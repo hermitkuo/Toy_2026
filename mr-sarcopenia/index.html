@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TCRD114-078-B  ·  MR of CKD and Sarcopenia</title>
+
+  <!-- ==========================================================
+       FONTS  ·  Cormorant (serif display) + IBM Plex Sans (body)
+       ========================================================== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+
+  <style>
+    /* ==========================================================
+       THEME  ·  Dark Botanical
+       Warm accents on near-black ground
+       ========================================================== */
+    :root {
+      --bg-primary:   #0f0f0f;
+      --bg-elevated:  #161616;
+      --bg-card:      #1a1a1a;
+      --line-soft:    rgba(232, 228, 223, 0.08);
+      --line-warm:    rgba(212, 165, 116, 0.35);
+
+      --text-primary:   #e8e4df;
+      --text-secondary: #9a9590;
+      --text-muted:     #6b6660;
+
+      --accent-warm:  #d4a574; /* terracotta gold */
+      --accent-pink:  #e8b4b8;
+      --accent-gold:  #c9b896;
+      --accent-sage:  #a3b8a8;
+      --accent-rust:  #b85042;
+
+      --font-display: "Cormorant", serif;
+      --font-body:    "IBM Plex Sans", sans-serif;
+      --font-mono:    "IBM Plex Mono", monospace;
+
+      --title-size:    clamp(2.4rem, 6.4vw, 5.2rem);
+      --h2-size:       clamp(1.8rem, 4vw, 3.2rem);
+      --h3-size:       clamp(1.3rem, 2.6vw, 2rem);
+      --body-size:     clamp(0.95rem, 1.45vw, 1.3rem);
+      --small-size:    clamp(0.85rem, 1.2vw, 1.1rem);
+      --xs-size:       clamp(0.72rem, 0.95vw, 0.92rem);
+
+      --slide-padding: clamp(1.4rem, 4vw, 3.6rem);
+      --content-gap:   clamp(0.6rem, 1.6vw, 1.6rem);
+      --element-gap:   clamp(0.35rem, 0.9vw, 0.85rem);
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration:      0.7s;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ======== viewport-base.css (mandatory) ======== */
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: var(--slide-padding);
+      background: var(--bg-primary);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      overflow: hidden;
+      gap: var(--content-gap);
+      position: relative;
+      z-index: 2;
+    }
+
+    @media (max-height: 800px) {
+      :root {
+        --slide-padding: clamp(1.1rem, 3.2vw, 2.4rem);
+        --content-gap: clamp(0.45rem, 1.3vw, 1.1rem);
+        --title-size: clamp(1.9rem, 5.4vw, 3.8rem);
+        --h2-size: clamp(1.5rem, 3.4vw, 2.5rem);
+        --body-size: clamp(0.88rem, 1.3vw, 1.15rem);
+      }
+    }
+    @media (max-height: 700px) {
+      :root {
+        --slide-padding: clamp(0.9rem, 2.6vw, 1.8rem);
+        --content-gap: clamp(0.35rem, 1.1vw, 0.85rem);
+        --title-size: clamp(1.6rem, 4.6vw, 3rem);
+        --h2-size: clamp(1.3rem, 3vw, 2.1rem);
+        --body-size: clamp(0.82rem, 1.2vw, 1.05rem);
+      }
+    }
+    @media (max-height: 600px) {
+      :root {
+        --slide-padding: clamp(0.7rem, 2.2vw, 1.4rem);
+        --content-gap: clamp(0.3rem, 1vw, 0.7rem);
+        --body-size: clamp(0.75rem, 1.05vw, 0.95rem);
+      }
+      .nav-dots, .keyboard-hint { display: none; }
+    }
+    @media (max-height: 500px) {
+      :root { --title-size: clamp(1.1rem, 3.6vw, 1.8rem); }
+    }
+    @media (max-width: 600px) {
+      :root { --title-size: clamp(1.4rem, 7vw, 2.6rem); }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ==========================================================
+       BOTANICAL BACKDROP  ·  blurred orbs + thin vertical line
+       ========================================================== */
+    .slide::before,
+    .slide::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .slide::before {
+      width: 36vw; height: 36vw;
+      top: -10vw; right: -10vw;
+      background: radial-gradient(circle, var(--accent-warm), transparent 65%);
+    }
+    .slide::after {
+      width: 28vw; height: 28vw;
+      bottom: -8vw; left: -8vw;
+      background: radial-gradient(circle, var(--accent-pink), transparent 70%);
+      opacity: 0.18;
+    }
+
+    /* thin vertical accent line on every content slide */
+    .slide.has-rule::before {
+      content: "";
+      position: absolute;
+      left: calc(var(--slide-padding) - 0.6rem);
+      top: var(--slide-padding);
+      bottom: var(--slide-padding);
+      width: 1px;
+      height: auto;
+      background: linear-gradient(to bottom, transparent, var(--line-warm) 20%, var(--line-warm) 80%, transparent);
+      border-radius: 0;
+      filter: none;
+      opacity: 1;
+    }
+
+    /* ==========================================================
+       HEADERS
+       ========================================================== */
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--small-size);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      font-weight: 500;
+    }
+
+    h1.slide-title {
+      font-family: var(--font-display);
+      font-size: var(--h2-size);
+      font-weight: 500;
+      line-height: 1.1;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .num-tag {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--accent-warm);
+      font-size: clamp(0.85rem, 1.2vw, 1rem);
+      letter-spacing: 0.08em;
+    }
+
+    /* page-num badge */
+    .page-badge {
+      position: absolute;
+      bottom: clamp(0.8rem, 1.6vw, 1.4rem);
+      right: clamp(0.8rem, 1.6vw, 1.4rem);
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      z-index: 3;
+    }
+    .footer-meta {
+      position: absolute;
+      bottom: clamp(0.8rem, 1.6vw, 1.4rem);
+      left: clamp(0.8rem, 1.6vw, 1.4rem);
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      color: var(--text-muted);
+      letter-spacing: 0.18em;
+      z-index: 3;
+    }
+
+    /* ==========================================================
+       TITLE SLIDE
+       ========================================================== */
+    .title-slide {
+      justify-content: space-between;
+      padding-top: clamp(2rem, 6vw, 4.5rem);
+      padding-bottom: clamp(1.5rem, 4vw, 3rem);
+    }
+    .title-chip {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      letter-spacing: 0.3em;
+      padding: 0.4rem 1.1rem;
+      border: 1px solid var(--accent-warm);
+      color: var(--accent-warm);
+      align-self: flex-start;
+      border-radius: 999px;
+    }
+    .title-hero {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: var(--title-size);
+      line-height: 1.05;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+      max-width: 19ch;
+    }
+    .title-hero em {
+      font-style: italic;
+      color: var(--accent-warm);
+      font-weight: 500;
+    }
+    .title-sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1rem, 1.8vw, 1.5rem);
+      color: var(--text-secondary);
+      max-width: 50ch;
+    }
+    .title-rule {
+      width: clamp(60px, 8vw, 120px);
+      height: 1px;
+      background: var(--accent-warm);
+      margin: clamp(0.6rem, 1.2vw, 1.2rem) 0;
+    }
+    .title-author {
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .title-affiliation {
+      font-family: var(--font-body);
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+    .title-date {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    /* ==========================================================
+       LAYOUTS
+       ========================================================== */
+    .header-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .header-block .meta-row {
+      display: flex;
+      align-items: baseline;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(0.8rem, 2vw, 2rem);
+      flex: 1;
+      min-height: 0;
+    }
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(0.6rem, 1.4vw, 1.2rem);
+    }
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: clamp(0.6rem, 1.4vw, 1.2rem);
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ==========================================================
+       CARDS
+       ========================================================== */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line-soft);
+      border-radius: 4px;
+      padding: clamp(0.8rem, 1.6vw, 1.4rem);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden;
+    }
+    .card-warm { border-left: 2px solid var(--accent-warm); }
+    .card-sage { border-left: 2px solid var(--accent-sage); }
+    .card-rust { border-left: 2px solid var(--accent-rust); }
+    .card-gold { border-left: 2px solid var(--accent-gold); }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: var(--h3-size);
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.15;
+    }
+    .card-body {
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* numbered card */
+    .num-card {
+      background: var(--bg-card);
+      border: 1px solid var(--line-soft);
+      padding: clamp(0.8rem, 1.6vw, 1.4rem);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .num-card .num {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1.8rem, 3.2vw, 2.8rem);
+      color: var(--accent-warm);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    /* ==========================================================
+       TABLES
+       ========================================================== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--small-size);
+      font-family: var(--font-body);
+    }
+    .data-table thead th {
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      font-weight: 500;
+      padding: clamp(0.5rem, 0.9vw, 0.75rem) clamp(0.5rem, 0.9vw, 0.8rem);
+      border-bottom: 1px solid var(--accent-warm);
+    }
+    .data-table tbody td {
+      padding: clamp(0.4rem, 0.8vw, 0.65rem) clamp(0.5rem, 0.9vw, 0.8rem);
+      border-bottom: 1px solid var(--line-soft);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr.section-row td {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: var(--small-size);
+      color: var(--accent-warm);
+      padding-top: clamp(0.6rem, 1vw, 0.8rem);
+      padding-bottom: 0.2rem;
+      border-bottom: 1px solid var(--line-warm);
+      letter-spacing: 0.02em;
+    }
+    .data-table .row-hero td {
+      background: rgba(212, 165, 116, 0.08);
+      color: var(--accent-warm);
+      font-weight: 500;
+    }
+    .data-table .row-muted td { color: var(--text-muted); }
+    .data-table .row-warn td  { color: var(--accent-rust); font-style: italic; }
+    .data-table .row-borderline td { color: var(--accent-rust); }
+    .data-table td.num { font-variant-numeric: tabular-nums; }
+
+    /* ==========================================================
+       HERO STAT
+       ========================================================== */
+    .hero-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--line-warm);
+      border-radius: 4px;
+      padding: clamp(1rem, 2vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-stat .stat-label {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+    }
+    .hero-stat .stat-pair {
+      font-family: var(--font-body);
+      color: var(--text-secondary);
+      font-size: var(--body-size);
+    }
+    .hero-stat .stat-value {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(3.4rem, 7vw, 6.5rem);
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .hero-stat .stat-ci {
+      font-family: var(--font-mono);
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+    }
+    .hero-stat .stat-p {
+      font-family: var(--font-mono);
+      font-size: var(--body-size);
+      color: var(--accent-warm);
+      letter-spacing: 0.04em;
+    }
+
+    /* ==========================================================
+       PROSE  ·  bullet & body
+       ========================================================== */
+    .prose {
+      color: var(--text-primary);
+      font-size: var(--body-size);
+      line-height: 1.55;
+    }
+    .prose .muted { color: var(--text-secondary); }
+    .prose strong { color: var(--accent-warm); font-weight: 500; }
+    .prose em { font-family: var(--font-display); font-style: italic; color: var(--accent-pink); }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.3rem, 0.9vw, 0.7rem);
+    }
+    .bullet-list li {
+      position: relative;
+      padding-left: 1.1rem;
+      font-size: var(--body-size);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .bullet-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 0.4rem;
+      height: 0.4rem;
+      background: var(--accent-warm);
+      border-radius: 50%;
+    }
+    .bullet-list li.sub {
+      padding-left: 2.2rem;
+      font-size: var(--small-size);
+      color: var(--text-secondary);
+    }
+    .bullet-list li.sub::before {
+      left: 1.2rem;
+      width: 0.4rem;
+      height: 1px;
+      background: var(--accent-warm);
+      border-radius: 0;
+    }
+
+    /* ==========================================================
+       INSIGHT BAR
+       ========================================================== */
+    .insight {
+      background: linear-gradient(135deg, rgba(212, 165, 116, 0.08), rgba(232, 180, 184, 0.04));
+      border: 1px solid var(--line-warm);
+      border-left: 3px solid var(--accent-warm);
+      padding: clamp(0.8rem, 1.6vw, 1.3rem);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .insight-label {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+    }
+    .insight-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: clamp(1rem, 1.7vw, 1.35rem);
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    /* ==========================================================
+       KEY-DESIGN PANEL
+       ========================================================== */
+    .key-panel {
+      background: linear-gradient(160deg, rgba(212, 165, 116, 0.12), rgba(232, 180, 184, 0.04) 60%, transparent);
+      border: 1px solid var(--line-warm);
+      border-radius: 4px;
+      padding: clamp(1rem, 2vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      position: relative;
+    }
+    .key-panel .key-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+    }
+    .key-panel h3 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+    .key-panel h3 em { color: var(--accent-pink); font-weight: 500; }
+    .key-panel .key-rule { width: 2.4rem; height: 1px; background: var(--accent-warm); margin: 0.3rem 0; }
+
+    /* ==========================================================
+       BLOCKED / WARN PANELS
+       ========================================================== */
+    .warn-panel {
+      background: linear-gradient(160deg, rgba(184, 80, 66, 0.18), rgba(184, 80, 66, 0.03) 60%, transparent);
+      border: 1px solid rgba(184, 80, 66, 0.45);
+      border-left: 3px solid var(--accent-rust);
+      border-radius: 4px;
+      padding: clamp(1rem, 2vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .warn-panel .label {
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--accent-rust);
+    }
+    .warn-panel h3 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-style: italic;
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    .takeaway-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 1.2rem); }
+
+    /* ==========================================================
+       FOREST PLOT (SVG)
+       ========================================================== */
+    .forest {
+      width: 100%;
+      max-height: 100%;
+      flex: 1;
+      min-height: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--line-soft);
+      border-radius: 4px;
+      padding: clamp(0.6rem, 1.2vw, 1rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      overflow: hidden;
+    }
+    .forest-svg {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+    .forest-svg .axis,
+    .forest-svg .grid-line {
+      stroke: var(--line-soft);
+      stroke-width: 1;
+    }
+    .forest-svg .ref-line {
+      stroke: var(--accent-pink);
+      stroke-width: 1.4;
+      stroke-dasharray: 4 4;
+      opacity: 0.7;
+    }
+    .forest-svg .row-bg {
+      fill: rgba(232, 228, 223, 0.025);
+    }
+    .forest-svg .label {
+      fill: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .forest-svg .label-sub {
+      fill: var(--text-secondary);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+    }
+    .forest-svg .tick-label {
+      fill: var(--text-secondary);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      text-anchor: middle;
+    }
+    .forest-svg .axis-title {
+      fill: var(--accent-warm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: middle;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .forest-svg .or-value {
+      fill: var(--text-primary);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 14px;
+      font-weight: 500;
+      text-anchor: start;
+    }
+    .forest-svg .ci-line {
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .forest-svg .ci-cap {
+      stroke-width: 2;
+    }
+    /* Categorical colors */
+    .forest-svg .sig         { stroke: var(--accent-warm); }
+    .forest-svg .sig-fill    { fill: var(--accent-warm); }
+    .forest-svg .borderline  { stroke: var(--accent-rust); }
+    .forest-svg .borderline-fill { fill: var(--accent-rust); }
+    .forest-svg .null        { stroke: var(--accent-sage); }
+    .forest-svg .null-fill   { fill: var(--accent-sage); }
+    .forest-svg .muted       { stroke: var(--text-muted); }
+    .forest-svg .muted-fill  { fill: var(--text-muted); }
+    .forest-svg .bias        { stroke: var(--accent-pink); }
+    .forest-svg .bias-fill   { fill: var(--accent-pink); }
+
+    .forest-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(0.5rem, 1.2vw, 1.1rem);
+      align-items: center;
+      font-size: var(--xs-size);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+    }
+    .legend-swatch {
+      display: inline-block;
+      width: 0.85rem;
+      height: 0.85rem;
+      border-radius: 50%;
+      margin-right: 0.35rem;
+      vertical-align: -2px;
+    }
+
+    /* ==========================================================
+       PROGRESS BAR
+       ========================================================== */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(to right, var(--accent-warm), var(--accent-pink));
+      z-index: 9999;
+      transition: width 0.2s ease;
+    }
+
+    /* ==========================================================
+       NAV DOTS
+       ========================================================== */
+    .nav-dots {
+      position: fixed;
+      right: clamp(0.8rem, 1.5vw, 1.5rem);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      z-index: 999;
+    }
+    .nav-dot {
+      width: 0.45rem; height: 0.45rem;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out-expo);
+    }
+    .nav-dot.active {
+      background: var(--accent-warm);
+      border-color: var(--accent-warm);
+      transform: scale(1.5);
+    }
+
+    /* ==========================================================
+       ANIMATIONS
+       ========================================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity var(--duration) var(--ease-out-expo), transform var(--duration) var(--ease-out-expo);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.15s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.25s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.35s; }
+    .slide.visible .reveal:nth-child(5) { transition-delay: 0.45s; }
+    .slide.visible .reveal:nth-child(6) { transition-delay: 0.55s; }
+
+    /* ==========================================================
+       INLINE EDITING
+       ========================================================== */
+    .edit-hotzone {
+      position: fixed;
+      top: 0; left: 0;
+      width: 70px; height: 70px;
+      z-index: 10000;
+      cursor: pointer;
+    }
+    .edit-toggle {
+      position: fixed;
+      top: 1rem; left: 1rem;
+      width: 2.4rem; height: 2.4rem;
+      border-radius: 50%;
+      background: var(--bg-card);
+      color: var(--accent-warm);
+      border: 1px solid var(--accent-warm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+      z-index: 10001;
+    }
+    .edit-toggle.show,
+    .edit-toggle.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .edit-toggle.active {
+      background: var(--accent-warm);
+      color: var(--bg-primary);
+    }
+    .edit-banner {
+      position: fixed;
+      top: 1rem; left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--accent-warm);
+      color: var(--accent-warm);
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.2em;
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 10001;
+      pointer-events: none;
+    }
+    .edit-banner.active { opacity: 1; }
+
+    body.edit-active [contenteditable="true"] {
+      outline: 1px dashed var(--accent-warm);
+      outline-offset: 3px;
+      border-radius: 2px;
+      cursor: text;
+    }
+    body.edit-active [contenteditable="true"]:focus {
+      outline: 2px solid var(--accent-pink);
+      outline-offset: 3px;
+    }
+
+    /* ==========================================================
+       MICRO
+       ========================================================== */
+    .arrow {
+      font-family: var(--font-mono);
+      color: var(--accent-warm);
+    }
+    .mono { font-family: var(--font-mono); }
+    .pill {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--xs-size);
+      letter-spacing: 0.2em;
+      padding: 0.2rem 0.65rem;
+      border: 1px solid var(--line-warm);
+      color: var(--accent-warm);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar"></div>
+  <nav class="nav-dots" aria-label="slide navigation"></nav>
+
+  <!-- inline editing controls -->
+  <div class="edit-hotzone" aria-hidden="true"></div>
+  <button class="edit-toggle" id="editToggle" title="Edit mode (E)" aria-label="Toggle edit mode">✎</button>
+  <div class="edit-banner" id="editBanner">EDIT MODE  ·  Ctrl+S to export</div>
+
+  <!-- ==========================================================
+       SLIDE 1  ·  TITLE
+       ========================================================== -->
+  <section class="slide title-slide">
+    <div class="title-chip reveal">TCRD114-078-B</div>
+
+    <div style="display:flex; flex-direction:column; gap:clamp(0.6rem, 1.4vw, 1.2rem);">
+      <h1 class="title-hero reveal">
+        Causal effects of <em>CKD</em> on skeletal muscle traits<br/>
+        and the impact of common <em>nephrology medications</em>
+      </h1>
+      <div class="title-rule reveal"></div>
+      <p class="title-sub reveal">
+        A bidirectional Mendelian randomization study with drug-target analyses
+      </p>
+    </div>
+
+    <div class="reveal" style="display:flex; flex-direction:column; gap:0.2rem;">
+      <div class="title-author">Chiu-Huang Kuo, MD</div>
+      <div class="title-affiliation">Department of Nephrology, Tzu Chi Hospital, Hualien  ·  hermit.kuo@gmail.com</div>
+      <div class="title-date" style="margin-top:0.6rem;">Report draft  ·  2026 · 05 · 27</div>
+    </div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 2  ·  BACKGROUND
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">01</span>
+        <h1 class="slide-title">Background</h1>
+        <p class="subtitle">Why a Mendelian randomization study?</p>
+      </header>
+
+      <div class="two-col" style="flex:1; align-items:start;">
+        <div class="reveal" style="display:flex; flex-direction:column; gap:0.9rem;">
+          <span class="card-label">臨床觀察</span>
+          <p class="prose">
+            Sarcopenia 在慢性腎臟病 (<strong>CKD</strong>) 病人盛行率 <strong>30–60%</strong>，
+            與死亡率、透析依賴、住院率上升有關。
+          </p>
+          <p class="prose muted">觀察研究無法分辨：</p>
+          <ul class="bullet-list">
+            <li>腎功能本身的影響</li>
+            <li>CKD 常用藥物的混淆 (confounding by indication)</li>
+          </ul>
+        </div>
+
+        <div class="key-panel reveal">
+          <span class="key-eyebrow">Research Question</span>
+          <h3>
+            腎功能本身是否<em>因果性</em>影響骨骼肌？常用腎科用藥
+            （statin / SGLT2i / ACEi / ARB / MRA / loop）是否
+            <em>獨立於</em>腎功能影響肌肉？
+          </h3>
+          <div class="key-rule"></div>
+          <span class="card-label" style="color:var(--text-secondary);">研究取徑</span>
+          <ul class="bullet-list" style="font-size:var(--small-size);">
+            <li><strong>Bidirectional MR</strong> <span class="arrow">→</span> 雙向因果</li>
+            <li><strong>Drug-target MR</strong> <span class="arrow">→</span> cis-variant 模擬藥物終生暴露</li>
+            <li><strong>MVMR</strong> <span class="arrow">→</span> 中介路徑 (SBP / LDL / HbA1c)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  MR of CKD and Sarcopenia</div>
+    <div class="page-badge">02 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 3  ·  STUDY DESIGN
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">02</span>
+        <h1 class="slide-title">Study design overview</h1>
+        <p class="subtitle">Two-sample bidirectional MR + drug-target MR + MVMR</p>
+      </header>
+
+      <div class="three-col reveal">
+        <div class="num-card card-warm">
+          <span class="num">01</span>
+          <div class="card-title">Forward MR</div>
+          <p class="card-body">腎功能 → 肌肉表型<br/><span class="mono" style="font-size:var(--xs-size);">eGFR-crea / eGFR-cysC / CKD → grip / ALM / sarcopenia</span></p>
+        </div>
+        <div class="num-card card-sage">
+          <span class="num">02</span>
+          <div class="card-title">Reverse MR</div>
+          <p class="card-body">肌肉表型 → 腎功能<br/><span class="mono" style="font-size:var(--xs-size);">grip / ALM → eGFR-cysC / eGFR-crea</span></p>
+        </div>
+        <div class="num-card card-gold">
+          <span class="num">03</span>
+          <div class="card-title">Drug-target MR</div>
+          <p class="card-body">六類腎科用藥之 cis-variant<br/><span class="mono" style="font-size:var(--xs-size);">HMGCR / SLC5A2 / ACE / AGTR1 / NR3C2 / SLC12A1</span></p>
+        </div>
+      </div>
+
+      <div class="insight reveal">
+        <span class="insight-label">關鍵方法學設計</span>
+        <p class="insight-text">
+          eGFR-creatinine 受肌肉源 creatinine 干擾  <span class="arrow">→</span>
+          以 muscle-independent 的 <em style="color:var(--accent-warm); font-style:italic;">eGFR-cystatin C</em>
+          作為平行 instrument；若兩者估計值分歧，以 cysC 為主推論、crea 訊號視為 instrument bias 探針。
+        </p>
+      </div>
+
+      <div class="reveal" style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
+        <span class="pill">STROBE-MR</span>
+        <span class="pill">Public GWAS summary stats</span>
+        <span class="pill">IRB_MR_sarcopenia 已核</span>
+        <span class="pill">R 4.5.1 · TwoSampleMR · MVMR · MR-PRESSO · coloc</span>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Study design</div>
+    <div class="page-badge">03 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 4  ·  DATA SOURCES
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">03</span>
+        <h1 class="slide-title">Data sources</h1>
+        <p class="subtitle">Genome-wide summary statistics, predominantly European ancestry</p>
+      </header>
+
+      <div class="reveal" style="flex:1; overflow:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:32%;">Role</th>
+              <th style="width:45%;">Source</th>
+              <th style="width:23%; text-align:right;">N</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="section-row"><td colspan="3">Exposure  ·  Kidney function</td></tr>
+            <tr><td>eGFR-creatinine</td><td>CKDGen 2019</td><td class="num" style="text-align:right;">567,460</td></tr>
+            <tr><td>CKD binary</td><td>CKDGen 2019</td><td class="num" style="text-align:right;">480,698</td></tr>
+            <tr class="row-hero"><td>eGFR-cystatin C  ★</td><td>Stanzick 2021</td><td class="num" style="text-align:right;">460,826</td></tr>
+
+            <tr class="section-row"><td colspan="3">Outcome  ·  Muscle traits</td></tr>
+            <tr><td>Hand grip strength</td><td>UK Biobank</td><td class="num" style="text-align:right;">461,089</td></tr>
+            <tr><td>Appendicular lean mass</td><td>Pei 2020</td><td class="num" style="text-align:right;">450,243</td></tr>
+            <tr><td>Muscle weakness</td><td>Jones 2021</td><td class="num" style="text-align:right;">256,523</td></tr>
+            <tr><td>Sarcopenia (M62.5)</td><td>FinnGen R11</td><td class="num" style="text-align:right;">≈412,000</td></tr>
+
+            <tr class="section-row"><td colspan="3">Drug target  ·  cis-variants  &  Mediators  ·  MVMR</td></tr>
+            <tr><td>HMGCR / SLC5A2 / ACE / AGTR1 / NR3C2 / SLC12A1</td><td>Evangelou 2018 SBP  ·  LDL  ·  HbA1c</td><td class="num" style="text-align:right;">—</td></tr>
+            <tr><td>SBP / LDL / HbA1c</td><td>UKBB-ICBP  ·  GLGC  ·  MAGIC</td><td class="num" style="text-align:right;">146k–1.32M</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="reveal" style="font-size:var(--xs-size); color:var(--text-muted); font-style:italic;">
+        ★ 主推論 instrument（muscle-independent）
+      </p>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Data sources</div>
+    <div class="page-badge">04 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 5  ·  INSTRUMENT SELECTION
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">04</span>
+        <h1 class="slide-title">Instrument selection</h1>
+        <p class="subtitle">GWAS-wide + drug-target cis-variant strategies</p>
+      </header>
+
+      <div class="two-col" style="flex:1; align-items:stretch;">
+        <div class="reveal" style="display:flex; flex-direction:column; gap:1rem;">
+          <div>
+            <span class="card-label">Genome-wide instruments</span>
+            <ul class="bullet-list" style="margin-top:0.5rem;">
+              <li>顯著性閾值：<span class="mono">p &lt; 5 × 10⁻⁸</span></li>
+              <li>LD clump：<span class="mono">r² &lt; 0.001 / 10,000 kb</span></li>
+              <li>Reference panel：1000 Genomes EUR</li>
+              <li>Instrument <strong>F-statistic &gt; 10</strong>（所有暴露）</li>
+            </ul>
+          </div>
+          <div>
+            <span class="card-label">Drug-target cis-variants</span>
+            <ul class="bullet-list" style="margin-top:0.5rem;">
+              <li><strong>HMGCR / SLC5A2</strong>：±100 kb · relaxed r² &lt; 0.3 / 500 kb</li>
+              <li><strong>ACE / AGTR1 / NR3C2 / SLC12A1</strong>：採文獻 lead SNP</li>
+              <li class="sub mono" style="font-size:var(--xs-size);">rs4291 · rs4343 · rs5186 · rs5522 · rs2074299 · rs7178344</li>
+              <li>Effect from Evangelou 2018 SBP GWAS</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="key-panel reveal">
+          <span class="key-eyebrow">Key Design</span>
+          <h3>eGFR-cystatin C<br/><em>as a parallel instrument</em></h3>
+          <div class="key-rule"></div>
+          <p class="prose" style="font-size:var(--small-size);">
+            <strong>問題：</strong>eGFR-creatinine 方程式內含血清 creatinine，
+            而 creatinine 由骨骼肌產生 <span class="arrow">→</span> instrument 受肌肉量混淆。
+          </p>
+          <p class="prose" style="font-size:var(--small-size);">
+            <strong>解法：</strong>Cystatin C 由所有有核細胞穩定分泌，與肌肉量無關
+            <span class="arrow">→</span> 作為平行 instrument。
+          </p>
+          <p class="prose" style="font-size:var(--small-size);">
+            <strong>推論策略：</strong>若 cysC 與 crea 一致 → 真實腎功能因果；
+            若分歧 → crea 訊號為 instrument bias。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Instruments</div>
+    <div class="page-badge">05 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 6  ·  STATISTICS
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">05</span>
+        <h1 class="slide-title">Statistical analysis</h1>
+        <p class="subtitle">IVW primary  ·  multiple sensitivity estimators</p>
+      </header>
+
+      <div class="two-col reveal" style="align-items:start;">
+        <div class="hero-stat" style="background:linear-gradient(160deg, rgba(212,165,116,0.18), rgba(232,180,184,0.04) 70%, transparent);">
+          <span class="stat-label">Primary</span>
+          <div class="stat-value" style="font-size:clamp(2.6rem, 5.5vw, 4.6rem);">IVW</div>
+          <p class="card-body" style="font-style:italic; font-family:var(--font-display); font-size:clamp(0.95rem,1.5vw,1.2rem); color:var(--text-secondary);">
+            Inverse-variance weighted<br/>with multiplicative random effects
+          </p>
+        </div>
+
+        <div class="card card-gold" style="gap:0.7rem;">
+          <span class="card-label" style="color:var(--accent-gold);">Sensitivity</span>
+          <ul class="bullet-list">
+            <li>Weighted median</li>
+            <li>MR-Egger（intercept test for pleiotropy）</li>
+            <li>Weighted mode</li>
+            <li>MR-PRESSO（outlier-corrected）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reveal" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:clamp(0.5rem, 1.2vw, 1rem);">
+        <div class="card" style="padding:clamp(0.6rem,1.2vw,1rem);">
+          <span class="card-label" style="color:var(--text-muted);">異質性</span>
+          <div style="font-family:var(--font-display); font-style:italic; font-size:clamp(1rem,1.8vw,1.4rem); color:var(--text-primary);">Cochran's Q</div>
+        </div>
+        <div class="card" style="padding:clamp(0.6rem,1.2vw,1rem);">
+          <span class="card-label" style="color:var(--text-muted);">單 SNP</span>
+          <div style="font-family:var(--font-display); font-style:italic; font-size:clamp(1rem,1.8vw,1.4rem); color:var(--text-primary);">Wald ratio</div>
+        </div>
+        <div class="card" style="padding:clamp(0.6rem,1.2vw,1rem);">
+          <span class="card-label" style="color:var(--text-muted);">報告單位</span>
+          <div style="font-family:var(--font-mono); font-size:var(--body-size); color:var(--text-primary);">per-SD OR + 95% CI</div>
+        </div>
+        <div class="card" style="padding:clamp(0.6rem,1.2vw,1rem);">
+          <span class="card-label" style="color:var(--text-muted);">工具</span>
+          <div class="mono" style="font-size:var(--xs-size); color:var(--text-primary); line-height:1.4;">TwoSampleMR · ieugwasr<br/>MVMR · MR-PRESSO · coloc</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Statistical analysis</div>
+    <div class="page-badge">06 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 7  ·  FORWARD MR  +  HERO
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">06</span>
+        <h1 class="slide-title">Forward MR  ·  Kidney → Muscle</h1>
+        <p class="subtitle">Lower kidney function lowers appendicular lean mass</p>
+      </header>
+
+      <div class="two-col" style="grid-template-columns: 38% 1fr; gap:clamp(0.8rem,1.8vw,1.6rem); flex:1; align-items:stretch;">
+        <!-- Hero stat -->
+        <div class="hero-stat reveal" style="justify-content:space-between;">
+          <div style="display:flex; flex-direction:column; gap:0.3rem;">
+            <span class="stat-label">Core Finding</span>
+            <span class="stat-pair">eGFR-cysC <span class="arrow">→</span> ALM</span>
+          </div>
+
+          <div>
+            <div style="display:flex; align-items:baseline; gap:0.4rem;">
+              <span class="mono" style="color:var(--text-secondary); font-size:var(--small-size);">OR</span>
+              <div class="stat-value">0.73</div>
+            </div>
+            <p class="stat-ci">95% CI 0.57 – 0.92</p>
+            <p class="stat-p"><strong style="color:var(--accent-warm);">p = 0.008</strong></p>
+          </div>
+
+          <div>
+            <div style="width:2.4rem; height:1px; background:var(--accent-warm); margin-bottom:0.5rem;"></div>
+            <p style="font-style:italic; font-family:var(--font-display); font-size:var(--small-size); color:var(--text-secondary);">
+              per-SD IVW · muscle-independent instrument
+            </p>
+          </div>
+        </div>
+
+        <!-- Forest plot + interpretation -->
+        <div class="reveal" style="display:flex; flex-direction:column; gap:0.6rem; min-height:0;">
+          <div class="forest" style="flex:1;">
+            <svg class="forest-svg" viewBox="0 0 800 290" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Forward MR forest plot">
+              <!-- row backgrounds -->
+              <rect class="row-bg" x="10" y="22"  width="780" height="36" rx="2"/>
+              <rect class="row-bg" x="10" y="98"  width="780" height="36" rx="2"/>
+              <rect class="row-bg" x="10" y="174" width="780" height="36" rx="2"/>
+
+              <!-- reference line at OR=1.0 -->
+              <line class="ref-line" x1="706" y1="20" x2="706" y2="230"/>
+              <text x="706" y="14" class="tick-label" style="fill: var(--accent-pink); font-size:12px;">OR = 1</text>
+
+              <!-- Row 1: eGFR-cysC → ALM (sig) -->
+              <text x="20" y="46" class="label">eGFR-cysC → ALM</text>
+              <text x="20" y="62" class="label-sub">182 SNPs  ·  per-SD IVW</text>
+              <line class="ci-line sig" x1="429" y1="50" x2="654" y2="50"/>
+              <line class="ci-cap sig" x1="429" y1="44" x2="429" y2="56"/>
+              <line class="ci-cap sig" x1="654" y1="44" x2="654" y2="56"/>
+              <circle class="sig-fill" cx="532" cy="50" r="8"/>
+              <text x="668" y="55" class="or-value">0.73 (0.57–0.92)  p=0.008</text>
+
+              <!-- Row 2: eGFR-crea → ALM (sig) -->
+              <text x="20" y="86"  class="label">eGFR-crea → ALM</text>
+              <text x="20" y="102" class="label-sub">44 SNPs</text>
+              <line class="ci-line sig" x1="378" y1="90" x2="673" y2="90"/>
+              <line class="ci-cap sig" x1="378" y1="84" x2="378" y2="96"/>
+              <line class="ci-cap sig" x1="673" y1="84" x2="673" y2="96"/>
+              <circle class="sig-fill" cx="500" cy="90" r="7"/>
+              <text x="687" y="95" class="or-value">0.68  p=0.023</text>
+
+              <!-- Row 3: eGFR-crea → grip (creatinine bias) -->
+              <text x="20" y="126" class="label">eGFR-crea → grip</text>
+              <text x="20" y="142" class="label-sub">44 SNPs  ·  creatinine bias ⚠</text>
+              <line class="ci-line bias" x1="519" y1="130" x2="641" y2="130"/>
+              <line class="ci-cap bias" x1="519" y1="124" x2="519" y2="136"/>
+              <line class="ci-cap bias" x1="641" y1="124" x2="641" y2="136"/>
+              <circle class="bias-fill" cx="577" cy="130" r="7"/>
+              <text x="655" y="135" class="or-value">0.80  p=3×10⁻⁴</text>
+
+              <!-- Row 4: eGFR-cysC → grip (attenuated → null) -->
+              <text x="20" y="166" class="label">eGFR-cysC → grip</text>
+              <text x="20" y="182" class="label-sub">182 SNPs  ·  attenuated ↓</text>
+              <line class="ci-line borderline" x1="616" y1="170" x2="706" y2="170"/>
+              <line class="ci-cap borderline" x1="616" y1="164" x2="616" y2="176"/>
+              <line class="ci-cap borderline" x1="706" y1="164" x2="706" y2="176"/>
+              <circle class="borderline-fill" cx="661" cy="170" r="7"/>
+              <text x="720" y="175" class="or-value">0.93  p=0.062</text>
+
+              <!-- Row 5: CKD → grip (null/underpowered) -->
+              <text x="20" y="206" class="label">CKD → grip</text>
+              <text x="20" y="222" class="label-sub">4 SNPs  ·  underpowered</text>
+              <line class="ci-line muted" x1="699" y1="210" x2="725" y2="210"/>
+              <line class="ci-cap muted" x1="699" y1="204" x2="699" y2="216"/>
+              <line class="ci-cap muted" x1="725" y1="204" x2="725" y2="216"/>
+              <circle class="muted-fill" cx="712" cy="210" r="6"/>
+              <text x="739" y="215" class="or-value">1.01  p=0.48</text>
+
+              <!-- X axis -->
+              <line class="axis" x1="320" y1="230" x2="770" y2="230"/>
+              <!-- ticks 0.5 0.6 0.7 0.8 0.9 1.0 1.1 -->
+              <g stroke="currentColor" stroke-width="1" opacity="0.6">
+                <line class="axis" x1="384"  y1="230" x2="384"  y2="236"/>
+                <line class="axis" x1="449"  y1="230" x2="449"  y2="236"/>
+                <line class="axis" x1="513"  y1="230" x2="513"  y2="236"/>
+                <line class="axis" x1="577"  y1="230" x2="577"  y2="236"/>
+                <line class="axis" x1="641"  y1="230" x2="641"  y2="236"/>
+                <line class="axis" x1="706"  y1="230" x2="706"  y2="236"/>
+                <line class="axis" x1="770"  y1="230" x2="770"  y2="236"/>
+              </g>
+              <text x="384" y="253" class="tick-label">0.5</text>
+              <text x="449" y="253" class="tick-label">0.6</text>
+              <text x="513" y="253" class="tick-label">0.7</text>
+              <text x="577" y="253" class="tick-label">0.8</text>
+              <text x="641" y="253" class="tick-label">0.9</text>
+              <text x="706" y="253" class="tick-label">1.0</text>
+              <text x="770" y="253" class="tick-label">1.1</text>
+
+              <text x="545" y="278" class="axis-title">Odds Ratio  (per-SD)</text>
+              <text x="450" y="278" class="tick-label" style="text-anchor:end; fill:var(--accent-pink);">← lower kidney → lower muscle</text>
+            </svg>
+          </div>
+
+          <div class="forest-legend reveal">
+            <span><span class="legend-swatch" style="background:var(--accent-warm);"></span>Significant (cysC-validated)</span>
+            <span><span class="legend-swatch" style="background:var(--accent-pink);"></span>Creatinine bias</span>
+            <span><span class="legend-swatch" style="background:var(--accent-rust);"></span>Attenuated</span>
+            <span><span class="legend-swatch" style="background:var(--text-muted);"></span>Underpowered</span>
+          </div>
+
+          <div class="insight">
+            <span class="insight-label">解讀</span>
+            <p style="font-size:var(--small-size); color:var(--text-primary); line-height:1.5;">
+              腎功能下降<strong>因果降低 ALM</strong>；握力訊號在切換到 cysC 後從
+              <span class="mono">p = 3×10⁻⁴</span> 衰減至 <span class="mono">p = 0.062</span>
+              <span class="arrow">→</span> 為 creatinine instrument bias，非真實因果效應。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Forward MR</div>
+    <div class="page-badge">07 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 8  ·  REVERSE MR
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">07</span>
+        <h1 class="slide-title">Reverse MR  ·  Muscle → Kidney</h1>
+        <p class="subtitle">Asymmetry confirms forward direction dominates</p>
+      </header>
+
+      <div class="reveal">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:18%;">Exposure → Outcome</th>
+              <th style="width:7%; text-align:center;">nSNP</th>
+              <th style="width:9%;">IVW OR</th>
+              <th style="width:10%; text-align:right;">p</th>
+              <th>判讀</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-warn">
+              <td>grip → eGFR-crea</td>
+              <td class="num" style="text-align:center;">136</td>
+              <td>0.94</td>
+              <td class="num" style="text-align:right;">2.9×10⁻⁷</td>
+              <td>偽陽性 — muscle-derived creatinine</td>
+            </tr>
+            <tr class="row-hero">
+              <td>grip → eGFR-cysC</td>
+              <td class="num" style="text-align:center;">160</td>
+              <td>0.99</td>
+              <td class="num" style="text-align:right;">0.34</td>
+              <td>null  →  bias 被排除</td>
+            </tr>
+            <tr class="row-muted">
+              <td>ALM → eGFR-cysC</td>
+              <td class="num" style="text-align:center;">585</td>
+              <td>0.99</td>
+              <td class="num" style="text-align:right;">0.0015</td>
+              <td>量級遠小於 forward — 反向訊號弱</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight reveal" style="background: linear-gradient(135deg, rgba(212, 165, 116, 0.15), rgba(232, 180, 184, 0.06));">
+        <span class="insight-label">Bidirectional Asymmetry</span>
+        <p class="insight-text">
+          雙向 MR 不對稱模式（forward 顯著 + cysC reverse null）證實主導方向為
+          <em style="color:var(--accent-warm); font-style:italic;">「腎 → 肌」</em>；
+          crea-based reverse 訊號為肌肉源 creatinine 造成的 instrument confounding。
+        </p>
+      </div>
+
+      <p class="reveal" style="font-size:var(--small-size); color:var(--text-muted); font-style:italic;">
+        ⚑  待補：ALM → eGFR-crea 與 ALM → CKD 因 OpenGWAS proxy API 錯誤未完成，列入後續 re-run。
+      </p>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Reverse MR</div>
+    <div class="page-badge">08 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 9  ·  DRUG-TARGET MR
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">08</span>
+        <h1 class="slide-title">Drug-target MR</h1>
+        <p class="subtitle">六類腎科用藥之 cis-variant 結果</p>
+      </header>
+
+      <div class="reveal forest" style="flex:1; min-height:0;">
+        <svg class="forest-svg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Drug-target MR forest plot">
+          <!-- alternating row backgrounds -->
+          <rect class="row-bg" x="10" y="22"  width="780" height="34" rx="2"/>
+          <rect class="row-bg" x="10" y="94"  width="780" height="34" rx="2"/>
+          <rect class="row-bg" x="10" y="166" width="780" height="34" rx="2"/>
+          <rect class="row-bg" x="10" y="238" width="780" height="34" rx="2"/>
+
+          <!-- reference line at OR=1.0 -->
+          <line class="ref-line" x1="632" y1="20" x2="632" y2="296"/>
+          <text x="632" y="14" class="tick-label" style="fill: var(--accent-pink); font-size:12px;">OR = 1</text>
+
+          <!-- Row 1: Statin (HMGCR) → grip (null) -->
+          <text x="20" y="42" class="label">Statin  ·  HMGCR → grip</text>
+          <text x="20" y="56" class="label-sub">3 SNPs</text>
+          <line class="ci-line null" x1="590" y1="46" x2="666" y2="46"/>
+          <line class="ci-cap null" x1="590" y1="40" x2="590" y2="52"/>
+          <line class="ci-cap null" x1="666" y1="40" x2="666" y2="52"/>
+          <circle class="null-fill" cx="625" cy="46" r="6"/>
+          <text x="680" y="51" class="or-value">0.99  p=0.79</text>
+
+          <!-- Row 2: SGLT2 (SLC5A2) → grip (null) -->
+          <text x="20" y="78" class="label">SGLT2i  ·  SLC5A2 → grip</text>
+          <text x="20" y="92" class="label-sub">7 SNPs</text>
+          <line class="ci-line null" x1="590" y1="82" x2="708" y2="82"/>
+          <line class="ci-cap null" x1="590" y1="76" x2="590" y2="88"/>
+          <line class="ci-cap null" x1="708" y1="76" x2="708" y2="88"/>
+          <circle class="null-fill" cx="645" cy="82" r="6"/>
+          <text x="722" y="87" class="or-value">1.02  p=0.62</text>
+
+          <!-- Row 3: SGLT2 (SLC5A2) → ALM (null) -->
+          <text x="20" y="114" class="label">SGLT2i  ·  SLC5A2 → ALM</text>
+          <text x="20" y="128" class="label-sub">7 SNPs</text>
+          <line class="ci-line null" x1="521" y1="118" x2="715" y2="118"/>
+          <line class="ci-cap null" x1="521" y1="112" x2="521" y2="124"/>
+          <line class="ci-cap null" x1="715" y1="112" x2="715" y2="124"/>
+          <circle class="null-fill" cx="611" cy="118" r="6"/>
+          <text x="729" y="123" class="or-value">0.97  p=0.66</text>
+
+          <!-- Row 4: Loop (SLC12A1) → grip (null) -->
+          <text x="20" y="150" class="label">Loop  ·  SLC12A1 → grip</text>
+          <text x="20" y="164" class="label-sub">2 SNPs</text>
+          <line class="ci-line null" x1="597" y1="154" x2="652" y2="154"/>
+          <line class="ci-cap null" x1="597" y1="148" x2="597" y2="160"/>
+          <line class="ci-cap null" x1="652" y1="148" x2="652" y2="160"/>
+          <circle class="null-fill" cx="625" cy="154" r="6"/>
+          <text x="666" y="159" class="or-value">0.99  p=0.73</text>
+
+          <!-- Row 5: ACE → ALM (borderline) -->
+          <text x="20" y="186" class="label">ACEi  ·  ACE → ALM</text>
+          <text x="20" y="200" class="label-sub">2 SNPs  ·  borderline</text>
+          <line class="ci-line borderline" x1="583" y1="190" x2="625" y2="190"/>
+          <line class="ci-cap borderline" x1="583" y1="184" x2="583" y2="196"/>
+          <line class="ci-cap borderline" x1="625" y1="184" x2="625" y2="196"/>
+          <circle class="borderline-fill" cx="604" cy="190" r="7"/>
+          <text x="639" y="195" class="or-value">0.96  p=0.021</text>
+
+          <!-- Row 6: NR3C2 → grip (borderline) -->
+          <text x="20" y="222" class="label">MRA  ·  NR3C2 → grip</text>
+          <text x="20" y="236" class="label-sub">1 SNP (Wald)  ·  borderline</text>
+          <line class="ci-line borderline" x1="652" y1="226" x2="729" y2="226"/>
+          <line class="ci-cap borderline" x1="652" y1="220" x2="652" y2="232"/>
+          <line class="ci-cap borderline" x1="729" y1="220" x2="729" y2="232"/>
+          <circle class="borderline-fill" cx="687" cy="226" r="7"/>
+          <text x="743" y="231" class="or-value">1.08  p=0.001</text>
+
+          <!-- Row 7: ARB (AGTR1) → ALM (null, wide CI) -->
+          <text x="20" y="258" class="label">ARB  ·  AGTR1 → ALM</text>
+          <text x="20" y="272" class="label-sub">1 SNP (Wald)</text>
+          <line class="ci-line null" x1="362" y1="262" x2="673" y2="262"/>
+          <line class="ci-cap null" x1="362" y1="256" x2="362" y2="268"/>
+          <line class="ci-cap null" x1="673" y1="256" x2="673" y2="268"/>
+          <circle class="null-fill" cx="493" cy="262" r="6"/>
+          <text x="687" y="267" class="or-value">0.80  p=0.12</text>
+
+          <!-- X axis -->
+          <line class="axis" x1="320" y1="296" x2="770" y2="296"/>
+          <g>
+            <line class="axis" x1="355"  y1="296" x2="355"  y2="302"/>
+            <line class="axis" x1="424"  y1="296" x2="424"  y2="302"/>
+            <line class="axis" x1="493"  y1="296" x2="493"  y2="302"/>
+            <line class="axis" x1="562"  y1="296" x2="562"  y2="302"/>
+            <line class="axis" x1="632"  y1="296" x2="632"  y2="302"/>
+            <line class="axis" x1="701"  y1="296" x2="701"  y2="302"/>
+            <line class="axis" x1="770"  y1="296" x2="770"  y2="302"/>
+          </g>
+          <text x="355" y="318" class="tick-label">0.6</text>
+          <text x="424" y="318" class="tick-label">0.7</text>
+          <text x="493" y="318" class="tick-label">0.8</text>
+          <text x="562" y="318" class="tick-label">0.9</text>
+          <text x="632" y="318" class="tick-label">1.0</text>
+          <text x="701" y="318" class="tick-label">1.1</text>
+          <text x="770" y="318" class="tick-label">1.2</text>
+
+          <text x="545" y="345" class="axis-title">Odds Ratio  (per-SD genetic perturbation)</text>
+        </svg>
+      </div>
+
+      <div class="forest-legend reveal">
+        <span><span class="legend-swatch" style="background:var(--accent-sage);"></span>Null  (safe)</span>
+        <span><span class="legend-swatch" style="background:var(--accent-rust);"></span>Borderline  (needs replication)</span>
+        <span style="color:var(--accent-pink); margin-left:auto; font-style:italic;">— — —  OR = 1  reference</span>
+      </div>
+
+      <div class="takeaway-grid reveal" style="margin-top:auto;">
+        <div class="card" style="border-left:3px solid var(--accent-sage);">
+          <span class="card-label" style="color:var(--accent-sage);">無不利證據</span>
+          <p class="card-body">
+            <strong style="color:var(--accent-sage);">Statin (HMGCR)</strong> ·
+            <strong style="color:var(--accent-sage);">SGLT2 inhibitor (SLC5A2)</strong> ·
+            <strong style="color:var(--accent-sage);">Loop diuretic (SLC12A1)</strong>
+            對肌肉量與肌力均無因果不利證據，臨床可安心使用。
+          </p>
+        </div>
+        <div class="card" style="border-left:3px solid var(--accent-rust);">
+          <span class="card-label" style="color:var(--accent-rust);">Borderline 訊號（需 replication）</span>
+          <p class="card-body">
+            <strong style="color:var(--accent-rust);">ACE → ALM</strong> (p=0.021) 與
+            <strong style="color:var(--accent-rust);">NR3C2 → grip</strong> (p=0.0012) 訊號倚賴 1–2 SNP，
+            尚不視為可行動結論，待 larger allelic series 驗證方向與量級。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Drug-target MR</div>
+    <div class="page-badge">09 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 10  ·  MVMR
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">09</span>
+        <h1 class="slide-title">Multivariable MR  ·  <em style="font-family:var(--font-display); font-style:italic; color:var(--accent-rust); font-weight:500;">未完成</em></h1>
+        <p class="subtitle">MVMR mediation through SBP / LDL / HbA1c</p>
+      </header>
+
+      <div class="two-col" style="flex:1; align-items:stretch;">
+        <div class="card card-warm reveal" style="gap:0.7rem;">
+          <span class="card-label">Analysis intent</span>
+          <ul class="bullet-list">
+            <li>共同暴露：<span class="mono">eGFR-cysC + SBP + LDL + HbA1c</span></li>
+            <li>結局：FinnGen sarcopenia (M62.5)</li>
+            <li>目的：分離腎功能直接效應與心代謝中介路徑</li>
+            <li>工具：<span class="mono">mv_multiple()</span> + MVMR conditional F-stat</li>
+          </ul>
+        </div>
+
+        <div class="warn-panel reveal">
+          <span class="label">Blocked</span>
+          <h3>OpenGWAS<br/>trial-tier quota</h3>
+          <div style="width:2.4rem; height:1px; background:var(--accent-rust); margin:0.3rem 0;"></div>
+
+          <p style="font-size:var(--small-size); line-height:1.5;">
+            <strong style="color:var(--accent-warm);">嘗試 1</strong>
+            <span class="mono" style="color:var(--text-secondary);">mv_extract_exposures()</span><br/>
+            結果：撞 300 秒 API timeout
+          </p>
+          <p style="font-size:var(--small-size); line-height:1.5;">
+            <strong style="color:var(--accent-warm);">嘗試 2</strong>
+            fetch per-exposure × 1,121 union SNPs<br/>
+            結果：trial 配額僅回 <span class="mono">1 / 4</span> 個暴露
+          </p>
+          <p style="font-size:var(--small-size); line-height:1.5; margin-top:0.2rem;">
+            <strong style="color:var(--accent-warm);">目前狀態：</strong>inconclusive，待升級 academic-tier API token 後重跑
+            <span class="mono">07_v3_drug_mvmr.R B2</span> 區塊。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  MVMR (pending)</div>
+    <div class="page-badge">10 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 11  ·  TAKE-HOME
+       ========================================================== -->
+  <section class="slide has-rule">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">10</span>
+        <h1 class="slide-title">Take-home messages</h1>
+        <p class="subtitle">本研究的四個主要訊息</p>
+      </header>
+
+      <div class="grid-2x2 reveal">
+        <div class="num-card card-warm">
+          <div style="display:flex; align-items:baseline; gap:0.6rem;">
+            <span class="num">01</span>
+            <div class="card-title">正向發現</div>
+          </div>
+          <p class="card-body">
+            腎功能下降會<strong>因果降低</strong>四肢瘦肉量 (ALM, OR 0.73, p=0.008)。
+            以 cysC instrument 排除肌肉源 creatinine 干擾後仍穩健。
+          </p>
+        </div>
+
+        <div class="num-card card-gold">
+          <div style="display:flex; align-items:baseline; gap:0.6rem;">
+            <span class="num" style="color:var(--accent-gold);">02</span>
+            <div class="card-title">方法學貢獻</div>
+          </div>
+          <p class="card-body">
+            <span class="mono">eGFR-crea / eGFR-cysC</span> 雙 instrument 對照成功揭露：
+            「握力 ↔ 腎功能」雙向關聯其實為 instrument bias 假象。
+          </p>
+        </div>
+
+        <div class="num-card card-sage">
+          <div style="display:flex; align-items:baseline; gap:0.6rem;">
+            <span class="num" style="color:var(--accent-sage);">03</span>
+            <div class="card-title">藥物安全訊號</div>
+          </div>
+          <p class="card-body">
+            常用腎科用藥（statin · SGLT2i · loop diuretic）對肌肉
+            <strong style="color:var(--accent-sage);">無因果不利證據</strong>；
+            ACE 與 NR3C2 borderline 訊號待 replication。
+          </p>
+        </div>
+
+        <div class="num-card card-rust">
+          <div style="display:flex; align-items:baseline; gap:0.6rem;">
+            <span class="num" style="color:var(--accent-rust);">04</span>
+            <div class="card-title">執行進度</div>
+          </div>
+          <p class="card-body">
+            結案報告 <strong>67% STROBE-MR</strong>；manuscript v1 已成稿（Abstract + IMRaD）；
+            剩 MVMR B2 與 Discussion 4.3–4.6 補完。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  Take-home</div>
+    <div class="page-badge">11 / 12</div>
+  </section>
+
+  <!-- ==========================================================
+       SLIDE 12  ·  LIMITATIONS & NEXT STEPS
+       ========================================================== -->
+  <section class="slide" style="background: radial-gradient(circle at 20% 100%, rgba(212,165,116,0.15), transparent 50%), var(--bg-primary);">
+    <div class="slide-content">
+      <header class="header-block reveal">
+        <span class="num-tag">11</span>
+        <h1 class="slide-title">Limitations & Next steps</h1>
+        <p class="subtitle">研究限制與後續規劃</p>
+      </header>
+
+      <div class="two-col" style="flex:1; align-items:start;">
+        <div class="reveal">
+          <span class="card-label">Limitations</span>
+          <div style="height:1px; background:var(--line-warm); margin:0.6rem 0;"></div>
+          <ul class="bullet-list">
+            <li>歐裔 GWAS：外推東亞需 TPMI 等亞洲世代驗證</li>
+            <li>FinnGen sarcopenia case 數有限，以 grip / ALM 為 surrogate</li>
+            <li>Drug-target MR 反映 lifelong 暴露，與臨床劑量/起效不直接類比</li>
+            <li>UKBB sample overlap 未以 MRlap 校正（後續修訂版加入）</li>
+            <li>ACE / NR3C2 訊號倚賴 1–2 SNP，不視為可行動結論</li>
+          </ul>
+        </div>
+
+        <div class="reveal">
+          <span class="card-label">Next steps</span>
+          <div style="height:1px; background:var(--line-warm); margin:0.6rem 0;"></div>
+          <ul class="bullet-list">
+            <li>升級 OpenGWAS academic-tier token，重跑 MVMR B2</li>
+            <li>補完 manuscript Discussion 4.3–4.6（機轉 / 臨床意涵 / 未來工作）</li>
+            <li>結案報告補 § 7 Funding + § 4.1 F-stat 範圍 → 75% STROBE-MR</li>
+            <li>匯出 Supplementary Table S1（per-instrument SNP/EA/OA/β/SE/p）</li>
+            <li>補 8 篇 manuscript 引用（Stanzick · Burgess · Bowden · Hartwig · Verbanck · Gill · Würtz · Evangelou）</li>
+            <li>重跑 ALM → eGFR-crea / ALM → CKD（待 API 穩定）</li>
+            <li>規劃 colocalisation + CAUSE 分析（次階段）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reveal" style="text-align:center; margin-top:auto; padding-top:1rem;">
+        <p style="font-family:var(--font-display); font-style:italic; font-size:clamp(1.4rem, 3vw, 2.2rem); color:var(--accent-warm); letter-spacing:0.04em;">
+          Thank you  ·  Q & A
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-meta">TCRD114-078-B  ·  End</div>
+    <div class="page-badge">12 / 12</div>
+  </section>
+
+  <script>
+    /* ==========================================================
+       SLIDE PRESENTATION CONTROLLER
+       ========================================================== */
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.progressBar = document.querySelector('.progress-bar');
+        this.navDotsContainer = document.querySelector('.nav-dots');
+        this.currentSlide = 0;
+
+        this.setupIntersectionObserver();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupProgressBar();
+        this.setupNavDots();
+        // mark the first slide visible immediately
+        this.slides[0].classList.add('visible');
+      }
+
+      setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const idx = this.slides.indexOf(entry.target);
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+              entry.target.classList.add('visible');
+              this.currentSlide = idx;
+              this.updateNavDots();
+              this.updateProgress();
+            }
+          });
+        }, { threshold: [0.3, 0.5, 0.7] });
+
+        this.slides.forEach((s) => observer.observe(s));
+      }
+
+      setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+          // Skip if editing a text element
+          if (e.target.getAttribute('contenteditable') === 'true') return;
+          if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+            e.preventDefault();
+            this.goTo(this.currentSlide + 1);
+          } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            e.preventDefault();
+            this.goTo(this.currentSlide - 1);
+          } else if (e.key === 'Home') {
+            this.goTo(0);
+          } else if (e.key === 'End') {
+            this.goTo(this.slides.length - 1);
+          }
+        });
+      }
+
+      setupTouchNav() {
+        let startY = 0;
+        document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+          const dy = startY - e.changedTouches[0].clientY;
+          if (Math.abs(dy) > 50) this.goTo(this.currentSlide + (dy > 0 ? 1 : -1));
+        }, { passive: true });
+      }
+
+      setupProgressBar() {
+        window.addEventListener('scroll', () => this.updateProgress(), { passive: true });
+        this.updateProgress();
+      }
+
+      updateProgress() {
+        const scrollTop = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? (scrollTop / max) * 100 : 0;
+        this.progressBar.style.width = pct + '%';
+      }
+
+      setupNavDots() {
+        // CRITICAL: clear before building so re-opening a saved file doesn't append duplicates
+        this.navDotsContainer.innerHTML = '';
+        this.slides.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'nav-dot';
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.addEventListener('click', () => this.goTo(i));
+          this.navDotsContainer.appendChild(dot);
+        });
+        this.updateNavDots();
+      }
+
+      updateNavDots() {
+        const dots = this.navDotsContainer.querySelectorAll('.nav-dot');
+        dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+      }
+
+      goTo(idx) {
+        idx = Math.max(0, Math.min(this.slides.length - 1, idx));
+        this.slides[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this.currentSlide = idx;
+      }
+    }
+
+    /* ==========================================================
+       INLINE EDITOR
+       Press E or hover top-left corner → toggle edit mode
+       Click any text element to edit. Ctrl+S to export the file.
+       Changes auto-save to localStorage.
+       ========================================================== */
+    class InlineEditor {
+      constructor() {
+        this.isActive = false;
+        this.editableSelector = 'h1, h2, h3, h4, p, li, span, td, th, div.card-title, div.stat-value, div.title-hero';
+        this.storageKey = 'tcrd_report_edits_v1';
+        this.restoreFromStorage();
+        this.bindToggle();
+        this.bindKeyboard();
+      }
+
+      collectEditables() {
+        return Array.from(document.querySelectorAll(this.editableSelector))
+          .filter((el) => !el.closest('.edit-toggle, .edit-banner, .progress-bar, .nav-dots'));
+      }
+
+      enable() {
+        this.isActive = true;
+        document.body.classList.add('edit-active');
+        this.collectEditables().forEach((el) => {
+          el.setAttribute('contenteditable', 'true');
+          el.addEventListener('input', this._onInput);
+        });
+        document.getElementById('editToggle').classList.add('active');
+        document.getElementById('editBanner').classList.add('active');
+      }
+
+      disable() {
+        this.isActive = false;
+        document.body.classList.remove('edit-active');
+        document.querySelectorAll('[contenteditable]').forEach((el) => {
+          el.removeAttribute('contenteditable');
+          el.removeEventListener('input', this._onInput);
+        });
+        document.getElementById('editToggle').classList.remove('active');
+        document.getElementById('editBanner').classList.remove('active');
+      }
+
+      toggleEditMode() {
+        this.isActive ? this.disable() : this.enable();
+      }
+
+      _onInput = () => {
+        // debounce save
+        clearTimeout(this._saveTimer);
+        this._saveTimer = setTimeout(() => this.saveToStorage(), 400);
+      };
+
+      saveToStorage() {
+        try {
+          const map = {};
+          this.collectEditables().forEach((el, i) => { map[i] = el.innerHTML; });
+          localStorage.setItem(this.storageKey, JSON.stringify(map));
+        } catch (err) { /* quota or disabled */ }
+      }
+
+      restoreFromStorage() {
+        try {
+          const raw = localStorage.getItem(this.storageKey);
+          if (!raw) return;
+          const map = JSON.parse(raw);
+          const els = this.collectEditables();
+          Object.keys(map).forEach((k) => {
+            const idx = parseInt(k, 10);
+            if (els[idx]) els[idx].innerHTML = map[k];
+          });
+        } catch (err) { /* ignore */ }
+      }
+
+      exportFile() {
+        // Strip edit state from DOM before snapshotting,
+        // so the saved file opens cleanly without dashed outlines.
+        const editableEls = Array.from(document.querySelectorAll('[contenteditable]'));
+        editableEls.forEach((el) => el.removeAttribute('contenteditable'));
+        document.body.classList.remove('edit-active');
+        const editToggle = document.getElementById('editToggle');
+        const editBanner = document.getElementById('editBanner');
+        editToggle?.classList.remove('active', 'show');
+        editBanner?.classList.remove('active', 'show');
+
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+        // Restore edit state
+        document.body.classList.add('edit-active');
+        editableEls.forEach((el) => el.setAttribute('contenteditable', 'true'));
+        editToggle?.classList.add('active');
+        editBanner?.classList.add('active');
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = '0527_報告準備.html';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+
+      bindToggle() {
+        const toggle = document.getElementById('editToggle');
+        const hotzone = document.querySelector('.edit-hotzone');
+        let hideTimeout = null;
+
+        toggle.addEventListener('click', () => this.toggleEditMode());
+        hotzone.addEventListener('click', () => this.toggleEditMode());
+
+        hotzone.addEventListener('mouseenter', () => {
+          clearTimeout(hideTimeout);
+          toggle.classList.add('show');
+        });
+        hotzone.addEventListener('mouseleave', () => {
+          hideTimeout = setTimeout(() => {
+            if (!this.isActive) toggle.classList.remove('show');
+          }, 400);
+        });
+        toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        toggle.addEventListener('mouseleave', () => {
+          hideTimeout = setTimeout(() => {
+            if (!this.isActive) toggle.classList.remove('show');
+          }, 400);
+        });
+      }
+
+      bindKeyboard() {
+        document.addEventListener('keydown', (e) => {
+          // E key (when not editing text)
+          if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') {
+            this.toggleEditMode();
+          }
+          // Ctrl+S to export
+          if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+            e.preventDefault();
+            this.exportFile();
+          }
+        });
+      }
+    }
+
+    const editor = new InlineEditor();
+    new SlidePresentation();
+  </script>
+</body>
+</html>
