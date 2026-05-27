@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>全球時區轉換器</title>
+    <title>Toy 2026 · Hermit Kuo</title>
+    <meta name="description" content="A collection of small web toys by Hermit Kuo.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --glass-bg: rgba(15, 23, 42, 0.42);
@@ -20,10 +21,9 @@
             margin: 0; padding: 0; min-height: 100vh;
             overflow-x: hidden;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-            font-feature-settings: 'cv11', 'ss01';
         }
 
-        /* ===== 背景：CSS 漸層 mesh（不靠外部圖片，永不失效） ===== */
+        /* 背景 mesh，與子工具一致 */
         #bg-mesh {
             position: fixed; inset: 0; z-index: -2;
             background:
@@ -33,34 +33,13 @@
                 radial-gradient(at 14% 88%, #8a6cd1 0%, transparent 50%),
                 radial-gradient(at 50% 50%, #c97ab3 0%, transparent 55%),
                 linear-gradient(135deg, #1e1b4b 0%, #4c1d95 50%, #831843 100%);
-            background-size: 100% 100%;
         }
-        /* 細微 grain，提升質感 */
         #bg-noise {
             position: fixed; inset: 0; z-index: -1;
             pointer-events: none; opacity: 0.18; mix-blend-mode: overlay;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
         }
 
-        /* ===== 拼圖入場動畫（保留入場節奏，背景換成漸層切片） ===== */
-        #puzzle-container {
-            position: fixed; inset: 0; z-index: -1;
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
-            pointer-events: none;
-        }
-        .puzzle-piece {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            opacity: 0; transform: scale(0.92);
-            animation: fadeIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes fadeIn { to { opacity: 1; transform: scale(1); } }
-        .p1 { animation-delay: 0.05s; } .p2 { animation-delay: 0.12s; } .p3 { animation-delay: 0.19s; }
-        .p4 { animation-delay: 0.26s; } .p5 { animation-delay: 0.33s; } .p6 { animation-delay: 0.40s; }
-        .p7 { animation-delay: 0.47s; } .p8 { animation-delay: 0.54s; } .p9 { animation-delay: 0.61s; }
-
-        /* ===== 玻璃卡 (Liquid Glass) ===== */
         .glass-card {
             background: var(--glass-bg-strong);
             backdrop-filter: blur(28px) saturate(160%);
@@ -69,310 +48,156 @@
             box-shadow:
                 0 1px 0 rgba(255, 255, 255, 0.25) inset,
                 0 -1px 0 rgba(0, 0, 0, 0.2) inset,
-                0 30px 60px -20px rgba(0, 0, 0, 0.55),
-                0 18px 36px -18px rgba(0, 0, 0, 0.35);
+                0 30px 60px -20px rgba(0, 0, 0, 0.55);
         }
-        .glass-inner {
+
+        .toy-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(14px) saturate(140%);
-            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
             border: 1px solid var(--glass-border);
             box-shadow:
                 0 1px 0 rgba(255, 255, 255, 0.18) inset,
-                0 8px 20px -8px rgba(0, 0, 0, 0.35);
-            transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                        box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
-                        background 220ms ease;
+                0 10px 24px -10px rgba(0, 0, 0, 0.4);
+            transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+                        background 240ms ease;
+            position: relative;
+            overflow: hidden;
         }
-        .glass-inner.zone-card:hover {
-            transform: translateY(-2px);
+        .toy-card::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 40%);
+            pointer-events: none;
+        }
+        .toy-card:hover {
+            transform: translateY(-4px);
             background: rgba(15, 23, 42, 0.5);
             box-shadow:
-                0 1px 0 rgba(255, 255, 255, 0.25) inset,
-                0 18px 36px -12px rgba(0, 0, 0, 0.5);
+                0 1px 0 rgba(255, 255, 255, 0.3) inset,
+                0 24px 48px -12px rgba(0, 0, 0, 0.55);
         }
-
-        /* ===== Date input：在 Safari/iOS 也保持玻璃感 ===== */
-        .date-input {
-            background: rgba(255, 255, 255, 0.92);
-            color: #0f172a;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-        .date-input::-webkit-calendar-picker-indicator {
-            opacity: 0.7; cursor: pointer;
-            filter: invert(0.2);
-        }
-
-        /* ===== 自訂滑桿 (毛玻璃膠囊 thumb) ===== */
-        input[type=range] {
-            -webkit-appearance: none; appearance: none;
-            background: transparent; cursor: pointer;
-            width: 100%; height: 28px;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            height: 6px; border-radius: 999px;
-            background: linear-gradient(90deg,
-                rgba(255,255,255,0.85) 0%,
-                rgba(255,255,255,0.85) var(--fill, 50%),
-                rgba(255,255,255,0.18) var(--fill, 50%),
-                rgba(255,255,255,0.18) 100%);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.25);
-        }
-        input[type=range]::-moz-range-track {
-            height: 6px; border-radius: 999px;
-            background: rgba(255,255,255,0.18);
-        }
-        input[type=range]::-moz-range-progress {
-            height: 6px; border-radius: 999px;
-            background: rgba(255,255,255,0.85);
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 22px; height: 22px; border-radius: 50%;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            border: 1px solid rgba(255,255,255,0.9);
-            box-shadow:
-                0 1px 2px rgba(255,255,255,0.6) inset,
-                0 4px 10px rgba(0,0,0,0.35);
-            margin-top: -8px;
-            transition: transform 160ms ease, box-shadow 160ms ease;
-        }
-        input[type=range]::-moz-range-thumb {
-            width: 22px; height: 22px; border-radius: 50%;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            border: 1px solid rgba(255,255,255,0.9);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-        }
-        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.08); }
-        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.15); }
-
-        /* ===== Focus visible (鍵盤可達性) ===== */
-        :focus-visible {
+        .toy-card:focus-visible {
             outline: 2px solid var(--ring);
-            outline-offset: 3px;
-            border-radius: 8px;
-        }
-        input[type=range]:focus-visible::-webkit-slider-thumb {
-            box-shadow:
-                0 0 0 4px rgba(255,255,255,0.35),
-                0 4px 10px rgba(0,0,0,0.35);
+            outline-offset: 4px;
         }
 
-        /* ===== Typography helpers ===== */
-        .tnum { font-variant-numeric: tabular-nums; }
-        .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
-        .text-shadow { text-shadow: 0 2px 6px rgba(0,0,0,0.45); }
+        .toy-card.coming-soon {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+        .toy-card.coming-soon:hover {
+            transform: none;
+            background: var(--glass-bg);
+        }
 
-        /* 時差膠囊 */
-        .diff-pill {
-            font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+        .icon-tile {
+            width: 56px; height: 56px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .icon-tile svg { width: 28px; height: 28px; color: #fff; }
+
+        .badge {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
             padding: 3px 8px; border-radius: 999px;
             background: rgba(255,255,255,0.14);
             border: 1px solid rgba(255,255,255,0.22);
             color: #fff;
-            backdrop-filter: blur(6px);
+            text-transform: uppercase;
         }
-        .diff-pill.next-day { background: rgba(251, 191, 36, 0.22); border-color: rgba(251,191,36,0.4); }
-        .diff-pill.prev-day { background: rgba(96, 165, 250, 0.22); border-color: rgba(96,165,250,0.4); }
+        .badge-soon { background: rgba(251, 191, 36, 0.2); border-color: rgba(251,191,36,0.4); }
 
-        /* "現在" 按鈕 */
-        .now-btn {
-            background: rgba(255,255,255,0.14);
-            border: 1px solid rgba(255,255,255,0.28);
-            color: #fff; font-weight: 600;
-            transition: background 160ms ease, transform 160ms ease;
-            cursor: pointer;
-        }
-        .now-btn:hover { background: rgba(255,255,255,0.24); transform: translateY(-1px); }
-        .now-btn:active { transform: translateY(0); }
+        .text-shadow { text-shadow: 0 2px 8px rgba(0,0,0,0.45); }
+        .text-shadow-sm { text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
 
-        /* ===== Reduced motion ===== */
+        /* 入場動畫 */
+        .fade-up { opacity: 0; transform: translateY(12px); animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
         @media (prefers-reduced-motion: reduce) {
-            .puzzle-piece { animation: none !important; opacity: 1; transform: none; }
-            * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+            * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation: none !important; opacity: 1 !important; transform: none !important; }
         }
     </style>
 </head>
-<body class="flex items-center justify-center p-4">
+<body class="min-h-screen flex flex-col items-center px-4 py-10 sm:py-16">
 
     <div id="bg-mesh" aria-hidden="true"></div>
     <div id="bg-noise" aria-hidden="true"></div>
-    <div id="puzzle-container" aria-hidden="true">
-        <div class="puzzle-piece p1"></div><div class="puzzle-piece p2"></div><div class="puzzle-piece p3"></div>
-        <div class="puzzle-piece p4"></div><div class="puzzle-piece p5"></div><div class="puzzle-piece p6"></div>
-        <div class="puzzle-piece p7"></div><div class="puzzle-piece p8"></div><div class="puzzle-piece p9"></div>
-    </div>
 
-    <main class="glass-card p-7 sm:p-8 rounded-3xl w-full max-w-md">
-        <header class="flex items-center justify-between mb-7">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-shadow">全球時區轉換</h1>
-            <button id="nowBtn" class="now-btn text-xs px-3 py-1.5 rounded-full" aria-label="重設為當前時間">現在</button>
+    <main class="w-full max-w-4xl">
+        <header class="text-center mb-10 sm:mb-14 fade-up" style="animation-delay: 0.05s;">
+            <p class="text-xs sm:text-sm font-bold tracking-[0.3em] text-white/70 mb-3 text-shadow-sm">HERMIT · KUO</p>
+            <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight text-shadow">Toy 2026</h1>
+            <p class="mt-4 text-sm sm:text-base text-white/75 max-w-lg mx-auto text-shadow-sm">
+                一些小工具、實驗、與練習。每一個 toy 都是一個獨立的靜態頁面。
+            </p>
         </header>
 
-        <section class="space-y-6">
-            <div class="glass-inner p-5 sm:p-6 rounded-2xl">
-                <label for="dateInput" class="block text-xs font-bold uppercase tracking-wider text-white/80 mb-2">日期</label>
-                <input type="date" id="dateInput"
-                       class="date-input w-full p-3 rounded-xl outline-none border border-white/30"
-                       aria-label="選擇日期">
-
-                <div class="flex items-baseline justify-between mt-6 mb-2">
-                    <label for="hourSlider" class="text-xs font-bold uppercase tracking-wider text-white/80">小時</label>
-                    <span id="hourVal" class="text-2xl font-bold text-white tnum text-shadow-sm">12</span>
-                </div>
-                <input type="range" id="hourSlider" min="0" max="23" value="12"
-                       aria-label="小時" aria-valuemin="0" aria-valuemax="23">
-
-                <div class="flex items-baseline justify-between mt-5 mb-2">
-                    <label for="minSlider" class="text-xs font-bold uppercase tracking-wider text-white/80">分鐘</label>
-                    <span id="minVal" class="text-2xl font-bold text-white tnum text-shadow-sm">00</span>
-                </div>
-                <input type="range" id="minSlider" min="0" max="59" value="0"
-                       aria-label="分鐘" aria-valuemin="0" aria-valuemax="59">
-
-                <p class="mt-4 text-[11px] text-white/60">以 <span class="font-semibold text-white/80">台北時間</span> 為基準輸入，下方自動換算（含日光節約時間）</p>
+        <section class="glass-card p-5 sm:p-7 rounded-3xl fade-up" style="animation-delay: 0.15s;">
+            <div class="flex items-center justify-between mb-5 px-1">
+                <h2 class="text-sm font-bold uppercase tracking-widest text-white/80">Toys</h2>
+                <span class="text-xs text-white/55 tnum" id="toyCount">— items</span>
             </div>
 
-            <div class="space-y-3" id="zoneList" role="list" aria-label="時區換算結果"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="toyGrid">
+                <!-- Toy: Timezone Converter -->
+                <a href="./timezone/" class="toy-card block p-5 rounded-2xl no-underline group" aria-label="開啟全球時區轉換器">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="icon-tile">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18M3 12h18"/>
+                            </svg>
+                        </div>
+                        <span class="badge">LIVE</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1 text-shadow-sm">全球時區轉換</h3>
+                    <p class="text-sm text-white/70 leading-relaxed">台北 · 埃德蒙頓 · 倫敦 三地對照，自動處理日光節約時間。</p>
+                    <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-white/85">
+                        <span>開啟</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-0.5">
+                            <path d="M5 12h14M13 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <!-- Placeholder: Coming Soon -->
+                <div class="toy-card coming-soon block p-5 rounded-2xl" aria-disabled="true">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="icon-tile">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                        </div>
+                        <span class="badge badge-soon">SOON</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-1 text-shadow-sm">下一個 Toy</h3>
+                    <p class="text-sm text-white/70 leading-relaxed">敬請期待。新工具會自動出現在這裡。</p>
+                </div>
+            </div>
         </section>
+
+        <footer class="mt-10 text-center text-xs text-white/55 fade-up" style="animation-delay: 0.3s;">
+            <p>
+                <a href="https://github.com/hermitkuo/Toy_2026" class="hover:text-white/85 transition-colors underline decoration-white/30 underline-offset-4">
+                    View source on GitHub
+                </a>
+            </p>
+            <p class="mt-2">© 2026 · Crafted with care</p>
+        </footer>
     </main>
 
     <script>
-        // ===== Zones (IANA timezone IDs — Intl 會自動處理 DST) =====
-        const BASE_TZ = 'Asia/Taipei';
-        const ZONES = [
-            { label: '台北',     code: 'TPE', tz: 'Asia/Taipei' },
-            { label: '埃德蒙頓', code: 'YEG', tz: 'America/Edmonton' },
-            { label: '倫敦',     code: 'LON', tz: 'Europe/London' },
-        ];
-
-        // ===== DOM =====
-        const hourSlider = document.getElementById('hourSlider');
-        const minSlider  = document.getElementById('minSlider');
-        const dateInput  = document.getElementById('dateInput');
-        const hourVal    = document.getElementById('hourVal');
-        const minVal     = document.getElementById('minVal');
-        const nowBtn     = document.getElementById('nowBtn');
-        const zoneList   = document.getElementById('zoneList');
-
-        // ===== 渲染時區卡（一次性建立） =====
-        const cardRefs = ZONES.map((z) => {
-            const card = document.createElement('div');
-            card.className = 'glass-inner zone-card p-4 rounded-2xl';
-            card.setAttribute('role', 'listitem');
-            card.innerHTML = `
-                <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-[11px] font-extrabold uppercase tracking-widest text-white/75">${z.label} · ${z.code}</span>
-                    <span class="diff-pill" data-diff></span>
-                </div>
-                <div class="text-[11px] font-medium text-white/70 mb-1 tnum" data-date>--/--（--）</div>
-                <div class="text-4xl font-bold text-white tnum text-shadow-sm" data-time>--:--</div>
-            `;
-            zoneList.appendChild(card);
-            return {
-                zone: z,
-                diffEl: card.querySelector('[data-diff]'),
-                dateEl: card.querySelector('[data-date]'),
-                timeEl: card.querySelector('[data-time]'),
-            };
-        });
-
-        // ===== 時區換算工具 (用 Intl 處理 DST) =====
-        const dayMap = { 'Sun':'週日','Mon':'週一','Tue':'週二','Wed':'週三','Thu':'週四','Fri':'週五','Sat':'週六' };
-
-        function partsIn(date, tz) {
-            const parts = new Intl.DateTimeFormat('en-US', {
-                timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
-                weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false,
-            }).formatToParts(date);
-            const out = {};
-            for (const p of parts) if (p.type !== 'literal') out[p.type] = p.value;
-            // hour 在午夜可能回 "24" — 正規化
-            if (out.hour === '24') out.hour = '00';
-            return out;
-        }
-
-        // 把「台北日期+時+分」字串解析成 UTC Date
-        // 做法：先當作 UTC 解析，再用 Intl 算出該 UTC 時刻在台北實際是幾點，
-        // 用差值修正 (台北無 DST，但這做法對任何 base TZ 都正確)
-        function taipeiWallToUTC(y, mo, d, h, mi) {
-            const guess = Date.UTC(y, mo - 1, d, h, mi);
-            const p = partsIn(new Date(guess), BASE_TZ);
-            const wallAsUTC = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
-            const offsetMs = wallAsUTC - guess;
-            return new Date(guess - offsetMs);
-        }
-
-        function dayIndex(parts) {
-            // 用 YYYYMMDD 數字方便比較
-            return +parts.year * 10000 + +parts.month * 100 + +parts.day;
-        }
-
-        function formatDiff(targetParts, baseParts) {
-            const baseTotal   = +baseParts.hour   * 60 + +baseParts.minute;
-            const targetTotal = +targetParts.hour * 60 + +targetParts.minute;
-            const dayDelta = Math.sign(dayIndex(targetParts) - dayIndex(baseParts));
-            // 用 day 邊界 + 時分差計算總分鐘差
-            const minutesDiff = (targetTotal - baseTotal) + dayDelta * 24 * 60;
-            const h = minutesDiff / 60;
-            const sign = h > 0 ? '+' : (h < 0 ? '−' : '±');
-            const abs = Math.abs(h);
-            const label = Number.isInteger(abs) ? `${abs}h` : `${abs.toFixed(1)}h`;
-            return { text: `${sign}${label}`, dayDelta };
-        }
-
-        // ===== 主更新 =====
-        function update() {
-            const h = parseInt(hourSlider.value, 10);
-            const mi = parseInt(minSlider.value, 10);
-            const [y, mo, d] = dateInput.value.split('-').map(Number);
-            if (!y) return;
-
-            hourVal.textContent = String(h).padStart(2, '0');
-            minVal.textContent  = String(mi).padStart(2, '0');
-            hourSlider.style.setProperty('--fill', (h / 23 * 100) + '%');
-            minSlider.style.setProperty('--fill',  (mi / 59 * 100) + '%');
-            hourSlider.setAttribute('aria-valuenow', h);
-            minSlider.setAttribute('aria-valuenow', mi);
-
-            const utc = taipeiWallToUTC(y, mo, d, h, mi);
-            const baseParts = partsIn(utc, BASE_TZ);
-
-            for (const ref of cardRefs) {
-                const p = partsIn(utc, ref.zone.tz);
-                ref.timeEl.textContent = `${p.hour}:${p.minute}`;
-                ref.dateEl.textContent = `${p.year}/${p.month}/${p.day}（${dayMap[p.weekday] || p.weekday}）`;
-
-                if (ref.zone.tz === BASE_TZ) {
-                    ref.diffEl.textContent = '基準';
-                    ref.diffEl.classList.remove('next-day', 'prev-day');
-                } else {
-                    const { text, dayDelta } = formatDiff(p, baseParts);
-                    let suffix = '';
-                    ref.diffEl.classList.remove('next-day', 'prev-day');
-                    if (dayDelta > 0) { suffix = ' · 次日'; ref.diffEl.classList.add('next-day'); }
-                    else if (dayDelta < 0) { suffix = ' · 前日'; ref.diffEl.classList.add('prev-day'); }
-                    ref.diffEl.textContent = text + suffix;
-                }
-            }
-        }
-
-        function setToNow() {
-            const now = new Date();
-            const p = partsIn(now, BASE_TZ);
-            dateInput.value = `${p.year}-${p.month}-${p.day}`;
-            hourSlider.value = +p.hour;
-            minSlider.value  = +p.minute;
-            update();
-        }
-
-        // ===== Init =====
-        setToNow();
-        hourSlider.addEventListener('input', update);
-        minSlider.addEventListener('input', update);
-        dateInput.addEventListener('input', update);
-        nowBtn.addEventListener('click', setToNow);
+        // 自動計數可用 toys
+        const cards = document.querySelectorAll('#toyGrid > *');
+        const live = document.querySelectorAll('#toyGrid > a').length;
+        const total = cards.length;
+        document.getElementById('toyCount').textContent = `${live} live · ${total} total`;
     </script>
 </body>
 </html>
