@@ -1,0 +1,229 @@
+{
+  "_meta": {
+    "title": "TriNetX nephrology outcome & cohort codelists",
+    "description": "Machine-readable code lists extracted VERBATIM from the in-text Methods of 15 open-access TriNetX nephrology papers (2025-2026). Source: PubMed Central full text. See outcome_definitions.md for narrative context and README.md for citations.",
+    "extracted_date": "2026-06-15",
+    "code_systems": ["ICD-10-CM", "ICD-10-PCS", "CPT", "RxNorm", "LOINC", "ICD-O-3", "TNX (TriNetX proprietary lab)"],
+    "caveats": [
+      "Only codes printed verbatim in the article body are listed. Concepts whose codes were deferred to supplementary tables are marked codes_source='supplement_not_retrieved' (publisher supplement hosts are outside this environment's network allowlist).",
+      "eGFR estimating equation differs by study (MDRD / CKD-EPI / Cockcroft-Gault) - confirm before reuse.",
+      "Code ranges (e.g. CPT 90935-90999, ICD-10 I10-I15) are reproduced as written; expand to member codes for implementation."
+    ],
+    "paper_index": {
+      "P1": "PMC12579246 Finerenone vs spironolactone (Nat Commun 2025) 10.1038/s41467-025-64640-3",
+      "P2": "PMC12477464 Finerenone/SGLT2i combined vs mono (NDT 2025) 10.1093/ndt/gfaf064",
+      "P3": "PMC12641577 ns vs steroidal MRA (Cureus 2025) 10.7759/cureus.97588",
+      "P4": "PMC12160804 GLP-1 RA advanced CKD (Clin Kidney J 2025) 10.1093/ckj/sfaf172",
+      "P5": "PMC12515787 GLP-1 RA obesity (Diabetes Obes Metab 2025) 10.1111/dom.70054",
+      "P6": "PMC12243591 Semaglutide T2D+CKD survival (Open Heart 2025) 10.1136/openhrt-2025-003382",
+      "P7": "PMC11846168 GLP-1 RA kidney transplant (Cardiovasc Diabetol 2025) 10.1186/s12933-025-02649-0",
+      "P8": "PMC12679846 HIF-PHI vs ESA non-dialysis CKD (Renal Failure 2025) 10.1080/0886022X.2025.2592442",
+      "P9": "PMC12073363 Vit D + calcimimetic dialysis (Nutrients 2025) 10.3390/nu17091536",
+      "P10": "PMC12336315 Kidney transplant + HCV (Sci Rep 2025) 10.1038/s41598-025-15169-4",
+      "P11": "PMC12995490 Systemic inflammation + ESKD (Kidney Int Rep 2026) 10.1016/j.ekir.2026.106364",
+      "P12": "PMC12802914 Aldosterone -> HTN/CKD (Am J Hypertens 2026) 10.1093/ajh/hpaf183",
+      "P13": "PMC12537428 Vit D deficiency + MAKE (Front Nutr 2025) 10.3389/fnut.2025.1650514",
+      "P14": "PMC12487499 Testosterone + AKI/RRT (Cardiovasc Diabetol 2025) 10.1186/s12933-025-02930-2",
+      "P15": "PMC12056805 ML prediction AKI/CKD (EBioMedicine 2025) 10.1016/j.ebiom.2025.105726"
+    }
+  },
+
+  "outcomes": {
+    "AKI": {
+      "label": "Acute kidney injury",
+      "codes": { "ICD-10-CM": ["N17.9 (P14)", "N17 (P15)"] },
+      "lab_thresholds": [],
+      "sources": ["P14", "P15", "P5 (narrative, no code)"]
+    },
+    "CKD_diagnosis": {
+      "label": "Chronic kidney disease (diagnosis code)",
+      "codes": { "ICD-10-CM": ["N18 (P3, P6, P13, P15)"] },
+      "lab_thresholds": ["eGFR < 60 mL/min/1.73m2 (P1 incident CKD = 2x eGFR<60 >=90d apart, MDRD; P2 cohort; P12 CKD outcome)", "eGFR 15-60 = KDIGO G3-G4 (P11)", "eGFR <= 45 (P4 advanced CKD entry)"],
+      "sources": ["P1", "P2", "P3", "P4", "P6", "P11", "P12", "P13", "P15"]
+    },
+    "CKD_stage5": {
+      "label": "Stage 5 CKD",
+      "codes": { "codes_source": "supplement_not_retrieved (P2)" },
+      "lab_thresholds": [],
+      "sources": ["P2"]
+    },
+    "stage4_CKD": {
+      "label": "Stage IV CKD (cohort definition)",
+      "codes": {},
+      "lab_thresholds": ["eGFR 15-30 mL/min/1.73m2 recorded on >=2 occasions (P8)"],
+      "sources": ["P8"]
+    },
+    "ESKD_ESRD": {
+      "label": "End-stage kidney disease / ESRD",
+      "definition": "Most studies define ESKD/ESRD = chronic dialysis OR renal transplantation.",
+      "codes": { "codes_source": "supplement_not_retrieved (P1, P2)" },
+      "lab_thresholds": [],
+      "sources": ["P1", "P2", "P11"]
+    },
+    "dialysis_dependence": {
+      "label": "Dialysis dependence / maintenance dialysis / RRT",
+      "codes": {
+        "ICD-10-CM": ["Z99.2 (P10 graft failure, P14 kidney failure w/ RRT)", "N18.6 (P9 maintenance dialysis cohort; P14 kidney failure; P8 ESRD exclusion)", "N18.5 (P8 ESRD exclusion)"],
+        "CPT": ["90935-90999 (dialysis, P8 exclusion)", "1012740 (P14)"]
+      },
+      "lab_thresholds": [],
+      "sources": ["P8", "P9", "P10", "P14"]
+    },
+    "kidney_failure_with_RRT": {
+      "label": "Kidney failure with replacement therapy (dialysis or transplant)",
+      "codes": {
+        "ICD-10-CM": ["N18.6 (P14)", "Z99.2 (P14)", "Z94.0 (P14)"],
+        "CPT": ["1012740 (P14)"],
+        "ICD-10-PCS": ["0TY1 (P14)", "0TY00Z1 (P14)", "0TY10Z1 (P14)", "0TY00Z0 (P14)", "0TY10Z0 (P14)"]
+      },
+      "lab_thresholds": [],
+      "sources": ["P14"]
+    },
+    "kidney_transplant_status": {
+      "label": "Kidney transplant status / index",
+      "codes": { "ICD-10-CM": ["Z94.0 (P7, P10, P14)"] },
+      "lab_thresholds": [],
+      "sources": ["P7", "P10", "P14"]
+    },
+    "graft_failure": {
+      "label": "Kidney graft failure (P10 composite)",
+      "codes": {
+        "ICD-10-CM": ["Z99.2 (dialysis dependence)"],
+        "TNX": ["TNX:9024 = serum/plasma/blood creatinine >= 6.00 mg/dL", "TNX:8001 = eGFR (MDRD) <= 5.00 mL/min/1.73m2"],
+        "LOINC": ["62238-1 = eGFR (CKD-EPI) <= 5.00 mL/min/1.73m2"]
+      },
+      "lab_thresholds": ["creatinine >= 6.00 mg/dL", "eGFR <= 5.00 mL/min/1.73m2"],
+      "sources": ["P10"]
+    },
+    "transplant_rejection": {
+      "label": "Transplant rejection",
+      "codes": { "ICD-10-CM": ["T86.11 (P10)"] },
+      "lab_thresholds": [],
+      "sources": ["P10"]
+    },
+    "MAKE": {
+      "label": "Major Adverse Kidney Events (composite; definition varies by study)",
+      "composite_definitions": {
+        "P5": "ESKD + dialysis + eGFR < 15 mL/min/1.73m2",
+        "P7": "dialysis dependence + eGFR < 15 mL/min/1.73m2 + death",
+        "P2": "stage 5 CKD + ESRD (ESRD = dialysis or transplant)",
+        "P13": "ESKD + urgent dialysis initiation + dialysis dependence (narrative; no component codes)"
+      },
+      "codes": { "codes_source": "component codes per dialysis_dependence/ESKD/eGFR; P2/P5/P7/P13 defer full lists to supplement" },
+      "lab_thresholds": ["eGFR < 15 mL/min/1.73m2 (kidney failure component, P5/P7)"],
+      "sources": ["P2", "P5", "P7", "P13"]
+    },
+    "MACE": {
+      "label": "Major Adverse Cardiovascular Events (composite; components vary)",
+      "composite_definitions": {
+        "P1": "ACS + nonfatal stroke + hemorrhagic stroke + cardiac arrest + cardiogenic shock",
+        "P2": "MI + ischemic/hemorrhagic stroke + cardiac death",
+        "P4": "MI + stroke + heart failure + arrhythmia + cardiac arrest",
+        "P5": "ACS + heart failure + stroke",
+        "P7": "stroke (ischemic/hemorrhagic) + AMI + cardiac arrest + cardiogenic shock + death",
+        "P11": "ischemic stroke + thromboembolism + AF + cardiac arrest + MI + HF hospitalization"
+      },
+      "codes": { "codes_source": "supplement_not_retrieved for most; see component codes (AMI, stroke, HF) below" },
+      "sources": ["P1", "P2", "P4", "P5", "P7", "P11"]
+    },
+    "acute_heart_failure": {
+      "label": "Acute heart failure",
+      "codes": { "ICD-10-CM": ["I50.21 (P6)", "I50.23 (P6)", "I50.31 (P6)", "I50.33 (P6)", "I50.41 (P6)", "I50.43 (P6)", "I50.811 (P6)", "I50.813 (P6)", "I50.2 (P3)", "I50.3 (P3)", "I50 (P10 covariate)"] },
+      "sources": ["P3", "P6", "P10"]
+    },
+    "acute_MI": {
+      "label": "Acute myocardial infarction",
+      "codes": { "ICD-10-CM": ["I21 (P6)"] },
+      "sources": ["P6"]
+    },
+    "stroke": {
+      "label": "Stroke (cerebral infarction / non-traumatic intracerebral hemorrhage)",
+      "codes": { "ICD-10-CM": ["I61 (P6)", "I63 (P6)"] },
+      "sources": ["P6"]
+    },
+    "hyperkalemia": {
+      "label": "Hyperkalemia",
+      "codes": { "codes_source": "lab-value based; LOINC not stated in body" },
+      "lab_thresholds": ["K+ > 5.5 mmol/L (P3 hyperkalemia; P1 >=5.5 mEq/L)", "K+ > 6.0 mmol/L (P3 severe; P1 >=6.0)", "K+ >= 6.5 mmol/L (P1 severe)"],
+      "sources": ["P1", "P2 (positive control)", "P3"]
+    },
+    "hepatic_outcomes_P10": {
+      "label": "Hepatic complications (kidney transplant + HCV study)",
+      "codes": {
+        "ICD-10-CM": ["C22.0 = liver cell carcinoma/hepatoma", "K74 = fibrosis and cirrhosis of liver", "K74.60 = unspecified cirrhosis", "K74.0 = hepatic fibrosis", "K72 = hepatic failure NEC"],
+        "ICD-O-3": ["C22.0 = liver"]
+      },
+      "sources": ["P10"]
+    },
+    "all_cause_mortality": {
+      "label": "All-cause mortality / death",
+      "codes": { "codes_source": "EHR mortality flag (no diagnosis code); P14 notes mortality from HCO EHR not death registry" },
+      "sources": ["P1", "P2", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P13", "P14"]
+    },
+    "uncontrolled_HTN": {
+      "label": "Uncontrolled hypertension (P12)",
+      "codes": { "LOINC": ["SBP captured via LOINC (code not enumerated)"] },
+      "lab_thresholds": ["SBP >= 130 mmHg (uncontrolled HTN)", "SBP >= 140 mmHg (stage 2 HTN)"],
+      "sources": ["P12"]
+    }
+  },
+
+  "cohort_and_exposure": {
+    "type2_diabetes": {
+      "codes": { "ICD-10-CM": ["E11 (P3, P6)", "E11.8 (P14)", "E11.9 (P14)", "E13.9 (P14)", "E08.9 (P14)", "E14 (P14)"] },
+      "lab_thresholds": ["HbA1c >= 6.5% (P5, used as diabetes-exclusion criterion)"],
+      "sources": ["P3", "P6", "P14"]
+    },
+    "obesity": {
+      "codes": { "ICD-10-CM": ["E66.01 (P5)", "Z68.3 (P5)", "Z68.4 (P5)", "E66 (P10 covariate)"] },
+      "lab_thresholds": ["BMI >= 30 kg/m2 (P5)"],
+      "sources": ["P5", "P10"]
+    },
+    "hypogonadism": {
+      "codes": { "ICD-10-CM": ["E29.1 (P14)", "E23.0 (P14)", "G11.5 (P14)", "Q53 (P14)", "Q98.0 (P14)", "Q98.1 (P14)", "Q98.4 (P14)"] },
+      "sources": ["P14"]
+    },
+    "heart_failure_cohort": {
+      "codes": { "ICD-10-CM": ["I50.2 (P3)", "I50.3 (P3)", "I50 (P10)"] },
+      "sources": ["P3", "P10"]
+    },
+    "hypertension_covariate": {
+      "codes": { "ICD-10-CM": ["I10-I15 (P10)"] },
+      "sources": ["P10"]
+    },
+    "glomerular_disease_covariate": {
+      "codes": { "ICD-10-CM": ["N00-N08 (P10)"] },
+      "sources": ["P10"]
+    },
+    "hepatitis_B_covariate": {
+      "codes": { "ICD-10-CM": ["B19.1 (P10)"] },
+      "sources": ["P10"]
+    }
+  },
+
+  "medications": {
+    "testosterone": { "codes": { "RxNorm": ["10379 (P14)"] }, "sources": ["P14"] },
+    "ESA_short_acting": { "label": "epoetin alfa / epoetin beta", "codes": { "RxNorm": ["1816044 (P8)", "1816005 (P8)"] }, "sources": ["P8"] },
+    "ESA_long_acting": { "label": "darbepoetin alfa / methoxy PEG-epoetin beta", "codes": { "RxNorm": ["2583538 (P8)", "729986 (P8)"] }, "sources": ["P8"] },
+    "HIF_PHI": { "label": "daprodustat / vadadustat / roxadustat", "codes": { "codes_source": "named drugs; RxNorm in supplement" }, "sources": ["P8"] },
+    "calcimimetics": { "label": "cinacalcet / etelcalcetide", "codes": { "codes_source": "named drugs; no code in body" }, "sources": ["P9"] },
+    "finerenone": { "codes": { "codes_source": "VA Drug Class + RxNorm, supplement" }, "sources": ["P1", "P2", "P3"] },
+    "GLP1_RA": { "label": "liraglutide / semaglutide (P5 also tirzepatide)", "codes": { "codes_source": "ATC/RxNorm, supplement" }, "sources": ["P4", "P5", "P6", "P7"] }
+  },
+
+  "labs_and_thresholds": {
+    "vitamin_D_25OH": { "LOINC": ["35365-6 (P9, total 25-hydroxyvitamin D)"], "thresholds": ["deficient < 20 ng/mL (P9, P13)", "adequate >= 30 ng/mL (P9, P13)", "insufficiency 21-29 ng/mL excluded (P13)"] },
+    "eGFR": { "thresholds": ["< 15 (kidney failure / MAKE component)", "15-30 (stage IV, P8)", "<= 45 (advanced CKD entry, P4)", "< 60 (CKD)", "15-60 (KDIGO G3-G4, P11)", "<= 5.00 (graft failure, P10)"], "equations": ["MDRD (P1, P10, P11)", "CKD-EPI (P10)", "Cockcroft-Gault (P2 allows)"] },
+    "serum_creatinine": { "thresholds": [">= 6.00 mg/dL (graft failure, P10; TNX:9024)"] },
+    "potassium": { "thresholds": ["> 5.5 mmol/L (hyperkalemia)", "> 6.0 mmol/L (severe)", ">= 6.5 mmol/L (severe, P1)"] },
+    "calcium": { "thresholds": ["<= 8.5 mg/dL hypocalcemia (P9)", "> 10.5 mg/dL hypercalcemia (P9)"] },
+    "PTH": { "thresholds": ["<= 300 pg/mL (PTH suppression, P9)"] },
+    "hsCRP": { "thresholds": [">= 2 mg/L = systemic inflammation (P11)"] },
+    "aldosterone": { "thresholds": [">= 5 / >= 10 / >= 15 ng/dL (dysregulation, P12)", "valid range 0-40 ng/dL"] },
+    "renin": { "thresholds": ["<= 1 ng/mL/h = low renin (P12)"] },
+    "SBP": { "thresholds": [">= 130 (uncontrolled HTN)", ">= 140 (stage 2 HTN)"] },
+    "hemoglobin": { "thresholds": [">= 9 g/dL inclusion (P8); strata <9/9-11/>11"] },
+    "albuminuria": { "thresholds": ["UACR >= 30 mg/g (P2)", "UACR > 200 mg/g = KDIGO A3 (P11)", "UPCR >= 150 mg/g (P2)"] },
+    "HbA1c": { "thresholds": [">= 6.5% (P5 diabetes exclusion)"] }
+  }
+}
