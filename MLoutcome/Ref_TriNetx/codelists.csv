@@ -1,0 +1,69 @@
+concept,category,code_system,code,description,source_paper
+AKI,outcome,ICD-10-CM,N17.9,Acute kidney injury unspecified,P14
+AKI,outcome,ICD-10-CM,N17,Acute kidney failure (ML label),P15
+CKD,cohort,ICD-10-CM,N18,Chronic kidney disease,P3;P6;P13;P15
+kidney_failure_RRT,outcome,ICD-10-CM,N18.6,End stage renal disease,P14
+kidney_failure_RRT,outcome,ICD-10-CM,Z99.2,Dependence on renal dialysis,P14
+kidney_failure_RRT,outcome,ICD-10-CM,Z94.0,Kidney transplant status,P14
+kidney_failure_RRT,outcome,CPT,1012740,Kidney transplant / RRT procedure,P14
+kidney_failure_RRT,outcome,ICD-10-PCS,0TY1,Kidney transplantation,P14
+kidney_failure_RRT,outcome,ICD-10-PCS,0TY00Z1,Transplantation right kidney allogeneic,P14
+kidney_failure_RRT,outcome,ICD-10-PCS,0TY10Z1,Transplantation left kidney allogeneic,P14
+kidney_failure_RRT,outcome,ICD-10-PCS,0TY00Z0,Transplantation right kidney allogeneic,P14
+kidney_failure_RRT,outcome,ICD-10-PCS,0TY10Z0,Transplantation left kidney allogeneic,P14
+dialysis_dependence,outcome,ICD-10-CM,N18.6,Maintenance dialysis cohort,P9
+dialysis_exclusion,exclusion,ICD-10-CM,N18.5,CKD stage 5 (ESRD exclusion),P8
+dialysis_exclusion,exclusion,ICD-10-CM,N18.6,ESRD (exclusion),P8
+dialysis_exclusion,exclusion,CPT,90935-90999,Dialysis procedures (range),P8
+kidney_transplant_status,cohort,ICD-10-CM,Z94.0,Kidney transplant status / index,P7;P10;P14
+graft_failure,outcome,ICD-10-CM,Z99.2,Dependence on renal dialysis,P10
+graft_failure,outcome,TNX,TNX:9024,Serum/plasma creatinine >= 6.00 mg/dL,P10
+graft_failure,outcome,TNX,TNX:8001,eGFR (MDRD) <= 5.00,P10
+graft_failure,outcome,LOINC,62238-1,eGFR (CKD-EPI) <= 5.00,P10
+transplant_rejection,outcome,ICD-10-CM,T86.11,Kidney transplant rejection,P10
+acute_heart_failure,outcome,ICD-10-CM,I50.21,Acute systolic CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.23,Acute on chronic systolic CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.31,Acute diastolic CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.33,Acute on chronic diastolic CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.41,Acute combined CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.43,Acute on chronic combined CHF,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.811,Acute right heart failure,P6
+acute_heart_failure,outcome,ICD-10-CM,I50.813,Acute on chronic right heart failure,P6
+heart_failure,cohort,ICD-10-CM,I50.2,Systolic heart failure,P3
+heart_failure,cohort,ICD-10-CM,I50.3,Diastolic heart failure,P3
+heart_failure,covariate,ICD-10-CM,I50,Heart failure,P10
+acute_MI,outcome,ICD-10-CM,I21,Acute myocardial infarction,P6
+stroke,outcome,ICD-10-CM,I61,Nontraumatic intracerebral hemorrhage,P6
+stroke,outcome,ICD-10-CM,I63,Cerebral infarction,P6
+hepatoma,outcome,ICD-10-CM,C22.0,Liver cell carcinoma,P10
+hepatic_fibrosis_cirrhosis,outcome,ICD-10-CM,K74,Fibrosis and cirrhosis of liver,P10
+cirrhosis_unspecified,outcome,ICD-10-CM,K74.60,Unspecified cirrhosis of liver,P10
+hepatic_fibrosis,outcome,ICD-10-CM,K74.0,Hepatic fibrosis,P10
+hepatic_failure,outcome,ICD-10-CM,K72,Hepatic failure NEC,P10
+type2_diabetes,cohort,ICD-10-CM,E11,Type 2 diabetes mellitus,P3;P6
+type2_diabetes,cohort,ICD-10-CM,E11.8,T2DM with unspecified complications,P14
+type2_diabetes,cohort,ICD-10-CM,E11.9,T2DM without complications,P14
+type2_diabetes,cohort,ICD-10-CM,E13.9,Other specified DM without complications,P14
+type2_diabetes,cohort,ICD-10-CM,E08.9,DM due to underlying condition,P14
+type2_diabetes,cohort,ICD-10-CM,E14,Unspecified diabetes mellitus,P14
+obesity,cohort,ICD-10-CM,E66.01,Morbid obesity due to excess calories,P5
+obesity,cohort,ICD-10-CM,Z68.3,BMI 30-39 adult,P5
+obesity,cohort,ICD-10-CM,Z68.4,BMI 40+ adult,P5
+obesity,covariate,ICD-10-CM,E66,Overweight and obesity,P10
+hypogonadism,cohort,ICD-10-CM,E29.1,Testicular hypofunction,P14
+hypogonadism,cohort,ICD-10-CM,E23.0,Hypopituitarism,P14
+hypogonadism,cohort,ICD-10-CM,G11.5,Hereditary ataxia (assoc.),P14
+hypogonadism,cohort,ICD-10-CM,Q53,Undescended testicle,P14
+hypogonadism,cohort,ICD-10-CM,Q98.0,Klinefelter 47XXY,P14
+hypogonadism,cohort,ICD-10-CM,Q98.1,Klinefelter >2 X,P14
+hypogonadism,cohort,ICD-10-CM,Q98.4,Klinefelter unspecified,P14
+hypertension,covariate,ICD-10-CM,I10-I15,Hypertensive diseases (range),P10
+glomerular_disease,covariate,ICD-10-CM,N00-N08,Glomerular diseases (range),P10
+hepatitis_B,covariate,ICD-10-CM,B19.1,Unspecified viral hepatitis B,P10
+testosterone,medication,RxNorm,10379,Testosterone,P14
+ESA_short_acting,medication,RxNorm,1816044,Epoetin alfa,P8
+ESA_short_acting,medication,RxNorm,1816005,Epoetin beta,P8
+ESA_long_acting,medication,RxNorm,2583538,Methoxy PEG-epoetin beta,P8
+ESA_long_acting,medication,RxNorm,729986,Darbepoetin alfa,P8
+vitamin_D_25OH,lab,LOINC,35365-6,25-hydroxyvitamin D total,P9
+graft_failure_egfr_ckdepi,lab,LOINC,62238-1,eGFR CKD-EPI,P10
