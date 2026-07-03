@@ -84,6 +84,7 @@
   .scroll.filtering td .nm:not(.hit){ color:#b3bcc6; }
 
   .colgroup-sep{border-left:1px solid var(--line);}
+  th.c-left,td.c-left{text-align:left;}
 
   /* status / error */
   .status{padding:40px 16px; text-align:center; color:var(--muted);}
@@ -159,8 +160,11 @@
     {i:9,  name:"關山"},
     {i:10, name:"聯安", sep:true},
     {i:11, name:"聯安掛名"},
-    {merge:[14,15,16,17], name:"休假", sep:true}
+    {merge:[14,15,16,17], name:"休假", sep:true, left:true}
   ];
+
+  // fixed display order for the doctor highlight chips
+  var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
 
   var el = function(id){ return document.getElementById(id); };
   var statusEl = el("status");
@@ -282,10 +286,15 @@
       if (!allKnown) multi[tok] = true;
     });
     var list = Object.keys(singles).concat(Object.keys(multi));
-    // sort: by frequency desc then by name
+    // sort: preferred fixed order first, then any extras by frequency
     var freq = {};
     forEachName(function(tok){ freq[tok] = (freq[tok]||0)+1; });
-    list.sort(function(a,b){ return (freq[b]||0)-(freq[a]||0) || a.localeCompare(b,"zh-Hant"); });
+    function rank(n){ var i = PREF_ORDER.indexOf(n); return i === -1 ? 999 : i; }
+    list.sort(function(a,b){
+      var ra = rank(a), rb = rank(b);
+      if (ra !== rb) return ra - rb;
+      return (freq[b]||0)-(freq[a]||0) || a.localeCompare(b,"zh-Hant");
+    });
     roster = list;
   }
 
@@ -363,7 +372,7 @@
     var h = '<table><thead><tr>';
     h += '<th class="c-date">日期</th><th>週</th>';
     for (var s=0;s<SHIFT_COLS.length;s++){
-      h += '<th'+(SHIFT_COLS[s].sep?' class="colgroup-sep"':'')+'>'+esc(SHIFT_COLS[s].name)+'</th>';
+      h += '<th'+colClass(SHIFT_COLS[s])+'>'+esc(SHIFT_COLS[s].name)+'</th>';
     }
     h += '</tr></thead><tbody>';
 
@@ -381,8 +390,7 @@
       h += '<td class="c-wk">'+esc(row.wk || wkName(dow))+'</td>';
       for (var s2=0;s2<SHIFT_COLS.length;s2++){
         var v = row.cells[s2] || "";
-        var sep = SHIFT_COLS[s2].sep ? ' colgroup-sep' : '';
-        h += '<td class="cell'+sep+'">'+renderCell(v)+'</td>';
+        h += '<td'+colClass(SHIFT_COLS[s2], "cell")+'>'+renderCell(v)+'</td>';
       }
       h += '</tr>';
     }
@@ -420,6 +428,12 @@
   }
 
   // ---- helpers ----
+  function colClass(col, base){
+    var c = base ? [base] : [];
+    if (col.sep) c.push("colgroup-sep");
+    if (col.left) c.push("c-left");
+    return c.length ? ' class="'+c.join(" ")+'"' : "";
+  }
   function wkName(dow){ return "週"+["日","一","二","三","四","五","六"][dow]; }
   function fmtClock(d){
     function p(n){ return (n<10?"0":"")+n; }
