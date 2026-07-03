@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>血透室 醫師班表查詢</title>
+<style>
+  :root{
+    --bg:#f4f6f8; --card:#ffffff; --ink:#1f2933; --muted:#7b8794;
+    --line:#e2e8ee; --line2:#eef2f6;
+    --accent:#0f766e; --accent-soft:#d7f0ec;
+    --weekend:#fbf3ea; --today:#fff6d6; --today-bar:#f2b705;
+    --hl:#ffe9a8; --hl-ink:#5b4600;
+    --danger:#b42318;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.4;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:14px 12px 60px;}
+
+  header.top{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:10px;}
+  header.top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.3px;}
+  header.top .sub{color:var(--muted); font-size:12.5px;}
+  .spacer{flex:1 1 auto;}
+  button{font-family:inherit; cursor:pointer;}
+  .btn{
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:8px; padding:6px 11px; font-size:13.5px; line-height:1;
+  }
+  .btn:hover{border-color:var(--accent); color:var(--accent);}
+  .btn:active{transform:translateY(1px);}
+
+  /* month nav */
+  .navbar{display:flex; align-items:center; gap:10px; margin:6px 0 12px;}
+  .navbar .month{font-size:20px; font-weight:700; min-width:150px; text-align:center;}
+  .nav-btn{
+    border:1px solid var(--line); background:var(--card); border-radius:10px;
+    width:40px; height:40px; font-size:19px; color:var(--ink); display:flex;
+    align-items:center; justify-content:center;
+  }
+  .nav-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .today-btn{border-radius:10px; height:40px;}
+
+  /* doctor chips */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px;}
+  .chips .lbl{color:var(--muted); font-size:12.5px; align-self:center; margin-right:2px;}
+  .chip{
+    border:1px solid var(--line); background:var(--card); border-radius:999px;
+    padding:5px 12px; font-size:14px; color:var(--ink);
+  }
+  .chip:hover{border-color:var(--accent);}
+  .chip.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+  .chip.clear{color:var(--muted);}
+
+  /* table */
+  .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .scroll{overflow:auto; max-height:calc(100vh - 210px);}
+  table{border-collapse:separate; border-spacing:0; width:100%; font-size:14px;}
+  th,td{padding:7px 8px; text-align:center; white-space:nowrap; border-bottom:1px solid var(--line2);}
+  thead th{
+    position:sticky; top:0; z-index:3; background:#f0f4f7; color:#3a4a58;
+    font-weight:700; font-size:12.5px; border-bottom:1px solid var(--line);
+  }
+  /* sticky first two columns (date + weekday) */
+  th.c-date,td.c-date{position:sticky; left:0; z-index:2; background:var(--card);
+    text-align:left; font-weight:700; min-width:52px; box-shadow:1px 0 0 var(--line2);}
+  thead th.c-date{z-index:4; background:#f0f4f7;}
+  td.c-wk{color:var(--muted); font-size:13px;}
+
+  tbody tr.weekend td{background:var(--weekend);}
+  tbody tr.weekend td.c-date{background:#f7ede0;}
+  tbody tr.today td{background:var(--today);}
+  tbody tr.today td.c-date{background:#fdeeb6; box-shadow:inset 3px 0 0 var(--today-bar), 1px 0 0 var(--line2);}
+  tbody tr:hover td{background:#eef7f6;}
+  tbody tr.today:hover td{background:#fdf2c4;}
+
+  td .nm{display:inline-block; padding:1px 2px; border-radius:5px;}
+  td .nm.hit{background:var(--hl); color:var(--hl-ink); font-weight:700; padding:1px 5px;}
+
+  .colgroup-sep{border-left:1px solid var(--line);}
+
+  /* status / error */
+  .status{padding:40px 16px; text-align:center; color:var(--muted);}
+  .status.err{color:var(--danger);}
+  .status .big{font-size:16px; margin-bottom:10px; color:inherit;}
+  .status a{color:var(--accent);}
+  .spin{display:inline-block; width:22px; height:22px; border:3px solid var(--accent-soft);
+    border-top-color:var(--accent); border-radius:50%; animation:sp .8s linear infinite; vertical-align:-5px; margin-right:8px;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  footer{color:var(--muted); font-size:12px; text-align:center; margin-top:16px;}
+  footer a{color:var(--muted);}
+
+  @media (max-width:560px){
+    body{font-size:14px;}
+    header.top h1{font-size:16px;}
+    .navbar .month{font-size:18px; min-width:120px;}
+    th,td{padding:6px 6px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>花蓮慈院 · 血液透析室 醫師班表</h1>
+    <div class="spacer"></div>
+    <span class="sub" id="loadInfo">載入中…</span>
+    <button class="btn" id="refreshBtn" title="重新抓取最新班表">↻ 重新整理</button>
+  </header>
+
+  <div class="navbar">
+    <button class="nav-btn" id="prevBtn" aria-label="上個月">‹</button>
+    <div class="month" id="monthLabel">—</div>
+    <button class="nav-btn" id="nextBtn" aria-label="下個月">›</button>
+    <button class="btn today-btn" id="thisMonthBtn">回本月</button>
+  </div>
+
+  <div class="chips" id="chips" hidden>
+    <span class="lbl">高亮醫師：</span>
+  </div>
+
+  <div class="tablecard">
+    <div class="scroll" id="scroll">
+      <div class="status" id="status"><span class="spin"></span>正在載入班表…</div>
+    </div>
+  </div>
+
+  <footer>
+    資料即時同步自
+    <a id="sheetLink" href="#" target="_blank" rel="noopener">Google 試算表</a>
+    · 名字為醫師簡稱
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
+  var GID = "1837573287";
+
+  // Displayed shift columns, by source column index (0-based) in the gviz row.
+  // 0 date, 1 星期 handled separately. 13 is empty separator (skipped).
+  // 14..17 are the four "假" columns -> merged into one 休假 column.
+  var SHIFT_COLS = [
+    {i:2,  name:"值班"},
+    {i:3,  name:"早"},
+    {i:4,  name:"中"},
+    {i:5,  name:"晚"},
+    {i:6,  name:"花蓮HD", sep:true},
+    {i:7,  name:"特約"},
+    {i:8,  name:"玉里"},
+    {i:9,  name:"關山"},
+    {i:10, name:"聯安", sep:true},
+    {i:11, name:"聯安掛名"},
+    {i:12, name:"NP休假", sep:true},
+    {merge:[14,15,16,17], name:"休假"}
+  ];
+
+  var el = function(id){ return document.getElementById(id); };
+  var statusEl = el("status");
+  var scrollEl = el("scroll");
+  var chipsEl  = el("chips");
+
+  var allRows = [];        // {date:Date, wk:string, cells:[strings]}
+  var byMonth = {};        // "YYYY-M" -> [rowIndexes]
+  var roster = [];         // doctor names (sorted for display)
+  var view = null;         // {y, m}  m: 0-based
+  var activeName = null;   // highlighted doctor
+
+  el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit?gid="+GID;
+
+  // ---- data load via gviz JSONP (no CORS) ----
+  var CB = "__sched_cb__";
+  var curScript = null, loadTimer = null;
+
+  function load(){
+    showStatus('<span class="spin"></span>正在載入班表…', false);
+    if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
+    clearTimeout(loadTimer);
+    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
+            + "?gid="+GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
+    curScript = document.createElement("script");
+    curScript.src = url;
+    curScript.onerror = function(){ onError("無法連線到 Google 試算表。請檢查網路連線。"); };
+    document.head.appendChild(curScript);
+    loadTimer = setTimeout(function(){ onError("載入逾時，請稍後重試。"); }, 15000);
+  }
+
+  window[CB] = function(resp){
+    clearTimeout(loadTimer);
+    try {
+      if (!resp || !resp.table || resp.status === "error") {
+        var msg = (resp && resp.errors && resp.errors[0] && resp.errors[0].detailed_message)
+                  || "試算表無法讀取，可能已改為非公開。";
+        onError(msg); return;
+      }
+      parse(resp.table);
+      buildRoster();
+      renderChips();
+      if (!view) view = defaultView();
+      render();
+      var now = new Date();
+      el("loadInfo").textContent = "資料更新於 " + fmtClock(now);
+    } catch(e){
+      onError("解析班表時發生錯誤：" + (e && e.message ? e.message : e));
+    }
+  };
+
+  function parse(table){
+    allRows = []; byMonth = {};
+    var rows = table.rows || [];
+    for (var r=0; r<rows.length; r++){
+      var c = rows[r].c || [];
+      var d = parseDate(c[0]);
+      if (!d) continue;
+      var wk = valOf(c[1]);
+      var cells = [];
+      for (var s=0; s<SHIFT_COLS.length; s++){
+        var col = SHIFT_COLS[s];
+        if (col.merge){
+          var parts = [];
+          for (var k=0; k<col.merge.length; k++){
+            var v = valOf(c[col.merge[k]]);
+            if (v) parts.push(v);
+          }
+          cells.push(parts.join("、"));
+        } else {
+          cells.push(valOf(c[col.i]) || "");
+        }
+      }
+      var idx = allRows.length;
+      allRows.push({date:d, wk:wk, cells:cells});
+      var key = d.getFullYear()+"-"+d.getMonth();
+      (byMonth[key] = byMonth[key] || []).push(idx);
+    }
+  }
+
+  function valOf(cell){
+    if (cell == null) return "";
+    var v = cell.v;
+    if (v == null) return "";
+    return String(v).trim();
+  }
+
+  // gviz date cell: v === "Date(2026,6,1)"
+  function parseDate(cell){
+    if (!cell) return null;
+    var v = cell.v;
+    if (v instanceof Date) return v;
+    if (typeof v === "string"){
+      var m = v.match(/^Date\((\d+),(\d+),(\d+)/);
+      if (m) return new Date(+m[1], +m[2], +m[3]);
+    }
+    return null;
+  }
+
+  // ---- doctor roster ----
+  // Derive the chip list only from physician shift columns (cells index 0..7:
+  // 值班/早/中/晚/花蓮HD/特約/玉里/關山). This excludes 聯安/NP休假/休假 which hold
+  // placeholders (X, ?), NP names, and leave annotations. Highlighting still
+  // matches every cell regardless of column.
+  var ROSTER_SRC = [0,1,2,3,4,5,6,7];
+  var BLACKLIST = {"X":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1};
+
+  function buildRoster(){
+    var singles = {}, multi = {}, seen = {};
+    // pass 1: collect single-char tokens
+    forEachName(function(tok){ if (tok.length === 1) singles[tok] = true; });
+    // pass 2: classify
+    forEachName(function(tok){
+      if (seen[tok]) return; seen[tok] = true;
+      if (tok.length === 1) return; // already a single
+      // 2+ chars: if every char is a known single name -> it's a combo, skip
+      var allKnown = true;
+      for (var i=0;i<tok.length;i++){ if(!singles[tok[i]]){ allKnown=false; break; } }
+      if (!allKnown) multi[tok] = true;
+    });
+    var list = Object.keys(singles).concat(Object.keys(multi));
+    // sort: by frequency desc then by name
+    var freq = {};
+    forEachName(function(tok){ freq[tok] = (freq[tok]||0)+1; });
+    list.sort(function(a,b){ return (freq[b]||0)-(freq[a]||0) || a.localeCompare(b,"zh-Hant"); });
+    roster = list;
+  }
+
+  function forEachName(fn){
+    for (var r=0; r<allRows.length; r++){
+      var cells = allRows[r].cells;
+      for (var s=0; s<ROSTER_SRC.length; s++){
+        var raw = cells[ROSTER_SRC[s]];
+        if (!raw) continue;
+        var toks = raw.split(/[、,\/\s]+/);
+        for (var t=0; t<toks.length; t++){
+          var tok = toks[t].trim();
+          if (tok && !BLACKLIST[tok]) fn(tok);
+        }
+      }
+    }
+  }
+
+  function renderChips(){
+    // keep the leading label, remove old chips
+    var kids = chipsEl.querySelectorAll(".chip");
+    for (var i=0;i<kids.length;i++) kids[i].parentNode.removeChild(kids[i]);
+    var clear = mkChip("全部", null);
+    clear.classList.add("clear");
+    chipsEl.appendChild(clear);
+    for (var j=0;j<roster.length;j++) chipsEl.appendChild(mkChip(roster[j], roster[j]));
+    chipsEl.hidden = false;
+    syncChips();
+  }
+
+  function mkChip(text, name){
+    var b = document.createElement("button");
+    b.className = "chip"; b.textContent = text; b.dataset.name = name || "";
+    b.onclick = function(){
+      activeName = (name && activeName === name) ? null : name;
+      syncChips(); applyHighlight();
+    };
+    return b;
+  }
+
+  function syncChips(){
+    var chips = chipsEl.querySelectorAll(".chip");
+    for (var i=0;i<chips.length;i++){
+      var nm = chips[i].dataset.name;
+      var on = activeName ? (nm === activeName) : (nm === "");
+      chips[i].classList.toggle("on", on);
+    }
+  }
+
+  // ---- rendering ----
+  function defaultView(){
+    var now = new Date();
+    var key = now.getFullYear()+"-"+now.getMonth();
+    if (byMonth[key]) return {y:now.getFullYear(), m:now.getMonth()};
+    // fallback: first month that has data
+    var keys = Object.keys(byMonth);
+    if (keys.length){
+      keys.sort(function(a,b){ var A=a.split("-"),B=b.split("-"); return A[0]-B[0] || A[1]-B[1]; });
+      var f = keys[0].split("-"); return {y:+f[0], m:+f[1]};
+    }
+    return {y:now.getFullYear(), m:now.getMonth()};
+  }
+
+  function render(){
+    el("monthLabel").textContent = view.y + "年" + (view.m+1) + "月";
+    var key = view.y+"-"+view.m;
+    var idxs = byMonth[key] || [];
+    if (!idxs.length){
+      scrollEl.innerHTML = '<div class="status">此月份沒有班表資料。</div>';
+      return;
+    }
+    var today = new Date();
+    var todayKey = today.getFullYear()+"|"+today.getMonth()+"|"+today.getDate();
+
+    var h = '<table><thead><tr>';
+    h += '<th class="c-date">日期</th><th>週</th>';
+    for (var s=0;s<SHIFT_COLS.length;s++){
+      h += '<th'+(SHIFT_COLS[s].sep?' class="colgroup-sep"':'')+'>'+esc(SHIFT_COLS[s].name)+'</th>';
+    }
+    h += '</tr></thead><tbody>';
+
+    for (var i=0;i<idxs.length;i++){
+      var row = allRows[idxs[i]];
+      var d = row.date;
+      var dow = d.getDay();
+      var isWeekend = (dow === 0 || dow === 6);
+      var isToday = (d.getFullYear()+"|"+d.getMonth()+"|"+d.getDate()) === todayKey;
+      var cls = [];
+      if (isWeekend) cls.push("weekend");
+      if (isToday) cls.push("today");
+      h += '<tr class="'+cls.join(" ")+'">';
+      h += '<td class="c-date">'+(d.getMonth()+1)+'/'+d.getDate()+'</td>';
+      h += '<td class="c-wk">'+esc(row.wk || wkName(dow))+'</td>';
+      for (var s2=0;s2<SHIFT_COLS.length;s2++){
+        var v = row.cells[s2] || "";
+        var sep = SHIFT_COLS[s2].sep ? ' colgroup-sep' : '';
+        h += '<td class="cell'+sep+'">'+renderCell(v)+'</td>';
+      }
+      h += '</tr>';
+    }
+    h += '</tbody></table>';
+    scrollEl.innerHTML = h;
+    applyHighlight();
+
+    // scroll today into view
+    var tr = scrollEl.querySelector("tr.today");
+    if (tr) tr.scrollIntoView({block:"nearest"});
+  }
+
+  // wrap each name token in a span so highlight can target substrings
+  function renderCell(v){
+    if (!v) return "";
+    var toks = v.split(/(、)/); // keep separators
+    var out = "";
+    for (var i=0;i<toks.length;i++){
+      var t = toks[i];
+      if (t === "、"){ out += "、"; continue; }
+      if (t === "") continue;
+      out += '<span class="nm" data-nm="'+esc(t)+'">'+esc(t)+'</span>';
+    }
+    return out;
+  }
+
+  function applyHighlight(){
+    var spans = scrollEl.querySelectorAll(".nm");
+    for (var i=0;i<spans.length;i++){
+      var nm = spans[i].getAttribute("data-nm") || "";
+      var hit = activeName && nm.indexOf(activeName) !== -1;
+      spans[i].classList.toggle("hit", !!hit);
+    }
+  }
+
+  // ---- helpers ----
+  function wkName(dow){ return "週"+["日","一","二","三","四","五","六"][dow]; }
+  function fmtClock(d){
+    function p(n){ return (n<10?"0":"")+n; }
+    return (d.getMonth()+1)+"/"+d.getDate()+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function showStatus(html, isErr){
+    scrollEl.innerHTML = '<div class="status'+(isErr?" err":"")+'">'+html+'</div>';
+  }
+  function onError(msg){
+    clearTimeout(loadTimer);
+    el("loadInfo").textContent = "載入失敗";
+    chipsEl.hidden = true;
+    showStatus('<div class="big">⚠ 無法載入班表</div><div>'+esc(msg)+'</div>'
+      +'<div style="margin-top:14px"><button class="btn" id="retryBtn">重試</button> '
+      +'<a class="btn" style="text-decoration:none" href="'+el("sheetLink").href+'" target="_blank" rel="noopener">開啟試算表</a></div>', true);
+    var rb = el("retryBtn"); if (rb) rb.onclick = load;
+  }
+
+  function shiftMonth(delta){
+    if (!view) return;
+    var m = view.m + delta, y = view.y;
+    while (m < 0){ m += 12; y--; }
+    while (m > 11){ m -= 12; y++; }
+    view = {y:y, m:m};
+    render();
+  }
+
+  // ---- events ----
+  el("prevBtn").onclick = function(){ shiftMonth(-1); };
+  el("nextBtn").onclick = function(){ shiftMonth(1); };
+  el("thisMonthBtn").onclick = function(){ view = defaultView(); render(); };
+  el("refreshBtn").onclick = function(){ load(); };
+
+  load();
+})();
+</script>
+</body>
+</html>
