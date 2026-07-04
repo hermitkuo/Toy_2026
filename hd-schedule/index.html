@@ -6,12 +6,14 @@
 <title>血透室 醫師班表查詢</title>
 <style>
   :root{
-    --bg:#f4f6f8; --card:#ffffff; --ink:#1f2933; --muted:#7b8794;
-    --line:#e2e8ee; --line2:#eef2f6;
-    --accent:#0f766e; --accent-soft:#d7f0ec;
-    --weekend:#fbf3ea; --today:#fff6d6; --today-bar:#f2b705;
-    --hl:#ffe9a8; --hl-ink:#5b4600;
-    --danger:#b42318;
+    --bg:#f5f7f9; --card:#ffffff; --ink:#1f2933; --muted:#5b6772;
+    --line:#e3e8ee; --line2:#eef2f6; --line3:#f1f4f7;
+    --accent:#0f766e; --accent-600:#0e6b63; --accent-soft:#d7f0ec;
+    --accent-tint:#ecf7f5;
+    --today-tint:#e6f4f0; --today-bar:#0f766e;
+    --head:#f1f4f7; --head-ink:#3a4a58;
+    --ok:#16a34a; --danger:#b42318;
+    --hrow:26px; --hsub:28px; --wdate:52px; --wwk:42px;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -20,79 +22,161 @@
     background:var(--bg); color:var(--ink); font-size:16px; line-height:1.3;
     -webkit-text-size-adjust:100%;
   }
-  .wrap{max-width:1100px; margin:0 auto; padding:14px 12px 60px;}
+  .wrap{max-width:1160px; margin:0 auto; padding:14px 12px 60px;}
 
-  header.top{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:10px;}
+  /* ---------- header + status pill ---------- */
+  header.top{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-bottom:12px;}
   header.top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.3px;}
-  header.top .sub{color:var(--muted); font-size:12.5px;}
   .spacer{flex:1 1 auto;}
   button{font-family:inherit; cursor:pointer;}
+
+  .statuspill{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:999px; padding:4px 6px 4px 12px;
+  }
+  .statuspill .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--ok);
+    box-shadow:0 0 0 3px rgba(22,163,74,.15); flex:0 0 auto;
+  }
+  .statuspill.err .dot{background:var(--danger); box-shadow:0 0 0 3px rgba(180,35,24,.15);}
+  .statuspill.loading .dot{background:#cbd5df; box-shadow:0 0 0 3px rgba(203,213,223,.25);}
+  .statuspill .sub{color:var(--muted); font-size:12.5px; white-space:nowrap;}
+  .iconbtn{
+    border:1px solid var(--line); background:var(--card); color:var(--muted);
+    border-radius:999px; width:28px; height:28px; font-size:15px; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .iconbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .iconbtn:active{transform:translateY(1px);}
+
   .btn{
     border:1px solid var(--line); background:var(--card); color:var(--ink);
-    border-radius:8px; padding:6px 11px; font-size:13.5px; line-height:1;
+    border-radius:8px; padding:7px 12px; font-size:13.5px; line-height:1;
   }
   .btn:hover{border-color:var(--accent); color:var(--accent);}
   .btn:active{transform:translateY(1px);}
 
-  /* month nav */
-  .navbar{display:flex; align-items:center; gap:10px; margin:6px 0 12px;}
-  .navbar .month{font-size:20px; font-weight:700; min-width:150px; text-align:center;}
+  /* ---------- month nav + picker ---------- */
+  .navbar{display:flex; align-items:center; gap:8px; margin:4px 0 12px;}
+  .month-wrap{position:relative; display:flex; align-items:center; gap:8px;}
+  .month{
+    border:1px solid transparent; background:transparent; color:var(--ink);
+    font-size:20px; font-weight:700; min-width:150px; text-align:center;
+    border-radius:10px; padding:6px 10px; display:inline-flex; align-items:center;
+    justify-content:center; gap:6px;
+  }
+  .month:hover{background:var(--line3);}
+  .month .caret{font-size:12px; color:var(--muted);}
   .nav-btn{
     border:1px solid var(--line); background:var(--card); border-radius:10px;
     width:40px; height:40px; font-size:19px; color:var(--ink); display:flex;
-    align-items:center; justify-content:center;
+    align-items:center; justify-content:center; flex:0 0 auto;
   }
   .nav-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .nav-btn.sm{width:30px; height:30px; font-size:16px; border-radius:8px;}
   .today-btn{border-radius:10px; height:40px;}
 
-  /* doctor chips */
-  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px;}
-  .chips .lbl{color:var(--muted); font-size:12.5px; align-self:center; margin-right:2px;}
+  .mpick{
+    position:absolute; top:50px; left:44px; z-index:40; width:252px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    box-shadow:0 12px 32px rgba(20,40,60,.16); padding:10px;
+  }
+  .mpick .yr{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .mpick .yr b{font-size:15px;}
+  .mpick .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
+  .mpick .mo{
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:8px; padding:9px 0 6px; font-size:13.5px;
+  }
+  .mpick .mo:hover{border-color:var(--accent); color:var(--accent);}
+  .mpick .mo.cur{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+  .mpick .mo.empty{color:#b3bcc6;}
+  .mpick .mo .has-dot{display:block; width:4px; height:4px; border-radius:50%;
+    background:var(--accent); margin:3px auto 0;}
+  .mpick .mo.cur .has-dot{background:#fff;}
+
+  /* ---------- doctor chips (multi-select) ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; align-items:center;}
+  .chips .lbl{color:var(--muted); font-size:12.5px; margin-right:2px;}
   .chip{
     border:1px solid var(--line); background:var(--card); border-radius:999px;
-    padding:5px 12px; font-size:14px; color:var(--ink);
+    padding:5px 12px 5px 9px; font-size:14px; color:var(--ink);
+    display:inline-flex; align-items:center; gap:6px; line-height:1.15;
   }
+  .chip .cdot{width:8px; height:8px; border-radius:50%; flex:0 0 auto;}
   .chip:hover{border-color:var(--accent);}
   .chip.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
-  .chip.clear{color:var(--muted);}
+  .chip.on .cdot{background:#fff !important;}
+  .chip.clear{color:var(--muted); padding-left:12px;}
+  .chip.clear.on{background:var(--accent); color:#fff;}
 
-  /* table */
+  /* ---------- table ---------- */
   .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
-  .scroll{overflow:auto; max-height:calc(100vh - 210px);}
-  table{border-collapse:separate; border-spacing:0; width:100%; font-size:16.5px;}
-  th,td{padding:4px 9px; text-align:center; white-space:nowrap; border-bottom:1px solid var(--line2);}
-  thead th{
-    position:sticky; top:0; z-index:3; background:#f0f4f7; color:#3a4a58;
-    font-weight:700; font-size:13px; border-bottom:1px solid var(--line);
+  .scroll{overflow:auto; max-height:calc(100vh - 220px);}
+  table{border-collapse:separate; border-spacing:0; width:100%; font-size:16px;}
+  th,td{padding:5px 9px; text-align:center; white-space:nowrap; border-bottom:1px solid var(--line2);}
+
+  /* two-tier sticky header */
+  thead th{position:sticky; z-index:4; background:var(--head); color:var(--head-ink);
+    font-weight:700; border-bottom:1px solid var(--line);}
+  thead tr.grp th{top:0; height:var(--hrow); font-size:12px; letter-spacing:.4px; padding:2px 8px;}
+  thead tr.sub th{top:var(--hrow); height:var(--hsub); font-size:12.5px; padding:3px 8px;
+    color:#54636f; font-weight:600; background:#f6f8fa;}
+  thead tr.grp th.grouped{background:#e9eef3; color:#33424f;}
+
+  /* group separators */
+  .gsep{border-left:1px solid var(--line);}
+
+  /* sticky first two columns: 日期 + 週 */
+  th.c-date,td.c-date{position:sticky; left:0; width:var(--wdate); min-width:var(--wdate);
+    text-align:left; font-weight:700; padding-left:11px; padding-right:6px;}
+  th.c-wk,td.c-wk{position:sticky; left:var(--wdate); width:var(--wwk); min-width:var(--wwk);
+    color:var(--muted); font-size:14px; box-shadow:1px 0 0 var(--line);}
+  td.c-date,td.c-wk{background:var(--card); z-index:2;}
+  thead th.c-date,thead th.c-wk{z-index:6;}
+  thead th.c-date,thead th.c-wk{background:var(--head);}
+
+  /* weekend: quiet — only tint frozen cols + colour the weekday text */
+  tbody tr.weekend td.c-date,tbody tr.weekend td.c-wk{background:#f7f9fb;}
+  tbody tr.sat td.c-wk{color:#2563eb;}
+  tbody tr.sun td.c-wk,tbody tr.sun td.c-date{color:var(--danger);}
+
+  /* today: strong brand indicator, distinct from weekend */
+  tbody tr.today td{background:var(--today-tint);}
+  tbody tr.today td.c-date{background:var(--today-tint); color:var(--accent-600); font-weight:800;
+    box-shadow:inset 3px 0 0 var(--today-bar);}
+  tbody tr.today td.c-wk{background:var(--today-tint);}
+
+  /* row hover for horizontal scanning */
+  tbody tr:hover td{background:#f0f6f5;}
+  tbody tr:hover td.c-date,tbody tr:hover td.c-wk{background:#e9f2f0;}
+  tbody tr.today:hover td{background:#dcefe9;}
+
+  /* empty slot marker (distinguish "no shift" from missing data) */
+  td .dash{color:#c4ccd4; font-weight:400;}
+
+  /* doctor name badges */
+  td .nm{
+    display:inline-block; margin:1px 2px; padding:1px 8px; border-radius:999px;
+    font-size:14.5px; line-height:1.55; white-space:nowrap;
+    background:hsl(var(--h),42%,95%); color:hsl(var(--h),36%,33%);
+    transition:box-shadow .1s, opacity .1s;
   }
-  /* sticky first two columns (date + weekday) */
-  th.c-date,td.c-date{position:sticky; left:0; z-index:2; background:var(--card);
-    text-align:left; font-weight:700; min-width:52px; box-shadow:1px 0 0 var(--line2);}
-  thead th.c-date{z-index:4; background:#f0f4f7;}
-  td.c-wk{color:var(--muted); font-size:14.5px;}
+  td .nm.hit{background:var(--accent); color:#fff; font-weight:700;}
+  td .nm.xh:not(.hit){box-shadow:0 0 0 2px rgba(15,118,110,.45);}
+  .scroll.filtering td .nm:not(.hit){opacity:.28;}
 
-  tbody tr.weekend td{background:var(--weekend);}
-  tbody tr.weekend td.c-date{background:#f7ede0;}
-  tbody tr.today td{background:var(--today);}
-  tbody tr.today td.c-date{background:#fdeeb6; box-shadow:inset 3px 0 0 var(--today-bar), 1px 0 0 var(--line2);}
-  tbody tr:hover td{background:#eef7f6;}
-  tbody tr.today:hover td{background:#fdf2c4;}
-
-  td .nm{display:inline-block; padding:1px 2px; border-radius:5px; transition:color .12s;}
-  td .nm.hit{background:var(--hl); color:var(--hl-ink); font-weight:700; padding:1px 5px;}
-  /* when a doctor is selected, dim everyone else */
-  .scroll.filtering td .nm:not(.hit){ color:#b3bcc6; }
-
-  .colgroup-sep{border-left:1px solid var(--line);}
   th.c-left,td.c-left{text-align:left;}
 
-  /* status / error */
-  .status{padding:40px 16px; text-align:center; color:var(--muted);}
+  /* ---------- status / error ---------- */
+  .status{padding:44px 16px; text-align:center; color:var(--muted);}
   .status.err{color:var(--danger);}
   .status .big{font-size:16px; margin-bottom:10px; color:inherit;}
   .status a{color:var(--accent);}
   .spin{display:inline-block; width:22px; height:22px; border:3px solid var(--accent-soft);
-    border-top-color:var(--accent); border-radius:50%; animation:sp .8s linear infinite; vertical-align:-5px; margin-right:8px;}
+    border-top-color:var(--accent); border-radius:50%; animation:sp .8s linear infinite;
+    vertical-align:-5px; margin-right:8px;}
   @keyframes sp{to{transform:rotate(360deg)}}
 
   footer{color:var(--muted); font-size:12px; text-align:center; margin-top:16px;}
@@ -101,9 +185,11 @@
   @media (max-width:560px){
     body{font-size:15px;}
     header.top h1{font-size:16px;}
-    .navbar .month{font-size:18px; min-width:120px;}
-    table{font-size:16px;}
-    th,td{padding:4px 7px;}
+    .month{font-size:18px; min-width:120px;}
+    table{font-size:15.5px;}
+    th,td{padding:5px 7px;}
+    td .nm{font-size:14px; padding:1px 7px;}
+    .mpick{left:8px;}
   }
 </style>
 </head>
@@ -112,19 +198,27 @@
   <header class="top">
     <h1>花蓮慈院 · 血液透析室 醫師班表</h1>
     <div class="spacer"></div>
-    <span class="sub" id="loadInfo">載入中…</span>
-    <button class="btn" id="refreshBtn" title="重新抓取最新班表">↻ 重新整理</button>
+    <div class="statuspill loading" id="statusPill">
+      <span class="dot"></span>
+      <span class="sub" id="loadInfo">載入中…</span>
+      <button class="iconbtn" id="refreshBtn" title="重新抓取最新班表" aria-label="重新整理">↻</button>
+    </div>
   </header>
 
   <div class="navbar">
-    <button class="nav-btn" id="prevBtn" aria-label="上個月">‹</button>
-    <div class="month" id="monthLabel">—</div>
-    <button class="nav-btn" id="nextBtn" aria-label="下個月">›</button>
-    <button class="btn today-btn" id="thisMonthBtn">回本月</button>
+    <div class="month-wrap">
+      <button class="nav-btn" id="prevBtn" aria-label="上個月">‹</button>
+      <button class="month" id="monthLabel" aria-haspopup="true" aria-expanded="false">
+        —<span class="caret">▾</span>
+      </button>
+      <button class="nav-btn" id="nextBtn" aria-label="下個月">›</button>
+      <div class="mpick" id="mpick" hidden></div>
+    </div>
+    <button class="btn today-btn" id="thisMonthBtn">本月</button>
   </div>
 
   <div class="chips" id="chips" hidden>
-    <span class="lbl">高亮醫師：</span>
+    <span class="lbl">高亮醫師（可多選）：</span>
   </div>
 
   <div class="tablecard">
@@ -136,7 +230,7 @@
   <footer>
     資料即時同步自
     <a id="sheetLink" href="#" target="_blank" rel="noopener">Google 試算表</a>
-    · 名字為醫師簡稱
+    · 名字為醫師簡稱 · 滑過任一醫師可跨列高亮同名班
   </footer>
 </div>
 
@@ -149,33 +243,37 @@
   // Displayed shift columns, by source column index (0-based) in the gviz row.
   // 0 date, 1 星期 handled separately. 13 is empty separator (skipped).
   // 14..17 are the four "假" columns -> merged into one 休假 column.
+  // group === null  -> standalone column (own header, spans both header rows)
+  // group === "..." -> grouped under a shared first-tier header
   var SHIFT_COLS = [
-    {i:2,  name:"值班"},
-    {i:3,  name:"早", sep:true},
-    {i:4,  name:"中"},
-    {i:5,  name:"晚"},
-    {i:6,  name:"花蓮HD", sep:true},
-    {i:7,  name:"特約"},
-    {i:8,  name:"玉里", sep:true},
-    {i:9,  name:"關山"},
-    {i:10, name:"聯安", sep:true},
-    {i:11, name:"聯安掛名"},
-    {merge:[14,15,16,17], name:"休假", sep:true, left:true}
+    {i:2,  name:"值班",   group:null},
+    {i:3,  name:"早",     group:"院內時段"},
+    {i:4,  name:"中",     group:"院內時段"},
+    {i:5,  name:"晚",     group:"院內時段"},
+    {i:6,  name:"花蓮HD", group:null},
+    {i:7,  name:"特約",   group:null},
+    {i:8,  name:"玉里",   group:"外派特約"},
+    {i:9,  name:"關山",   group:"外派特約"},
+    {i:10, name:"聯安",   group:"外派特約"},
+    {i:11, name:"聯安掛名",group:"外派特約"},
+    {merge:[14,15,16,17], name:"休假", group:"假勤", left:true}
   ];
 
   // fixed display order for the doctor highlight chips
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
 
   var el = function(id){ return document.getElementById(id); };
-  var statusEl = el("status");
   var scrollEl = el("scroll");
   var chipsEl  = el("chips");
+  var pillEl   = el("statusPill");
 
   var allRows = [];        // {date:Date, wk:string, cells:[strings]}
   var byMonth = {};        // "YYYY-M" -> [rowIndexes]
   var roster = [];         // doctor names (sorted for display)
   var view = null;         // {y, m}  m: 0-based
-  var activeName = null;   // highlighted doctor
+  var activeNames = {};    // set of highlighted doctors {name:true}
+  var sections = buildSections();   // header grouping, precomputed once
+  var secStart = sectionStartSet(); // shift-col indexes that begin a section
 
   el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit?gid="+GID;
 
@@ -184,6 +282,7 @@
   var curScript = null, loadTimer = null;
 
   function load(){
+    setPill("loading", "載入中…");
     showStatus('<span class="spin"></span>正在載入班表…', false);
     if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
     clearTimeout(loadTimer);
@@ -206,11 +305,11 @@
       }
       parse(resp.table);
       buildRoster();
+      restoreSel();
       renderChips();
       if (!view) view = defaultView();
       render();
-      var now = new Date();
-      el("loadInfo").textContent = "資料更新於 " + fmtClock(now);
+      setPill("ok", "已同步 · " + fmtClock(new Date()));
     } catch(e){
       onError("解析班表時發生錯誤：" + (e && e.message ? e.message : e));
     }
@@ -264,29 +363,44 @@
     return null;
   }
 
+  // ---- header sections (two-tier grouping) ----
+  function buildSections(){
+    var secs = [], i = 0;
+    while (i < SHIFT_COLS.length){
+      var col = SHIFT_COLS[i];
+      if (col.group){
+        var grp = [col], j = i+1;
+        while (j < SHIFT_COLS.length && SHIFT_COLS[j].group === col.group){ grp.push(SHIFT_COLS[j]); j++; }
+        secs.push({group:col.group, cols:grp, start:i}); i = j;
+      } else {
+        secs.push({group:null, cols:[col], start:i}); i++;
+      }
+    }
+    return secs;
+  }
+  function sectionStartSet(){
+    var set = {};
+    for (var s=0; s<sections.length; s++) set[sections[s].start] = true;
+    return set;
+  }
+
   // ---- doctor roster ----
   // Derive the chip list only from physician shift columns (cells index 0..7:
-  // 值班/早/中/晚/花蓮HD/特約/玉里/關山). This excludes 聯安/NP休假/休假 which hold
-  // placeholders (X, ?), NP names, and leave annotations. Highlighting still
-  // matches every cell regardless of column.
+  // 值班/早/中/晚/花蓮HD/特約/玉里/關山). Highlighting still matches every cell.
   var ROSTER_SRC = [0,1,2,3,4,5,6,7];
   var BLACKLIST = {"X":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1};
 
   function buildRoster(){
     var singles = {}, multi = {}, seen = {};
-    // pass 1: collect single-char tokens
     forEachName(function(tok){ if (tok.length === 1) singles[tok] = true; });
-    // pass 2: classify
     forEachName(function(tok){
       if (seen[tok]) return; seen[tok] = true;
-      if (tok.length === 1) return; // already a single
-      // 2+ chars: if every char is a known single name -> it's a combo, skip
+      if (tok.length === 1) return;
       var allKnown = true;
       for (var i=0;i<tok.length;i++){ if(!singles[tok[i]]){ allKnown=false; break; } }
       if (!allKnown) multi[tok] = true;
     });
     var list = Object.keys(singles).concat(Object.keys(multi));
-    // sort: preferred fixed order first, then any extras by frequency
     var freq = {};
     forEachName(function(tok){ freq[tok] = (freq[tok]||0)+1; });
     function rank(n){ var i = PREF_ORDER.indexOf(n); return i === -1 ? 999 : i; }
@@ -313,33 +427,54 @@
     }
   }
 
+  // ---- selection persistence (acts as "my favourites") ----
+  function selList(){ return Object.keys(activeNames); }
+  function saveSel(){ try{ localStorage.setItem("hd_sel", JSON.stringify(selList())); }catch(e){} }
+  function restoreSel(){
+    activeNames = {};
+    try{
+      var a = JSON.parse(localStorage.getItem("hd_sel") || "[]");
+      for (var i=0;i<a.length;i++){ if (roster.indexOf(a[i]) !== -1) activeNames[a[i]] = true; }
+    }catch(e){ activeNames = {}; }
+  }
+
+  // ---- chips ----
   function renderChips(){
-    // keep the leading label, remove old chips
     var kids = chipsEl.querySelectorAll(".chip");
     for (var i=0;i<kids.length;i++) kids[i].parentNode.removeChild(kids[i]);
-    var clear = mkChip("全部", null);
+    var clear = mkChip("全部", null, true);
     clear.classList.add("clear");
     chipsEl.appendChild(clear);
-    for (var j=0;j<roster.length;j++) chipsEl.appendChild(mkChip(roster[j], roster[j]));
+    for (var j=0;j<roster.length;j++) chipsEl.appendChild(mkChip(roster[j], roster[j], false));
     chipsEl.hidden = false;
     syncChips();
   }
 
-  function mkChip(text, name){
+  function mkChip(text, name, noDot){
     var b = document.createElement("button");
-    b.className = "chip"; b.textContent = text; b.dataset.name = name || "";
+    b.className = "chip"; b.dataset.name = name || "";
+    if (!noDot){
+      var dot = document.createElement("i");
+      dot.className = "cdot";
+      dot.style.background = "hsl("+hue(name)+",50%,52%)";
+      b.appendChild(dot);
+    }
+    b.appendChild(document.createTextNode(text));
     b.onclick = function(){
-      activeName = (name && activeName === name) ? null : name;
-      syncChips(); applyHighlight();
+      if (!name){ activeNames = {}; }
+      else if (activeNames[name]){ delete activeNames[name]; }
+      else { activeNames[name] = true; }
+      saveSel(); syncChips(); applyHighlight();
     };
     return b;
   }
 
   function syncChips(){
     var chips = chipsEl.querySelectorAll(".chip");
+    var none = selList().length === 0;
     for (var i=0;i<chips.length;i++){
       var nm = chips[i].dataset.name;
-      var on = activeName ? (nm === activeName) : (nm === "");
+      var on = nm ? !!activeNames[nm] : none;
       chips[i].classList.toggle("on", on);
     }
   }
@@ -349,7 +484,6 @@
     var now = new Date();
     var key = now.getFullYear()+"-"+now.getMonth();
     if (byMonth[key]) return {y:now.getFullYear(), m:now.getMonth()};
-    // fallback: first month that has data
     var keys = Object.keys(byMonth);
     if (keys.length){
       keys.sort(function(a,b){ var A=a.split("-"),B=b.split("-"); return A[0]-B[0] || A[1]-B[1]; });
@@ -358,8 +492,28 @@
     return {y:now.getFullYear(), m:now.getMonth()};
   }
 
+  function headerHTML(){
+    var top = '<tr class="grp"><th class="c-date" rowspan="2">日期</th>'
+            + '<th class="c-wk" rowspan="2">週</th>';
+    var sub = '<tr class="sub">';
+    for (var s=0; s<sections.length; s++){
+      var sec = sections[s];
+      if (sec.group && sec.cols.length > 1){
+        top += '<th class="gsep grouped" colspan="'+sec.cols.length+'">'+esc(sec.group)+'</th>';
+        for (var k=0;k<sec.cols.length;k++){
+          sub += '<th'+(k===0?' class="gsep"':'')+'>'+esc(sec.cols[k].name)+'</th>';
+        }
+      } else {
+        // standalone column, or single-column group -> show group label if present
+        var nm = sec.group ? sec.group : sec.cols[0].name;
+        top += '<th class="gsep" rowspan="2">'+esc(nm)+'</th>';
+      }
+    }
+    return top + '</tr>' + sub + '</tr>';
+  }
+
   function render(){
-    el("monthLabel").textContent = view.y + "年" + (view.m+1) + "月";
+    el("monthLabel").innerHTML = view.y + "年" + (view.m+1) + "月<span class=\"caret\">▾</span>";
     var key = view.y+"-"+view.m;
     var idxs = byMonth[key] || [];
     if (!idxs.length){
@@ -369,28 +523,24 @@
     var today = new Date();
     var todayKey = today.getFullYear()+"|"+today.getMonth()+"|"+today.getDate();
 
-    var h = '<table><thead><tr>';
-    h += '<th class="c-date">日期</th><th>週</th>';
-    for (var s=0;s<SHIFT_COLS.length;s++){
-      h += '<th'+colClass(SHIFT_COLS[s])+'>'+esc(SHIFT_COLS[s].name)+'</th>';
-    }
-    h += '</tr></thead><tbody>';
+    var h = '<table><thead>' + headerHTML() + '</thead><tbody>';
 
     for (var i=0;i<idxs.length;i++){
       var row = allRows[idxs[i]];
       var d = row.date;
       var dow = d.getDay();
-      var isWeekend = (dow === 0 || dow === 6);
       var isToday = (d.getFullYear()+"|"+d.getMonth()+"|"+d.getDate()) === todayKey;
       var cls = [];
-      if (isWeekend) cls.push("weekend");
+      if (dow === 0 || dow === 6) cls.push("weekend");
+      if (dow === 6) cls.push("sat");
+      if (dow === 0) cls.push("sun");
       if (isToday) cls.push("today");
       h += '<tr class="'+cls.join(" ")+'">';
       h += '<td class="c-date">'+(d.getMonth()+1)+'/'+d.getDate()+'</td>';
       h += '<td class="c-wk">'+esc(row.wk || wkName(dow))+'</td>';
       for (var s2=0;s2<SHIFT_COLS.length;s2++){
         var v = row.cells[s2] || "";
-        h += '<td'+colClass(SHIFT_COLS[s2], "cell")+'>'+renderCell(v)+'</td>';
+        h += '<td'+cellClass(s2)+'>'+renderCell(v)+'</td>';
       }
       h += '</tr>';
     }
@@ -398,42 +548,119 @@
     scrollEl.innerHTML = h;
     applyHighlight();
 
-    // scroll today into view
     var tr = scrollEl.querySelector("tr.today");
     if (tr) tr.scrollIntoView({block:"nearest"});
   }
 
-  // wrap each name token in a span so highlight can target substrings
+  function cellClass(s){
+    var c = [];
+    if (secStart[s]) c.push("gsep");
+    if (SHIFT_COLS[s].left) c.push("c-left");
+    return c.length ? ' class="'+c.join(" ")+'"' : "";
+  }
+
+  // hash a name to a stable hue for its badge colour
+  function hue(s){
+    var h = 0, str = s || "";
+    for (var i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+    return h % 360;
+  }
+
+  // wrap each name token in a badge so highlight/cross-highlight can target it
   function renderCell(v){
-    if (!v) return "";
-    var toks = v.split(/(、)/); // keep separators
+    if (!v) return '<span class="dash">·</span>';
+    var toks = v.split(/[、,\s]+/);
     var out = "";
     for (var i=0;i<toks.length;i++){
-      var t = toks[i];
-      if (t === "、"){ out += "、"; continue; }
-      if (t === "") continue;
-      out += '<span class="nm" data-nm="'+esc(t)+'">'+esc(t)+'</span>';
+      var t = toks[i].trim();
+      if (!t) continue;
+      out += '<span class="nm" data-nm="'+esc(t)+'" style="--h:'+hue(t)+'">'+esc(t)+'</span>';
     }
-    return out;
+    return out || '<span class="dash">·</span>';
   }
 
   function applyHighlight(){
-    scrollEl.classList.toggle("filtering", !!activeName);
+    var act = selList();
+    scrollEl.classList.toggle("filtering", act.length > 0);
     var spans = scrollEl.querySelectorAll(".nm");
     for (var i=0;i<spans.length;i++){
       var nm = spans[i].getAttribute("data-nm") || "";
-      var hit = activeName && nm.indexOf(activeName) !== -1;
-      spans[i].classList.toggle("hit", !!hit);
+      var hit = false;
+      for (var a=0;a<act.length;a++){ if (nm.indexOf(act[a]) !== -1){ hit = true; break; } }
+      spans[i].classList.toggle("hit", hit);
     }
   }
 
-  // ---- helpers ----
-  function colClass(col, base){
-    var c = base ? [base] : [];
-    if (col.sep) c.push("colgroup-sep");
-    if (col.left) c.push("c-left");
-    return c.length ? ' class="'+c.join(" ")+'"' : "";
+  // ---- cross-highlight on hover (same doctor across the whole month) ----
+  var xhOn = "";
+  function setXH(nm){
+    if (nm === xhOn) return;
+    clearXH();
+    xhOn = nm || "";
+    if (!xhOn) return;
+    var spans = scrollEl.querySelectorAll(".nm");
+    for (var i=0;i<spans.length;i++){
+      var v = spans[i].getAttribute("data-nm") || "";
+      if (v.indexOf(xhOn) !== -1 || xhOn.indexOf(v) !== -1) spans[i].classList.add("xh");
+    }
   }
+  function clearXH(){
+    if (!xhOn) return;
+    var spans = scrollEl.querySelectorAll(".nm.xh");
+    for (var i=0;i<spans.length;i++) spans[i].classList.remove("xh");
+    xhOn = "";
+  }
+  scrollEl.addEventListener("mouseover", function(e){
+    var t = e.target && e.target.closest ? e.target.closest(".nm") : null;
+    if (t) setXH(t.getAttribute("data-nm"));
+  });
+  scrollEl.addEventListener("mouseleave", clearXH);
+
+  // ---- month picker ----
+  var pickYear = null;
+  function openPick(){
+    if (!view) return;
+    pickYear = view.y;
+    drawPick();
+    el("mpick").hidden = false;
+    el("monthLabel").setAttribute("aria-expanded","true");
+  }
+  function closePick(){
+    el("mpick").hidden = true;
+    el("monthLabel").setAttribute("aria-expanded","false");
+  }
+  function drawPick(){
+    var html = '<div class="yr">'
+      + '<button class="nav-btn sm" data-py="-1" aria-label="前一年">‹</button>'
+      + '<b>'+pickYear+' 年</b>'
+      + '<button class="nav-btn sm" data-py="1" aria-label="後一年">›</button></div>'
+      + '<div class="grid">';
+    for (var m=0;m<12;m++){
+      var key = pickYear+"-"+m;
+      var has = !!byMonth[key];
+      var cls = "mo" + (has ? "" : " empty")
+              + (view.y===pickYear && view.m===m ? " cur" : "");
+      html += '<button class="'+cls+'" data-m="'+m+'">'+(m+1)+'月'
+            + (has ? '<span class="has-dot"></span>' : '')+'</button>';
+    }
+    el("mpick").innerHTML = html + '</div>';
+  }
+  el("mpick").addEventListener("click", function(e){
+    var t = e.target && e.target.closest ? e.target.closest("button") : null;
+    if (!t) return;
+    if (t.dataset.py){ pickYear += (+t.dataset.py); drawPick(); return; }
+    if (t.dataset.m != null){ view = {y:pickYear, m:+t.dataset.m}; closePick(); render(); }
+  });
+  el("monthLabel").onclick = function(e){
+    e.stopPropagation();
+    if (el("mpick").hidden) openPick(); else closePick();
+  };
+  document.addEventListener("click", function(e){
+    if (el("mpick").hidden) return;
+    if (!e.target.closest || !e.target.closest(".month-wrap")) closePick();
+  });
+
+  // ---- helpers ----
   function wkName(dow){ return "週"+["日","一","二","三","四","五","六"][dow]; }
   function fmtClock(d){
     function p(n){ return (n<10?"0":"")+n; }
@@ -444,12 +671,16 @@
       return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
     });
   }
+  function setPill(state, text){
+    pillEl.className = "statuspill" + (state==="ok" ? "" : " "+state);
+    el("loadInfo").textContent = text;
+  }
   function showStatus(html, isErr){
     scrollEl.innerHTML = '<div class="status'+(isErr?" err":"")+'">'+html+'</div>';
   }
   function onError(msg){
     clearTimeout(loadTimer);
-    el("loadInfo").textContent = "載入失敗";
+    setPill("err", "載入失敗");
     chipsEl.hidden = true;
     showStatus('<div class="big">⚠ 無法載入班表</div><div>'+esc(msg)+'</div>'
       +'<div style="margin-top:14px"><button class="btn" id="retryBtn">重試</button> '
