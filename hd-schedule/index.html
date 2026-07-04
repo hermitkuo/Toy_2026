@@ -242,11 +242,15 @@
   .avtbl tr.fulldayrow td{background:#eef6ff;}
   .avtbl tr.fulldayrow td.c-site{background:#dcebff; color:#1e5aa8;}
   .avtbl tr.fulldayrow:hover td{background:#e3effb;}
+  .avtbl tr.busyrow td{background:#fff5e9;}
+  .avtbl tr.busyrow td.c-site{background:#ffe6c9; color:#b3630b;}
+  .avtbl tr.busyrow:hover td{background:#ffefdb;}
   .avtbl tr.sep-top td{border-top:2px solid var(--line);}
 
   .avtbl td .nm{display:inline-block; margin:1px 2px; padding:1px 7px; border-radius:999px;
     font-size:14px; line-height:1.5; background:hsl(var(--h),42%,95%); color:hsl(var(--h),36%,33%);}
   .avtbl td .nm.free{background:#dff3ee; color:#0d6b60;}
+  .avtbl td .nm.busy{background:#ffe3bf; color:#8a4b06;}
   .avtbl td .nm.hit{color:#fff!important; font-weight:700;}  /* background set inline, per-doctor colour */
   .avtbl.filtering td .nm:not(.hit){opacity:.26;}
   .avtbl td .dash{color:#c9d0d8;}
@@ -334,7 +338,7 @@
 
     <div class="av-hint">
       綠列 <b>有空</b>＝該時段沒被任何院區排到的醫師；藍列 <b>全天有空</b>＝當天早/中/晚都沒班的醫師。
-      已扣除當日<b>休假</b>醫師（依班表分頁的休假欄）。名單依當月母表出現的醫師自動推得；資料即時同步。
+      已扣除當日<b>休假</b>醫師（依班表分頁的休假欄），以及橘列 <b>有事</b>醫師（依 <code>!早/!中/!晚</code> 欄，該時段不可排）。名單依當月母表出現的醫師自動推得；資料即時同步。
     </div>
   </section>
 
@@ -872,6 +876,8 @@ window.__hlColorFor = function(orderedNames, name){
   var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
   var GID = "1810798741";                 // rotation master (week × site matrix)
   var CB  = "__avail_cb__";
+  var BGID = "0";                          // raw master tab: holds the !早/!中/!晚 (有事) columns
+  var BCB  = "__avail_busy_cb__";
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
   var OUT_ROWS = {"有空":1,"全天有空":1};  // computed rows in the sheet — ignore as source
   var BLACK = {"X":1,"Ｘ":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1,"":1};
@@ -890,6 +896,8 @@ window.__hlColorFor = function(orderedNames, name){
   var activeA={};
   var loaded=false, loading=false;
   var curScript=null, loadTimer=null;
+  var busyByDate={};             // "y-m-d" -> [ [早names], [中names], [晚names] ]  (有事)
+  var curBusyScript=null, busyTimer=null;
   var lastWide=null;             // last responsive state (>560px) the table was rendered for
 
   // ---- lazy init: called first time the tab opens ----
@@ -917,6 +925,64 @@ window.__hlColorFor = function(orderedNames, name){
     curScript.onerror = function(){ onError("無法連線到 Google 試算表。"); };
     document.head.appendChild(curScript);
     loadTimer = setTimeout(function(){ onError("載入逾時，請稍後重試。"); }, 15000);
+    loadBusy();   // 有事 data is supplementary — loaded in parallel, never blocks the master
+  }
+
+  // ---- 有事（!早/!中/!晚）loader — reads the raw master tab (gid=0), non-fatal on failure ----
+  function loadBusy(){
+    if (curBusyScript && curBusyScript.parentNode) curBusyScript.parentNode.removeChild(curBusyScript);
+    clearTimeout(busyTimer);
+    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
+            + "?gid="+BGID+"&headers=0&tqx=responseHandler:"+BCB+"&_="+Date.now();
+    curBusyScript = document.createElement("script");
+    curBusyScript.src = url;
+    curBusyScript.onerror = function(){ clearTimeout(busyTimer); };   // keep view working without 有事
+    document.head.appendChild(curBusyScript);
+    busyTimer = setTimeout(function(){}, 15000);
+  }
+
+  window[BCB] = function(resp){
+    clearTimeout(busyTimer);
+    try{
+      if (resp && resp.table){ parseBusy(resp.table); if (loaded) render(); }
+    }catch(e){ /* non-fatal: 有事 just stays empty */ }
+  };
+
+  function cellDate(c){
+    if (!c) return null;
+    var v=c.v;
+    if (v instanceof Date) return v;
+    if (typeof v==="string"){ var m=v.match(/^Date\((\d+),(\d+),(\d+)/); if (m) return new Date(+m[1],+m[2],+m[3]); }
+    return null;
+  }
+
+  function parseBusy(table){
+    var rows = table.rows||[];
+    // header row 0 (headers=0) → map each session to the columns headed !早 / !中 / !晚
+    var cols=[[],[],[]], hdr=(rows[0]&&rows[0].c)||[];
+    for (var ci=0; ci<hdr.length; ci++){
+      var lab=valOf(hdr[ci]);
+      if (lab==="!早") cols[0].push(ci);
+      else if (lab==="!中") cols[1].push(ci);
+      else if (lab==="!晚") cols[2].push(ci);
+    }
+    var map={};
+    for (var r=1; r<rows.length; r++){
+      var c=rows[r].c||[];
+      var dt=cellDate(c[0]); if (!dt) continue;
+      var key=dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
+      var per=[[],[],[]], any=false;
+      for (var s=0; s<3; s++){
+        for (var k=0; k<cols[s].length; k++){
+          var names=tok(valOf(c[cols[s][k]]));
+          for (var n=0; n<names.length; n++){
+            if (per[s].indexOf(names[n])===-1){ per[s].push(names[n]); any=true; }
+          }
+        }
+      }
+      if (any) map[key]=per;
+    }
+    busyByDate=map;
   }
 
   window[CB] = function(resp){
@@ -996,18 +1062,25 @@ window.__hlColorFor = function(orderedNames, name){
     }
     return set;
   }
+  function dkey(wk,d){ var dt=slotDate(wk,d); return dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate(); }
   // doctors on leave (休假) that day, from the date-view tab (Tab A), keyed by real date
-  function leaveOn(wk,d){
-    var dt=slotDate(wk,d), key=dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
-    return (window.__leaveByDate && window.__leaveByDate[key]) || [];
+  function leaveOn(wk,d){ return (window.__leaveByDate && window.__leaveByDate[dkey(wk,d)]) || []; }
+  // doctors with matters (有事) blocking a single session s (0早/1中/2晚), from gid=0
+  function busyAt(wk,d,s){ var b=busyByDate[dkey(wk,d)]; return (b && b[s]) || []; }
+  // doctors with matters at ANY session that day (→ not free the whole day)
+  function busyAnyDay(wk,d){
+    var b=busyByDate[dkey(wk,d)]; if (!b) return [];
+    var seen={}, out=[];
+    for (var s=0;s<3;s++){ for (var i=0;i<b[s].length;i++){ var n=b[s][i]; if (!seen[n]){ seen[n]=1; out.push(n); } } }
+    return out;
   }
   function availCount(wk,d){ return roster.length - leaveOn(wk,d).length; }
-  function freeAt(wk,d,s){ var a=assigned(wk,d,s), lv=leaveOn(wk,d);
-    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1;}); }
+  function freeAt(wk,d,s){ var a=assigned(wk,d,s), lv=leaveOn(wk,d), bz=busyAt(wk,d,s);
+    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1 && bz.indexOf(n)===-1;}); }
   function freeAllDay(wk,d){
     var a={}; for (var s=0;s<3;s++){ var x=assigned(wk,d,s); for (var n in x) a[n]=1; }
-    var lv=leaveOn(wk,d);
-    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1;});
+    var lv=leaveOn(wk,d), bz=busyAnyDay(wk,d);
+    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1 && bz.indexOf(n)===-1;});
   }
 
   // ---- week helpers (Week 1 = week containing the 1st, Mon-based) ----
@@ -1082,12 +1155,13 @@ window.__hlColorFor = function(orderedNames, name){
   // ---- render table ----
   function hue(s){ var h=0,str=s||""; for (var i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))>>>0; } return h%360; }
   function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
-  function badges(names, free){
+  function badges(names, cls){
     if (!names.length) return '<span class="dash">·</span>';
+    var extra = cls ? (" "+cls) : "";
     var out="";
     for (var i=0;i<names.length;i++){
       var t=names[i];
-      out += '<span class="nm'+(free?" free":"")+'" data-nm="'+esc(t)+'" style="--h:'+hue(t)+'">'+esc(t)+'</span>';
+      out += '<span class="nm'+extra+'" data-nm="'+esc(t)+'" style="--h:'+hue(t)+'">'+esc(t)+'</span>';
     }
     return out;
   }
@@ -1099,7 +1173,7 @@ window.__hlColorFor = function(orderedNames, name){
     if (!weekList.length){ scrollEl.innerHTML='<div class="status">母表沒有可解析的資料。</div>'; return; }
     if (curWeek==null) curWeek=weekList[0];
 
-    var SITEW=88, SESSW=116, LATEW=48;
+    var SITEW=88, SESSW=116, LATEW=120;   // 晚 wide enough for 3 doctor pills per line (avoids tall rows)
     var wide = window.innerWidth > 560;         // collapse 晚 on narrow screens
     lastWide = wide;
     var sess = wide ? [0,1,2] : [0,1];          // shown sessions (早/中[/晚])
@@ -1129,17 +1203,26 @@ window.__hlColorFor = function(orderedNames, name){
       h += '<tr class="siterow"><td class="c-site">'+esc(site)+'</td>';
       for (var d2=0; d2<6; d2++) for (var s2i=0; s2i<sess.length; s2i++){
         var s2=sess[s2i], arr = g ? g[d2][s2] : [];
-        h += '<td'+colCls(s2)+'>'+badges(arr,false)+'</td>';
+        h += '<td'+colCls(s2)+'>'+badges(arr,"")+'</td>';
       }
       h += '</tr>';
     }
 
-    // 有空 (per session) — leave doctors already excluded in freeAt
-    h += '<tr class="freerow sep-top"><td class="c-site">有空</td>';
+    // 有事 (per session) — doctors with matters (!早/!中/!晚) that block that session
+    h += '<tr class="busyrow sep-top"><td class="c-site">有事</td>';
+    for (var db=0; db<6; db++){
+      for (var sbi=0; sbi<sess.length; sbi++){ var sb=sess[sbi];
+        h += '<td'+colCls(sb)+'>'+badges(busyAt(curWeek,db,sb),"busy")+'</td>';
+      }
+    }
+    h += '</tr>';
+
+    // 有空 (per session) — leave + 有事 doctors already excluded in freeAt
+    h += '<tr class="freerow"><td class="c-site">有空</td>';
     for (var d3=0; d3<6; d3++){ var ac=availCount(curWeek,d3);
       for (var s3i=0; s3i<sess.length; s3i++){ var s3=sess[s3i];
         var fr=freeAt(curWeek,d3,s3);
-        var cell = (fr.length===ac) ? '<span class="allfree">全部</span>' : badges(fr,true);
+        var cell = (fr.length===ac) ? '<span class="allfree">全部</span>' : badges(fr,"free");
         h += '<td'+colCls(s3)+'>'+cell+'</td>';
       }
     }
@@ -1149,7 +1232,7 @@ window.__hlColorFor = function(orderedNames, name){
     h += '<tr class="fulldayrow"><td class="c-site">全天有空</td>';
     for (var d4=0; d4<6; d4++){
       var fd=freeAllDay(curWeek,d4), ac2=availCount(curWeek,d4);
-      var cell2 = (fd.length===ac2) ? '<span class="allfree">全部</span>' : badges(fd,true);
+      var cell2 = (fd.length===ac2) ? '<span class="allfree">全部</span>' : badges(fd,"free");
       h += '<td class="gsep fdcell" colspan="'+span+'">'+cell2+'</td>';
     }
     h += '</tr>';
