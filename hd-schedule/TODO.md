@@ -27,8 +27,11 @@
         · 草稿自動存 localStorage(hd_sched_draft_<月>)、換月/重開不遺失
         · 狀態徽章 草稿/已確認；「✔ 確認並鎖定」→ 存 hd_sched_pub_<月> + 鎖定不可編輯
         · 發布區：複製 JSON / 下載 CSV(貼回試算表橋接)；可「解鎖再修改」
+      → 一鍵發布：`publish_webapp.gs`（Apps Script doPost，token 驗證）寫入「自動排班草稿」分頁；
+        schedule.html 發布區填 /exec 網址+通關碼即可 POST（text/plain 避開 CORS preflight）。已驗證前端 payload。
+        待排班者部署 Web App 並填網址後可實測。
       待辦：S6 偏好納入優化、掛名輪替(目前偏集中)、遞補自動套用(目前僅建議)、
-            接 Apps Script 一鍵發布到醫師閱覽頁(取代目前 JSON/CSV 橋接)。
+            「自動排班草稿」升為正式班表分頁（或閱覽頁改讀草稿分頁）。
 
 ## 背景
 

@@ -40,6 +40,8 @@
   .ctrls label{font-size:12.5px; color:var(--muted); font-weight:600;}
   .month-name{font-size:16px; font-weight:700; min-width:110px; text-align:center;}
   select{font-family:inherit; font-size:14px; border:1px solid var(--line); border-radius:8px; padding:6px 8px; background:var(--card); color:var(--ink);}
+  .pubin{font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px; padding:7px 9px; background:var(--card); color:var(--ink);}
+  .pubin:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
   .nav-btn{border:1px solid var(--line); background:var(--card); border-radius:8px; width:32px; height:32px;
     font-size:16px; color:var(--ink); display:flex; align-items:center; justify-content:center;}
   .nav-btn:hover{border-color:var(--accent); color:var(--accent);}
@@ -183,12 +185,20 @@
   </div>
 
   <div class="publish panel" id="publish">
-    <h3 style="font-size:13px;margin:0 0 8px;color:var(--head-ink)">發布（供醫師閱覽頁）</h3>
+    <h3 style="font-size:13px;margin:0 0 8px;color:var(--head-ink)">發布到「自動排班草稿」分頁</h3>
     <div class="note">
-      此版已<b>確認鎖定</b>。目前以匯出橋接：<b>複製 JSON / 下載 CSV</b> 貼回 Google 試算表，
-      醫師閱覽頁（index.html）即會同步。未來接 Apps Script 可改成「一鍵發布」。
+      此版已<b>確認鎖定</b>。<b>🚀 一鍵發布</b>＝把當月寫進 Google 試算表的「自動排班草稿」分頁
+      （需先部署 <code>publish_webapp.gs</code>，把下方網址/通關碼填好，只需設定一次）。
+      或用 <b>複製 JSON / 下載 CSV</b> 手動貼回。
     </div>
-    <div class="ctrls">
+    <div class="ctrls" style="gap:6px">
+      <input id="pubUrl" class="pubin" placeholder="Apps Script Web App /exec 網址" style="flex:2 1 260px">
+      <input id="pubToken" class="pubin" placeholder="通關碼（與 .gs 的 PUBLISH_TOKEN 一致）" style="flex:1 1 160px">
+    </div>
+    <div class="ctrls" style="margin-top:8px">
+      <button class="btn primary" id="publishBtn">🚀 一鍵發布</button>
+      <span id="pubMsg" style="font-size:12.5px;color:var(--muted)"></span>
+      <div class="spacer"></div>
       <button class="btn" id="copyBtn">複製 JSON</button>
       <button class="btn" id="csvBtn2">下載 CSV</button>
       <button class="btn ghost" id="unlockBtn">解鎖再修改</button>
@@ -506,6 +516,34 @@
   el("clearDraftBtn").onclick=function(){ if(!confirm("清除 "+view.y+"年"+(view.m+1)+"月 的草稿？")) return;
     try{ localStorage.removeItem(draftKey()); }catch(e){} model=[]; confirmed=false; confirmedAt=null; render(); recheck(); updateStatus(); el("publish").classList.remove("show"); };
 
+  // ===== one-click publish → Apps Script Web App → 「自動排班草稿」分頁 =====
+  function warnsForDay(day){
+    var re=new RegExp("^"+(view.m+1)+"/"+day+"(?=[\\s：])");
+    return warns.filter(function(w){return re.test(w.txt);}).map(function(w){return w.txt.replace(/<[^>]+>/g,"");}).join(" / ");
+  }
+  function buildPublishPayload(token){
+    return { token:token, month:view.y+"-"+pad(view.m+1),
+      days:model.map(function(row){ var c=row.cells; return {
+        date:view.y+"-"+pad(view.m+1)+"-"+pad(row.day), weekday:WK[row.dow],
+        duty:c.duty, am:c.am, pm:c.pm, eve:c.eve, hd:c.hd, teyue:c.teyue,
+        yuli:c.yuli, guanshan:c.guanshan, lianan:c.lianan, liananhm:c.liananhm, leave:c.leave,
+        warn:warnsForDay(row.day) }; }) };
+  }
+  function pubMsg(t,cls){ var e=el("pubMsg"); e.textContent=t; e.style.color=(cls==="ok")?"var(--ok)":((cls==="err")?"var(--leave)":"var(--muted)"); }
+  el("publishBtn").onclick=function(){
+    if(!model.length) return;
+    if(!confirmed){ pubMsg("請先「✔ 確認並鎖定」再發布","err"); return; }
+    var url=(el("pubUrl").value||"").trim(), token=(el("pubToken").value||"").trim();
+    if(!url){ pubMsg("請先貼上 Web App /exec 網址","err"); return; }
+    try{ localStorage.setItem("hd_pub_url",url); localStorage.setItem("hd_pub_token",token); }catch(e){}
+    pubMsg("發布中…","");
+    fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(buildPublishPayload(token))})
+      .then(function(r){return r.json();})
+      .then(function(o){ if(o&&o.ok) pubMsg("✓ 已發布 "+o.written+" 天到「自動排班草稿」("+o.month+")","ok");
+                         else pubMsg("發布失敗："+((o&&o.error)||"未知")+"（檢查通關碼/分頁）","err"); })
+      .catch(function(e){ pubMsg("已送出但讀不到回應(可能 CORS)。請到試算表確認；若未更新改用下方 CSV。","err"); });
+  };
+
   // ===== export =====
   function buildJSON(){ return { month:view.y+"-"+pad(view.m+1), dutyStart:el("dutyStart").value, confirmed:confirmed, confirmedAt:confirmedAt,
     columns:COLS.map(function(c){return c.name;}),
@@ -537,6 +575,7 @@
   el("demoChk").onchange=function(){ if(model.length){ loadInputs(); model.forEach(function(r){r.cells.leave=leaveListForDay(r.day);}); render(); recheck(); updateStatus(); } };
 
   // ===== boot: load master, then draft-or-generate =====
+  try{ el("pubUrl").value=localStorage.getItem("hd_pub_url")||""; el("pubToken").value=localStorage.getItem("hd_pub_token")||""; }catch(e){}
   loadMaster(function(){
     loadInputs();
     if(loadDraft()){ render(); recheck(); updateStatus();
