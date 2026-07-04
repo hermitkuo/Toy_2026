@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>血透室 醫師偏好填寫（院內時段）</title>
+<style>
+  :root{
+    --bg:#f5f7f9; --card:#ffffff; --ink:#1f2933; --muted:#5b6772;
+    --line:#e3e8ee; --line2:#eef2f6; --line3:#f1f4f7;
+    --accent:#0f766e; --accent-600:#0e6b63; --accent-soft:#d7f0ec; --accent-tint:#ecf7f5;
+    --head:#f1f4f7; --head-ink:#3a4a58;
+    --ok:#16a34a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:16px; line-height:1.3;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:680px; margin:0 auto; padding:14px 12px 80px;}
+  button{font-family:inherit; cursor:pointer;}
+
+  header.top{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin-bottom:6px;}
+  header.top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.3px;}
+  .lead{color:var(--muted); font-size:13px; margin:0 0 14px; line-height:1.55;}
+  .lead b{color:var(--accent-600);}
+  .mock-flag{display:inline-block; background:#fff4d6; color:#8a6100; border:1px solid #f0dfa8;
+    border-radius:999px; padding:2px 10px; font-size:12px; font-weight:600; margin-left:2px;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:14px 14px 16px; margin-bottom:14px;}
+  .card > h2{font-size:14px; margin:0 0 10px; color:var(--head-ink); font-weight:700;
+    display:flex; align-items:center; gap:7px;}
+  .card > h2 .step{display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; border-radius:50%; background:var(--accent); color:#fff;
+    font-size:12px; font-weight:700; flex:0 0 auto;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+  .chip{border:1px solid var(--line); background:var(--card); border-radius:999px;
+    padding:6px 14px; font-size:14.5px; color:var(--ink); line-height:1.15;}
+  .chip:hover{border-color:var(--accent); color:var(--accent);}
+  .chip.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+
+  /* preference grid: weekday × session */
+  .gridwrap{overflow-x:auto;}
+  table{border-collapse:separate; border-spacing:0; width:100%; min-width:340px; font-size:15.5px;}
+  th,td{padding:0; text-align:center; border-bottom:1px solid var(--line2);}
+  thead th{background:var(--head); color:var(--head-ink); font-weight:700; font-size:13px;
+    padding:8px 4px; border-bottom:1px solid var(--line);}
+  th.c-wd,td.c-wd{text-align:left; padding-left:12px; width:98px; min-width:98px; font-weight:700;}
+  td.c-wd small{display:block; color:var(--muted); font-size:11px; font-weight:400; margin-top:1px;}
+  tbody tr.w246 td.c-wd{color:#2563eb;}
+
+  td.slot{cursor:pointer; user-select:none; -webkit-user-select:none; height:46px;
+    border-left:1px solid var(--line2); transition:background .08s; position:relative;}
+  td.slot .mark{display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border-radius:50%; font-size:13px; color:#c4ccd4; font-weight:700;
+    border:1px dashed transparent;}
+  td.slot:hover .mark{border-color:var(--accent-soft); color:var(--accent);}
+  td.slot[data-on="1"]{background:var(--accent-tint);}
+  td.slot[data-on="1"] .mark{background:var(--accent); color:#fff; border-style:solid; border-color:var(--accent);}
+
+  .actionbar{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:16px;}
+  .summary{color:var(--muted); font-size:13px; flex:1 1 auto; min-width:180px;}
+  .summary b{color:var(--ink);}
+  .summary .seq{color:var(--accent-600); font-weight:700;}
+  .btn{border:1px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:9px; padding:10px 16px; font-size:14px; line-height:1;}
+  .btn:hover{border-color:var(--accent); color:var(--accent);}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+  .btn.primary:hover{background:var(--accent-600); color:#fff;}
+  .btn.ghost{color:var(--muted);}
+  .btn:disabled{opacity:.5; cursor:not-allowed;}
+
+  .noterow{margin-top:12px;}
+  .noterow label{display:block; font-size:13px; color:var(--muted); margin-bottom:5px;}
+  textarea{width:100%; min-height:56px; resize:vertical; font-family:inherit; font-size:14.5px;
+    border:1px solid var(--line); border-radius:9px; padding:9px 10px; color:var(--ink); background:var(--card);}
+  textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+
+  .preview{margin-top:14px; display:none;}
+  .preview.show{display:block;}
+  .preview .done{display:flex; align-items:center; gap:8px; color:var(--accent-600);
+    font-weight:700; font-size:15px; margin-bottom:8px;}
+  .preview .done .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 0 3px rgba(22,163,74,.15);}
+  pre{background:#0f172a; color:#e2e8f0; border-radius:10px; padding:12px 14px; margin:0;
+    overflow:auto; font-size:12.5px; line-height:1.5; max-height:320px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}
+  .hint{color:var(--muted); font-size:12px; margin-top:8px; line-height:1.5;}
+
+  footer{color:var(--muted); font-size:12px; text-align:center; margin-top:20px;}
+  footer a{color:var(--muted);}
+
+  @media (max-width:560px){
+    body{font-size:15px;}
+    header.top h1{font-size:16px;}
+    th.c-wd,td.c-wd{width:82px; min-width:82px; padding-left:9px;}
+    td.slot{height:48px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>血液透析室 · 醫師偏好填寫</h1>
+    <span class="mock-flag">Mock · 尚未連動送出</span>
+  </header>
+  <p class="lead">
+    選你的名字，點選<b>希望優先被排的院內時段</b>（星期幾 × 早／中／晚）。
+    點選順序＝<b>優先序</b>（1 最優先）。此為每週固定偏好，排班時在不影響硬規則下盡量滿足。
+  </p>
+
+  <div class="card">
+    <h2><span class="step">1</span>選擇醫師</h2>
+    <div class="chips" id="docChips"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="step">2</span>點選偏好時段（依序 = 優先序）</h2>
+    <div class="gridwrap">
+      <table id="grid"><tbody><tr><td style="padding:36px;color:var(--muted)">請先選擇醫師</td></tr></tbody></table>
+    </div>
+
+    <div class="noterow">
+      <label for="note">備註（選填）</label>
+      <textarea id="note" placeholder="例如：週一早最希望，其餘可彈性…"></textarea>
+    </div>
+
+    <div class="actionbar">
+      <div class="summary" id="summary">尚未選擇。</div>
+      <button class="btn ghost" id="clearBtn">清除</button>
+      <button class="btn primary" id="submitBtn" disabled>送出（預覽）</button>
+    </div>
+
+    <div class="preview" id="preview">
+      <div class="done"><span class="dot"></span><span id="doneMsg">已收到！以下是將送出的資料</span></div>
+      <pre id="jsonOut"></pre>
+      <div class="actionbar" style="margin-top:10px">
+        <span class="hint" style="flex:1 1 auto">
+          這是 <b>mock</b>：資料已存到本機瀏覽器（localStorage），<b>尚未真的送出</b>。
+        </span>
+        <button class="btn" id="copyBtn">複製 JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    花蓮慈院 · 血液透析室排班　·　<a href="index.html">← 回班表查詢</a>　·　<a href="leave.html">請假/有事填寫 →</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // 醫師簡稱：沿用班表頁固定顯示順序
+  var ROSTER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
+  // 院內 HD 只在週一～週六（無週日）；日型對應 §0.2 患者分組
+  var DAYS = [
+    {wd:1, label:"週一", grp:"W135"}, {wd:2, label:"週二", grp:"W246"},
+    {wd:3, label:"週三", grp:"W135"}, {wd:4, label:"週四", grp:"W246"},
+    {wd:5, label:"週五", grp:"W135"}, {wd:6, label:"週六", grp:"W246"}
+  ];
+  var SESS = [{k:"am",label:"早"},{k:"pm",label:"中"},{k:"eve",label:"晚"}];
+
+  var el = function(id){ return document.getElementById(id); };
+
+  var doctor = null;
+  var order = [];   // ordered array of "wd|sess" keys — index+1 = 優先序
+
+  function storeKey(){ return "hd_pref_"+doctor; }
+  function keyOf(wd, sess){ return wd+"|"+sess; }
+  function rankOf(key){ var i = order.indexOf(key); return i===-1 ? 0 : i+1; }
+
+  // ---- doctor chips ----
+  (function renderDocs(){
+    var box = el("docChips"), h="";
+    for (var i=0;i<ROSTER.length;i++) h += '<button class="chip" data-d="'+ROSTER[i]+'">'+ROSTER[i]+'</button>';
+    box.innerHTML = h;
+    box.addEventListener("click", function(e){
+      var t = e.target.closest ? e.target.closest(".chip") : null;
+      if (!t) return;
+      doctor = t.dataset.d;
+      var chips = box.querySelectorAll(".chip");
+      for (var i=0;i<chips.length;i++) chips[i].classList.toggle("on", chips[i].dataset.d===doctor);
+      loadPref(); render();
+    });
+  })();
+
+  // ---- persistence (mock “backend” = localStorage) ----
+  function loadPref(){
+    order = [];
+    if (!doctor){ el("note").value=""; return; }
+    try{
+      var raw = localStorage.getItem(storeKey());
+      if (raw){ var o = JSON.parse(raw); order = o.order || []; el("note").value = o.note || ""; }
+      else el("note").value = "";
+    }catch(e){ order = []; }
+  }
+  function savePref(){
+    if (!doctor) return;
+    try{ localStorage.setItem(storeKey(), JSON.stringify({order:order, note:el("note").value})); }catch(e){}
+  }
+
+  // ---- render grid ----
+  function render(){
+    if (!doctor){
+      el("grid").innerHTML = '<tbody><tr><td style="padding:36px;color:var(--muted)">請先選擇醫師</td></tr></tbody>';
+      updateSummary(); return;
+    }
+    var h = '<thead><tr><th class="c-wd">星期</th>';
+    for (var s=0;s<SESS.length;s++) h += '<th>'+SESS[s].label+'</th>';
+    h += '</tr></thead><tbody>';
+    for (var d=0; d<DAYS.length; d++){
+      var day = DAYS[d];
+      h += '<tr class="'+(day.grp==="W246"?"w246":"w135")+'">';
+      h += '<td class="c-wd">'+day.label+'<small>'+day.grp+'</small></td>';
+      for (var si=0; si<SESS.length; si++){
+        var key = keyOf(day.wd, SESS[si].k), r = rankOf(key);
+        h += '<td class="slot" data-wd="'+day.wd+'" data-s="'+SESS[si].k+'" data-on="'+(r?1:0)+'">'
+           + '<span class="mark">'+(r ? r : "＋")+'</span></td>';
+      }
+      h += '</tr>';
+    }
+    el("grid").innerHTML = h + '</tbody>';
+    updateSummary();
+  }
+
+  // ---- interaction: toggle + maintain priority order ----
+  el("grid").addEventListener("click", function(e){
+    if (!doctor) return;
+    var cell = e.target.closest ? e.target.closest(".slot") : null;
+    if (!cell) return;
+    var key = keyOf(+cell.dataset.wd, cell.dataset.s);
+    var i = order.indexOf(key);
+    if (i===-1) order.push(key); else order.splice(i,1);
+    savePref();
+    repaintRanks();   // re-number all cells (removing one shifts the rest)
+    updateSummary();
+  });
+
+  function repaintRanks(){
+    var cells = el("grid").querySelectorAll(".slot");
+    for (var i=0;i<cells.length;i++){
+      var key = keyOf(+cells[i].dataset.wd, cells[i].dataset.s), r = rankOf(key);
+      cells[i].dataset.on = r ? 1 : 0;
+      cells[i].querySelector(".mark").textContent = r ? r : "＋";
+    }
+  }
+
+  // ---- summary + submit gating ----
+  var WDLABEL = {1:"週一",2:"週二",3:"週三",4:"週四",5:"週五",6:"週六"};
+  var SLABEL = {am:"早",pm:"中",eve:"晚"};
+  function prettyList(){
+    return order.map(function(k){ var p=k.split("|"); return WDLABEL[p[0]]+SLABEL[p[1]]; });
+  }
+  function updateSummary(){
+    var sub = el("submitBtn");
+    if (!doctor){ el("summary").textContent = "請先選擇醫師。"; sub.disabled = true; return; }
+    if (!order.length){ el("summary").innerHTML = "<b>"+doctor+"</b>　尚未選擇偏好。"; sub.disabled = true; return; }
+    el("summary").innerHTML = "<b>"+doctor+"</b>　優先序：<span class='seq'>"+prettyList().join(" › ")+"</span>";
+    sub.disabled = false;
+  }
+
+  // ---- build payload ----
+  function buildPayload(){
+    var pref = order.map(function(k, idx){
+      var p = k.split("|");
+      return { weekday:+p[0], session:p[1], rank:idx+1 };  // weekday 1=一…6=六
+    });
+    return {
+      doctor: doctor,
+      type: "inpatient-session-preference",
+      preferred: pref,        // 依 rank 由高到低（1 最優先）
+      note: el("note").value.trim(),
+      submittedAt: null       // 之後由後端填時間戳；mock 不產生 Date 以保持可重現
+    };
+  }
+
+  el("submitBtn").onclick = function(){
+    if (!doctor || !order.length) return;
+    savePref();
+    var payload = buildPayload();
+    el("jsonOut").textContent = JSON.stringify(payload, null, 2);
+    el("doneMsg").textContent = "已收到 " + doctor + " 醫師的偏好（mock）";
+    el("preview").classList.add("show");
+    el("preview").scrollIntoView({behavior:"smooth", block:"nearest"});
+    window.__lastPayload = payload;
+  };
+
+  el("clearBtn").onclick = function(){
+    if (!doctor) return;
+    if (!order.length){ el("note").value=""; savePref(); return; }
+    if (!confirm("清除 "+doctor+" 醫師的所有偏好？")) return;
+    order = []; el("note").value = "";
+    savePref(); render(); el("preview").classList.remove("show");
+  };
+
+  el("copyBtn").onclick = function(){
+    var txt = el("jsonOut").textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(txt).then(function(){ flash("已複製 ✓"); }, function(){ fallbackCopy(txt); });
+    else fallbackCopy(txt);
+  };
+  function fallbackCopy(txt){
+    var ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand("copy"); flash("已複製 ✓"); }catch(e){ flash("複製失敗，請手動選取"); }
+    document.body.removeChild(ta);
+  }
+  function flash(msg){ var b=el("copyBtn"), o=b.textContent; b.textContent=msg;
+    setTimeout(function(){ b.textContent=o; }, 1400); }
+
+  el("note").addEventListener("input", savePref);
+  render();
+})();
+</script>
+</body>
+</html>
