@@ -480,7 +480,16 @@ window.__sched = {
 (function(){
   "use strict";
   var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var GID = "1837573287";
+  var BANBIAO_GID = "1837573287";      // 現行「班表」分頁
+
+  // ── 改讀 schedule.html 發布的「自動排班草稿」分頁 ──
+  // 填該分頁 gid → 醫師閱覽頁即改讀草稿；留空＝維持讀原班表分頁（預設，不改變現況）。
+  // 草稿分頁若在另一份試算表，另填 DRAFT_SHEET_ID。草稿為空時會自動退回原班表，避免頁面空白。
+  var DRAFT_GID = "";
+  var DRAFT_SHEET_ID = "";
+  var usingDraft = !!DRAFT_GID;
+  var GID = usingDraft ? DRAFT_GID : BANBIAO_GID;
+  var triedBanbiaoFallback = false;
 
   // Displayed shift columns, by source column index (0-based) in the gviz row.
   // 0 date, 1 星期 handled separately. 13 is empty separator (skipped).
@@ -498,7 +507,7 @@ window.__sched = {
     {i:9,  name:"關山",   group:"外派特約"},
     {i:10, name:"聯安",   group:"外派特約"},
     {i:11, name:"聯安掛名",group:"外派特約"},
-    {merge:[14,15,16,17], name:"休假", group:"假勤", left:true}
+    {leave:true, name:"休假", group:"假勤", left:true}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
   ];
 
   // fixed display order for the doctor highlight chips
@@ -520,7 +529,7 @@ window.__sched = {
   // map SHIFT_COLS names -> cell index, for the 我的時段 module (via window.__sched)
   function schedColIndex(){ var m={}; for (var i=0;i<SHIFT_COLS.length;i++) m[SHIFT_COLS[i].name]=i; return m; }
 
-  el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit?gid="+GID;
+  el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+((usingDraft&&DRAFT_SHEET_ID)?DRAFT_SHEET_ID:SHEET_ID)+"/edit?gid="+GID;
 
   // ---- data load via gviz JSONP (no CORS) ----
   var CB = "__sched_cb__";
@@ -531,7 +540,8 @@ window.__sched = {
     showStatus('<span class="spin"></span>正在載入班表…', false);
     if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
     clearTimeout(loadTimer);
-    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
+    var sid = (usingDraft && DRAFT_SHEET_ID) ? DRAFT_SHEET_ID : SHEET_ID;
+    var url = "https://docs.google.com/spreadsheets/d/"+sid+"/gviz/tq"
             + "?gid="+GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
     curScript = document.createElement("script");
     curScript.src = url;
@@ -549,6 +559,11 @@ window.__sched = {
         onError(msg); return;
       }
       parse(resp.table);
+      if (usingDraft && !triedBanbiaoFallback && allRows.length === 0){
+        // 草稿分頁尚無資料 → 自動退回原班表分頁，避免醫師看到空白
+        triedBanbiaoFallback = true; usingDraft = false; GID = BANBIAO_GID;
+        load(); return;
+      }
       buildRoster();
       buildLeaveMap();
       restoreSel();
@@ -573,13 +588,14 @@ window.__sched = {
       var cells = [];
       for (var s=0; s<SHIFT_COLS.length; s++){
         var col = SHIFT_COLS[s];
-        if (col.merge){
-          var parts = [];
-          for (var k=0; k<col.merge.length; k++){
-            var v = valOf(c[col.merge[k]]);
-            if (v) parts.push(v);
+        if (col.leave){
+          if (usingDraft){
+            cells.push(valOf(c[12]) || "");                 // 草稿分頁：單一「休假」欄
+          } else {
+            var parts = [];                                  // 班表分頁：合併 假1-4（索引 14..17）
+            for (var k=0; k<4; k++){ var v = valOf(c[14+k]); if (v) parts.push(v); }
+            cells.push(parts.join("、"));
           }
-          cells.push(parts.join("、"));
         } else {
           cells.push(valOf(c[col.i]) || "");
         }
@@ -606,6 +622,8 @@ window.__sched = {
     if (typeof v === "string"){
       var m = v.match(/^Date\((\d+),(\d+),(\d+)/);
       if (m) return new Date(+m[1], +m[2], +m[3]);
+      var m2 = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);   // 草稿分頁：文字日期 YYYY-MM-DD
+      if (m2) return new Date(+m2[1], +m2[2]-1, +m2[3]);
     }
     return null;
   }

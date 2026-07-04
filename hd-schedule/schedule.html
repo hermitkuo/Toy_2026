@@ -524,7 +524,7 @@
   function buildPublishPayload(token){
     return { token:token, month:view.y+"-"+pad(view.m+1),
       days:model.map(function(row){ var c=row.cells; return {
-        date:view.y+"-"+pad(view.m+1)+"-"+pad(row.day), weekday:WK[row.dow],
+        date:view.y+"-"+pad(view.m+1)+"-"+pad(row.day), weekday:"週"+WK[row.dow],
         duty:c.duty, am:c.am, pm:c.pm, eve:c.eve, hd:c.hd, teyue:c.teyue,
         yuli:c.yuli, guanshan:c.guanshan, lianan:c.lianan, liananhm:c.liananhm, leave:c.leave,
         warn:warnsForDay(row.day) }; }) };

@@ -30,8 +30,10 @@
       → 一鍵發布：`publish_webapp.gs`（Apps Script doPost，token 驗證）寫入「自動排班草稿」分頁；
         schedule.html 發布區填 /exec 網址+通關碼即可 POST（text/plain 避開 CORS preflight）。已驗證前端 payload。
         待排班者部署 Web App 並填網址後可實測。
-      待辦：S6 偏好納入優化、掛名輪替(目前偏集中)、遞補自動套用(目前僅建議)、
-            「自動排班草稿」升為正式班表分頁（或閱覽頁改讀草稿分頁）。
+      → 閱覽頁讀草稿(B 已做)：index.html 加 DRAFT_GID/DRAFT_SHEET_ID 設定 → 填「自動排班草稿」分頁 gid
+        即改讀草稿（草稿為空自動退回原班表、不弄壞頁面）；parseDate 支援文字日期、休假單欄。
+        預設留空＝現況不變。已驗證原班表與我的時段皆正常、草稿格式解析正確。
+      待辦：排班者填 DRAFT_GID 啟用；S6 偏好納入優化、掛名輪替、遞補自動套用。
 
 ## 背景
 
