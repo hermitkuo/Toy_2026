@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent Orchestration、Harness Engineer 與 Loop Engineer｜2026-07-01</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --accent-2: #a78bfa;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --ok: #34d399;
+      --line: rgba(255,255,255,.12);
+      --card: rgba(255,255,255,.055);
+      --shadow: 0 24px 60px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,.16), transparent 32rem),
+        radial-gradient(circle at 80% 20%, rgba(167,139,250,.18), transparent 30rem),
+        linear-gradient(180deg, #0f172a 0%, #111827 42%, #0b1120 100%);
+      color: var(--text);
+      line-height: 1.75;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    header {
+      padding: 76px 0 42px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size: 14px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 16px rgba(52,211,153,.8); }
+    h1 {
+      font-size: clamp(36px, 5vw, 72px);
+      line-height: 1.05;
+      margin: 26px 0 18px;
+      letter-spacing: -0.045em;
+    }
+    .subtitle {
+      max-width: 920px;
+      font-size: clamp(18px, 2.1vw, 25px);
+      color: #cbd5e1;
+      margin: 0;
+    }
+    .meta {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.045);
+      color: #d1d5db;
+      font-size: 14px;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(16px);
+      background: rgba(15,23,42,.78);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+    nav a {
+      color: #d1d5db;
+      white-space: nowrap;
+      font-size: 14px;
+      padding: 7px 10px;
+      border-radius: 8px;
+    }
+    nav a:hover { background: rgba(255,255,255,.07); color: white; }
+    section { padding: 52px 0; border-bottom: 1px solid var(--line); }
+    h2 {
+      font-size: clamp(28px, 3.2vw, 44px);
+      line-height: 1.15;
+      margin: 0 0 22px;
+      letter-spacing: -0.03em;
+    }
+    h3 { font-size: 23px; margin: 28px 0 12px; }
+    p { color: #d1d5db; margin: 0 0 16px; }
+    .lead { font-size: 20px; color: #e2e8f0; max-width: 920px; }
+    .grid { display: grid; gap: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+    .card h3, .card h4 { margin-top: 0; }
+    .card h4 { font-size: 18px; margin-bottom: 8px; }
+    .tagline {
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 16px 0;
+    }
+    .accent { color: var(--accent); }
+    .accent2 { color: var(--accent-2); }
+    .warn { color: var(--warn); }
+    .danger { color: var(--danger); }
+    .ok { color: var(--ok); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      margin: 18px 0;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      color: white;
+      background: rgba(255,255,255,.07);
+      font-weight: 700;
+    }
+    td { color: #d1d5db; }
+    tr:last-child td { border-bottom: 0; }
+    .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+      color: #dbeafe;
+      background: rgba(2,6,23,.72);
+      border: 1px solid rgba(148,163,184,.22);
+      border-radius: 18px;
+      padding: 18px;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(100px, 1fr));
+      gap: 10px;
+      margin: 22px 0;
+    }
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: center;
+      background: rgba(255,255,255,.055);
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #e0f2fe;
+    }
+    .quote {
+      border-left: 4px solid var(--accent);
+      padding: 18px 22px;
+      background: rgba(56,189,248,.07);
+      border-radius: 14px;
+      color: #e0f2fe;
+      font-size: 21px;
+      margin: 22px 0;
+    }
+    .callout {
+      border: 1px solid rgba(251,191,36,.35);
+      background: rgba(251,191,36,.07);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 18px;
+    }
+    .footer {
+      padding: 42px 0 72px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ul { padding-left: 1.2em; color: #d1d5db; }
+    li { margin: 8px 0; }
+    @media (max-width: 900px) {
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      header { padding-top: 52px; }
+      .wrap { width: min(100% - 28px, 1180px); }
+    }
+    @media print {
+      body { background: white; color: #111827; }
+      nav { display: none; }
+      .card, table, .code, .quote, .callout { box-shadow: none; break-inside: avoid; }
+      p, td, li { color: #111827; }
+      header, section { border-color: #d1d5db; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow"><span class="dot"></span> 製作日期：2026-07-01</div>
+      <h1>AI Agent Orchestration、Harness Engineer 與 Loop Engineer</h1>
+      <p class="subtitle">從多代理協調方法，推進到可控、可測、可審計的醫療 AI agent production 架構。</p>
+      <div class="meta">
+        <span class="pill">主題：Agent Orchestration</span>
+        <span class="pill">角色：Harness Engineer / Loop Engineer</span>
+        <span class="pill">場景：Clinical AI / 醫療資訊系統</span>
+        <span class="pill">檔名：ai_agent_orchestration_harness_loop_2026-07-01.html</span>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="wrap">
+      <a href="#summary">總結判斷</a>
+      <a href="#methods">Orchestration 方法</a>
+      <a href="#roles">兩種新職能</a>
+      <a href="#mapping">方法對應</a>
+      <a href="#clinical">醫療落地</a>
+      <a href="#roadmap">團隊路線圖</a>
+      <a href="#notodo">Not-to-do</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="summary">
+      <div class="wrap">
+        <h2>總結判斷</h2>
+        <p class="lead">AI agent orchestration 的成熟方向，不是讓多個 agent 自由群聊，而是把 LLM 放進可控的 workflow runtime。Harness Engineer 與 Loop Engineer 是把這些 orchestration pattern 產品化的兩個職能切面。</p>
+        <div class="quote">Orchestration = 流程拓撲；Harness = 安全執行外殼；Loop = 閉環推進機制；Evaluation = 品質與風險量測；Platform = 規模化營運。</div>
+        <div class="grid three">
+          <div class="card">
+            <h3 class="accent">最穩基礎</h3>
+            <p>Deterministic workflow / DAG。能用 rule、SQL、function 解決的，不要交給 LLM 自由推理。</p>
+          </div>
+          <div class="card">
+            <h3 class="accent2">最有生產價值</h3>
+            <p>Graph-based orchestration + durable execution + validator。讓 agent 有狀態、中斷點、回放、審計軌跡。</p>
+          </div>
+          <div class="card">
+            <h3 class="ok">最適合醫療</h3>
+            <p>Agentic subroutine 放在受控節點內；臨床決策與醫囑寫回必須 human-gated。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="methods">
+      <div class="wrap">
+        <h2>常用 AI Agent Orchestration 方法</h2>
+        <table>
+          <thead>
+            <tr><th>方法</th><th>核心用途</th><th>適合場景</th><th>主要風險</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Deterministic workflow / DAG</td><td>固定順序、可控執行</td><td>eCQM、報表、資料清洗、批次監測</td><td>不適合開放式探索</td></tr>
+            <tr><td>Graph-based orchestration</td><td>用 node/edge 管理 state、routing、loop</td><td>臨床風險清單、醫囑建議草稿、文獻 radar</td><td>graph 過度複雜會難維護</td></tr>
+            <tr><td>Supervisor–specialist hierarchy</td><td>主管 agent 分派 specialist agent</td><td>研究設計、投稿策略、多面向審查</td><td>supervisor routing 錯誤、責任模糊</td></tr>
+            <tr><td>Handoff orchestration</td><td>任務轉交與上下文傳遞</td><td>客服、行政、研究助理流程</td><td>無限轉交、context 漏失</td></tr>
+            <tr><td>Role-based crew</td><td>角色分工與協作產出</td><td>快速原型、競品分析、教材草稿</td><td>像團隊，其實未必可驗證</td></tr>
+            <tr><td>Tool-centric / MCP</td><td>呼叫 API、查資料庫、讀寫系統</td><td>HIS 中介層、RAG、文件工具、資料查詢</td><td>工具權限與寫入風險</td></tr>
+            <tr><td>Durable execution</td><td>長任務可恢復、可重試、不中斷</td><td>每週任務、drift 監測、批次資料管線</td><td>初期工程成本較高</td></tr>
+            <tr><td>Planner–executor–validator loop</td><td>計畫、執行、檢查、修正</td><td>醫療建議草稿、資料完整性檢查</td><td>validator 若只靠 LLM，安全性不足</td></tr>
+            <tr><td>Memory / state orchestration</td><td>管理 session、任務進度、RAG、audit</td><td>長流程、多輪審查、個人化工作流</td><td>context rot、錯誤記憶污染</td></tr>
+            <tr><td>Parallel fan-out / fan-in</td><td>並行分析後聚合</td><td>文獻多面向評讀、病人風險多模組分析</td><td>成本高，不一致訊號可能被整合掉</td></tr>
+            <tr><td>Observability / replay</td><td>trace、評估、回放、除錯</td><td>所有 production agent</td><td>若未設計指標，只會累積 log 垃圾</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="roles">
+      <div class="wrap">
+        <h2>Harness Engineer 與 Loop Engineer</h2>
+        <p class="lead">這兩個詞不應被理解成固定職稱，而是 agent 系統產品化時的兩組能力。小團隊可由同一人負責；醫療級 production 最好拆分治理責任。</p>
+        <div class="grid two">
+          <div class="card">
+            <h3 class="accent">Harness Engineer</h3>
+            <p class="tagline">負責 agent 活在什麼環境裡。</p>
+            <ul>
+              <li>Tool registry / MCP integration</li>
+              <li>Context pipeline / RAG grounding</li>
+              <li>Guardrails / policy enforcement</li>
+              <li>Schema validation / PHI boundary</li>
+              <li>Trace / audit / replay</li>
+              <li>Eval harness / human approval workflow</li>
+            </ul>
+            <p>本質是把模型能力變成可觀察、可權限控管、可驗證、可追責的系統行為。</p>
+          </div>
+          <div class="card">
+            <h3 class="accent2">Loop Engineer</h3>
+            <p class="tagline">負責 agent 如何反覆推進、修正與停止。</p>
+            <ul>
+              <li>Trigger / event design</li>
+              <li>Task decomposition</li>
+              <li>Success criteria</li>
+              <li>Validator / verifier</li>
+              <li>Retry / repair / fallback strategy</li>
+              <li>Stop condition / escalation policy</li>
+            </ul>
+            <p>本質是設計閉環控制系統：不是讓 agent 一直跑，而是知道何時繼續、換策略、升級或停止。</p>
+          </div>
+        </div>
+        <div class="code">Prompt Engineer
+→ Context Engineer
+→ Harness Engineer
+→ Loop Engineer
+→ Agent Platform / Reliability Engineer</div>
+      </div>
+    </section>
+
+    <section id="mapping">
+      <div class="wrap">
+        <h2>Orchestration、Harness、Loop 的對應關係</h2>
+        <table>
+          <thead>
+            <tr><th>Orchestration 技術</th><th>Harness Engineer 要處理</th><th>Loop Engineer 要處理</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Deterministic workflow / DAG</td><td>哪些節點可用 LLM，哪些必須 rule-based</td><td>每個節點失敗後 retry、fallback 或 stop</td></tr>
+            <tr><td>Graph-based orchestration</td><td>node I/O schema、state、trace、tool 權限</td><td>cycle、repair edge、fallback edge、終止條件</td></tr>
+            <tr><td>Supervisor–specialist</td><td>specialist 權限、工具邊界、handoff payload</td><td>何時重派、何時停止、何時交給人</td></tr>
+            <tr><td>Tool-centric / MCP</td><td>工具 schema、auth、dry-run、audit</td><td>工具失敗後重試、換工具、或停止</td></tr>
+            <tr><td>Durable execution</td><td>狀態保存、idempotency、權限恢復</td><td>長任務 resume、timeout、週期性執行</td></tr>
+            <tr><td>Planner–executor–validator</td><td>validator 與 policy gate 設計</td><td>repair loop、重新計畫、升級策略</td></tr>
+            <tr><td>Memory / state</td><td>記憶分層、retention policy、audit memory</td><td>每輪如何更新 state、避免 context rot</td></tr>
+            <tr><td>Observability / replay</td><td>trace、eval dataset、審計記錄</td><td>偵測 loop thrashing、runaway cost、false convergence</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="clinical">
+      <div class="wrap">
+        <h2>醫療 AI 範例：透析 Anemia Management Agent</h2>
+        <p class="lead">這個例子說明為什麼醫療場景不能只做「聰明 agent」，而要做 harness + loop + human gate。</p>
+        <div class="grid two">
+          <div class="card">
+            <h3 class="accent">Harness 設計</h3>
+            <ul>
+              <li>資料來源：Hb trend、Ferritin、TSAT、ESA dose、IV iron、住院/感染/出血 flag、local protocol。</li>
+              <li>工具：read-only EHR query、lab trend summarizer、protocol retriever、dose simulator、note draft generator。</li>
+              <li>安全邊界：不可直接改醫囑；Hb &lt; 7、Hb &gt; 12、active bleeding、recent admission 強制醫師審核。</li>
+              <li>所有建議必須附資料 timestamp、protocol source、可追蹤理由。</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 class="accent2">Loop 設計</h3>
+            <ul>
+              <li>Trigger：每週一早上，或新 Hb result 回來後觸發。</li>
+              <li>Action：抓資料 → eligibility → 產生建議 → 驗證 → 送 review queue。</li>
+              <li>Verification：資料完整性、lab 是否過期、protocol 是否違反、contraindication。</li>
+              <li>Stop：建議完成、資料不足、高風險人工判斷、retry 超過上限。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flow">
+          <div class="step">Trigger</div>
+          <div class="step">Context</div>
+          <div class="step">Action</div>
+          <div class="step">Verification</div>
+          <div class="step">State Update</div>
+          <div class="step">Repair / Escalate</div>
+          <div class="step">Stop</div>
+        </div>
+        <div class="quote">workflow 決定能不能做；harness 決定怎麼安全地做；loop 決定怎麼反覆推進與停止；human gate 決定能不能落地。</div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="wrap">
+        <h2>建議團隊 Roadmap</h2>
+        <div class="grid three">
+          <div class="card">
+            <h3>Layer 1 — Harness</h3>
+            <p>建立 agent 的安全執行外殼：tools、permissions、RAG、memory、guardrails、trace、eval、audit。</p>
+          </div>
+          <div class="card">
+            <h3>Layer 2 — Loop</h3>
+            <p>建立可控閉環：trigger、goal、validator、repair、retry、stop、human escalation。</p>
+          </div>
+          <div class="card">
+            <h3>Layer 3 — Clinical Workflow</h3>
+            <p>接到真實醫療流程：review queue、採納/拒絕原因、protocol update、quality dashboard。</p>
+          </div>
+        </div>
+        <h3>最小可行版本</h3>
+        <div class="code">每日或每週觸發
+→ 抓取病人清單
+→ 找出 protocol deviation / high-risk cases
+→ 產生可解釋摘要
+→ validator 檢查資料完整性與規則
+→ 放入醫師 review queue
+→ 記錄採納、修改、拒絕原因
+→ 用結果更新 eval dataset</div>
+        <div class="callout">
+          <strong class="warn">職稱建議：</strong> 不必急著對外招聘「Harness Engineer」或「Loop Engineer」。比較容易被醫療主管、資安與法遵理解的名稱是 <strong>Agent Orchestration / Reliability Engineer</strong> 或 <strong>Clinical Agent Platform Engineer</strong>。
+        </div>
+      </div>
+    </section>
+
+    <section id="notodo">
+      <div class="wrap">
+        <h2>Not-to-do：不值得投入的方向</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3 class="danger">不要做純 swarm / 群聊式 multi-agent</h3>
+            <p>看起來有智慧，實際上難除錯、難審計、成本高，臨床環境尤其不適合。</p>
+          </div>
+          <div class="card">
+            <h3 class="danger">不要把所有流程 agent 化</h3>
+            <p>能用 SQL、rule engine、function、workflow 解決的，就不要交給 LLM。這是工程紀律，不是保守。</p>
+          </div>
+          <div class="card">
+            <h3 class="danger">不要無治理接一堆 MCP server</h3>
+            <p>工具越多，攻擊面越大。醫療場景應採白名單、最小權限、dry-run、審計與輸出驗證。</p>
+          </div>
+          <div class="card">
+            <h3 class="danger">不要追求 fully autonomous clinical loop</h3>
+            <p>醫療產品競爭力不是不需要醫師，而是讓醫師在正確時間看到可驗證建議，並留下審計軌跡。</p>
+          </div>
+        </div>
+        <div class="quote">成熟的 agent 系統，不是讓 AI 擁有更多自由，而是讓 AI 在更清楚的邊界內產生更高密度、可追責的工作成果。</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>製作日期：2026-07-01｜檔名：ai_agent_orchestration_harness_loop_2026-07-01.html</p>
+      <p>內容來源：本次對話關於 AI agent orchestration、Harness Engineer、Loop Engineer 與醫療 AI 落地架構的整理。</p>
+    </div>
+  </footer>
+</body>
+</html>

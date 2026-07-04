@@ -6,7 +6,7 @@
  *   2. 上方選單「擴充功能 → Apps Script」
  *   3. 把本檔內容整段貼上，存檔
  *   4. 函式選 setupSettingsSheet → 執行 → 首次會要求授權，同意即可
- *   5. 回到試算表，會多出三個分頁：醫師偏好 / 每月班別設定 / 自動排班草稿
+ *   5. 回到試算表，會多出四個分頁：醫師偏好 / 每月班別設定 / 醫師配額 / 自動排班草稿
  *
  * 特性：
  *   - 只在分頁「空白」時寫入表頭與範例，已填資料不會被覆蓋（可重複執行）。
@@ -110,6 +110,6 @@ function setupSettingsSheet() {
   if (def && def.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(def);
 
   try {
-    SpreadsheetApp.getUi().alert('完成！已建立：醫師偏好 / 每月班別設定 / 自動排班草稿');
+    SpreadsheetApp.getUi().alert('完成！已建立：醫師偏好 / 每月班別設定 / 醫師配額 / 自動排班草稿');
   } catch (e) { /* 非 UI 環境執行時忽略 */ }
 }
