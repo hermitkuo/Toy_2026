@@ -260,6 +260,67 @@
   .av-hint{color:var(--muted); font-size:12.5px; margin:10px 2px 0; line-height:1.5;}
   .av-hint b{color:var(--accent-600);}
 
+  /* ---------- 我的時段（個人週行事曆） ---------- */
+  .mine-pick{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:0 0 10px;}
+  .mine-pick .lbl{color:var(--muted); font-size:12.5px; margin-right:2px;}
+  .mine-bar{display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 12px;}
+  .mine-weeknav{display:flex; align-items:center; gap:6px;}
+  .mine-weeklabel{font-size:16px; font-weight:700; min-width:150px; text-align:center;}
+
+  .mcal{border-collapse:separate; border-spacing:0; width:100%; table-layout:fixed; font-size:14px;}
+  .mcal th,.mcal td{border-bottom:1px solid var(--line2); border-left:1px solid var(--line2);
+    padding:5px 6px; text-align:center; vertical-align:top;}
+  .mcal thead th{position:sticky; top:0; z-index:3; background:var(--head); color:var(--head-ink);
+    font-weight:700; border-bottom:1px solid var(--line); line-height:1.25;}
+  .mcal thead th .dnum{display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-top:1px;}
+  .mcal thead th.we{color:var(--danger);}
+  .mcal thead th.sat{color:#2563eb;}
+  .mcal thead th.today{background:var(--today-tint); color:var(--accent-600);}
+  .mcal th.rowhd,.mcal td.rowhd{position:sticky; left:0; z-index:2; width:46px; min-width:46px;
+    background:var(--card); color:var(--muted); font-weight:700; box-shadow:1px 0 0 var(--line);}
+  .mcal thead th.rowhd{z-index:4; background:var(--head);}
+  .mcal td.rowhd.se-late{color:#b7bfc7;}
+  .mcal tr.allday td{background:#fafbfc;}
+  .mcal td.today{background:var(--today-tint)!important;}
+  .mcal td .ev{display:block; margin:2px 1px; padding:2px 7px; border-radius:6px;
+    font-size:12.5px; line-height:1.45; white-space:normal;}
+  .mcal td .none,.agnone{color:#c9d0d8;}
+
+  /* category colours — shared bg for event chips + legend swatches; text colour on chips only */
+  .ev.c-oncall, .sw.c-oncall {background:#e7e3f6;}  .ev.c-oncall{color:#4a3d8c;}
+  .ev.c-inhd,   .sw.c-inhd   {background:var(--accent-soft);} .ev.c-inhd{color:var(--accent-600);}
+  .ev.c-opd,    .sw.c-opd    {background:#ffe1ec;}  .ev.c-opd{color:#a8365e;}
+  .ev.c-hlhd,   .sw.c-hlhd   {background:#dcf1e6;}  .ev.c-hlhd{color:#177a51;}
+  .ev.c-special,.sw.c-special{background:#e9efd6;}  .ev.c-special{color:#5c6b1c;}
+  .ev.c-yuli,   .sw.c-yuli   {background:#dcebff;}  .ev.c-yuli{color:#1e5aa8;}
+  .ev.c-guan,   .sw.c-guan   {background:#d5edf2;}  .ev.c-guan{color:#186b7a;}
+  .ev.c-lianan, .sw.c-lianan {background:#f4e7d6;}  .ev.c-lianan{color:#8a5a1f;}
+  .ev.c-leave,  .sw.c-leave  {background:#eef1f4;}  .ev.c-leave{color:#71808d;}
+  .ev.c-busy,   .sw.c-busy   {background:#ffe3bf;}  .ev.c-busy{color:#8a4b06;}
+  .ev.c-nominal,.sw.c-nominal{background:#f2f4f6; border:1px dashed #cfd6dd;}
+  .ev.c-nominal{color:#9aa4b0; opacity:.75;}   /* 掛名：與勞務無關，淡化 */
+  .ev.c-busy{opacity:.85;}
+
+  .mine-legend{display:flex; flex-wrap:wrap; gap:6px 12px; margin:12px 2px 0; font-size:12px; color:var(--muted);}
+  .mine-legend .lg{display:inline-flex; align-items:center; gap:5px;}
+  .mine-legend .sw{display:inline-block; width:11px; height:11px; border-radius:3px; padding:0; flex:0 0 auto;}
+
+  /* mobile agenda (rendered by JS on narrow screens instead of the grid) */
+  .agenda{display:flex; flex-direction:column;}
+  .agday{border-bottom:1px solid var(--line2); padding:8px 4px;}
+  .agday:last-child{border-bottom:0;}
+  .agday.today{background:var(--today-tint); border-radius:8px;}
+  .aghd{font-weight:700; font-size:14px; margin-bottom:5px;}
+  .aghd.we{color:var(--danger);} .aghd.sat{color:#2563eb;}
+  .aghd b{font-weight:800;}
+  .agtoday{display:inline-block; background:var(--accent); color:#fff; font-size:11px; font-weight:700;
+    border-radius:999px; padding:1px 8px; margin-left:4px;}
+  .agrow{display:flex; align-items:flex-start; gap:8px; margin:3px 0;}
+  .agsl{flex:0 0 34px; color:var(--muted); font-size:12.5px; font-weight:700; padding-top:3px;}
+  .agev{flex:1 1 auto; display:flex; flex-wrap:wrap; gap:4px;}
+  .agev .ev{display:inline-block; margin:0; padding:2px 9px; font-size:13px;}
+  .agnone{font-size:12.5px; font-style:italic; padding:2px 0 2px 34px;}
+
   @media (max-width:560px){
     body{font-size:15px;}
     header.top h1{font-size:16px;}
@@ -290,6 +351,7 @@
   <div class="viewtabs" role="tablist">
     <button class="vtab on" id="tabDate" data-view="date" role="tab" aria-selected="true">📅 班表</button>
     <button class="vtab" id="tabAvail" data-view="avail" role="tab" aria-selected="false">🔎 找空檔</button>
+    <button class="vtab" id="tabMine" data-view="mine" role="tab" aria-selected="false">🗓️ 我的時段</button>
   </div>
 
   <section id="viewDate">
@@ -342,6 +404,32 @@
     </div>
   </section>
 
+  <section id="viewMine" hidden>
+    <div class="mine-pick" id="minePick" hidden>
+      <span class="lbl">選擇醫師：</span>
+    </div>
+    <div class="mine-bar">
+      <div class="mine-weeknav">
+        <button class="nav-btn sm" id="minePrev" aria-label="上一週">‹</button>
+        <span class="mine-weeklabel" id="mineWeekLabel">—</span>
+        <button class="nav-btn sm" id="mineNext" aria-label="下一週">›</button>
+      </div>
+      <button class="btn" id="mineThisWeek">本週</button>
+    </div>
+
+    <div class="tablecard">
+      <div class="scroll" id="mineScroll">
+        <div class="status"><span class="spin"></span>正在載入班表…</div>
+      </div>
+    </div>
+
+    <div class="mine-legend" id="mineLegend"></div>
+    <div class="av-hint">
+      依醫師別的一週個人行事曆：<b>院內HD</b>（早/中/晚）、<b>花蓮OPD</b>、<b>玉里／關山／聯安</b>（外派·早+中）為時段勞務；值班、休假為全天。
+      花蓮OPD 依輪值母表週期規則（自母表起始月起每月沿用），其餘讀自班表分頁。<b>花蓮HD診／花蓮特約診／聯安掛名</b> 為全天掛名（無實際勞務）、<b>有事</b>（<code>!早/!中/!晚</code>）皆淡化顯示。
+    </div>
+  </section>
+
   <footer>
     資料即時同步自
     <a id="sheetLink" href="#" target="_blank" rel="noopener">Google 試算表</a>
@@ -353,8 +441,8 @@
 // ---- shared status-pill controller (both views write here; only active view shows) ----
 window.__hdPill = {
   view: "date",
-  last: { date:["loading","載入中…"], avail:["loading","載入中…"] },
-  refresh: { date:null, avail:null },
+  last: { date:["loading","載入中…"], avail:["loading","載入中…"], mine:["loading","載入中…"] },
+  refresh: { date:null, avail:null, mine:null },
   set: function(view, state, text){
     this.last[view] = [state, text];
     if (view === this.view) this._apply(state, text);
@@ -376,6 +464,16 @@ window.__HL_PALETTE = ["#4b7168","#9c6249","#566d94","#97596f","#736394","#5c7d5
 window.__hlColorFor = function(orderedNames, name){
   var i = orderedNames.indexOf(name);
   return i === -1 ? null : window.__HL_PALETTE[i % window.__HL_PALETTE.length];
+};
+
+// ---- shared schedule bus: the 班表 module publishes parsed rows here; 我的時段 consumes them ----
+window.__sched = {
+  rows:[], roster:[], colIndex:{}, ready:false, reload:null, _subs:[],
+  onData:function(fn){ this._subs.push(fn); if (this.ready) { try{ fn(); }catch(e){} } },
+  publish:function(o){
+    this.rows = o.rows; this.roster = o.roster; this.colIndex = o.colIndex; this.ready = true;
+    for (var i=0;i<this._subs.length;i++){ try{ this._subs[i](); }catch(e){} }
+  }
 };
 </script>
 <script>
@@ -419,6 +517,9 @@ window.__hlColorFor = function(orderedNames, name){
   var sections = buildSections();   // header grouping, precomputed once
   var secStart = sectionStartSet(); // shift-col indexes that begin a section
 
+  // map SHIFT_COLS names -> cell index, for the 我的時段 module (via window.__sched)
+  function schedColIndex(){ var m={}; for (var i=0;i<SHIFT_COLS.length;i++) m[SHIFT_COLS[i].name]=i; return m; }
+
   el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/edit?gid="+GID;
 
   // ---- data load via gviz JSONP (no CORS) ----
@@ -454,6 +555,7 @@ window.__hlColorFor = function(orderedNames, name){
       renderChips();
       if (!view) view = defaultView();
       render();
+      window.__sched.publish({rows:allRows, roster:roster, colIndex:schedColIndex()});
       setPill("ok", "已同步 · " + fmtClock(new Date()));
     } catch(e){
       onError("解析班表時發生錯誤：" + (e && e.message ? e.message : e));
@@ -864,6 +966,7 @@ window.__hlColorFor = function(orderedNames, name){
   el("nextBtn").onclick = function(){ shiftMonth(1); };
   el("thisMonthBtn").onclick = function(){ view = defaultView(); render(); };
   window.__hdPill.refresh.date = load;   // header ↻ routes here when 班表 active
+  window.__sched.reload = load;          // 我的時段 refresh re-triggers this shared load
 
   load();
 })();
@@ -1310,21 +1413,282 @@ window.__hlColorFor = function(orderedNames, name){
   }
 })();
 
+// ===== 我的時段（依醫師別的個人週行事曆）module =====================
+(function(){
+  "use strict";
+  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
+  var OGID = "1810798741";   // rotation master → 花蓮OPD (session-level, by week-of-month)
+  var OCB  = "__mine_opd_cb__";
+  var BGID = "0";            // raw master → 有事 (!早/!中/!晚)
+  var BCB  = "__mine_busy_cb__";
+  var BLACK = {"X":1,"Ｘ":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1,"":1};
+  var WD = ["一","二","三","四","五","六","日"];   // Mon..Sun
+  var SESSNAME = ["早","中","晚"];
+  // legend / category colours (class suffix matches CSS .ev.c-*)
+  var LEGEND = [
+    {label:"值班",cls:"c-oncall"}, {label:"院內HD",cls:"c-inhd"}, {label:"花蓮OPD",cls:"c-opd"},
+    {label:"玉里",cls:"c-yuli"}, {label:"關山",cls:"c-guan"}, {label:"聯安",cls:"c-lianan"},
+    {label:"休假",cls:"c-leave"}, {label:"有事",cls:"c-busy"},
+    {label:"掛名（花蓮HD診／花蓮特約診／聯安掛名·無實際勞務）",cls:"c-nominal"}
+  ];
+
+  var el=function(id){ return document.getElementById(id); };
+  var scrollEl=el("mineScroll"), pickEl=el("minePick"), legendEl=el("mineLegend");
+  var SCHED=window.__sched;
+
+  var byDateKey={};   // "y-m-d" -> sched row
+  var minD=null, maxD=null, roster=[];
+  var busyByDate={};  // "y-m-d" -> [[早],[中],[晚]]
+  var opd={year:null,m0:null,weekList:[],byWeek:{}};   // 花蓮OPD from master
+  var selDoctor=null, weekStart=null, inited=false, lastWide=null;
+
+  // ---------- helpers ----------
+  function tok(s){ var out=[],p=(s||"").split(/[、,\/\s]+/); for(var i=0;i<p.length;i++){var t=p[i].trim(); if(t&&!BLACK[t]) out.push(t);} return out; }
+  function has(cellStr,doc){ var ts=tok(cellStr); for(var i=0;i<ts.length;i++){ if(ts[i]===doc) return true; } return false; }
+  function dkey(d){ return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function hue(s){ var h=0,str=s||""; for(var i=0;i<str.length;i++){h=(h*31+str.charCodeAt(i))>>>0;} return h%360; }
+  function md(x){ return (x.getMonth()+1)+"/"+x.getDate(); }
+  function mondayOf(d){ var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; }
+  function addDays(d,n){ var x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()+n); return x; }
+  function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+  function fmtClock(d){ function p(n){return(n<10?"0":"")+n;} return (d.getMonth()+1)+"/"+d.getDate()+" "+p(d.getHours())+":"+p(d.getMinutes()); }
+  function valOf(c){ return (c&&c.v!=null)?String(c.v).trim():""; }
+  function cellDate(c){ if(!c)return null; var v=c.v; if(v instanceof Date)return v; if(typeof v==="string"){var m=v.match(/^Date\((\d+),(\d+),(\d+)/); if(m)return new Date(+m[1],+m[2],+m[3]);} return null; }
+
+  // ---------- ingest the shared 班表 data ----------
+  function ingestSched(){
+    byDateKey={}; minD=null; maxD=null;
+    var rows=SCHED.rows||[];
+    for(var i=0;i<rows.length;i++){
+      var d=rows[i].date; if(!d) continue;
+      byDateKey[dkey(d)]=rows[i];
+      if(!minD||d<minD)minD=d; if(!maxD||d>maxD)maxD=d;
+    }
+    roster=(SCHED.roster||[]).slice();
+  }
+
+  // ---------- 有事 (gid=0) ----------
+  function loadBusy(){
+    var s=document.createElement("script");
+    s.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?gid="+BGID+"&headers=0&tqx=responseHandler:"+BCB+"&_="+Date.now();
+    s.onerror=function(){}; document.head.appendChild(s);
+  }
+  window[BCB]=function(resp){ try{ if(resp&&resp.table){ parseBusy(resp.table); if(inited) render(); } }catch(e){} };
+  function parseBusy(table){
+    var rows=table.rows||[], cols=[[],[],[]], hdr=(rows[0]&&rows[0].c)||[];
+    for(var ci=0;ci<hdr.length;ci++){ var lab=valOf(hdr[ci]); if(lab==="!早")cols[0].push(ci); else if(lab==="!中")cols[1].push(ci); else if(lab==="!晚")cols[2].push(ci); }
+    var map={};
+    for(var r=1;r<rows.length;r++){
+      var c=rows[r].c||[], dt=cellDate(c[0]); if(!dt)continue;
+      var key=dkey(dt), per=[[],[],[]], any=false;
+      for(var s=0;s<3;s++)for(var k=0;k<cols[s].length;k++){ var nm=tok(valOf(c[cols[s][k]])); for(var n=0;n<nm.length;n++){ if(per[s].indexOf(nm[n])===-1){per[s].push(nm[n]);any=true;} } }
+      if(any)map[key]=per;
+    }
+    busyByDate=map;
+  }
+  function busyAt(key,s){ var b=busyByDate[key]; return (b&&b[s])||[]; }
+
+  // ---------- 花蓮OPD (rotation master gid=1810798741) ----------
+  function loadOPD(){
+    var s=document.createElement("script");
+    s.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?gid="+OGID+"&tqx=responseHandler:"+OCB+"&_="+Date.now();
+    s.onerror=function(){}; document.head.appendChild(s);
+  }
+  window[OCB]=function(resp){ try{ if(resp&&resp.table){ parseOPD(resp.table); if(inited) render(); } }catch(e){} };
+  function mkGrid(){ var g=[]; for(var d=0;d<6;d++)g.push([[],[],[]]); return g; }
+  function parseOPD(table){
+    var rows=table.rows||[];
+    var mh=valOf(rows[0]&&rows[0].c&&rows[0].c[0]).match(/(\d{4})\D+(\d{1,2})/);
+    var year=mh?+mh[1]:null, m0=mh?(+mh[2]-1):null, byWeek={}, wset={};
+    for(var r=2;r<rows.length;r++){
+      var c=rows[r].c||[]; if(valOf(c[1])!=="花蓮OPD")continue;
+      var wm=valOf(c[0]).match(/(\d+)/); if(!wm)continue; var wk=+wm[1]; wset[wk]=1;
+      var g=byWeek[wk]||(byWeek[wk]=mkGrid());
+      for(var d=0;d<6;d++)for(var s=0;s<3;s++){
+        var nm=tok(valOf(c[2+d*3+s]));
+        for(var k=0;k<nm.length;k++){ if(g[d][s].indexOf(nm[k])===-1) g[d][s].push(nm[k]); }
+      }
+    }
+    opd={year:year, m0:m0, weekList:Object.keys(wset).map(Number).sort(function(a,b){return a-b;}), byWeek:byWeek};
+  }
+  // 花蓮OPD 母表是「週期模板」：母表標示月(opd.year/m0)為規則起始月，之後每月沿用同一
+  //「週次×星期×時段」樣式。故 date → 用該日「自己月份」的週次(第1週=含1號那週,週一為首)，
+  // 起始月(含)以後皆適用；起始月之前無 OPD。週次超出模板範圍時夾到模板最後一週。
+  function opdWeekOf(dt){
+    if(opd.year==null || !opd.weekList.length) return null;
+    if(dt < new Date(opd.year,opd.m0,1)) return null;   // 規則起始月之前不排 OPD
+    var first=new Date(dt.getFullYear(),dt.getMonth(),1);
+    var firstMon=new Date(first.getFullYear(),first.getMonth(),1-((first.getDay()+6)%7));
+    var wk=Math.floor((dt-firstMon)/86400000/7)+1;
+    var mn=opd.weekList[0], mx=opd.weekList[opd.weekList.length-1];
+    if(wk<mn)wk=mn; if(wk>mx)wk=mx;                       // 夾到模板可用週次
+    return opd.byWeek[wk]?wk:mx;
+  }
+  function opdAt(dt,s){
+    var wk=opdWeekOf(dt); if(wk==null)return [];
+    var d=(dt.getDay()+6)%7; if(d>5)return [];   // Sun: no OPD
+    var g=opd.byWeek[wk]; return g?g[d][s]:[];
+  }
+
+  // ---------- events for the selected doctor on a date ----------
+  function cellOf(row,name){ var i=SCHED.colIndex?SCHED.colIndex[name]:null; return (i==null||!row)?"":(row.cells[i]||""); }
+  function eventsFor(dt){
+    var row=byDateKey[dkey(dt)]||null, key=dkey(dt), doc=selDoctor;
+    var all=[], sess=[[],[],[]];
+    function pushAll(name,label,cls,dim){ if(doc&&row&&has(cellOf(row,name),doc)) all.push({label:label,cls:cls,dim:!!dim}); }
+    // 全天：值班、休假，加掛名欄（§0.1 無實際勞務，淡化同聯安掛名）
+    pushAll("值班","值班","c-oncall");
+    pushAll("聯安掛名","聯安掛名","c-nominal",true);
+    pushAll("花蓮HD","花蓮HD診","c-nominal",true);
+    pushAll("特約","花蓮特約診","c-nominal",true);
+    pushAll("休假","休假","c-leave");
+    for(var s=0;s<3;s++){
+      var arr=[];
+      if(doc&&row){
+        if(has(cellOf(row,SESSNAME[s]),doc)) arr.push({label:"院內HD",cls:"c-inhd"});
+        if(s<2){   // 外派 玉里/關山/聯安 預設早+中（晚一般回院上院內晚，H2 例外）
+          if(has(cellOf(row,"玉里"),doc)) arr.push({label:"玉里",cls:"c-yuli"});
+          if(has(cellOf(row,"關山"),doc)) arr.push({label:"關山",cls:"c-guan"});
+          if(has(cellOf(row,"聯安"),doc)) arr.push({label:"聯安",cls:"c-lianan"});
+        }
+      }
+      if(doc && opdAt(dt,s).indexOf(doc)!==-1) arr.push({label:"花蓮OPD",cls:"c-opd"});
+      if(doc && busyAt(key,s).indexOf(doc)!==-1) arr.push({label:"有事",cls:"c-busy"});
+      sess[s]=arr;
+    }
+    return {all:all, sess:sess};
+  }
+  function evHTML(events){
+    if(!events.length) return '<span class="none">·</span>';
+    var out=""; for(var i=0;i<events.length;i++){ out+='<span class="ev '+events[i].cls+'">'+esc(events[i].label)+'</span>'; }
+    return out;
+  }
+
+  // ---------- doctor picker ----------
+  function defaultDoctor(){
+    try{ var mine=localStorage.getItem("hd_mine"); if(mine&&roster.indexOf(mine)!==-1)return mine; }catch(e){}
+    try{ var fav=JSON.parse(localStorage.getItem("hd_sel")||"[]"); for(var i=0;i<fav.length;i++){ if(roster.indexOf(fav[i])!==-1)return fav[i]; } }catch(e){}
+    return roster[0]||null;
+  }
+  function renderPick(){
+    var kids=pickEl.querySelectorAll(".chip"); for(var i=0;i<kids.length;i++)kids[i].parentNode.removeChild(kids[i]);
+    for(var j=0;j<roster.length;j++) pickEl.appendChild(mkPick(roster[j]));
+    pickEl.hidden=false;
+  }
+  function mkPick(name){
+    var b=document.createElement("button"); b.className="chip"+(name===selDoctor?" on":""); b.dataset.name=name;
+    var dot=document.createElement("i"); dot.className="cdot"; dot.style.background="hsl("+hue(name)+",50%,52%)"; b.appendChild(dot);
+    b.appendChild(document.createTextNode(name));
+    b.onclick=function(){ selDoctor=name; try{localStorage.setItem("hd_mine",name);}catch(e){} render(); };
+    return b;
+  }
+  function renderLegend(){
+    var h=""; for(var i=0;i<LEGEND.length;i++){ h+='<span class="lg"><span class="sw '+LEGEND[i].cls+'"></span>'+esc(LEGEND[i].label)+'</span>'; }
+    legendEl.innerHTML=h;
+  }
+
+  // ---------- week nav ----------
+  function defaultWeek(){
+    var today=new Date(), t=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    if(minD&&maxD && t>=mondayOf(minD) && t<=addDays(mondayOf(maxD),6)) return mondayOf(t);
+    return minD?mondayOf(minD):mondayOf(t);
+  }
+  function clampWeek(){
+    if(minD&&weekStart<mondayOf(minD)) weekStart=mondayOf(minD);
+    if(maxD&&weekStart>mondayOf(maxD)) weekStart=mondayOf(maxD);
+  }
+  function shiftWeek(delta){ weekStart=addDays(weekStart,delta*7); clampWeek(); render(); }
+  function renderWeekLabel(){ var a=weekStart,b=addDays(weekStart,6); el("mineWeekLabel").textContent=a.getFullYear()+"/"+md(a)+" – "+md(b); }
+
+  // ---------- render ----------
+  function render(){
+    if(!SCHED.ready){ scrollEl.innerHTML='<div class="status"><span class="spin"></span>正在載入班表…</div>'; return; }
+    if(!roster.length){ scrollEl.innerHTML='<div class="status">目前沒有可顯示的醫師。</div>'; return; }
+    if(!selDoctor || roster.indexOf(selDoctor)===-1) selDoctor=defaultDoctor();
+    if(!weekStart){ weekStart=defaultWeek(); clampWeek(); }
+    renderPick(); renderLegend(); renderWeekLabel();
+
+    var days=[]; for(var i=0;i<7;i++){ var dt=addDays(weekStart,i); days.push({dt:dt, ev:eventsFor(dt)}); }
+    var today=new Date(), wide=window.innerWidth>640; lastWide=wide;
+    scrollEl.innerHTML = wide ? gridHTML(days,today) : agendaHTML(days,today);
+    window.__hdPill.set("mine","ok","已同步 · "+fmtClock(new Date()));
+  }
+  function gridHTML(days,today){
+    var head='<tr><th class="rowhd"></th>';
+    for(var i=0;i<7;i++){
+      var dt=days[i].dt, dow=dt.getDay(), cls=[];
+      if(dow===6)cls.push("sat"); if(dow===0)cls.push("we"); if(sameDay(dt,today))cls.push("today");
+      head+='<th'+(cls.length?' class="'+cls.join(" ")+'"':'')+'>週'+WD[i]+'<span class="dnum">'+md(dt)+'</span></th>';
+    }
+    head+='</tr>';
+    var body='<tr class="allday"><td class="rowhd">全天</td>';
+    for(var a=0;a<7;a++){ body+='<td'+(sameDay(days[a].dt,today)?' class="today"':'')+'>'+evHTML(days[a].ev.all)+'</td>'; }
+    body+='</tr>';
+    for(var s=0;s<3;s++){
+      body+='<tr><td class="rowhd'+(s===2?' se-late':'')+'">'+SESSNAME[s]+'</td>';
+      for(var b=0;b<7;b++){ body+='<td'+(sameDay(days[b].dt,today)?' class="today"':'')+'>'+evHTML(days[b].ev.sess[s])+'</td>'; }
+      body+='</tr>';
+    }
+    return '<table class="mcal"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
+  }
+  function agRow(slot,events){ return '<div class="agrow"><span class="agsl">'+slot+'</span><span class="agev">'+evHTML(events)+'</span></div>'; }
+  function agendaHTML(days,today){
+    var out='<div class="agenda">';
+    for(var i=0;i<7;i++){
+      var dt=days[i].dt, ev=days[i].ev, dow=dt.getDay(), isT=sameDay(dt,today), dcls=[];
+      if(dow===0)dcls.push("we"); if(dow===6)dcls.push("sat");
+      out+='<div class="agday'+(isT?' today':'')+'"><div class="aghd '+dcls.join(" ")+'">週'+WD[i]+' <b>'+md(dt)+'</b>'+(isT?' <span class="agtoday">今天</span>':'')+'</div>';
+      var any=ev.all.length||ev.sess[0].length||ev.sess[1].length||ev.sess[2].length;
+      if(!any){ out+='<div class="agnone">無班務</div>'; }
+      else{
+        if(ev.all.length) out+=agRow("全天",ev.all);
+        for(var s=0;s<3;s++){ if(ev.sess[s].length) out+=agRow(SESSNAME[s],ev.sess[s]); }
+      }
+      out+='</div>';
+    }
+    return out+'</div>';
+  }
+
+  // ---------- events ----------
+  el("minePrev").onclick=function(){ shiftWeek(-1); };
+  el("mineNext").onclick=function(){ shiftWeek(1); };
+  el("mineThisWeek").onclick=function(){ weekStart=defaultWeek(); clampWeek(); render(); };
+  window.addEventListener("resize",function(){ if(inited && (window.innerWidth>640)!==lastWide) render(); });
+
+  window.__mineInit=function(){
+    if(inited) return; inited=true;
+    window.__hdPill.set("mine","loading","載入中…");
+    SCHED.onData(function(){ ingestSched(); render(); });   // fires now if data already loaded
+    loadBusy(); loadOPD();
+    if(!SCHED.ready) render();   // spinner until 班表 data arrives
+  };
+  window.__hdPill.refresh.mine=function(){
+    if(window.__sched.reload) window.__sched.reload();   // reload shared 班表 data
+    loadBusy(); loadOPD();
+  };
+})();
+
 // ===== view switcher ==============================================
 (function(){
   window.__hdView = "date";
-  var tabDate=document.getElementById("tabDate"), tabAvail=document.getElementById("tabAvail");
+  var TABS = [
+    {v:"date",  sec:"viewDate",  btn:"tabDate"},
+    {v:"avail", sec:"viewAvail", btn:"tabAvail", init:function(){ if(window.__availInit) window.__availInit(); }},
+    {v:"mine",  sec:"viewMine",  btn:"tabMine",  init:function(){ if(window.__mineInit) window.__mineInit(); }}
+  ];
   function show(v){
     window.__hdView=v;
-    document.getElementById("viewDate").hidden = (v!=="date");
-    document.getElementById("viewAvail").hidden = (v!=="avail");
-    tabDate.classList.toggle("on", v==="date"); tabDate.setAttribute("aria-selected", v==="date");
-    tabAvail.classList.toggle("on", v==="avail"); tabAvail.setAttribute("aria-selected", v==="avail");
+    for(var i=0;i<TABS.length;i++){
+      var t=TABS[i], on=(t.v===v);
+      document.getElementById(t.sec).hidden=!on;
+      var b=document.getElementById(t.btn);
+      b.classList.toggle("on",on); b.setAttribute("aria-selected",on);
+    }
     window.__hdPill.show(v);
-    if (v==="avail" && window.__availInit) window.__availInit();
+    for(var j=0;j<TABS.length;j++){ if(TABS[j].v===v && TABS[j].init) TABS[j].init(); }
   }
-  tabDate.onclick=function(){ show("date"); };
-  tabAvail.onclick=function(){ show("avail"); };
+  for(var i=0;i<TABS.length;i++){ (function(t){ document.getElementById(t.btn).onclick=function(){ show(t.v); }; })(TABS[i]); }
   // header ↻ refreshes whichever view is active
   document.getElementById("refreshBtn").onclick=function(){
     var f=window.__hdPill.refresh[window.__hdView]; if (f) f();
