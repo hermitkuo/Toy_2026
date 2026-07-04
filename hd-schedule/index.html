@@ -163,7 +163,7 @@
     background:hsl(var(--h),42%,95%); color:hsl(var(--h),36%,33%);
     transition:box-shadow .1s, opacity .1s;
   }
-  td .nm.hit{background:var(--accent); color:#fff; font-weight:700;}
+  td .nm.hit{color:#fff; font-weight:700;}  /* background set inline, per-doctor colour */
   td .nm.xh:not(.hit){box-shadow:0 0 0 2px rgba(15,118,110,.45);}
   .scroll.filtering td .nm:not(.hit){opacity:.28;}
 
@@ -182,6 +182,80 @@
   footer{color:var(--muted); font-size:12px; text-align:center; margin-top:16px;}
   footer a{color:var(--muted);}
 
+  /* ---------- view switcher (班表 / 找空檔) ---------- */
+  .viewtabs{display:inline-flex; background:var(--head); border:1px solid var(--line);
+    border-radius:10px; padding:3px; gap:3px; margin:0 0 12px;}
+  .vtab{border:0; background:transparent; color:var(--muted); font-size:14px; font-weight:600;
+    padding:7px 14px; border-radius:8px; line-height:1; display:inline-flex; align-items:center; gap:6px;}
+  .vtab:hover{color:var(--accent);}
+  .vtab.on{background:var(--card); color:var(--accent); box-shadow:0 1px 2px rgba(20,40,60,.08);}
+
+  /* ---------- availability view ---------- */
+  .av-bar{display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 10px;}
+  .av-month{font-size:19px; font-weight:700; margin-right:4px;}
+  .wkpills{display:inline-flex; flex-wrap:wrap; gap:6px;}
+  .wkpill{border:1px solid var(--line); background:var(--card); border-radius:999px;
+    padding:6px 13px; font-size:13.5px; color:var(--ink); line-height:1.15; text-align:center;}
+  .wkpill small{display:block; color:var(--muted); font-size:11px; font-weight:400; margin-top:1px;}
+  .wkpill:hover{border-color:var(--accent); color:var(--accent);}
+  .wkpill.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:700;}
+  .wkpill.on small{color:rgba(255,255,255,.85);}
+  .av-actions{margin-left:auto; display:flex; gap:6px;}
+
+  /* availability table */
+  table.avtbl{border-collapse:separate; border-spacing:0; width:auto; table-layout:fixed; font-size:15px;}
+  .avtbl th,.avtbl td{padding:5px 8px; text-align:center; white-space:nowrap;
+    border-bottom:1px solid var(--line2);}
+  .avtbl thead th{position:sticky; z-index:4; background:var(--head); color:var(--head-ink);
+    font-weight:700; border-bottom:1px solid var(--line);}
+  .avtbl thead tr.grp th{top:0; height:26px; font-size:12px; padding:2px 8px;}
+  .avtbl thead tr.grp th.wd{background:#e9eef3; color:#33424f;}
+  .avtbl thead tr.grp th.wd.we{color:var(--danger);}
+  .avtbl thead tr.grp th.wd small{font-weight:400; color:var(--muted); font-size:10.5px; margin-left:3px;}
+  .avtbl thead tr.sub th{top:26px; height:26px; font-size:12px; padding:3px 6px;
+    color:#54636f; font-weight:600; background:#f6f8fa;}
+  .avtbl th.c-site,.avtbl td.c-site{position:sticky; left:0; z-index:2; text-align:left;
+    font-weight:700; padding-left:11px; min-width:74px; background:var(--card);
+    box-shadow:1px 0 0 var(--line);}
+  .avtbl thead th.c-site{z-index:6; background:var(--head);}
+  /* 早/中/晚 columns: fixed ~3-doctor width, wrap beyond; thin line between sessions */
+  .avtbl th.sc,.avtbl td.sc{border-left:1px solid #c2cdd8;}
+  .avtbl td.sc{white-space:normal;}
+  .avtbl td.fdcell{white-space:normal;}
+  /* weekday separators: prominent line between 週一|週二|… (overrides the thin one on 早) */
+  .avtbl td.gsep,.avtbl th.gsep{border-left:2px solid #bcc8d4;}
+  .avtbl thead tr.grp th.wd.gsep{border-left:2px solid #a9b7c6;}
+  /* de-emphasise 晚 columns (no evening OPD clinic) */
+  .avtbl td.late{background:#f4f6f8!important;}
+  .avtbl th.late{background:#eef1f4!important; color:#a9b1ba; font-weight:600;}
+  .avtbl td.late .nm{opacity:.38;}
+  .avtbl td.late .dash{color:#dde3e9;}
+  .avtbl td.late .allfree{color:#c6ced6;}
+  .avtbl tbody tr:hover td{background:#f0f6f5;}
+  .avtbl tbody tr:hover td.c-site{background:#e9f2f0;}
+
+  /* site rows vs computed availability rows */
+  .avtbl tr.siterow td.c-site{color:var(--ink);}
+  .avtbl tr.freerow td{background:var(--accent-tint);}
+  .avtbl tr.freerow td.c-site{background:var(--accent-soft); color:var(--accent-600);}
+  .avtbl tr.freerow:hover td{background:#e2f2ef;}
+  .avtbl tr.fulldayrow td{background:#eef6ff;}
+  .avtbl tr.fulldayrow td.c-site{background:#dcebff; color:#1e5aa8;}
+  .avtbl tr.fulldayrow:hover td{background:#e3effb;}
+  .avtbl tr.sep-top td{border-top:2px solid var(--line);}
+
+  .avtbl td .nm{display:inline-block; margin:1px 2px; padding:1px 7px; border-radius:999px;
+    font-size:14px; line-height:1.5; background:hsl(var(--h),42%,95%); color:hsl(var(--h),36%,33%);}
+  .avtbl td .nm.free{background:#dff3ee; color:#0d6b60;}
+  .avtbl td .nm.hit{color:#fff!important; font-weight:700;}  /* background set inline, per-doctor colour */
+  .avtbl.filtering td .nm:not(.hit){opacity:.26;}
+  .avtbl td .dash{color:#c9d0d8;}
+  .avtbl td.xcell{color:#c0c8d0; font-size:12.5px;}
+  .avtbl td.allfree{color:#93b7a9; font-size:12px; font-style:italic;}
+
+  .av-hint{color:var(--muted); font-size:12.5px; margin:10px 2px 0; line-height:1.5;}
+  .av-hint b{color:var(--accent-600);}
+
   @media (max-width:560px){
     body{font-size:15px;}
     header.top h1{font-size:16px;}
@@ -190,6 +264,10 @@
     th,td{padding:5px 7px;}
     td .nm{font-size:14px; padding:1px 7px;}
     .mpick{left:8px;}
+    .avtbl{font-size:14px;}
+    .avtbl th,.avtbl td{padding:5px 6px;}
+    .avtbl td .nm{font-size:13px; padding:1px 6px;}
+    .av-actions{margin-left:0; width:100%;}
   }
 </style>
 </head>
@@ -205,6 +283,12 @@
     </div>
   </header>
 
+  <div class="viewtabs" role="tablist">
+    <button class="vtab on" id="tabDate" data-view="date" role="tab" aria-selected="true">📅 班表</button>
+    <button class="vtab" id="tabAvail" data-view="avail" role="tab" aria-selected="false">🔎 找空檔</button>
+  </div>
+
+  <section id="viewDate">
   <div class="navbar">
     <div class="month-wrap">
       <button class="nav-btn" id="prevBtn" aria-label="上個月">‹</button>
@@ -226,6 +310,33 @@
       <div class="status" id="status"><span class="spin"></span>正在載入班表…</div>
     </div>
   </div>
+  </section>
+
+  <section id="viewAvail" hidden>
+    <div class="av-bar">
+      <span class="av-month" id="avMonth">—</span>
+      <div class="wkpills" id="avWeeks"></div>
+      <div class="av-actions">
+        <button class="btn" id="avJson">⬇︎ JSON</button>
+        <button class="btn" id="avCsv">⬇︎ CSV</button>
+      </div>
+    </div>
+
+    <div class="chips" id="avChips" hidden>
+      <span class="lbl">高亮醫師（可多選）：</span>
+    </div>
+
+    <div class="tablecard">
+      <div class="scroll" id="avScroll">
+        <div class="status"><span class="spin"></span>正在載入輪值母表…</div>
+      </div>
+    </div>
+
+    <div class="av-hint">
+      綠列 <b>有空</b>＝該時段沒被任何院區排到的醫師；藍列 <b>全天有空</b>＝當天早/中/晚都沒班的醫師。
+      已扣除當日<b>休假</b>醫師（依班表分頁的休假欄）。名單依當月母表出現的醫師自動推得；資料即時同步。
+    </div>
+  </section>
 
   <footer>
     資料即時同步自
@@ -234,6 +345,35 @@
   </footer>
 </div>
 
+<script>
+// ---- shared status-pill controller (both views write here; only active view shows) ----
+window.__hdPill = {
+  view: "date",
+  last: { date:["loading","載入中…"], avail:["loading","載入中…"] },
+  refresh: { date:null, avail:null },
+  set: function(view, state, text){
+    this.last[view] = [state, text];
+    if (view === this.view) this._apply(state, text);
+  },
+  show: function(view){
+    this.view = view;
+    var l = this.last[view] || ["ok",""];
+    this._apply(l[0], l[1]);
+  },
+  _apply: function(state, text){
+    var pill = document.getElementById("statusPill");
+    pill.className = "statuspill" + (state==="ok" ? "" : " "+state);
+    document.getElementById("loadInfo").textContent = text;
+  }
+};
+
+// ---- highlight palette: a distinct, muted colour per selected doctor, assigned by selection order ----
+window.__HL_PALETTE = ["#4b7168","#9c6249","#566d94","#97596f","#736394","#5c7d55","#4d7a82","#8a6f42"];
+window.__hlColorFor = function(orderedNames, name){
+  var i = orderedNames.indexOf(name);
+  return i === -1 ? null : window.__HL_PALETTE[i % window.__HL_PALETTE.length];
+};
+</script>
 <script>
 (function(){
   "use strict";
@@ -305,6 +445,7 @@
       }
       parse(resp.table);
       buildRoster();
+      buildLeaveMap();
       restoreSel();
       renderChips();
       if (!view) view = defaultView();
@@ -427,6 +568,20 @@
     }
   }
 
+  // ---- expose leave-by-date (休假 column) for the availability view ----
+  function buildLeaveMap(){
+    var m = {}, LI = SHIFT_COLS.length - 1;   // last cell = 休假 (merged 假1..4)
+    for (var r=0; r<allRows.length; r++){
+      var v = allRows[r].cells[LI]; if (!v) continue;
+      var d = allRows[r].date, key = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();
+      var toks = v.split(/[、,\/\s]+/), out = [];
+      for (var i=0;i<toks.length;i++){ var t=toks[i].trim(); if (t && !BLACKLIST[t]) out.push(t); }
+      if (out.length) m[key] = out;
+    }
+    window.__leaveByDate = m;
+    if (window.__availOnData) window.__availOnData();   // let avail view refresh if it's open
+  }
+
   // ---- selection persistence (acts as "my favourites") ----
   function selList(){ return Object.keys(activeNames); }
   function saveSel(){ try{ localStorage.setItem("hd_sel", JSON.stringify(selList())); }catch(e){} }
@@ -471,11 +626,14 @@
 
   function syncChips(){
     var chips = chipsEl.querySelectorAll(".chip");
-    var none = selList().length === 0;
+    var act = selList(), none = act.length === 0;
     for (var i=0;i<chips.length;i++){
       var nm = chips[i].dataset.name;
       var on = nm ? !!activeNames[nm] : none;
       chips[i].classList.toggle("on", on);
+      if (nm && on){ var c = window.__hlColorFor(act, nm);
+        chips[i].style.background = c; chips[i].style.borderColor = c; chips[i].style.color = "#fff"; }
+      else { chips[i].style.background = ""; chips[i].style.borderColor = ""; chips[i].style.color = ""; }
     }
   }
 
@@ -585,9 +743,10 @@
     var spans = scrollEl.querySelectorAll(".nm");
     for (var i=0;i<spans.length;i++){
       var nm = spans[i].getAttribute("data-nm") || "";
-      var hit = false;
-      for (var a=0;a<act.length;a++){ if (nm.indexOf(act[a]) !== -1){ hit = true; break; } }
-      spans[i].classList.toggle("hit", hit);
+      var matched = null;
+      for (var a=0;a<act.length;a++){ if (nm.indexOf(act[a]) !== -1){ matched = act[a]; break; } }
+      if (matched){ spans[i].classList.add("hit"); spans[i].style.background = window.__hlColorFor(act, matched); }
+      else { spans[i].classList.remove("hit"); spans[i].style.background = ""; }
     }
   }
 
@@ -672,8 +831,7 @@
     });
   }
   function setPill(state, text){
-    pillEl.className = "statuspill" + (state==="ok" ? "" : " "+state);
-    el("loadInfo").textContent = text;
+    window.__hdPill.set("date", state, text);
   }
   function showStatus(html, isErr){
     scrollEl.innerHTML = '<div class="status'+(isErr?" err":"")+'">'+html+'</div>';
@@ -701,9 +859,393 @@
   el("prevBtn").onclick = function(){ shiftMonth(-1); };
   el("nextBtn").onclick = function(){ shiftMonth(1); };
   el("thisMonthBtn").onclick = function(){ view = defaultView(); render(); };
-  el("refreshBtn").onclick = function(){ load(); };
+  window.__hdPill.refresh.date = load;   // header ↻ routes here when 班表 active
 
   load();
+})();
+</script>
+
+<script>
+// ===== 找空檔（輪值母表）module ====================================
+(function(){
+  "use strict";
+  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
+  var GID = "1810798741";                 // rotation master (week × site matrix)
+  var CB  = "__avail_cb__";
+  var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
+  var OUT_ROWS = {"有空":1,"全天有空":1};  // computed rows in the sheet — ignore as source
+  var BLACK = {"X":1,"Ｘ":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1,"":1};
+  var WD = ["一","二","三","四","五","六"];
+  var SESS = ["早","中","晚"];
+
+  var el = function(id){ return document.getElementById(id); };
+  var scrollEl = el("avScroll"), chipsEl = el("avChips");
+
+  var year=null, m0=null, monthTitle="";
+  var weekList=[];               // sorted week numbers present
+  var byWeek={};                 // wk -> site -> [6][3] -> [names]
+  var siteOrder=[];              // real sites, first-seen order
+  var roster=[];                 // active doctors this month
+  var curWeek=null;
+  var activeA={};
+  var loaded=false, loading=false;
+  var curScript=null, loadTimer=null;
+  var lastWide=null;             // last responsive state (>560px) the table was rendered for
+
+  // ---- lazy init: called first time the tab opens ----
+  window.__availInit = function(){
+    if (loaded || loading) return;
+    load();
+  };
+  window.__hdPill.refresh.avail = function(){ loaded=false; load(); };
+  // re-render when leave data (from the 班表 tab) arrives, and when crossing the mobile breakpoint
+  window.__availOnData = function(){ if (loaded) render(); };
+  window.addEventListener("resize", function(){
+    if (loaded && (window.innerWidth>560) !== lastWide) render();
+  });
+
+  function load(){
+    loading=true;
+    window.__hdPill.set("avail","loading","載入母表…");
+    scrollEl.innerHTML = '<div class="status"><span class="spin"></span>正在載入輪值母表…</div>';
+    if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
+    clearTimeout(loadTimer);
+    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
+            + "?gid="+GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
+    curScript = document.createElement("script");
+    curScript.src = url;
+    curScript.onerror = function(){ onError("無法連線到 Google 試算表。"); };
+    document.head.appendChild(curScript);
+    loadTimer = setTimeout(function(){ onError("載入逾時，請稍後重試。"); }, 15000);
+  }
+
+  window[CB] = function(resp){
+    clearTimeout(loadTimer); loading=false;
+    try{
+      if (!resp || !resp.table || resp.status==="error"){
+        onError((resp&&resp.errors&&resp.errors[0]&&resp.errors[0].detailed_message)||"母表無法讀取。");
+        return;
+      }
+      parse(resp.table);
+      loaded=true;
+      if (curWeek==null || weekList.indexOf(curWeek)===-1) curWeek = weekList[0]||null;
+      restoreSel(); renderChips(); renderWeeks(); render();
+      window.__hdPill.set("avail","ok","已同步 · "+fmtClock(new Date()));
+    }catch(e){
+      onError("解析母表時發生錯誤："+(e&&e.message?e.message:e));
+    }
+  };
+
+  function valOf(c){ return (c&&c.v!=null) ? String(c.v).trim() : ""; }
+  function tok(s){
+    var out=[], parts=(s||"").split(/[、,\/\s]+/);
+    for (var i=0;i<parts.length;i++){ var t=parts[i].trim(); if (t && !BLACK[t]) out.push(t); }
+    return out;
+  }
+
+  function parse(table){
+    var rows = table.rows||[];
+    // header row 0: "2026/07" in col0
+    var mh = valOf(rows[0] && rows[0].c && rows[0].c[0]).match(/(\d{4})\D+(\d{1,2})/);
+    if (mh){ year=+mh[1]; m0=(+mh[2])-1; monthTitle=year+"年"+(+mh[2])+"月"; }
+    else { monthTitle="輪值母表"; }
+
+    byWeek={}; siteOrder=[]; var seenSite={}; var freq={}; var rosterSet={};
+    for (var r=2; r<rows.length; r++){
+      var c = rows[r].c||[];
+      var wraw = valOf(c[0]); var site = valOf(c[1]);
+      var wm = wraw.match(/(\d+)/); if (!wm) continue;
+      var wk = +wm[1];
+      if (!site) continue;
+      var isOut = OUT_ROWS[site];
+      for (var d=0; d<6; d++) for (var s=0; s<3; s++){
+        var names = tok(valOf(c[2 + d*3 + s]));
+        if (!names.length) continue;
+        if (isOut) continue;                        // 有空/全天有空 rows are output, not source
+        if (!seenSite[site]){ seenSite[site]=1; siteOrder.push(site); }
+        byWeek[wk] = byWeek[wk] || {};
+        var grid = byWeek[wk][site] = byWeek[wk][site] || mkGrid();
+        var slot = grid[d][s];
+        for (var k=0;k<names.length;k++){
+          var n=names[k];
+          if (slot.indexOf(n)===-1) slot.push(n);
+          rosterSet[n]=1; freq[n]=(freq[n]||0)+1;
+        }
+      }
+    }
+    weekList = Object.keys(byWeek).map(Number).sort(function(a,b){return a-b;});
+    // roster: PREF order first, then by frequency, then locale
+    var list = Object.keys(rosterSet);
+    function rank(n){ var i=PREF_ORDER.indexOf(n); return i===-1?999:i; }
+    list.sort(function(a,b){
+      var ra=rank(a), rb=rank(b);
+      if (ra!==rb) return ra-rb;
+      return (freq[b]||0)-(freq[a]||0) || a.localeCompare(b,"zh-Hant");
+    });
+    roster=list;
+  }
+  function mkGrid(){ var g=[]; for (var d=0;d<6;d++){ g.push([[],[],[]]); } return g; }
+
+  // ---- availability computation ----
+  function assigned(wk,d,s){
+    var set={};
+    for (var i=0;i<siteOrder.length;i++){
+      var g = byWeek[wk] && byWeek[wk][siteOrder[i]];
+      if (!g) continue;
+      var arr=g[d][s]; for (var k=0;k<arr.length;k++) set[arr[k]]=1;
+    }
+    return set;
+  }
+  // doctors on leave (休假) that day, from the date-view tab (Tab A), keyed by real date
+  function leaveOn(wk,d){
+    var dt=slotDate(wk,d), key=dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();
+    return (window.__leaveByDate && window.__leaveByDate[key]) || [];
+  }
+  function availCount(wk,d){ return roster.length - leaveOn(wk,d).length; }
+  function freeAt(wk,d,s){ var a=assigned(wk,d,s), lv=leaveOn(wk,d);
+    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1;}); }
+  function freeAllDay(wk,d){
+    var a={}; for (var s=0;s<3;s++){ var x=assigned(wk,d,s); for (var n in x) a[n]=1; }
+    var lv=leaveOn(wk,d);
+    return roster.filter(function(n){return !a[n] && lv.indexOf(n)===-1;});
+  }
+
+  // ---- week helpers (Week 1 = week containing the 1st, Mon-based) ----
+  function weekMonday(wk){
+    var first=new Date(year, m0, 1);
+    var dow=(first.getDay()+6)%7;
+    return new Date(year, m0, 1 - dow + (wk-1)*7);
+  }
+  function slotDate(wk,d){ var mon=weekMonday(wk); var x=new Date(mon); x.setDate(mon.getDate()+d); return x; }
+  function md(x){ return (x.getMonth()+1)+"/"+x.getDate(); }
+  function iso(x){ function p(n){return (n<10?"0":"")+n;} return x.getFullYear()+"-"+p(x.getMonth()+1)+"-"+p(x.getDate()); }
+
+  // ---- week pills ----
+  function renderWeeks(){
+    el("avMonth").textContent = monthTitle;
+    var h="";
+    for (var i=0;i<weekList.length;i++){
+      var wk=weekList[i];
+      var a=slotDate(wk,0), b=slotDate(wk,5);
+      h += '<button class="wkpill'+(wk===curWeek?" on":"")+'" data-wk="'+wk+'">第'+wk+'週'
+         + '<small>'+md(a)+'–'+md(b)+'</small></button>';
+    }
+    el("avWeeks").innerHTML=h;
+  }
+  el("avWeeks").addEventListener("click", function(e){
+    var t=e.target && e.target.closest ? e.target.closest(".wkpill") : null;
+    if (!t) return;
+    curWeek=+t.dataset.wk; renderWeeks(); render();
+  });
+
+  // ---- chips ----
+  function selList(){ return Object.keys(activeA); }
+  function saveSel(){ try{ localStorage.setItem("hd_sel_a", JSON.stringify(selList())); }catch(e){} }
+  function restoreSel(){
+    activeA={};
+    try{ var a=JSON.parse(localStorage.getItem("hd_sel_a")||"[]");
+      for (var i=0;i<a.length;i++){ if (roster.indexOf(a[i])!==-1) activeA[a[i]]=true; }
+    }catch(e){ activeA={}; }
+  }
+  function renderChips(){
+    var kids=chipsEl.querySelectorAll(".chip");
+    for (var i=0;i<kids.length;i++) kids[i].parentNode.removeChild(kids[i]);
+    var clear=mkChip("全部",null,true); clear.classList.add("clear"); chipsEl.appendChild(clear);
+    for (var j=0;j<roster.length;j++) chipsEl.appendChild(mkChip(roster[j],roster[j],false));
+    chipsEl.hidden=false; syncChips();
+  }
+  function mkChip(text,name,noDot){
+    var b=document.createElement("button");
+    b.className="chip"; b.dataset.name=name||"";
+    if (!noDot){ var dot=document.createElement("i"); dot.className="cdot";
+      dot.style.background="hsl("+hue(name)+",50%,52%)"; b.appendChild(dot); }
+    b.appendChild(document.createTextNode(text));
+    b.onclick=function(){
+      if (!name){ activeA={}; }
+      else if (activeA[name]){ delete activeA[name]; }
+      else { activeA[name]=true; }
+      saveSel(); syncChips(); applyHighlight();
+    };
+    return b;
+  }
+  function syncChips(){
+    var chips=chipsEl.querySelectorAll(".chip"), act=selList(), none=act.length===0;
+    for (var i=0;i<chips.length;i++){
+      var nm=chips[i].dataset.name, on = nm ? !!activeA[nm] : none;
+      chips[i].classList.toggle("on", on);
+      if (nm && on){ var c = window.__hlColorFor(act, nm);
+        chips[i].style.background = c; chips[i].style.borderColor = c; chips[i].style.color = "#fff"; }
+      else { chips[i].style.background = ""; chips[i].style.borderColor = ""; chips[i].style.color = ""; }
+    }
+  }
+
+  // ---- render table ----
+  function hue(s){ var h=0,str=s||""; for (var i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))>>>0; } return h%360; }
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  function badges(names, free){
+    if (!names.length) return '<span class="dash">·</span>';
+    var out="";
+    for (var i=0;i<names.length;i++){
+      var t=names[i];
+      out += '<span class="nm'+(free?" free":"")+'" data-nm="'+esc(t)+'" style="--h:'+hue(t)+'">'+esc(t)+'</span>';
+    }
+    return out;
+  }
+
+  // vertical-line + dim-晚 class for a session column (s: 0早 1中 2晚)
+  function colCls(s){ var c=["sc"]; if (s===0) c.push("gsep"); if (s===2) c.push("late"); return ' class="'+c.join(" ")+'"'; }
+
+  function render(){
+    if (!weekList.length){ scrollEl.innerHTML='<div class="status">母表沒有可解析的資料。</div>'; return; }
+    if (curWeek==null) curWeek=weekList[0];
+
+    var SITEW=88, SESSW=116, LATEW=48;
+    var wide = window.innerWidth > 560;         // collapse 晚 on narrow screens
+    lastWide = wide;
+    var sess = wide ? [0,1,2] : [0,1];          // shown sessions (早/中[/晚])
+    var span = sess.length;
+    var wOf = function(s){ return s===2 ? LATEW : SESSW; };
+
+    // colgroup (site col + per-weekday session cols) → deterministic widths
+    var cols='<colgroup><col style="width:'+SITEW+'px">', totalW=SITEW;
+    for (var d0=0; d0<6; d0++) for (var i0=0; i0<sess.length; i0++){
+      var w=wOf(sess[i0]); cols += '<col style="width:'+w+'px">'; totalW += w;
+    }
+    cols += '</colgroup>';
+
+    // header
+    var grp='<tr class="grp"><th class="c-site" rowspan="2">院區＼日</th>';
+    var sub='<tr class="sub">';
+    for (var d=0; d<6; d++){
+      var dt=slotDate(curWeek,d), we=(d===5)?" we":"";   // 週六
+      grp += '<th class="wd gsep'+we+'" colspan="'+span+'">週'+WD[d]+'<small>'+md(dt)+'</small></th>';
+      for (var i=0;i<sess.length;i++) sub += '<th'+colCls(sess[i])+'>'+SESS[sess[i]]+'</th>';
+    }
+    var h='<table class="avtbl" style="width:'+totalW+'px">'+cols+'<thead>'+grp+'</tr>'+sub+'</tr></thead><tbody>';
+
+    // site rows
+    for (var r=0;r<siteOrder.length;r++){
+      var site=siteOrder[r], g=byWeek[curWeek] && byWeek[curWeek][site];
+      h += '<tr class="siterow"><td class="c-site">'+esc(site)+'</td>';
+      for (var d2=0; d2<6; d2++) for (var s2i=0; s2i<sess.length; s2i++){
+        var s2=sess[s2i], arr = g ? g[d2][s2] : [];
+        h += '<td'+colCls(s2)+'>'+badges(arr,false)+'</td>';
+      }
+      h += '</tr>';
+    }
+
+    // 有空 (per session) — leave doctors already excluded in freeAt
+    h += '<tr class="freerow sep-top"><td class="c-site">有空</td>';
+    for (var d3=0; d3<6; d3++){ var ac=availCount(curWeek,d3);
+      for (var s3i=0; s3i<sess.length; s3i++){ var s3=sess[s3i];
+        var fr=freeAt(curWeek,d3,s3);
+        var cell = (fr.length===ac) ? '<span class="allfree">全部</span>' : badges(fr,true);
+        h += '<td'+colCls(s3)+'>'+cell+'</td>';
+      }
+    }
+    h += '</tr>';
+
+    // 全天有空 (per day, merged across shown sessions)
+    h += '<tr class="fulldayrow"><td class="c-site">全天有空</td>';
+    for (var d4=0; d4<6; d4++){
+      var fd=freeAllDay(curWeek,d4), ac2=availCount(curWeek,d4);
+      var cell2 = (fd.length===ac2) ? '<span class="allfree">全部</span>' : badges(fd,true);
+      h += '<td class="gsep fdcell" colspan="'+span+'">'+cell2+'</td>';
+    }
+    h += '</tr>';
+
+    h += '</tbody></table>';
+    scrollEl.innerHTML=h;
+    applyHighlight();
+  }
+
+  // ---- highlight ----
+  function applyHighlight(){
+    var act=selList();
+    var tbl=scrollEl.querySelector(".avtbl"); if (!tbl) return;
+    tbl.classList.toggle("filtering", act.length>0);
+    var spans=tbl.querySelectorAll(".nm");
+    for (var i=0;i<spans.length;i++){
+      var nm=spans[i].getAttribute("data-nm")||"", matched=null;
+      for (var a=0;a<act.length;a++){ if (nm.indexOf(act[a])!==-1){ matched=act[a]; break; } }
+      if (matched){ spans[i].classList.add("hit"); spans[i].style.background = window.__hlColorFor(act, matched); }
+      else { spans[i].classList.remove("hit"); spans[i].style.background = ""; }
+    }
+  }
+
+  // ---- export (normalised clean data) ----
+  function buildExport(){
+    var assignments=[], availability=[], fullday=[];
+    for (var wi=0; wi<weekList.length; wi++){
+      var wk=weekList[wi];
+      for (var d=0; d<6; d++){
+        var dt=slotDate(wk,d), diso=iso(dt);
+        for (var s=0; s<3; s++){
+          for (var si=0; si<siteOrder.length; si++){
+            var site=siteOrder[si], g=byWeek[wk] && byWeek[wk][site];
+            var arr=g ? g[d][s] : [];
+            for (var k=0;k<arr.length;k++)
+              assignments.push({month:isoMonth(),week:wk,weekday:d+1,date:diso,session:SESS[s],site:site,doctor:arr[k]});
+          }
+          availability.push({week:wk,weekday:d+1,date:diso,session:SESS[s],free:freeAt(wk,d,s)});
+        }
+        fullday.push({week:wk,weekday:d+1,date:diso,free:freeAllDay(wk,d)});
+      }
+    }
+    return {month:isoMonth(), weekAnchor:"week-containing-1st (Mon–Sat)", roster:roster,
+            sites:siteOrder, assignments:assignments, availability:availability, fullDayFree:fullday};
+  }
+  function isoMonth(){ function p(n){return (n<10?"0":"")+n;} return year+"-"+p(m0+1); }
+  function dl(name, text, type){
+    var blob=new Blob([text],{type:type+";charset=utf-8"});
+    var url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  }
+  el("avJson").onclick=function(){
+    if (!loaded) return;
+    dl("輪值母表_"+isoMonth()+".json", JSON.stringify(buildExport(),null,2), "application/json");
+  };
+  el("avCsv").onclick=function(){
+    if (!loaded) return;
+    var ex=buildExport(), lines=["month,week,weekday,date,session,site,doctor"];
+    for (var i=0;i<ex.assignments.length;i++){
+      var a=ex.assignments[i];
+      lines.push([a.month,a.week,a.weekday,a.date,a.session,a.site,a.doctor].join(","));
+    }
+    dl("輪值班表_"+isoMonth()+".csv", "﻿"+lines.join("\n"), "text/csv");
+  };
+
+  function fmtClock(d){ function p(n){return (n<10?"0":"")+n;} return (d.getMonth()+1)+"/"+d.getDate()+" "+p(d.getHours())+":"+p(d.getMinutes()); }
+  function onError(msg){
+    clearTimeout(loadTimer); loading=false;
+    window.__hdPill.set("avail","err","載入失敗");
+    chipsEl.hidden=true;
+    scrollEl.innerHTML='<div class="status err"><div class="big">⚠ 無法載入母表</div><div>'+esc(msg)
+      +'</div><div style="margin-top:14px"><button class="btn" id="avRetry">重試</button></div></div>';
+    var rb=el("avRetry"); if (rb) rb.onclick=function(){ loaded=false; load(); };
+  }
+})();
+
+// ===== view switcher ==============================================
+(function(){
+  window.__hdView = "date";
+  var tabDate=document.getElementById("tabDate"), tabAvail=document.getElementById("tabAvail");
+  function show(v){
+    window.__hdView=v;
+    document.getElementById("viewDate").hidden = (v!=="date");
+    document.getElementById("viewAvail").hidden = (v!=="avail");
+    tabDate.classList.toggle("on", v==="date"); tabDate.setAttribute("aria-selected", v==="date");
+    tabAvail.classList.toggle("on", v==="avail"); tabAvail.setAttribute("aria-selected", v==="avail");
+    window.__hdPill.show(v);
+    if (v==="avail" && window.__availInit) window.__availInit();
+  }
+  tabDate.onclick=function(){ show("date"); };
+  tabAvail.onclick=function(){ show("avail"); };
+  // header ↻ refreshes whichever view is active
+  document.getElementById("refreshBtn").onclick=function(){
+    var f=window.__hdPill.refresh[window.__hdView]; if (f) f();
+  };
 })();
 </script>
 </body>
