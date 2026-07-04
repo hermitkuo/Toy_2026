@@ -1,4 +1,21 @@
+---
+project: hd-schedule
+last_checkout: 2026-07-04 17:54
+---
+
 # TODO — 花蓮慈院血透室班表頁
+
+## Status
+檢查 `setup_settings_sheet.gs`：功能邏輯健全（欄數／validation／重跑保護皆正確），修正過時提示——檔頭與完成 alert 由「三個分頁」改為「四個分頁」，補上遺漏的「醫師配額」。
+
+## Next
+- 部署 `publish_webapp.gs` 成 Web App、填 schedule.html 的 /exec 網址+通關碼；把草稿分頁 gid 填進 index.html `DRAFT_GID` 啟用 B。
+- schedule.html 優化：S6 偏好納入排班、掛名輪替（目前偏集中）、遞補自動套用（目前僅建議）。
+- 接後端讓 leave.html / preference.html 真正送出（Apps Script 寫入 醫師偏好/請假分頁）。
+
+## Sessions
+- sess_unknown (2026-07-04): 檢查並修正 setup_settings_sheet.gs 過時提示（3→4 分頁，補「醫師配額」）
+- sess_unknown (2026-07-04): 建立排班全鏈路四頁+兩支 Apps Script+規則 v1.0，閱覽頁可讀草稿分頁(B)，全部已 push
 
 ## 計劃 — 自動化排班（新增）
 
