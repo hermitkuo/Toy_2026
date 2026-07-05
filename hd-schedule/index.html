@@ -1534,11 +1534,12 @@ window.__sched = {
   // 列印一律用亮色主題輸出（彩色、黑白友善），並更新標題；列印後還原使用者主題；同時涵蓋 Ctrl+P
   // 字體以易讀為先，不縮到單頁：滿版月份由瀏覽器自然排成 1–2 頁（表頭每頁重印、整列不跨頁）
   var __printPrevTheme = null, __printPrevTitle = null;
-  // 列印/存 PDF 的預設檔名（瀏覽器取自 document.title）：{年}腎臟科班表-{月}-{院區}
+  // 列印/存 PDF 的預設檔名（瀏覽器取自 document.title）：{年}{月兩碼}腎臟科班表-{院區}
   function printFileName(){
     var sel = siteSelListD();
     var site = sel.length ? sel.join("、") : "全部";
-    return (view ? view.y : "") + "腎臟科班表-" + (view ? (view.m+1) : "") + "-" + site;
+    var mm = view ? ("0"+(view.m+1)).slice(-2) : "";
+    return (view ? view.y : "") + mm + "腎臟科班表-" + site;
   }
   window.addEventListener("beforeprint", function(){
     updatePrintTitle();
