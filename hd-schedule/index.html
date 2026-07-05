@@ -2126,7 +2126,7 @@ window.__sched = {
   var HIST_GID  = "834332171";       // 歷史班表（~2023/2 起；採用 2026-01-01 之前）
   var CUR_GID   = "1837573287";      // 現行班表（採用 2026-01-01 起）
   var HOL_SHEET = "1UdSMWQG1XxpNa7jRRmvK5cqQ7sfMb7E4O89B-y5Te9c";
-  var HOL_GID   = "592318403";       // 國定假日表（日期／節日／醫院是否放假）
+  var HOL_GID   = "600263934";       // 國定假日表（欄：日期／週幾／節日名稱／醫院是否放假／HD醫師非週末出勤）
   var CUTOFF    = new Date(2026,0,1); // < CUTOFF → 歷史；>= CUTOFF → 現行
 
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
@@ -2237,14 +2237,15 @@ window.__sched = {
     for(var r=0;r<rows.length;r++){
       var c=rows[r].c||[];
       var dt=gvizDate(c[0]); if(!dt) continue;
-      holidays.push({date:dt, name:valOf(c[1]), off:isNotClosed(valOf(c[2]))});
+      // 欄：0 日期 · 1 週幾 · 2 節日名稱 · 3 醫院是否放假 · 4 HD醫師非週末出勤
+      holidays.push({date:dt, name:valOf(c[2]), off:!isOn(valOf(c[4]))});
     }
   }
-  // 醫院是否放假：空白/是/放假/TRUE → 計入；否/沒放假/FALSE/上班 → off（不計）
-  function isNotClosed(v){
+  // HD醫師非週末出勤：1／是／TRUE → 計入；0／空白 → off（不計）
+  function isOn(v){
     if(!v) return false;
     var s=v.trim().toLowerCase();
-    return /^(否|no|n|false|0|上班|不放|照常|正常|×|✗|x)$/.test(s);
+    return /^(1|是|y|yes|true|✓|○|v)$/.test(s) || parseFloat(s)>0;
   }
 
   function maybeReady(){
@@ -2372,14 +2373,14 @@ window.__sched = {
 
   // ---- 國定假日值班醫師清單 ----
   function holidaySection(){
-    var desc='國定假日當天的<b>值班醫師</b>。標「醫院上班」者（假日表註記醫院沒放假）淡化、不計入下方次數。';
+    var desc='國定假日當天的<b>值班醫師</b>（值班欄取自班表）。僅計假日表「<b>HD醫師非週末出勤</b>」註記為 1 的假日；其餘（週末或醫院照常上班）淡化、不計入下方次數。';
     var list=holidays.filter(function(h){ return h.date.getFullYear()===curYear; })
                      .sort(function(a,b){ return a.date-b.date; });
     if(!list.length){
       return sec("國定假日值班", desc,
         '<div class="stat-empty">尚無 '+curYear+' 年的國定假日資料。<br>'
         +'請於<a href="https://docs.google.com/spreadsheets/d/'+HOL_SHEET+'/edit?gid='+HOL_GID+'" target="_blank" rel="noopener">國定假日表</a>'
-        +'填入日期／節日名稱／醫院是否放假後即會自動顯示。</div>');
+        +'填入日期／節日名稱／HD醫師非週末出勤後即會自動顯示。</div>');
     }
     var tally={};
     var rowsH='<div class="stat-scroll"><table class="holtbl"><thead><tr>'
@@ -2395,7 +2396,7 @@ window.__sched = {
            + '<td>'+WK[h.date.getDay()]+'</td>'
            + '<td>'+esc(h.name||"—")+'</td>'
            + '<td class="hd-doc">'+docHTML+'</td>'
-           + '<td class="hd-off">'+(h.off?'醫院上班·不計':'')+'</td></tr>';
+           + '<td class="hd-off">'+(h.off?'非HD出勤·不計':'')+'</td></tr>';
     }
     rowsH+='</tbody></table></div>';
     // per-doctor tally bar
