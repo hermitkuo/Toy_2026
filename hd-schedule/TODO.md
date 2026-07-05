@@ -5,8 +5,11 @@ last_checkout: 2026-07-05 13:04
 
 # TODO — 花蓮慈院血透室班表頁
 
+> 專案總覽見 [`README.md`](README.md)；Claude 提出的後續建議清單見 [`TODO_byClaude.md`](TODO_byClaude.md)。
+
 ## Status
-找班表／找空檔篩選器標籤精簡（院區（可多選）→院區、高亮醫師（可多選）→醫師）；班表欄位改名（花蓮HD→花蓮洗腎診、特約→花蓮特約診、假勤→請假，並同步更新「我的時段」掛名 colIndex 查詢鍵避免失效）。已 push。
+文件同步：新增 `README.md`（頁面一覽、資料來源 gid、規則摘要、待辦），並整理本檔指向。
+前一輪功能：找班表／找空檔篩選器標籤精簡（院區、醫師）；班表欄位改名（花蓮HD→花蓮洗腎診、特約→花蓮特約診、假勤→請假，並同步更新「我的時段」掛名 colIndex 查詢鍵避免失效）。均已 push。
 
 ## Next
 - 部署 `publish_webapp.gs` 成 Web App、填 schedule.html 的 /exec 網址+通關碼；把草稿分頁 gid 填進 index.html `DRAFT_GID` 啟用 B。
@@ -50,6 +53,7 @@ last_checkout: 2026-07-05 13:04
         頁首標題含年月＋院區/高亮摘要；同時涵蓋 Ctrl+P。已用離屏量測驗證頁數與字級。
 
 ## Sessions
+- sess_current (2026-07-05): 文件同步 — 新增 README.md 與 TODO_byClaude.md，整理 TODO.md 指向
 - sess_03a207f5 (2026-07-05): 篩選器標籤精簡（院區／醫師）＋班表欄位改名（花蓮洗腎診／花蓮特約診／請假，同步我的時段查詢鍵），已 push
 - sess_unknown (2026-07-04): 檢查並修正 setup_settings_sheet.gs 過時提示（3→4 分頁，補「醫師配額」）
 - sess_unknown (2026-07-04): 建立排班全鏈路四頁+兩支 Apps Script+規則 v1.0，閱覽頁可讀草稿分頁(B)，全部已 push
