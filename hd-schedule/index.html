@@ -115,8 +115,15 @@
   /* ---------- table ---------- */
   .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
   .scroll{overflow:auto; max-height:calc(100vh - 220px);}
-  .tblfoot{display:flex; justify-content:flex-end; padding:8px 10px; border-top:1px solid var(--line);}
-  #copyBtn.ok{border-color:var(--accent); color:var(--accent);}
+  .tblfoot{display:flex; justify-content:flex-start; padding:3px 4px 3px 6px;}
+  .iconbtn{display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px;
+    border:0; background:transparent; color:var(--muted); border-radius:6px; cursor:pointer; opacity:.65;}
+  .iconbtn:hover{opacity:1; background:var(--line3); color:var(--ink);}
+  .iconbtn:active{transform:translateY(1px);}
+  .iconbtn .i-ok{display:none;}
+  .iconbtn.ok{opacity:1; color:var(--accent);}
+  .iconbtn.ok .i-copy{display:none;}
+  .iconbtn.ok .i-ok{display:inline;}
   table{border-collapse:separate; border-spacing:0; width:100%; font-size:16px;}
   th,td{padding:5px 9px; text-align:center; white-space:nowrap; border-bottom:1px solid var(--line2);}
 
@@ -645,7 +652,10 @@
       <div class="status" id="status"><span class="spin"></span>正在載入班表…</div>
     </div>
     <div class="tblfoot" id="tblFoot">
-      <button class="btn" id="copyBtn" title="複製目前顯示的班表（依院區篩選）">📋 複製</button>
+      <button class="iconbtn" id="copyBtn" aria-label="複製目前顯示的班表" title="複製目前顯示的班表（依院區篩選）">
+        <svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <svg class="i-ok" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+      </button>
     </div>
   </div>
   </section>
@@ -1436,15 +1446,14 @@ window.__sched = {
   }
   el("copyBtn").onclick = function(){
     var btn = this, key = view ? view.y+"-"+view.m : "";
+    var reset = function(){ btn.classList.remove("ok"); btn.title = "複製目前顯示的班表（依院區篩選）"; };
     if (!view || !(byMonth[key] && byMonth[key].length)){
-      btn.textContent = "此月份無資料";
-      setTimeout(function(){ btn.textContent = "📋 複製"; }, 1500);
-      return;
+      btn.title = "此月份無資料"; setTimeout(reset, 1500); return;
     }
     copyText(dateTableToText(), function(ok){
-      btn.textContent = ok ? "✓ 已複製" : "複製失敗";
       btn.classList.toggle("ok", ok);
-      setTimeout(function(){ btn.textContent = "📋 複製"; btn.classList.remove("ok"); }, 1500);
+      btn.title = ok ? "已複製" : "複製失敗，請再試一次";
+      setTimeout(reset, 1500);
     });
   };
 
