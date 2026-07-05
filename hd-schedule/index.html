@@ -349,10 +349,14 @@
   .heat tfoot td{font-weight:700; background:var(--head); color:var(--head-ink); border-top:1px solid var(--line);}
   .heat tbody tr:hover td{filter:brightness(.97);}
   .heat tbody tr:hover td.hname{background:var(--accent-tint); color:var(--accent-600);}
-  /* heat intensity buckets (light) */
+  /* heat intensity buckets (light) — default teal scheme */
   .heat td.hcell.l1{background:#e0f0ed;} .heat td.hcell.l2{background:#b7e0d8;}
   .heat td.hcell.l3{background:#7fc9bd;} .heat td.hcell.l4{background:#46ab9c; color:#fff;}
   .heat td.hcell.l5{background:#178f7d; color:#fff;}
+  /* alt scheme: violet (light) */
+  .heat.s-violet td.hcell.l1{background:#ece7f8;} .heat.s-violet td.hcell.l2{background:#d3c6ee;}
+  .heat.s-violet td.hcell.l3{background:#b199e0;} .heat.s-violet td.hcell.l4{background:#8a6fd0; color:#fff;}
+  .heat.s-violet td.hcell.l5{background:#6a49c2; color:#fff;}
   .heatkey{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); margin:10px 2px 0;}
   .heatkey .ks{display:inline-block; width:16px; height:12px; border-radius:2px;}
 
@@ -361,10 +365,13 @@
   .barrow{display:grid; grid-template-columns:52px 1fr 44px; align-items:center; gap:8px;}
   .barrow .bname{font-weight:700; font-size:13.5px; text-align:right; color:var(--ink);}
   .barrow .btrack{background:var(--line3); border-radius:6px; height:20px; overflow:hidden;}
-  .barrow .bfill{height:100%; border-radius:6px; background:var(--accent); min-width:2px;
+  .barrow .bfill{display:block; height:100%; border-radius:6px; background:var(--accent); min-width:3px;
     transition:width .35s ease;}
   .barrow .bval{font-size:13px; font-weight:700; color:var(--muted); font-variant-numeric:tabular-nums;}
   .barrow.zero .bfill{background:var(--line);}
+  /* per-chart bar colours (variety across the stat tab) */
+  .barlist.b-amber .bfill{background:#e08a1e;}
+  .barlist.b-blue  .bfill{background:#3f7fc4;}
 
   /* national-holiday duty table */
   table.holtbl{border-collapse:separate; border-spacing:0; width:100%; font-size:13.5px;}
@@ -493,7 +500,12 @@
     .heat td.hcell.l1{background:#14332e;} .heat td.hcell.l2{background:#1b4b43;}
     .heat td.hcell.l3{background:#226358; color:#dff3ee;} .heat td.hcell.l4{background:#2a8072; color:#fff;}
     .heat td.hcell.l5{background:#34b8a6; color:#06231f;}
+    .heat.s-violet td.hcell.l1{background:#241d3d;} .heat.s-violet td.hcell.l2{background:#332a58;}
+    .heat.s-violet td.hcell.l3{background:#463a73; color:#e7dfff;} .heat.s-violet td.hcell.l4{background:#5f4f97; color:#fff;}
+    .heat.s-violet td.hcell.l5{background:#8570c8; color:#14102a;}
     .barrow .btrack{background:#1b232d;}
+    .barlist.b-amber .bfill{background:#d98e2e;}
+    .barlist.b-blue  .bfill{background:#4f8fd0;}
     .holtbl td.hd-doc .nm{background:#123c37; color:#5ee0d0;}
   }
 
@@ -2292,7 +2304,13 @@ window.__sched = {
   }
 
   // ---- 醫師 × 月份 熱區圖（依 field: 'inhd' | 'site'）----
-  function heatSection(title, desc, field){
+  // colour schemes for the two heatmaps (table class + legend swatch hex)
+  var HEAT_SCHEMES = {
+    teal:   {cls:"",         keys:["#e0f0ed","#b7e0d8","#7fc9bd","#46ab9c","#178f7d"]},
+    violet: {cls:" s-violet", keys:["#ece7f8","#d3c6ee","#b199e0","#8a6fd0","#6a49c2"]}
+  };
+  function heatSection(title, desc, field, schemeName){
+    var scheme=HEAT_SCHEMES[schemeName]||HEAT_SCHEMES.teal;
     var idxs=byYear[curYear]||[];
     var counts={}, docTot={}, monTot={}, max=0;
     for(var i=0;i<idxs.length;i++){
@@ -2307,7 +2325,7 @@ window.__sched = {
     var docs=orderRoster(docTot);
     if(!docs.length) return sec(title, desc, '<div class="stat-empty">此年度沒有資料。</div>');
 
-    var h='<div class="stat-scroll"><table class="heat"><thead><tr>'
+    var h='<div class="stat-scroll"><table class="heat'+scheme.cls+'"><thead><tr>'
         + '<th class="hname">醫師</th>';
     for(var mo=0;mo<12;mo++) h+='<th>'+(mo+1)+'月</th>';
     h+='<th class="tot">總計</th></tr></thead><tbody>';
@@ -2324,9 +2342,9 @@ window.__sched = {
     for(var mt=0;mt<12;mt++){ h+='<td>'+(monTot[mt]||0)+'</td>'; grand+=(monTot[mt]||0); }
     h+='<td class="tot">'+grand+'</td></tr></tfoot></table></div>'
      + '<div class="heatkey">少 '
-     + '<span class="ks" style="background:#e0f0ed"></span><span class="ks" style="background:#b7e0d8"></span>'
-     + '<span class="ks" style="background:#7fc9bd"></span><span class="ks" style="background:#46ab9c"></span>'
-     + '<span class="ks" style="background:#178f7d"></span> 多（每格＝該月被排的班次數）</div>';
+     + '<span class="ks" style="background:'+scheme.keys[0]+'"></span><span class="ks" style="background:'+scheme.keys[1]+'"></span>'
+     + '<span class="ks" style="background:'+scheme.keys[2]+'"></span><span class="ks" style="background:'+scheme.keys[3]+'"></span>'
+     + '<span class="ks" style="background:'+scheme.keys[4]+'"></span> 多（每格＝該月被排的班次數）</div>';
     return sec(title, desc, h);
   }
   function lvl(v,max){
@@ -2355,7 +2373,7 @@ window.__sched = {
     var desc='大抽週六＝每月<b>第一個週六</b>（對齊全站週定義「第 1 週＝含 1 號那週、週一為首」的那個週六）；計當天<b>院內時段（早/中/晚）</b>的醫師各一次。';
     if(!docs.length) return sec("大抽週六次數", desc, '<div class="stat-empty">此年度沒有可對應的班表資料。</div>');
     var max=0; for(var i=0;i<docs.length;i++) if(counts[docs[i]]>max) max=counts[docs[i]];
-    var body='<div class="barlist">';
+    var body='<div class="barlist b-amber">';
     for(var r=0;r<docs.length;r++){
       var n=docs[r], v=counts[n], pct=max?Math.round(v/max*100):0;
       body+='<div class="barrow'+(v?'':' zero')+'"><span class="bname">'+esc(n)+'</span>'
@@ -2374,7 +2392,7 @@ window.__sched = {
 
   // ---- 國定假日值班醫師清單 ----
   function holidaySection(){
-    var desc='國定假日當天的<b>值班醫師</b>（值班欄取自班表）。僅計假日表「<b>HD醫師非週末出勤</b>」註記為 1 的假日；其餘（週末或醫院照常上班）淡化、不計入下方次數。';
+    var desc='國定假日當天的<b>院內時段醫師</b>（早／中／晚，取自班表）。僅計假日表「<b>HD醫師非週末出勤</b>」註記為 1 的假日；其餘（週末或醫院照常上班）淡化、不計入下方次數。同一位醫師同日早/中/晚多節僅計一次。';
     var list=holidays.filter(function(h){ return h.date.getFullYear()===curYear; })
                      .sort(function(a,b){ return a.date-b.date; });
     if(!list.length){
@@ -2385,10 +2403,10 @@ window.__sched = {
     }
     var tally={};
     var rowsH='<div class="stat-scroll"><table class="holtbl"><thead><tr>'
-            + '<th>日期</th><th>週</th><th>節日</th><th>值班醫師</th><th></th></tr></thead><tbody>';
+            + '<th>日期</th><th>週</th><th>節日</th><th>院內時段醫師</th><th></th></tr></thead><tbody>';
     for(var i=0;i<list.length;i++){
       var h=list[i], rec=mapByKey[key(h.date)];
-      var docs=rec?rec.oncall:[];
+      var docs=[]; if(rec){ var seen={}; for(var q=0;q<rec.inhd.length;q++){ var nm=rec.inhd[q]; if(!seen[nm]){ seen[nm]=1; docs.push(nm); } } }
       var docHTML=docs.length? docs.map(function(n){return '<span class="nm">'+esc(n)+'</span>';}).join(" ")
                              : '<span class="hd-off">—</span>';
       if(!h.off){ for(var k=0;k<docs.length;k++) tally[docs[k]]=(tally[docs[k]]||0)+1; }
@@ -2404,7 +2422,7 @@ window.__sched = {
     var td=orderRoster(tally), tallyHTML="";
     if(td.length){
       var max=0; for(var t=0;t<td.length;t++) if(tally[td[t]]>max) max=tally[td[t]];
-      tallyHTML='<div class="heatkey" style="margin-top:14px">醫師別國定假日值班次數（醫院有放假者）</div><div class="barlist" style="margin-top:6px">';
+      tallyHTML='<div class="heatkey" style="margin-top:14px">醫師別國定假日院內時段出勤次數（醫院有放假者）</div><div class="barlist b-blue" style="margin-top:6px">';
       for(var r=0;r<td.length;r++){
         var n=td[r], v=tally[n], pct=max?Math.round(v/max*100):0;
         tallyHTML+='<div class="barrow"><span class="bname">'+esc(n)+'</span>'
@@ -2431,8 +2449,8 @@ window.__sched = {
       return;
     }
     el("statBody").innerHTML=
-        heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd")
-      + heatSection("院區支援 月份班數", "外派院區（玉里／關山／聯安；2026 前含嘉恩／懷德／鳳林）每月班次數。", "site")
+        heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd", "teal")
+      + heatSection("院區支援 月份班數", "外派院區（玉里／關山／聯安；2026 前含嘉恩／懷德／鳳林）每月班次數。", "site", "violet")
       + bigSatSection()
       + holidaySection();
   }
