@@ -59,7 +59,6 @@
 
   /* ---------- month nav + picker ---------- */
   .navbar{display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:4px 0 12px;}
-  #printBtn{margin-left:auto;}   /* 靠右；空間不足時自動換行 */
   .month-wrap{position:relative; display:flex; align-items:center; gap:8px;}
   .month{
     border:1px solid transparent; background:transparent; color:var(--ink);
@@ -118,7 +117,7 @@
   /* ---------- table ---------- */
   .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
   .scroll{overflow:auto; max-height:calc(100vh - 220px);}
-  .tblfoot{display:flex; justify-content:flex-start; padding:3px 4px 3px 6px;}
+  .tblfoot{display:flex; justify-content:flex-start; gap:2px; padding:3px 4px 3px 6px;}
   .iconbtn{display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px;
     border:0; background:transparent; color:var(--muted); border-radius:6px; cursor:pointer; opacity:.65;}
   .iconbtn:hover{opacity:1; background:var(--line3); color:var(--ink);}
@@ -663,7 +662,6 @@
       <div class="mpick" id="mpick" hidden></div>
     </div>
     <button class="btn today-btn" id="thisMonthBtn">本月</button>
-    <button class="btn" id="printBtn" title="列印目前月份整張班表">🖨 列印</button>
   </div>
 
   <div class="filters" id="dateFilters">
@@ -695,6 +693,9 @@
       <button class="iconbtn" id="copyBtn" aria-label="複製目前顯示的班表" title="複製目前顯示的班表（依院區篩選）">
         <svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <svg class="i-ok" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+      </button>
+      <button class="iconbtn" id="printBtn" aria-label="列印目前月份整張班表" title="列印目前月份整張班表（依院區篩選）">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
       </button>
     </div>
   </div>
