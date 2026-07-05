@@ -381,6 +381,8 @@
   .heat.s-red td.hcell.l1{background:#fde2e0;} .heat.s-red td.hcell.l2{background:#f7b7b2;}
   .heat.s-red td.hcell.l3{background:#ef8a82;} .heat.s-red td.hcell.l4{background:#e05a4f; color:#fff;}
   .heat.s-red td.hcell.l5{background:#c62f22; color:#fff;}
+  /* 淡色：高於「目前月份」的欄位（尚未發生／未排定），降透明度 */
+  .heat .fut{opacity:.4;}
   .heatkey{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); margin:10px 2px 0;}
   .heatkey .ks{display:inline-block; width:16px; height:12px; border-radius:2px;}
   /* 找統計 院區篩選 chips */
@@ -408,6 +410,11 @@
   /* per-chart bar colours (variety across the stat tab) */
   .barlist.b-amber .bfill{background:#e08a1e;}
   .barlist.b-blue  .bfill{background:#3f7fc4;}
+  .barlist.b-teal  .bfill{background:#178f7d;}
+  /* 大抽 週五／週六 兩欄並排（窄螢幕自動堆疊） */
+  .twocol{display:flex; gap:18px; flex-wrap:wrap;}
+  .twocol .col{flex:1 1 240px; min-width:0;}
+  .twocol .col h3{font-size:13.5px; font-weight:700; margin:0 0 10px; color:var(--ink);}
 
   /* national-holiday duty table */
   table.holtbl{border-collapse:separate; border-spacing:0; width:100%; font-size:13.5px;}
@@ -2571,29 +2578,37 @@ window.__sched = {
   };
   // 數字顯示：整數原樣，小數保留 1 位（去掉多餘 .0）
   function fmtN(v){ var r=Math.round(v*10)/10; return (r%1===0)? String(r) : String(r); }
+  // 該月是否「高於目前月份」（尚未發生／未排定）→ 供熱區圖淡色處理。僅在檢視當年時淡化未來月份。
+  function futMonth(mm){
+    var now=new Date(), ny=now.getFullYear(), nm=now.getMonth();
+    if(curYear>ny) return true;
+    if(curYear<ny) return false;
+    return mm>nm;
+  }
   // 由 {doc:{month:val}}、docTot、monTot 產生熱區表
   // cellTip(name, mm|'tot') → 字串：若提供，掛在該格 title（滑鼠停留顯示明細）
-  function heatRender(title, desc, counts, docTot, monTot, max, schemeName, unitLabel, cellTip){
+  // fade=true → 高於目前月份的欄位淡色處理（月表頭／格／合計列）
+  function heatRender(title, desc, counts, docTot, monTot, max, schemeName, unitLabel, cellTip, fade){
     var scheme=HEAT_SCHEMES[schemeName]||HEAT_SCHEMES.teal;
     var docs=orderRoster(docTot);
     if(!docs.length) return sec(title, desc, '<div class="stat-empty">此年度沒有資料。</div>');
     var h='<div class="stat-scroll"><table class="heat'+scheme.cls+'"><thead><tr>'
         + '<th class="hname">醫師</th>';
-    for(var mo=0;mo<12;mo++) h+='<th>'+(mo+1)+'月</th>';
+    for(var mo=0;mo<12;mo++) h+='<th'+(fade&&futMonth(mo)?' class="fut"':'')+'>'+(mo+1)+'月</th>';
     h+='<th class="tot">總計</th></tr></thead><tbody>';
     for(var r=0;r<docs.length;r++){
       var name=docs[r]; h+='<tr><td class="hname">'+esc(name)+'</td>';
       for(var mm=0;mm<12;mm++){
         var v=(counts[name]&&counts[name][mm])||0;
         var tp=cellTip? cellTip(name, mm) : "";
-        h+='<td class="hcell '+lvl(v,max)+'"'+(tp?' title="'+esc(tp)+'"':'')+'>'+(v?fmtN(v):'·')+'</td>';
+        h+='<td class="hcell '+lvl(v,max)+(fade&&futMonth(mm)?' fut':'')+'"'+(tp?' title="'+esc(tp)+'"':'')+'>'+(v?fmtN(v):'·')+'</td>';
       }
       var tt=cellTip? cellTip(name,'tot') : "";
       h+='<td class="tot"'+(tt?' title="'+esc(tt)+'"':'')+'>'+fmtN(docTot[name])+'</td></tr>';
     }
     h+='</tbody><tfoot><tr><td class="hname">合計</td>';
     var grand=0;
-    for(var mt=0;mt<12;mt++){ var mv=monTot[mt]||0; h+='<td>'+(mv?fmtN(mv):0)+'</td>'; grand+=mv; }
+    for(var mt=0;mt<12;mt++){ var mv=monTot[mt]||0; h+='<td'+(fade&&futMonth(mt)?' class="fut"':'')+'>'+(mv?fmtN(mv):0)+'</td>'; grand+=mv; }
     h+='<td class="tot">'+fmtN(grand)+'</td></tr></tfoot></table></div>'
      + '<div class="heatkey">少 '
      + '<span class="ks" style="background:'+scheme.keys[0]+'"></span><span class="ks" style="background:'+scheme.keys[1]+'"></span>'
@@ -2602,7 +2617,7 @@ window.__sched = {
     return sec(title, desc, h);
   }
   // 單一欄位（inhd/site/oncall）的醫師×月熱區
-  function heatSection(title, desc, field, schemeName){
+  function heatSection(title, desc, field, schemeName, fade){
     var idxs=byYear[curYear]||[];
     var counts={}, docTot={}, monTot={}, max=0;
     for(var i=0;i<idxs.length;i++){
@@ -2614,7 +2629,7 @@ window.__sched = {
         if(counts[d][m]>max) max=counts[d][m];
       }
     }
-    return heatRender(title, desc, counts, docTot, monTot, max, schemeName, "該月被排的班次數");
+    return heatRender(title, desc, counts, docTot, monTot, max, schemeName, "該月被排的班次數", null, fade);
   }
   // 總工作量：院內HD＋外派＋花蓮OPD（徐/王 OPD×1.5；值班與掛名皆不計）
   function workloadSection(){
@@ -2632,10 +2647,11 @@ window.__sched = {
       var ih=rec.inhd||[];
       for(var k=0;k<ih.length;k++){ add(ih[k],m,1); bump(inhdC,ih[k],m,1); }
       var sb=rec.siteBy||{};
-      for(var sn in sb){ siteSet[sn]=1; var arr=sb[sn];
-        for(var q=0;q<arr.length;q++){ var dn=arr[q]; add(dn,m,1);
+      for(var sn in sb){ var arr=sb[sn]; if(!arr.length) continue; siteSet[sn]=1;
+        var sw=siteSessions(sn, rec.date)/arr.length;                     // 時段數 ÷ 當天該站人數
+        for(var q=0;q<arr.length;q++){ var dn=arr[q]; add(dn,m,sw);
           siteDet[dn]=siteDet[dn]||{}; siteDet[dn][m]=siteDet[dn][m]||{};
-          siteDet[dn][m][sn]=(siteDet[dn][m][sn]||0)+1;
+          siteDet[dn][m][sn]=(siteDet[dn][m][sn]||0)+sw;                  // 明細存加權後貢獻
         }
       }
     }
@@ -2657,18 +2673,32 @@ window.__sched = {
         ih=(inhdC[name]&&inhdC[name][mm])||0; opd=(opdC[name]&&opdC[name][mm])||0;
         sd=(siteDet[name]&&siteDet[name][mm])||{};
       }
-      var sp=yearSites.map(function(s){return s+(sd[s]||0);}).join("/");
+      var sp=yearSites.map(function(s){return s+fmtN(sd[s]||0);}).join("/");
       return "院內HD="+ih+" ＋ 外派("+sp+") ＋ 花蓮OPD="+fmtN(opd)+" ＝ "+fmtN(total);
     }
-    var desc='每位醫師每月的<b>總工作量</b>＝院內HD（早/中/晚）＋外派（玉里/關山/聯安）＋花蓮OPD。'
+    var desc='每位醫師每月的<b>總工作量</b>＝院內HD（早/中/晚，每時段1）＋外派（依營業時段加權）＋花蓮OPD。'
+           + '<b>外派（以真實班表計）</b>：權重＝該站當天營業時段數÷當天該站人數。時段數：玉里/聯安＝2（早+午）、關山 週三＝1（只有早）其餘＝2、歷史站＝2；'
+           + '同格兩人共擔則各半（如聯安「林郭」各 1）。'
            + '<b>值班</b>與掛名（花蓮HD診/特約診/聯安掛名）皆<b>不計</b>。<b>花蓮OPD</b> 由輪值母表週期模板投影＝<b>估算值</b>，'
-           + '且 <b>徐/王</b> 的 OPD 每時段以 <b>1.5</b> 計（因應花蓮OPD人次較多）；<b>當天請假者該日 OPD 不計</b>。'
-           + '<b>滑鼠停在任一格可看加總前明細。</b>';
-    return heatRender("總工作量 月份熱區圖", desc, counts, docTot, monTot, max, "amber", "該月加權工作量", tip);
+           + '<b>徐/王</b> OPD 每時段以 <b>1.5</b> 計、當天請假者該日 OPD 不計、未排院內HD 的月份不計 OPD。'
+           + '<b>滑鼠停在任一格可看加總前明細</b>（外派為加權後貢獻）。';
+    return heatRender("總工作量 月份熱區圖", desc, counts, docTot, monTot, max, "amber", "該月加權工作量", tip, true);
   }
   // 院區支援 月份熱區（可依單一院區篩選；siteFilter="全部" 或某院區名）
   var SITE_ALL = ["玉里","關山","聯安","嘉恩","懷德","鳳林"];
   var siteFilter = "全部";
+  // 各站每週間的「營業時段數」（早/午）；wd 用 getDay()（0日..6六）
+  //   玉里/聯安＝早+午(2)；關山 週三只有早(1)、其餘(含週五/六)=2；歷史站預設 2
+  // 每人外派權重＝該站當天時段數 ÷ 當天該站人數（單人全拿；兩人共擔則各半，如聯安「林郭」各 1）
+  var SITE_SESSIONS = {
+    "玉里":{def:2}, "關山":{def:2, wd:{3:1}}, "聯安":{def:2},
+    "嘉恩":{def:2}, "懷德":{def:2}, "鳳林":{def:2}
+  };
+  function siteSessions(station, date){
+    var w=SITE_SESSIONS[station]; if(!w) return 2;
+    var dow=date.getDay();
+    return (w.wd && w.wd[dow]!=null) ? w.wd[dow] : w.def;
+  }
   function siteHeatSection(){
     var idxs=byYear[curYear]||[];
     var counts={}, docTot={}, monTot={}, max=0;
@@ -2694,7 +2724,7 @@ window.__sched = {
     chips+='</div>';
     var lab=(siteFilter==="全部")?"外派院區（玉里／關山／聯安；2026 前含嘉恩／懷德／鳳林）":("院區："+siteFilter);
     var desc=lab+' 每位醫師每月被排的班次數。可用上方院區篩選器切換單一院區。';
-    return heatRender("院區支援 月份班數", desc, counts, docTot, monTot, max, "violet", "該月被排的班次數").replace('<div class="desc">'+desc+'</div>', '<div class="desc">'+desc+'</div>'+chips);
+    return heatRender("院區支援 月份班數", desc, counts, docTot, monTot, max, "violet", "該月被排的班次數", null, true).replace('<div class="desc">'+desc+'</div>', '<div class="desc">'+desc+'</div>'+chips);
   }
   // 週間人力吃緊時段：全天/早/中/晚 × 週一~週六，格值＝平均可用院內人力（10人−外派/OPD/請假）
   function tightSection(){
@@ -2714,37 +2744,39 @@ window.__sched = {
       var af=0; for(var r2=0;r2<roster.length;r2++){ if(!allBusy[roster[r2]]) af++; }
       sumF[wd]+=af; cntF[wd]++;
     }
-    // 早/中/晚 一組正規化、全天 另一組正規化（各看自身變化）
-    var vals=[], minV=Infinity, maxV=-Infinity, any=false;
+    var vals=[], any=false;
     for(var w2=0;w2<6;w2++){ vals.push([]); for(var s2=0;s2<3;s2++){
       var a=cnt[w2][s2]? sum[w2][s2]/cnt[w2][s2] : null; vals[w2].push(a);
-      if(a!=null){ any=true; if(a<minV)minV=a; if(a>maxV)maxV=a; }
+      if(a!=null) any=true;
     } }
-    var valsF=[], minF=Infinity, maxF=-Infinity;
-    for(var w4=0;w4<6;w4++){ var af2=cntF[w4]? sumF[w4]/cntF[w4] : null; valsF.push(af2);
-      if(af2!=null){ if(af2<minF)minF=af2; if(af2>maxF)maxF=af2; } }
+    var valsF=[];
+    for(var w4=0;w4<6;w4++){ valsF.push(cntF[w4]? sumF[w4]/cntF[w4] : null); }
     var desc='一週各時段的<b>平均可用院內人力</b>＝全體 '+roster.length+' 人扣除當天<b>外派</b>（玉里/關山/聯安…）、當時段<b>花蓮OPD</b>（母表投影）、當天<b>請假</b>後的平均可用人數（值班不占用）。'
-           + '<b>全天</b>＝當天早/中/晚皆無被占用（外派/請假/任一時段 OPD）的人數。數字越小、色越紅＝該時段人力越<b>吃緊</b>（全天與早/中/晚各自比較色階）。';
+           + '<b>全天</b>＝當天早/中/晚皆無被占用（外派/請假/任一時段 OPD）的人數。<b>固定分級</b>（越紅越吃緊）：<b>&gt;5</b> 白／<b>4–5</b>／<b>3–4</b>／<b>&lt;3</b> 最紅。';
     if(!any) return sec("週間人力吃緊時段", desc, '<div class="stat-empty">此年度沒有可計算的班表資料。</div>');
-    function lvlT(v,mn,mx){ if(v==null) return "z"; if(mx<=mn) return "l3"; return "l"+Math.min(5,Math.max(1,Math.ceil((mx-v)/(mx-mn)*5))); }
+    // 固定分級（絕對值）：>5 白、4–5、3–4、<3 最紅
+    function lvlT(v){ if(v==null) return "z"; if(v>5) return ""; if(v>=4) return "l2"; if(v>=3) return "l4"; return "l5"; }
     var h='<div class="stat-scroll"><table class="heat s-red"><thead><tr><th class="hname">時段＼星期</th>';
     for(var c=0;c<6;c++) h+='<th>週'+WK[c+1]+'</th>';
     h+='</tr></thead><tbody>';
+    // 分級與顯示皆用四捨五入到 1 位的值，色階與數字一致
+    function rnd(v){ return v==null? null : Math.round(v*10)/10; }
     // 全天列（置頂）
     h+='<tr><td class="hname">全天</td>';
-    for(var wf=0;wf<6;wf++){ var vf=valsF[wf]; h+='<td class="hcell '+lvlT(vf,minF,maxF)+'">'+(vf==null?'·':fmtN(Math.round(vf*10)/10))+'</td>'; }
+    for(var wf=0;wf<6;wf++){ var vf=rnd(valsF[wf]); h+='<td class="hcell '+lvlT(vf)+'">'+(vf==null?'·':fmtN(vf))+'</td>'; }
     h+='</tr>';
     var SN=["早","中","晚"];
     for(var s3=0;s3<3;s3++){
       h+='<tr><td class="hname">'+SN[s3]+'</td>';
-      for(var w3=0;w3<6;w3++){ var v=vals[w3][s3]; h+='<td class="hcell '+lvlT(v,minV,maxV)+'">'+(v==null?'·':fmtN(Math.round(v*10)/10))+'</td>'; }
+      for(var w3=0;w3<6;w3++){ var v=rnd(vals[w3][s3]); h+='<td class="hcell '+lvlT(v)+'">'+(v==null?'·':fmtN(v))+'</td>'; }
       h+='</tr>';
     }
     h+='</tbody></table></div>'
      + '<div class="heatkey">寬鬆 '
-     + '<span class="ks" style="background:#fde2e0"></span><span class="ks" style="background:#f7b7b2"></span>'
-     + '<span class="ks" style="background:#ef8a82"></span><span class="ks" style="background:#e05a4f"></span>'
-     + '<span class="ks" style="background:#c62f22"></span> 吃緊（格值＝平均可用人數，越小越吃緊）</div>';
+     + '<span class="ks" style="background:#fff;box-shadow:inset 0 0 0 1px var(--line)"></span>&gt;5 '
+     + '<span class="ks" style="background:#f7b7b2"></span>4–5 '
+     + '<span class="ks" style="background:#e05a4f"></span>3–4 '
+     + '<span class="ks" style="background:#c62f22"></span>&lt;3 吃緊（格值＝平均可用人數）</div>';
     return sec("週間人力吃緊時段", desc, h);
   }
   function lvl(v,max){
@@ -2753,41 +2785,50 @@ window.__sched = {
     return "l"+Math.min(5, Math.max(1, Math.ceil(v/max*5)));
   }
 
-  // ---- 大抽週六：對齊全站週定義「第1週＝含1號那週、週一為首」的週六 ----
-  //   即當月第一個週六（＝週1那週的週六，落在當月）。
-  function bigSatDay(y,m){
-    var dow=new Date(y,m,1).getDay();          // 0 日..6 六
-    return 1+((6-dow+7)%7);                     // 當月第一個週六
+  // ---- 大抽週五／週六：當月第一個週五、第一個週六；早/中/晚各算 1（同人同日最多 3）----
+  function firstDow(y,m,targetDow){          // targetDow: 5=週五, 6=週六
+    var dow=new Date(y,m,1).getDay();        // 0 日..6 六
+    return 1+((targetDow-dow+7)%7);          // 當月第一個 targetDow
   }
-  function bigSatSection(){
+  // 某 targetDow 的每位醫師累計次數（早/中/晚各計一次＝直接數 inhd 出現次數）＋日期清單
+  function drawCounts(targetDow){
     var counts={}, dateList=[];
     for(var m=0;m<12;m++){
-      var d=bigSatDay(curYear,m);
+      var d=firstDow(curYear,m,targetDow);
       var dt=new Date(curYear,m,d), rec=mapByKey[key(dt)];
       dateList.push({m:m, d:d, has:!!rec});
       if(!rec) continue;
-      var seen={};   // 每位醫師每個大抽週六計一次（早/中/晚同人不重複）
-      for(var k=0;k<rec.inhd.length;k++){ var nm=rec.inhd[k]; if(seen[nm]) continue; seen[nm]=1; counts[nm]=(counts[nm]||0)+1; }
+      for(var k=0;k<rec.inhd.length;k++){ var nm=rec.inhd[k]; counts[nm]=(counts[nm]||0)+1; }  // 早/中/晚各一次
     }
+    return {counts:counts, dateList:dateList};
+  }
+  function drawBlock(title, wdName, targetDow, barCls){
+    var r=drawCounts(targetDow), counts=r.counts, dateList=r.dateList;
     var docs=orderRoster(counts);
-    var desc='大抽週六＝每月<b>第一個週六</b>（對齊全站週定義「第 1 週＝含 1 號那週、週一為首」的那個週六）；計當天<b>院內時段（早/中/晚）</b>的醫師各一次。';
-    if(!docs.length) return sec("大抽週六次數", desc, '<div class="stat-empty">此年度沒有可對應的班表資料。</div>');
+    if(!docs.length) return '<div class="col"><h3>'+esc(title)+'</h3><div class="stat-empty">此年度沒有可對應的班表資料。</div></div>';
     var max=0; for(var i=0;i<docs.length;i++) if(counts[docs[i]]>max) max=counts[docs[i]];
-    var body='<div class="barlist b-amber">';
-    for(var r=0;r<docs.length;r++){
-      var n=docs[r], v=counts[n], pct=max?Math.round(v/max*100):0;
+    var body='<div class="barlist '+barCls+'">';
+    for(var rr=0;rr<docs.length;rr++){
+      var n=docs[rr], v=counts[n], pct=max?Math.round(v/max*100):0;
       body+='<div class="barrow'+(v?'':' zero')+'"><span class="bname">'+esc(n)+'</span>'
           + '<span class="btrack"><span class="bfill" style="width:'+pct+'%"></span></span>'
           + '<span class="bval">'+v+'</span></div>';
     }
     body+='</div>';
-    var chips='<div class="heatkey" style="flex-wrap:wrap">當年大抽週六：';
-    for(var j=0;j<dateList.length;j++){
-      var it=dateList[j];
-      chips+='<span style="margin-right:8px'+(it.has?'':';opacity:.4')+'">'+(it.m+1)+'/'+it.d+'</span>';
-    }
+    var chips='<div class="heatkey" style="flex-wrap:wrap">當年大抽'+wdName+'：';
+    for(var j=0;j<dateList.length;j++){ var it=dateList[j];
+      chips+='<span style="margin-right:8px'+(it.has?'':';opacity:.4')+'">'+(it.m+1)+'/'+it.d+'</span>'; }
     chips+='</div>';
-    return sec("大抽週六次數", desc, body+chips);
+    return '<div class="col"><h3>'+esc(title)+'</h3>'+body+chips+'</div>';
+  }
+  function bigDrawSection(){
+    var desc='大抽週五／週六＝每月<b>第一個週五</b>與<b>第一個週六</b>；計當天<b>院內時段（早／中／晚）</b>的醫師，'
+           + '<b>早／中／晚各算 1 次</b>（同一位醫師同日最多 3 次，一整個週六＝3）。';
+    var body='<div class="twocol">'
+           + drawBlock("大抽週五次數","週五",5,"b-teal")
+           + drawBlock("大抽週六次數","週六",6,"b-amber")
+           + '</div>';
+    return sec("大抽週五／週六次數", desc, body);
   }
 
   // ---- 國定假日值班醫師清單 ----
@@ -2871,11 +2912,11 @@ window.__sched = {
       return;
     }
     el("statBody").innerHTML=
-        heatSection("醫師別月份值班", "每位醫師每月被排的<b>值班</b>次數（值班以「日」計；輪值池 7 人：徐王賴林郭鄧翔）。", "oncall", "rose")
-      + heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd", "teal")
+        heatSection("醫師別月份值班", "每位醫師每月被排的<b>值班</b>次數（值班以「日」計；輪值池 7 人：徐王賴林郭鄧翔）。高於目前月份者淡色處理。", "oncall", "rose", true)
+      + heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd", "teal", false)
       + siteHeatSection()
       + tightSection()
-      + bigSatSection()
+      + bigDrawSection()
       + holidaySection()
       + leaveTimelineSection()
       + workloadSection();
