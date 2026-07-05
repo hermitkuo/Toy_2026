@@ -1,14 +1,12 @@
 ---
 project: hd-schedule
-last_checkout: 2026-07-04 17:54
-active_session: 03a207f5-e978-4ae6-a079-ed1e23a716e1
-checkin_at: 2026-07-05 08:45
+last_checkout: 2026-07-05 13:04
 ---
 
 # TODO — 花蓮慈院血透室班表頁
 
 ## Status
-檢查 `setup_settings_sheet.gs`：功能邏輯健全（欄數／validation／重跑保護皆正確），修正過時提示——檔頭與完成 alert 由「三個分頁」改為「四個分頁」，補上遺漏的「醫師配額」。
+找班表／找空檔篩選器標籤精簡（院區（可多選）→院區、高亮醫師（可多選）→醫師）；班表欄位改名（花蓮HD→花蓮洗腎診、特約→花蓮特約診、假勤→請假，並同步更新「我的時段」掛名 colIndex 查詢鍵避免失效）。已 push。
 
 ## Next
 - 部署 `publish_webapp.gs` 成 Web App、填 schedule.html 的 /exec 網址+通關碼；把草稿分頁 gid 填進 index.html `DRAFT_GID` 啟用 B。
@@ -52,6 +50,7 @@ checkin_at: 2026-07-05 08:45
         頁首標題含年月＋院區/高亮摘要；同時涵蓋 Ctrl+P。已用離屏量測驗證頁數與字級。
 
 ## Sessions
+- sess_03a207f5 (2026-07-05): 篩選器標籤精簡（院區／醫師）＋班表欄位改名（花蓮洗腎診／花蓮特約診／請假，同步我的時段查詢鍵），已 push
 - sess_unknown (2026-07-04): 檢查並修正 setup_settings_sheet.gs 過時提示（3→4 分頁，補「醫師配額」）
 - sess_unknown (2026-07-04): 建立排班全鏈路四頁+兩支 Apps Script+規則 v1.0，閱覽頁可讀草稿分頁(B)，全部已 push
 
