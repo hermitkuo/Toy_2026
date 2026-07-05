@@ -2918,8 +2918,10 @@ window.__sched = {
       + tightSection()
       + bigDrawSection()
       + holidaySection()
-      + leaveTimelineSection()
-      + workloadSection();
+      + leaveTimelineSection();
+      // 總工作量熱區圖暫時隱藏：計算疑有 bug 待修（見 TODO.md「總工作量熱區圖」段）。
+      // 要重新啟用：把下一行的註解移除即可。workloadSection() 及其相依函式皆保留。
+      // + workloadSection();
     bindSiteChips();
   }
   // 綁定院區篩選 chips（每次 render 後重綁）
