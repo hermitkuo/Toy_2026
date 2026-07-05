@@ -355,6 +355,7 @@
   .heat thead th.hname{z-index:3; background:var(--head);}
   .heat td.hcell{color:var(--ink); font-variant-numeric:tabular-nums; min-width:34px;}
   .heat td.hcell.z{color:#c4ccd4;}         /* zero */
+  .heat td.hcell[title],.heat td.tot[title]{cursor:help;}   /* 有明細可 hover */
   .heat td.tot,.heat th.tot{font-weight:800; background:var(--accent-tint); color:var(--accent-600);
     border-left:1px solid var(--line);}
   .heat tfoot td{font-weight:700; background:var(--head); color:var(--head-ink); border-top:1px solid var(--line);}
@@ -2557,7 +2558,8 @@ window.__sched = {
   // 數字顯示：整數原樣，小數保留 1 位（去掉多餘 .0）
   function fmtN(v){ var r=Math.round(v*10)/10; return (r%1===0)? String(r) : String(r); }
   // 由 {doc:{month:val}}、docTot、monTot 產生熱區表
-  function heatRender(title, desc, counts, docTot, monTot, max, schemeName, unitLabel){
+  // cellTip(name, mm|'tot') → 字串：若提供，掛在該格 title（滑鼠停留顯示明細）
+  function heatRender(title, desc, counts, docTot, monTot, max, schemeName, unitLabel, cellTip){
     var scheme=HEAT_SCHEMES[schemeName]||HEAT_SCHEMES.teal;
     var docs=orderRoster(docTot);
     if(!docs.length) return sec(title, desc, '<div class="stat-empty">此年度沒有資料。</div>');
@@ -2569,9 +2571,11 @@ window.__sched = {
       var name=docs[r]; h+='<tr><td class="hname">'+esc(name)+'</td>';
       for(var mm=0;mm<12;mm++){
         var v=(counts[name]&&counts[name][mm])||0;
-        h+='<td class="hcell '+lvl(v,max)+'">'+(v?fmtN(v):'·')+'</td>';
+        var tp=cellTip? cellTip(name, mm) : "";
+        h+='<td class="hcell '+lvl(v,max)+'"'+(tp?' title="'+esc(tp)+'"':'')+'>'+(v?fmtN(v):'·')+'</td>';
       }
-      h+='<td class="tot">'+fmtN(docTot[name])+'</td></tr>';
+      var tt=cellTip? cellTip(name,'tot') : "";
+      h+='<td class="tot"'+(tt?' title="'+esc(tt)+'"':'')+'>'+fmtN(docTot[name])+'</td></tr>';
     }
     h+='</tbody><tfoot><tr><td class="hname">合計</td>';
     var grand=0;
@@ -2602,21 +2606,51 @@ window.__sched = {
   function workloadSection(){
     var idxs=byYear[curYear]||[];
     var counts={}, docTot={}, monTot={}, max=0;
+    var inhdC={}, opdC={}, siteDet={};   // 加總前的各分項（供 hover 明細）
     function add(doc,m,w){
       counts[doc]=counts[doc]||{}; counts[doc][m]=(counts[doc][m]||0)+w;
       docTot[doc]=(docTot[doc]||0)+w; monTot[m]=(monTot[m]||0)+w;
     }
+    function bump(o,doc,m,w){ o[doc]=o[doc]||{}; o[doc][m]=(o[doc][m]||0)+w; }
+    var siteSet={};
     for(var i=0;i<idxs.length;i++){
-      var rec=days[idxs[i]], m=rec.m, f=["inhd","site"];
-      for(var g=0;g<f.length;g++){ var arr=rec[f[g]]||[]; for(var k=0;k<arr.length;k++) add(arr[k],m,1); }
+      var rec=days[idxs[i]], m=rec.m;
+      var ih=rec.inhd||[];
+      for(var k=0;k<ih.length;k++){ add(ih[k],m,1); bump(inhdC,ih[k],m,1); }
+      var sb=rec.siteBy||{};
+      for(var sn in sb){ siteSet[sn]=1; var arr=sb[sn];
+        for(var q=0;q<arr.length;q++){ var dn=arr[q]; add(dn,m,1);
+          siteDet[dn]=siteDet[dn]||{}; siteDet[dn][m]=siteDet[dn][m]||{};
+          siteDet[dn][m][sn]=(siteDet[dn][m][sn]||0)+1;
+        }
+      }
     }
     var oc=opdCounts(curYear);   // 花蓮OPD 母表投影（估算，已扣當天請假）
-    for(var doc in oc){ for(var mm in oc[doc]) add(doc, +mm, oc[doc][mm]); }
+    for(var doc in oc){ for(var mm in oc[doc]){ add(doc,+mm,oc[doc][mm]); bump(opdC,doc,+mm,oc[doc][mm]); } }
     for(var d in counts){ for(var kk in counts[d]){ if(counts[d][kk]>max) max=counts[d][kk]; } }
+    var yearSites=SITE_ALL.filter(function(s){return siteSet[s];});
+    // hover 明細：院內HD=? ＋ 外派(玉里a/關山b/…) ＋ 花蓮OPD=? ＝ 總計
+    function tip(name, mm){
+      var ih=0, opd=0, sd={}, total;
+      if(mm==='tot'){
+        for(var mo=0;mo<12;mo++){
+          ih+=(inhdC[name]&&inhdC[name][mo])||0; opd+=(opdC[name]&&opdC[name][mo])||0;
+          var md=siteDet[name]&&siteDet[name][mo]; if(md) for(var s in md) sd[s]=(sd[s]||0)+md[s];
+        }
+        total=docTot[name]||0;
+      } else {
+        total=(counts[name]&&counts[name][mm])||0; if(!total) return "";
+        ih=(inhdC[name]&&inhdC[name][mm])||0; opd=(opdC[name]&&opdC[name][mm])||0;
+        sd=(siteDet[name]&&siteDet[name][mm])||{};
+      }
+      var sp=yearSites.map(function(s){return s+(sd[s]||0);}).join("/");
+      return "院內HD="+ih+" ＋ 外派("+sp+") ＋ 花蓮OPD="+fmtN(opd)+" ＝ "+fmtN(total);
+    }
     var desc='每位醫師每月的<b>總工作量</b>＝院內HD（早/中/晚）＋外派（玉里/關山/聯安）＋花蓮OPD。'
            + '<b>值班</b>與掛名（花蓮HD診/特約診/聯安掛名）皆<b>不計</b>。<b>花蓮OPD</b> 由輪值母表週期模板投影＝<b>估算值</b>，'
-           + '且 <b>徐/王</b> 的 OPD 每時段以 <b>1.5</b> 計（因應花蓮OPD人次較多）；<b>當天請假者該日 OPD 不計</b>。';
-    return heatRender("總工作量 月份熱區圖", desc, counts, docTot, monTot, max, "amber", "該月加權工作量");
+           + '且 <b>徐/王</b> 的 OPD 每時段以 <b>1.5</b> 計（因應花蓮OPD人次較多）；<b>當天請假者該日 OPD 不計</b>。'
+           + '<b>滑鼠停在任一格可看加總前明細。</b>';
+    return heatRender("總工作量 月份熱區圖", desc, counts, docTot, monTot, max, "amber", "該月加權工作量", tip);
   }
   // 院區支援 月份熱區（可依單一院區篩選；siteFilter="全部" 或某院區名）
   var SITE_ALL = ["玉里","關山","聯安","嘉恩","懷德","鳳林"];
