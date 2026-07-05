@@ -112,6 +112,9 @@
   .chip.clear{color:var(--muted); padding-left:12px;}
   .chip.clear.on{background:var(--accent); color:#fff;}
 
+  /* 篩選器：桌機維持 inline chips，手機收成左右兩個下拉（.fdrop 觸發鈕僅手機顯示） */
+  .fdrop{display:none;}
+
   /* ---------- table ---------- */
   .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
   .scroll{overflow:auto; max-height:calc(100vh - 220px);}
@@ -374,8 +377,16 @@
   .heat.s-amber td.hcell.l1{background:#fdecc8;} .heat.s-amber td.hcell.l2{background:#f8d386;}
   .heat.s-amber td.hcell.l3{background:#efb443;} .heat.s-amber td.hcell.l4{background:#d9911a; color:#fff;}
   .heat.s-amber td.hcell.l5{background:#b6720c; color:#fff;}
+  /* alt scheme: red (light) — used for 人力吃緊（反向：紅=吃緊）*/
+  .heat.s-red td.hcell.l1{background:#fde2e0;} .heat.s-red td.hcell.l2{background:#f7b7b2;}
+  .heat.s-red td.hcell.l3{background:#ef8a82;} .heat.s-red td.hcell.l4{background:#e05a4f; color:#fff;}
+  .heat.s-red td.hcell.l5{background:#c62f22; color:#fff;}
   .heatkey{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); margin:10px 2px 0;}
   .heatkey .ks{display:inline-block; width:16px; height:12px; border-radius:2px;}
+  /* 找統計 院區篩選 chips */
+  .statchips{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:2px 0 10px;}
+  .statchips .chiplbl{font-size:12.5px; color:var(--muted); margin-right:2px;}
+  .statchips .chip{padding:4px 11px; font-size:13px; cursor:pointer;}
   /* 年度請假時間軸（52 週）*/
   .wkchart{margin-top:4px;}
   .wkstrip{display:flex; gap:2px; align-items:flex-end; height:84px; padding:2px 0; overflow-x:auto;}
@@ -421,11 +432,25 @@
     .statuspill{padding:4px 4px 4px 8px; flex:0 0 auto;}
     .viewtabs{margin-bottom:8px;}
     .navbar{margin:2px 0 8px;}
-    /* highlight-doctor filter: one swipeable row instead of 2–3 wrapped rows */
-    .chips{flex-wrap:nowrap; overflow-x:auto; margin:0 0 8px; padding-bottom:2px;
-      -webkit-overflow-scrolling:touch; scrollbar-width:none;}
-    .chips::-webkit-scrollbar{display:none;}
-    .chips .lbl,.chip{flex:0 0 auto;}
+    /* 篩選器：手機收成左右並排的兩個下拉，chips 面板改為彈出層 */
+    .filters{display:flex; gap:8px; align-items:flex-start; margin:0 0 8px;}
+    .fgroup{flex:1 1 0; min-width:0; position:relative;}
+    .fdrop{display:flex; width:100%; align-items:center; justify-content:space-between; gap:6px;
+      border:1px solid var(--line); background:var(--card); color:var(--ink);
+      border-radius:10px; padding:9px 12px; font-size:14px; line-height:1.2; min-height:40px;}
+    .fdrop .fdlabel{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .fdrop .fdcaret{color:var(--muted); flex:0 0 auto; transition:transform .15s;}
+    .fgroup.open .fdrop{border-color:var(--accent); color:var(--accent);}
+    .fgroup.open .fdrop .fdcaret{transform:rotate(180deg); color:var(--accent);}
+    .fgroup .chips{position:absolute; top:calc(100% + 4px); left:0; z-index:40;
+      display:none; flex-wrap:wrap; gap:6px; margin:0; padding:8px;
+      min-width:160px; max-width:82vw; max-height:52vh; overflow:auto;
+      background:var(--card); border:1px solid var(--line); border-radius:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,.16);}
+    #fgDoc .chips{left:auto; right:0;}          /* 右側群組向右對齊，避免超出視窗 */
+    .fgroup.open .chips{display:flex;}
+    .fgroup .chips .lbl{display:none;}           /* 面板內不重複顯示「院區：/醫師：」 */
+    .fgroup .chips .chip{flex:0 0 auto;}
     /* hand the reclaimed height back to the table */
     .scroll{max-height:calc(100vh - 176px); max-height:calc(100dvh - 176px);}
     .month{font-size:18px; min-width:120px;}
@@ -449,7 +474,7 @@
 
   /* ---------- keyboard focus rings (a11y) ---------- */
   .vtab:focus-visible,.chip:focus-visible,.btn:focus-visible,.nav-btn:focus-visible,
-  .iconbtn:focus-visible,.month:focus-visible,.wkpill:focus-visible,.mpick .mo:focus-visible{
+  .iconbtn:focus-visible,.month:focus-visible,.wkpill:focus-visible,.mpick .mo:focus-visible,.fdrop:focus-visible{
     outline:2px solid var(--accent); outline-offset:2px;
   }
   /* the two frozen/brand cells already carry meaning; keep ring inside */
@@ -534,6 +559,10 @@
     .heat.s-amber td.hcell.l1{background:#3a2c10;} .heat.s-amber td.hcell.l2{background:#544015;}
     .heat.s-amber td.hcell.l3{background:#7a5c1c; color:#ffeec6;} .heat.s-amber td.hcell.l4{background:#a67c1e; color:#fff;}
     .heat.s-amber td.hcell.l5{background:#d6a12e; color:#2a1f06;}
+    .heat.s-red td.hcell.l1{background:#3a1a17;} .heat.s-red td.hcell.l2{background:#55221d;}
+    .heat.s-red td.hcell.l3{background:#7a3229; color:#ffdcd6;} .heat.s-red td.hcell.l4{background:#a8443a; color:#fff;}
+    .heat.s-red td.hcell.l5{background:#d8574a; color:#2a0d09;}
+    .statchips .chip{background:#161d26; border-color:#2b3742; color:#e7edf3;}
     .barrow .btrack{background:#1b232d;}
     .barlist.b-amber .bfill{background:#d98e2e;}
     .barlist.b-blue  .bfill{background:#4f8fd0;}
@@ -553,7 +582,7 @@
     body{font-size:12px;}
     .wrap{max-width:none; margin:0; padding:0;}
     /* 只留 班表 表格，其餘介面隱藏 */
-    header.top,.viewtabs,.navbar,#dateSiteChips,#chips,footer,.tblfoot,
+    header.top,.viewtabs,.navbar,.filters,#dateSiteChips,#chips,footer,.tblfoot,
     #viewAvail,#viewMine,#viewStat{display:none!important;}
     #printTitle{display:block!important; text-align:center; margin:0 0 6px;
       font-weight:700; font-size:15px; line-height:1.3;}
@@ -637,12 +666,23 @@
     <button class="btn" id="printBtn" title="列印目前月份整張班表">🖨 列印</button>
   </div>
 
-  <div class="chips" id="dateSiteChips" hidden>
-    <span class="lbl">院區：</span>
-  </div>
-
-  <div class="chips" id="chips" hidden>
-    <span class="lbl">醫師：</span>
+  <div class="filters" id="dateFilters">
+    <div class="fgroup" id="fgSite">
+      <button class="fdrop" id="fdropSite" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fdlabel">院區：全部</span><span class="fdcaret">▾</span>
+      </button>
+      <div class="chips" id="dateSiteChips" hidden>
+        <span class="lbl">院區：</span>
+      </div>
+    </div>
+    <div class="fgroup" id="fgDoc">
+      <button class="fdrop" id="fdropDoc" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fdlabel">醫師：全部</span><span class="fdcaret">▾</span>
+      </button>
+      <div class="chips" id="chips" hidden>
+        <span class="lbl">醫師：</span>
+      </div>
+    </div>
   </div>
 
   <div id="printTitle" aria-hidden="true"></div>
@@ -1085,6 +1125,8 @@ window.__sched = {
         chips[i].style.background = c; chips[i].style.borderColor = c; chips[i].style.color = "#fff"; }
       else { chips[i].style.background = ""; chips[i].style.borderColor = ""; chips[i].style.color = ""; }
     }
+    var ds = selList(), dl = el("fdropDoc") && el("fdropDoc").querySelector(".fdlabel");
+    if (dl) dl.textContent = "醫師：" + (ds.length ? (ds.length<=2 ? ds.join("、") : ds.length+" 位") : "全部");
   }
 
   // ---- 院區篩選器（欄位＋列雙向收斂）----
@@ -1143,7 +1185,37 @@ window.__sched = {
       var st = chips[i].dataset.site;
       chips[i].classList.toggle("on", st ? !!activeSiteD[st] : none);
     }
+    var sel = siteSelListD(), sl = el("fdropSite") && el("fdropSite").querySelector(".fdlabel");
+    if (sl) sl.textContent = "院區：" + (sel.length ? sel.join("、") : "全部");
   }
+
+  // ---- 手機版篩選器下拉：桌機為 inline chips；手機收成左右兩個彈出下拉 ----
+  function closeFilterDrops(except){
+    var open = document.querySelectorAll("#dateFilters .fgroup.open");
+    for (var i=0;i<open.length;i++){
+      if (open[i] === except) continue;
+      open[i].classList.remove("open");
+      var d = open[i].querySelector(".fdrop"); if (d) d.setAttribute("aria-expanded","false");
+    }
+  }
+  function setupFilterDrop(groupId, dropId){
+    var group = el(groupId), drop = el(dropId);
+    if (!group || !drop) return;
+    drop.addEventListener("click", function(e){
+      e.stopPropagation();
+      var willOpen = !group.classList.contains("open");
+      closeFilterDrops(group);
+      group.classList.toggle("open", willOpen);
+      drop.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+  }
+  setupFilterDrop("fgSite", "fdropSite");
+  setupFilterDrop("fgDoc", "fdropDoc");
+  // 點面板外收合（點 chip 仍在群組內，多選時保持開啟）
+  document.addEventListener("click", function(e){
+    var inside = e.target.closest ? e.target.closest("#dateFilters .fgroup.open") : null;
+    closeFilterDrops(inside);
+  });
 
   // ---- rendering ----
   function defaultView(){
@@ -2312,7 +2384,15 @@ window.__sched = {
     if(wk<mn)wk=mn; if(wk>mx)wk=mx;
     return opd.byWeek[wk]?wk:mx;
   }
+  // 某日某時段 花蓮OPD 醫師（母表投影；模板年份之前不估）
+  function opdAtStat(dt,s){
+    if(opd.year==null || dt.getFullYear()<opd.year) return [];
+    var d=(dt.getDay()+6)%7; if(d>5) return [];               // 週日無 OPD
+    var wk=opdWeekForWL(dt); if(wk==null) return [];
+    var g=opd.byWeek[wk]; return g ? (g[d][s]||[]) : [];
+  }
   // 某年 花蓮OPD 每位醫師×月的加權時段數（徐/王 每時段計 1.5，其餘 1）
+  // 當天該醫師整天請假（班表「假1-4」）者不計 OPD（避免高估）。
   function opdCounts(year){
     var out={};
     if(opd.year==null || year<opd.year) return out;             // 模板年份之前的年度不估 OPD
@@ -2322,10 +2402,13 @@ window.__sched = {
       var wk=opdWeekForWL(dt); if(wk==null) continue;
       var g=opd.byWeek[wk]; if(!g) continue;
       var m=dt.getMonth();
+      var rec=mapByKey[key(dt)], onLeave=rec&&rec.leave&&rec.leave.length ? rec.leave : null;
       for(var s=0;s<3;s++){
         var arr=g[d][s]||[];
         for(var k=0;k<arr.length;k++){
-          var nm=arr[k], w=(nm==="徐"||nm==="王")?1.5:1;
+          var nm=arr[k];
+          if(onLeave && onLeave.indexOf(nm)!==-1) continue;     // 當天請假 → 不計這天的 OPD
+          var w=(nm==="徐"||nm==="王")?1.5:1;
           out[nm]=out[nm]||{}; out[nm][m]=(out[nm][m]||0)+w;
         }
       }
@@ -2379,15 +2462,19 @@ window.__sched = {
     var rows=resp.table.rows||[];
     // column indexes per source
     var map = (kind==="hist")
-      ? {oncall:[7], inhd:[8,9,10], site:[2,3,4,5,6], clinic:[11,12], leave:[]}          // 歷史表無合併休假欄
-      : {oncall:[2], inhd:[3,4,5],  site:[8,9,10],    clinic:[6,7], leave:[14,15,16,17]};// 值班早中晚 / 玉里,關山,聯安 / 花蓮HD,特約 / 假1-4
+      ? {oncall:[7], sess:[[8],[9],[10]], siteBy:{"玉里":[2],"關山":[3],"嘉恩":[4],"懷德":[5],"鳳林":[6]}, clinic:[11,12], leave:[]}
+      : {oncall:[2], sess:[[3],[4],[5]],  siteBy:{"玉里":[8],"關山":[9],"聯安":[10]},                     clinic:[6,7], leave:[14,15,16,17]};
     for(var r=0;r<rows.length;r++){
       var c=rows[r].c||[];
       var dt=gvizDate(c[0]); if(!dt) continue;
       if(kind==="hist" && dt>=CUTOFF) continue;
       if(kind==="cur"  && dt<CUTOFF)  continue;
+      var sess=[collect(c,map.sess[0]), collect(c,map.sess[1]), collect(c,map.sess[2])];  // 院內 早/中/晚
+      var siteBy={}, site=[];
+      for(var sn in map.siteBy){ var sa=collect(c,map.siteBy[sn]); siteBy[sn]=sa; site=site.concat(sa); }
       out.push({date:dt, y:dt.getFullYear(), m:dt.getMonth(),
-                inhd:collect(c,map.inhd), site:collect(c,map.site),
+                sess:sess, inhd:[].concat(sess[0],sess[1],sess[2]),
+                site:site, siteBy:siteBy,
                 oncall:collect(c,map.oncall), clinic:collect(c,map.clinic),
                 leave:collect(c,map.leave)});
     }
@@ -2419,7 +2506,10 @@ window.__sched = {
     var singles=buildSingles();
     for(var i=0;i<days.length;i++){
       var r=days[i];
-      r.inhd=expand(r.inhd,singles); r.site=expand(r.site,singles);
+      for(var s=0;s<3;s++) r.sess[s]=expand(r.sess[s]||[],singles);
+      r.inhd=[].concat(r.sess[0],r.sess[1],r.sess[2]);         // 由拆分後的早/中/晚重組
+      r.site=[];
+      for(var sn in r.siteBy){ r.siteBy[sn]=expand(r.siteBy[sn]||[],singles); r.site=r.site.concat(r.siteBy[sn]); }
       r.oncall=expand(r.oncall,singles); r.clinic=expand(r.clinic,singles);
       r.leave=expand(r.leave||[],singles);
       var seen={}; r.attend=[];
@@ -2507,7 +2597,7 @@ window.__sched = {
     }
     return heatRender(title, desc, counts, docTot, monTot, max, schemeName, "該月被排的班次數");
   }
-  // 總工作量：值班＋院內HD＋外派＋花蓮OPD（徐/王 OPD×1.5；掛名不計，§0.1）
+  // 總工作量：院內HD＋外派＋花蓮OPD（徐/王 OPD×1.5；值班與掛名皆不計）
   function workloadSection(){
     var idxs=byYear[curYear]||[];
     var counts={}, docTot={}, monTot={}, max=0;
@@ -2516,16 +2606,86 @@ window.__sched = {
       docTot[doc]=(docTot[doc]||0)+w; monTot[m]=(monTot[m]||0)+w;
     }
     for(var i=0;i<idxs.length;i++){
-      var rec=days[idxs[i]], m=rec.m, f=["oncall","inhd","site"];
+      var rec=days[idxs[i]], m=rec.m, f=["inhd","site"];
       for(var g=0;g<f.length;g++){ var arr=rec[f[g]]||[]; for(var k=0;k<arr.length;k++) add(arr[k],m,1); }
     }
-    var oc=opdCounts(curYear);   // 花蓮OPD 母表投影（估算）
+    var oc=opdCounts(curYear);   // 花蓮OPD 母表投影（估算，已扣當天請假）
     for(var doc in oc){ for(var mm in oc[doc]) add(doc, +mm, oc[doc][mm]); }
     for(var d in counts){ for(var kk in counts[d]){ if(counts[d][kk]>max) max=counts[d][kk]; } }
-    var desc='每位醫師每月的<b>總工作量</b>＝值班＋院內HD（早/中/晚）＋外派（玉里/關山/聯安）＋花蓮OPD。'
-           + '掛名（花蓮HD診/特約診/聯安掛名）不計（§0.1）。<b>花蓮OPD</b> 由輪值母表週期模板投影＝<b>估算值</b>，'
-           + '且 <b>徐/王</b> 的 OPD 每時段以 <b>1.5</b> 計（因應花蓮OPD人次較多）。';
+    var desc='每位醫師每月的<b>總工作量</b>＝院內HD（早/中/晚）＋外派（玉里/關山/聯安）＋花蓮OPD。'
+           + '<b>值班</b>與掛名（花蓮HD診/特約診/聯安掛名）皆<b>不計</b>。<b>花蓮OPD</b> 由輪值母表週期模板投影＝<b>估算值</b>，'
+           + '且 <b>徐/王</b> 的 OPD 每時段以 <b>1.5</b> 計（因應花蓮OPD人次較多）；<b>當天請假者該日 OPD 不計</b>。';
     return heatRender("總工作量 月份熱區圖", desc, counts, docTot, monTot, max, "amber", "該月加權工作量");
+  }
+  // 院區支援 月份熱區（可依單一院區篩選；siteFilter="全部" 或某院區名）
+  var SITE_ALL = ["玉里","關山","聯安","嘉恩","懷德","鳳林"];
+  var siteFilter = "全部";
+  function siteHeatSection(){
+    var idxs=byYear[curYear]||[];
+    var counts={}, docTot={}, monTot={}, max=0;
+    for(var i=0;i<idxs.length;i++){
+      var rec=days[idxs[i]], m=rec.m, sb=rec.siteBy||{};
+      for(var sn in sb){
+        if(siteFilter!=="全部" && sn!==siteFilter) continue;
+        var arr=sb[sn];
+        for(var k=0;k<arr.length;k++){
+          var d=arr[k];
+          counts[d]=counts[d]||{}; counts[d][m]=(counts[d][m]||0)+1;
+          docTot[d]=(docTot[d]||0)+1; monTot[m]=(monTot[m]||0)+1;
+          if(counts[d][m]>max) max=counts[d][m];
+        }
+      }
+    }
+    var chips='<div class="statchips"><span class="chiplbl">院區：</span>';
+    var opts=["全部"].concat(SITE_ALL);
+    for(var o=0;o<opts.length;o++){
+      var nm=opts[o];
+      chips+='<button class="chip'+(siteFilter===nm?" on":"")+'" data-sitefilter="'+nm+'">'+nm+'</button>';
+    }
+    chips+='</div>';
+    var lab=(siteFilter==="全部")?"外派院區（玉里／關山／聯安；2026 前含嘉恩／懷德／鳳林）":("院區："+siteFilter);
+    var desc=lab+' 每位醫師每月被排的班次數。可用上方院區篩選器切換單一院區。';
+    return heatRender("院區支援 月份班數", desc, counts, docTot, monTot, max, "violet", "該月被排的班次數").replace('<div class="desc">'+desc+'</div>', '<div class="desc">'+desc+'</div>'+chips);
+  }
+  // 平均一週人力吃緊：早/中/晚 × 週一~週六，格值＝平均可用院內人力（10人−當時段外派/OPD/請假）
+  function tightSection(){
+    var idxs=byYear[curYear]||[], roster=PREF_ORDER;
+    var sum=[], cnt=[];
+    for(var w=0;w<6;w++){ sum.push([0,0,0]); cnt.push([0,0,0]); }
+    for(var i=0;i<idxs.length;i++){
+      var rec=days[idxs[i]], dt=rec.date, wd=(dt.getDay()+6)%7; if(wd>5) continue;   // 只計週一~週六
+      var dayBusy={}; (rec.site||[]).forEach(function(n){dayBusy[n]=1;}); (rec.leave||[]).forEach(function(n){dayBusy[n]=1;});
+      for(var s=0;s<3;s++){
+        var busy={}; for(var n in dayBusy) busy[n]=1;
+        var op=opdAtStat(dt,s); for(var k=0;k<op.length;k++) busy[op[k]]=1;
+        var avail=0; for(var r=0;r<roster.length;r++){ if(!busy[roster[r]]) avail++; }
+        sum[wd][s]+=avail; cnt[wd][s]++;
+      }
+    }
+    var vals=[], minV=Infinity, maxV=-Infinity, any=false;
+    for(var w2=0;w2<6;w2++){ vals.push([]); for(var s2=0;s2<3;s2++){
+      var a=cnt[w2][s2]? sum[w2][s2]/cnt[w2][s2] : null; vals[w2].push(a);
+      if(a!=null){ any=true; if(a<minV)minV=a; if(a>maxV)maxV=a; }
+    } }
+    var desc='一週各時段的<b>平均可用院內人力</b>＝全體 '+roster.length+' 人扣除當天<b>外派</b>（玉里/關山/聯安…）、當時段<b>花蓮OPD</b>（母表投影）、當天<b>請假</b>後的平均可用人數（值班不占用）。'
+           + '數字越小、色越紅＝該時段人力越<b>吃緊</b>。';
+    if(!any) return sec("平均一週人力吃緊", desc, '<div class="stat-empty">此年度沒有可計算的班表資料。</div>');
+    function lvlTight(v){ if(v==null) return "z"; if(maxV<=minV) return "l3"; return "l"+Math.min(5,Math.max(1,Math.ceil((maxV-v)/(maxV-minV)*5))); }
+    var h='<div class="stat-scroll"><table class="heat s-red"><thead><tr><th class="hname">時段＼星期</th>';
+    for(var c=0;c<6;c++) h+='<th>週'+WK[c+1]+'</th>';
+    h+='</tr></thead><tbody>';
+    var SN=["早","中","晚"];
+    for(var s3=0;s3<3;s3++){
+      h+='<tr><td class="hname">'+SN[s3]+'</td>';
+      for(var w3=0;w3<6;w3++){ var v=vals[w3][s3]; h+='<td class="hcell '+lvlTight(v)+'">'+(v==null?'·':fmtN(Math.round(v*10)/10))+'</td>'; }
+      h+='</tr>';
+    }
+    h+='</tbody></table></div>'
+     + '<div class="heatkey">寬鬆 '
+     + '<span class="ks" style="background:#fde2e0"></span><span class="ks" style="background:#f7b7b2"></span>'
+     + '<span class="ks" style="background:#ef8a82"></span><span class="ks" style="background:#e05a4f"></span>'
+     + '<span class="ks" style="background:#c62f22"></span> 吃緊（格值＝平均可用人數，越小越吃緊）</div>';
+    return sec("平均一週人力吃緊", desc, h);
   }
   function lvl(v,max){
     if(v<=0) return "z";
@@ -2654,10 +2814,19 @@ window.__sched = {
         workloadSection()
       + heatSection("醫師別月份值班", "每位醫師每月被排的<b>值班</b>次數（值班以「日」計；輪值池 7 人：徐王賴林郭鄧翔）。", "oncall", "rose")
       + heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd", "teal")
-      + heatSection("院區支援 月份班數", "外派院區（玉里／關山／聯安；2026 前含嘉恩／懷德／鳳林）每月班次數。", "site", "violet")
+      + siteHeatSection()
+      + tightSection()
       + bigSatSection()
       + holidaySection()
       + leaveTimelineSection();
+    bindSiteChips();
+  }
+  // 綁定院區篩選 chips（每次 render 後重綁）
+  function bindSiteChips(){
+    var btns=el("statBody").querySelectorAll("[data-sitefilter]");
+    for(var i=0;i<btns.length;i++){
+      btns[i].onclick=function(){ siteFilter=this.getAttribute("data-sitefilter"); renderAll(); };
+    }
   }
 
   // ---- year nav ----
