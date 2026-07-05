@@ -1533,15 +1533,24 @@ window.__sched = {
 
   // 列印一律用亮色主題輸出（彩色、黑白友善），並更新標題；列印後還原使用者主題；同時涵蓋 Ctrl+P
   // 字體以易讀為先，不縮到單頁：滿版月份由瀏覽器自然排成 1–2 頁（表頭每頁重印、整列不跨頁）
-  var __printPrevTheme = null;
+  var __printPrevTheme = null, __printPrevTitle = null;
+  // 列印/存 PDF 的預設檔名（瀏覽器取自 document.title）：{年}腎臟科班表-{月}-{院區}
+  function printFileName(){
+    var sel = siteSelListD();
+    var site = sel.length ? sel.join("、") : "全部";
+    return (view ? view.y : "") + "腎臟科班表-" + (view ? (view.m+1) : "") + "-" + site;
+  }
   window.addEventListener("beforeprint", function(){
     updatePrintTitle();
+    __printPrevTitle = document.title;
+    document.title = printFileName();
     var root = document.documentElement;
     __printPrevTheme = root.getAttribute("data-theme");
     root.setAttribute("data-theme", "light");
   });
   window.addEventListener("afterprint", function(){
     if (__printPrevTheme != null){ document.documentElement.setAttribute("data-theme", __printPrevTheme); __printPrevTheme = null; }
+    if (__printPrevTitle != null){ document.title = __printPrevTitle; __printPrevTitle = null; }
   });
   window.__hdPill.refresh.date = load;   // header ↻ routes here when 班表 active
   window.__sched.reload = load;          // 我的時段 refresh re-triggers this shared load
@@ -2394,17 +2403,21 @@ window.__sched = {
     var g=opd.byWeek[wk]; return g ? (g[d][s]||[]) : [];
   }
   // 某年 花蓮OPD 每位醫師×月的加權時段數（徐/王 每時段計 1.5，其餘 1）
-  // 當天該醫師整天請假（班表「假1-4」）者不計 OPD（避免高估）。
+  // 僅估「已排院內HD 的月份」（該月院內HD 全空＝班表未排，不計 OPD）；當天整天請假者亦不計。
   function opdCounts(year){
     var out={};
     if(opd.year==null || year<opd.year) return out;             // 模板年份之前的年度不估 OPD
+    var idxs=byYear[year]||[], schedMon={};                      // 有排院內HD 的月份＝視為已排班表
+    for(var i=0;i<idxs.length;i++){ var rc=days[idxs[i]]; if((rc.inhd||[]).length) schedMon[rc.m]=1; }
     var dt=new Date(year,0,1), end=new Date(year,11,31);
     for(; dt<=end; dt=new Date(dt.getFullYear(),dt.getMonth(),dt.getDate()+1)){
       var d=(dt.getDay()+6)%7; if(d>5) continue;               // 週日無 OPD
+      if(!schedMon[dt.getMonth()]) continue;                    // 該月未排院內HD → 不計 OPD
+      var rec=mapByKey[key(dt)]; if(!rec) continue;             // 無班表資料的日期不計 OPD
       var wk=opdWeekForWL(dt); if(wk==null) continue;
       var g=opd.byWeek[wk]; if(!g) continue;
       var m=dt.getMonth();
-      var rec=mapByKey[key(dt)], onLeave=rec&&rec.leave&&rec.leave.length ? rec.leave : null;
+      var onLeave=rec.leave&&rec.leave.length ? rec.leave : null;
       for(var s=0;s<3;s++){
         var arr=g[d][s]||[];
         for(var k=0;k<arr.length;k++){
@@ -2682,37 +2695,48 @@ window.__sched = {
     var desc=lab+' 每位醫師每月被排的班次數。可用上方院區篩選器切換單一院區。';
     return heatRender("院區支援 月份班數", desc, counts, docTot, monTot, max, "violet", "該月被排的班次數").replace('<div class="desc">'+desc+'</div>', '<div class="desc">'+desc+'</div>'+chips);
   }
-  // 平均一週人力吃緊：早/中/晚 × 週一~週六，格值＝平均可用院內人力（10人−當時段外派/OPD/請假）
+  // 週間人力吃緊時段：全天/早/中/晚 × 週一~週六，格值＝平均可用院內人力（10人−外派/OPD/請假）
   function tightSection(){
     var idxs=byYear[curYear]||[], roster=PREF_ORDER;
-    var sum=[], cnt=[];
-    for(var w=0;w<6;w++){ sum.push([0,0,0]); cnt.push([0,0,0]); }
+    var sum=[], cnt=[], sumF=[], cntF=[];                     // sum[wd][s] 早中晚；sumF[wd] 全天
+    for(var w=0;w<6;w++){ sum.push([0,0,0]); cnt.push([0,0,0]); sumF.push(0); cntF.push(0); }
     for(var i=0;i<idxs.length;i++){
       var rec=days[idxs[i]], dt=rec.date, wd=(dt.getDay()+6)%7; if(wd>5) continue;   // 只計週一~週六
       var dayBusy={}; (rec.site||[]).forEach(function(n){dayBusy[n]=1;}); (rec.leave||[]).forEach(function(n){dayBusy[n]=1;});
+      var allBusy={}; for(var nb in dayBusy) allBusy[nb]=1;    // 全天＝外派/請假 ＋ 任一時段有 OPD
       for(var s=0;s<3;s++){
         var busy={}; for(var n in dayBusy) busy[n]=1;
-        var op=opdAtStat(dt,s); for(var k=0;k<op.length;k++) busy[op[k]]=1;
+        var op=opdAtStat(dt,s); for(var k=0;k<op.length;k++){ busy[op[k]]=1; allBusy[op[k]]=1; }
         var avail=0; for(var r=0;r<roster.length;r++){ if(!busy[roster[r]]) avail++; }
         sum[wd][s]+=avail; cnt[wd][s]++;
       }
+      var af=0; for(var r2=0;r2<roster.length;r2++){ if(!allBusy[roster[r2]]) af++; }
+      sumF[wd]+=af; cntF[wd]++;
     }
+    // 早/中/晚 一組正規化、全天 另一組正規化（各看自身變化）
     var vals=[], minV=Infinity, maxV=-Infinity, any=false;
     for(var w2=0;w2<6;w2++){ vals.push([]); for(var s2=0;s2<3;s2++){
       var a=cnt[w2][s2]? sum[w2][s2]/cnt[w2][s2] : null; vals[w2].push(a);
       if(a!=null){ any=true; if(a<minV)minV=a; if(a>maxV)maxV=a; }
     } }
+    var valsF=[], minF=Infinity, maxF=-Infinity;
+    for(var w4=0;w4<6;w4++){ var af2=cntF[w4]? sumF[w4]/cntF[w4] : null; valsF.push(af2);
+      if(af2!=null){ if(af2<minF)minF=af2; if(af2>maxF)maxF=af2; } }
     var desc='一週各時段的<b>平均可用院內人力</b>＝全體 '+roster.length+' 人扣除當天<b>外派</b>（玉里/關山/聯安…）、當時段<b>花蓮OPD</b>（母表投影）、當天<b>請假</b>後的平均可用人數（值班不占用）。'
-           + '數字越小、色越紅＝該時段人力越<b>吃緊</b>。';
-    if(!any) return sec("平均一週人力吃緊", desc, '<div class="stat-empty">此年度沒有可計算的班表資料。</div>');
-    function lvlTight(v){ if(v==null) return "z"; if(maxV<=minV) return "l3"; return "l"+Math.min(5,Math.max(1,Math.ceil((maxV-v)/(maxV-minV)*5))); }
+           + '<b>全天</b>＝當天早/中/晚皆無被占用（外派/請假/任一時段 OPD）的人數。數字越小、色越紅＝該時段人力越<b>吃緊</b>（全天與早/中/晚各自比較色階）。';
+    if(!any) return sec("週間人力吃緊時段", desc, '<div class="stat-empty">此年度沒有可計算的班表資料。</div>');
+    function lvlT(v,mn,mx){ if(v==null) return "z"; if(mx<=mn) return "l3"; return "l"+Math.min(5,Math.max(1,Math.ceil((mx-v)/(mx-mn)*5))); }
     var h='<div class="stat-scroll"><table class="heat s-red"><thead><tr><th class="hname">時段＼星期</th>';
     for(var c=0;c<6;c++) h+='<th>週'+WK[c+1]+'</th>';
     h+='</tr></thead><tbody>';
+    // 全天列（置頂）
+    h+='<tr><td class="hname">全天</td>';
+    for(var wf=0;wf<6;wf++){ var vf=valsF[wf]; h+='<td class="hcell '+lvlT(vf,minF,maxF)+'">'+(vf==null?'·':fmtN(Math.round(vf*10)/10))+'</td>'; }
+    h+='</tr>';
     var SN=["早","中","晚"];
     for(var s3=0;s3<3;s3++){
       h+='<tr><td class="hname">'+SN[s3]+'</td>';
-      for(var w3=0;w3<6;w3++){ var v=vals[w3][s3]; h+='<td class="hcell '+lvlTight(v)+'">'+(v==null?'·':fmtN(Math.round(v*10)/10))+'</td>'; }
+      for(var w3=0;w3<6;w3++){ var v=vals[w3][s3]; h+='<td class="hcell '+lvlT(v,minV,maxV)+'">'+(v==null?'·':fmtN(Math.round(v*10)/10))+'</td>'; }
       h+='</tr>';
     }
     h+='</tbody></table></div>'
@@ -2720,7 +2744,7 @@ window.__sched = {
      + '<span class="ks" style="background:#fde2e0"></span><span class="ks" style="background:#f7b7b2"></span>'
      + '<span class="ks" style="background:#ef8a82"></span><span class="ks" style="background:#e05a4f"></span>'
      + '<span class="ks" style="background:#c62f22"></span> 吃緊（格值＝平均可用人數，越小越吃緊）</div>';
-    return sec("平均一週人力吃緊", desc, h);
+    return sec("週間人力吃緊時段", desc, h);
   }
   function lvl(v,max){
     if(v<=0) return "z";
@@ -2846,14 +2870,14 @@ window.__sched = {
       return;
     }
     el("statBody").innerHTML=
-        workloadSection()
-      + heatSection("醫師別月份值班", "每位醫師每月被排的<b>值班</b>次數（值班以「日」計；輪值池 7 人：徐王賴林郭鄧翔）。", "oncall", "rose")
+        heatSection("醫師別月份值班", "每位醫師每月被排的<b>值班</b>次數（值班以「日」計；輪值池 7 人：徐王賴林郭鄧翔）。", "oncall", "rose")
       + heatSection("院內 HD 月份班數", "院內 HD（HL 早／中／晚）每位醫師每月被排的班次數。", "inhd", "teal")
       + siteHeatSection()
       + tightSection()
       + bigSatSection()
       + holidaySection()
-      + leaveTimelineSection();
+      + leaveTimelineSection()
+      + workloadSection();
     bindSiteChips();
   }
   // 綁定院區篩選 chips（每次 render 後重綁）
