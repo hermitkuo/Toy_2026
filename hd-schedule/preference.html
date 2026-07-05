@@ -99,6 +99,33 @@
     header.top h1{font-size:16px;}
     th.c-wd,td.c-wd{width:82px; min-width:82px; padding-left:9px;}
     td.slot{height:48px;}
+    /* touch targets ≥40px on phones */
+    .chip{padding:9px 15px;}
+    .btn{padding:11px 17px;}
+  }
+
+  /* ---------- keyboard focus rings (a11y) ---------- */
+  .chip:focus-visible,.btn:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  /* ---------- respect reduced motion ---------- */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important;
+      transition-duration:.001ms!important; scroll-behavior:auto!important;}
+  }
+
+  /* ---------- dark mode ---------- */
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f141a; --card:#171e26; --ink:#e6edf3; --muted:#9aa7b2;
+      --line:#2b343f; --line2:#212a33; --line3:#1b232c;
+      --accent:#14b8a6; --accent-600:#2dd4bf; --accent-soft:#123c37; --accent-tint:#102a27;
+      --head:#1b232d; --head-ink:#c3cdd7;
+    }
+    .mock-flag{background:#33280f; color:#e0a55a; border-color:#5a4a1f;}
+    tbody tr.w246 td.c-wd{color:#60a5fa;}
+    td.slot .mark{color:#4a5560;}
   }
 </style>
 </head>

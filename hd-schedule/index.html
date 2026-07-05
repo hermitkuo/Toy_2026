@@ -333,6 +333,89 @@
     .avtbl th,.avtbl td{padding:5px 6px;}
     .avtbl td .nm{font-size:13px; padding:1px 6px;}
     .av-actions{margin-left:0; width:100%;}
+    /* touch targets ≥40px on phones */
+    .iconbtn{width:40px; height:40px; font-size:17px;}
+    .nav-btn.sm{width:40px; height:40px; font-size:18px; border-radius:10px;}
+    .vtab{padding:10px 16px;}
+    .wkpill{padding:9px 15px;}
+    .chip{padding:8px 14px 8px 11px;}
+    .mpick .mo{padding:12px 0 9px;}
+  }
+
+  /* ---------- keyboard focus rings (a11y) ---------- */
+  .vtab:focus-visible,.chip:focus-visible,.btn:focus-visible,.nav-btn:focus-visible,
+  .iconbtn:focus-visible,.month:focus-visible,.wkpill:focus-visible,.mpick .mo:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  /* the two frozen/brand cells already carry meaning; keep ring inside */
+  .month:focus-visible{outline-offset:0;}
+
+  /* ---------- respect reduced motion ---------- */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important; animation-iteration-count:1!important;
+      transition-duration:.001ms!important; scroll-behavior:auto!important;}
+  }
+
+  /* ---------- dark mode ---------- */
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f141a; --card:#171e26; --ink:#e6edf3; --muted:#9aa7b2;
+      --line:#2b343f; --line2:#212a33; --line3:#1b232c;
+      --accent:#14b8a6; --accent-600:#2dd4bf; --accent-soft:#123c37; --accent-tint:#102a27;
+      --today-tint:#12302b; --today-bar:#2dd4bf;
+      --head:#1b232d; --head-ink:#c3cdd7; --danger:#f87171;
+    }
+    /* structural near-white surfaces */
+    thead tr.sub th{background:#1b232d; color:#9aa7b2;}
+    thead tr.grp th.grouped{background:#232e39; color:#c3cdd7;}
+    tbody tr.weekend td.c-date,tbody tr.weekend td.c-wk{background:#141b22;}
+    tbody tr.sat td.c-wk{color:#60a5fa;}
+    tbody tr:hover td{background:#1f2831;}
+    tbody tr:hover td.c-date,tbody tr:hover td.c-wk{background:#243039;}
+    tbody tr.today:hover td{background:#183a33;}
+    td .dash{color:#4a5560;}
+    /* doctor badges: darken the auto light chips */
+    td .nm{background:hsl(var(--h),30%,22%); color:hsl(var(--h),55%,78%);}
+    /* availability view */
+    .avtbl thead tr.grp th.wd{background:#232e39; color:#c3cdd7;}
+    .avtbl thead tr.sub th{background:#1b232d; color:#9aa7b2;}
+    .avtbl td.late{background:#141a20!important;}
+    .avtbl th.late{background:#1a212a!important; color:#6b747d;}
+    .avtbl td.gsep,.avtbl th.gsep{border-left-color:#3a4650;}
+    .avtbl th.sc,.avtbl td.sc{border-left-color:#333e48;}
+    .avtbl td .nm{background:hsl(var(--h),30%,22%); color:hsl(var(--h),55%,78%);}
+    .avtbl td .nm.free{background:#123c37; color:#5ee0d0;}
+    .avtbl td .nm.busy{background:#3a2a12; color:#e0a55a;}
+    .avtbl td .dash{color:#3f4a55;}
+    .avtbl td.xcell{color:#5a636d;}
+    .avtbl td.allfree{color:#5a7a70;}
+    .avtbl tbody tr:hover td{background:#1f2831;}
+    .avtbl tbody tr:hover td.c-site{background:#243039;}
+    .avtbl tr.freerow:hover td{background:#153a35;}
+    .avtbl tr.fulldayrow td{background:#16263a;}
+    .avtbl tr.fulldayrow td.c-site{background:#1e3a5a; color:#8fbcf0;}
+    .avtbl tr.fulldayrow:hover td{background:#1c2f47;}
+    .avtbl tr.busyrow td{background:#2b2113;}
+    .avtbl tr.busyrow td.c-site{background:#4a3518; color:#e0a55a;}
+    .avtbl tr.busyrow:hover td{background:#352817;}
+    /* my-slots calendar */
+    .mcal thead th.sat{color:#60a5fa;}
+    .mcal td.rowhd.se-late{color:#5a636d;}
+    .mcal tr.allday td{background:#141a20;}
+    .mcal td .none,.agnone{color:#4a5560;}
+    /* event / legend chips: lift onto dark with muted tints */
+    .ev.c-oncall,.sw.c-oncall{background:#2a2647;}   .ev.c-oncall{color:#b6ace8;}
+    .ev.c-opd,.sw.c-opd{background:#3d1f2d;}          .ev.c-opd{color:#e89ab6;}
+    .ev.c-hlhd,.sw.c-hlhd{background:#123329;}        .ev.c-hlhd{color:#6cc79a;}
+    .ev.c-special,.sw.c-special{background:#2c3117;}  .ev.c-special{color:#c0cd82;}
+    .ev.c-yuli,.sw.c-yuli{background:#16263a;}        .ev.c-yuli{color:#8fbcf0;}
+    .ev.c-guan,.sw.c-guan{background:#123236;}        .ev.c-guan{color:#78c6d4;}
+    .ev.c-lianan,.sw.c-lianan{background:#332412;}    .ev.c-lianan{color:#d0a468;}
+    .ev.c-leave,.sw.c-leave{background:#252d35;}      .ev.c-leave{color:#9aa7b2;}
+    .ev.c-busy,.sw.c-busy{background:#3a2a12;}        .ev.c-busy{color:#e0a55a;}
+    .ev.c-nominal,.sw.c-nominal{background:#1c242c; border-color:#333e48;}
+    .statuspill .dot{box-shadow:0 0 0 3px rgba(34,197,94,.22);}
+    pre{background:#0b0f14;}
   }
 </style>
 </head>
@@ -386,6 +469,10 @@
         <button class="btn" id="avJson">⬇︎ JSON</button>
         <button class="btn" id="avCsv">⬇︎ CSV</button>
       </div>
+    </div>
+
+    <div class="chips" id="avSiteChips" hidden>
+      <span class="lbl">院區（可多選）：</span>
     </div>
 
     <div class="chips" id="avChips" hidden>
@@ -1006,7 +1093,7 @@ window.__sched = {
   var SESS = ["早","中","晚"];
 
   var el = function(id){ return document.getElementById(id); };
-  var scrollEl = el("avScroll"), chipsEl = el("avChips");
+  var scrollEl = el("avScroll"), chipsEl = el("avChips"), siteChipsEl = el("avSiteChips");
 
   var year=null, m0=null, monthTitle="";
   var weekList=[];               // sorted week numbers present
@@ -1014,7 +1101,8 @@ window.__sched = {
   var siteOrder=[];              // real sites, first-seen order
   var roster=[];                 // active doctors this month
   var curWeek=null;
-  var activeA={};
+  var activeA={};                // selected doctors (highlight filter)
+  var activeSite={};             // selected 院區 (row-visibility filter)
   var loaded=false, loading=false;
   var curScript=null, loadTimer=null;
   var busyByDate={};             // "y-m-d" -> [ [早names], [中names], [晚names] ]  (有事)
@@ -1116,7 +1204,7 @@ window.__sched = {
       parse(resp.table);
       loaded=true;
       if (curWeek==null || weekList.indexOf(curWeek)===-1) curWeek = weekList[0]||null;
-      restoreSel(); renderChips(); renderWeeks(); render();
+      restoreSel(); renderChips(); restoreSiteSel(); renderSiteChips(); renderWeeks(); render();
       window.__hdPill.set("avail","ok","已同步 · "+fmtClock(new Date()));
     }catch(e){
       onError("解析母表時發生錯誤："+(e&&e.message?e.message:e));
@@ -1273,6 +1361,43 @@ window.__sched = {
     }
   }
 
+  // ---- 院區 filter chips (row visibility only; 有空/全天有空 stay computed from all sites) ----
+  function siteSelList(){ return Object.keys(activeSite); }
+  function saveSiteSel(){ try{ localStorage.setItem("hd_site_a", JSON.stringify(siteSelList())); }catch(e){} }
+  function restoreSiteSel(){
+    activeSite={};
+    try{ var a=JSON.parse(localStorage.getItem("hd_site_a")||"[]");
+      for (var i=0;i<a.length;i++){ if (siteOrder.indexOf(a[i])!==-1) activeSite[a[i]]=true; }
+    }catch(e){ activeSite={}; }
+  }
+  function shownSites(){ var sel=siteSelList(); return sel.length ? siteOrder.filter(function(s){return activeSite[s];}) : siteOrder; }
+  function renderSiteChips(){
+    var kids=siteChipsEl.querySelectorAll(".chip");
+    for (var i=0;i<kids.length;i++) kids[i].parentNode.removeChild(kids[i]);
+    var clear=mkSiteChip("全部",null); clear.classList.add("clear"); siteChipsEl.appendChild(clear);
+    for (var j=0;j<siteOrder.length;j++) siteChipsEl.appendChild(mkSiteChip(siteOrder[j],siteOrder[j]));
+    siteChipsEl.hidden = siteOrder.length===0; syncSiteChips();
+  }
+  function mkSiteChip(text,name){
+    var b=document.createElement("button");
+    b.className="chip"; b.dataset.site=name||"";
+    b.appendChild(document.createTextNode(text));
+    b.onclick=function(){
+      if (!name){ activeSite={}; }
+      else if (activeSite[name]){ delete activeSite[name]; }
+      else { activeSite[name]=true; }
+      saveSiteSel(); syncSiteChips(); render();
+    };
+    return b;
+  }
+  function syncSiteChips(){
+    var chips=siteChipsEl.querySelectorAll(".chip"), none=siteSelList().length===0;
+    for (var i=0;i<chips.length;i++){
+      var st=chips[i].dataset.site, on = st ? !!activeSite[st] : none;
+      chips[i].classList.toggle("on", on);
+    }
+  }
+
   // ---- render table ----
   function hue(s){ var h=0,str=s||""; for (var i=0;i<str.length;i++){ h=(h*31+str.charCodeAt(i))>>>0; } return h%360; }
   function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
@@ -1318,9 +1443,10 @@ window.__sched = {
     }
     var h='<table class="avtbl" style="width:'+totalW+'px">'+cols+'<thead>'+grp+'</tr>'+sub+'</tr></thead><tbody>';
 
-    // site rows
-    for (var r=0;r<siteOrder.length;r++){
-      var site=siteOrder[r], g=byWeek[curWeek] && byWeek[curWeek][site];
+    // site rows (院區 filter: show only selected sites, or all if none selected)
+    var sites=shownSites();
+    for (var r=0;r<sites.length;r++){
+      var site=sites[r], g=byWeek[curWeek] && byWeek[curWeek][site];
       h += '<tr class="siterow"><td class="c-site">'+esc(site)+'</td>';
       for (var d2=0; d2<6; d2++) for (var s2i=0; s2i<sess.length; s2i++){
         var s2=sess[s2i], arr = g ? g[d2][s2] : [];
@@ -1378,7 +1504,15 @@ window.__sched = {
   }
 
   // ---- export (normalised clean data) ----
+  // Export follows the active filters: no filter → everything; 院區 filter → those sites
+  // for the whole month; 醫師 filter → that doctor for the whole month (both apply if both set).
   function buildExport(){
+    var siteSel=siteSelList(), docSel=selList();
+    var siteOn=siteSel.length>0, docOn=docSel.length>0;
+    function siteOk(s){ return !siteOn || activeSite[s]; }
+    function docOk(n){ return !docOn || activeA[n]; }
+    var expSites   = siteOn ? siteOrder.filter(siteOk) : siteOrder;
+    var expRoster  = docOn  ? roster.filter(docOk)     : roster;
     var assignments=[], availability=[], fullday=[];
     for (var wi=0; wi<weekList.length; wi++){
       var wk=weekList[wi];
@@ -1386,18 +1520,24 @@ window.__sched = {
         var dt=slotDate(wk,d), diso=iso(dt);
         for (var s=0; s<3; s++){
           for (var si=0; si<siteOrder.length; si++){
-            var site=siteOrder[si], g=byWeek[wk] && byWeek[wk][site];
+            var site=siteOrder[si]; if (!siteOk(site)) continue;
+            var g=byWeek[wk] && byWeek[wk][site];
             var arr=g ? g[d][s] : [];
-            for (var k=0;k<arr.length;k++)
+            for (var k=0;k<arr.length;k++){
+              if (!docOk(arr[k])) continue;
               assignments.push({month:isoMonth(),week:wk,weekday:d+1,date:diso,session:SESS[s],site:site,doctor:arr[k]});
+            }
           }
-          availability.push({week:wk,weekday:d+1,date:diso,session:SESS[s],free:freeAt(wk,d,s)});
+          var fr=freeAt(wk,d,s); if (docOn) fr=fr.filter(docOk);
+          availability.push({week:wk,weekday:d+1,date:diso,session:SESS[s],free:fr});
         }
-        fullday.push({week:wk,weekday:d+1,date:diso,free:freeAllDay(wk,d)});
+        var fd=freeAllDay(wk,d); if (docOn) fd=fd.filter(docOk);
+        fullday.push({week:wk,weekday:d+1,date:diso,free:fd});
       }
     }
-    return {month:isoMonth(), weekAnchor:"week-containing-1st (Mon–Sat)", roster:roster,
-            sites:siteOrder, assignments:assignments, availability:availability, fullDayFree:fullday};
+    return {month:isoMonth(), weekAnchor:"week-containing-1st (Mon–Sat)", roster:expRoster,
+            sites:expSites, filters:{sites:siteOn?expSites:null, doctors:docOn?expRoster:null},
+            assignments:assignments, availability:availability, fullDayFree:fullday};
   }
   function isoMonth(){ function p(n){return (n<10?"0":"")+n;} return year+"-"+p(m0+1); }
   function dl(name, text, type){
@@ -1424,7 +1564,7 @@ window.__sched = {
   function onError(msg){
     clearTimeout(loadTimer); loading=false;
     window.__hdPill.set("avail","err","載入失敗");
-    chipsEl.hidden=true;
+    chipsEl.hidden=true; siteChipsEl.hidden=true;
     scrollEl.innerHTML='<div class="status err"><div class="big">⚠ 無法載入母表</div><div>'+esc(msg)
       +'</div><div style="margin-top:14px"><button class="btn" id="avRetry">重試</button></div></div>';
     var rb=el("avRetry"); if (rb) rb.onclick=function(){ loaded=false; load(); };
