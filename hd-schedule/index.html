@@ -855,7 +855,7 @@ window.__sched = {
   // 14..17 are the four "假" columns -> merged into one 休假 column.
   // group === null  -> standalone column (own header, spans both header rows)
   // group === "..." -> grouped under a shared first-tier header
-  // site: 院區別（供班表頁「院區篩選器」用）。休假為跨院區共通欄，site:null＝恆顯示。
+  // site: 院區別（供班表頁「院區篩選器」用）。請假亦為一個可選類別（site:"請假"）。
   var SHIFT_COLS = [
     {i:2,  name:"值班",   group:null,      site:"花蓮"},
     {i:3,  name:"早",     group:"院內時段", site:"花蓮"},
@@ -867,11 +867,11 @@ window.__sched = {
     {i:9,  name:"關山",   group:"外派特約", site:"關山"},
     {i:10, name:"聯安",   group:"外派特約", site:"聯安"},
     {i:11, name:"聯安掛名",group:"外派特約", site:"聯安"},
-    {leave:true, name:"休假", group:"請假", left:true, site:null}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
+    {leave:true, name:"休假", group:"請假", left:true, site:"請假"}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
   ];
 
-  // 院區篩選器的固定順序（母表固定四院區）
-  var SITE_ORDER = ["花蓮","玉里","關山","聯安"];
+  // 院區篩選器的固定順序（四院區＋請假）
+  var SITE_ORDER = ["花蓮","玉里","關山","聯安","請假"];
 
   // fixed display order for the doctor highlight chips
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
