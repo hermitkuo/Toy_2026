@@ -592,11 +592,11 @@
   </div>
 
   <div class="chips" id="dateSiteChips" hidden>
-    <span class="lbl">院區（可多選）：</span>
+    <span class="lbl">院區：</span>
   </div>
 
   <div class="chips" id="chips" hidden>
-    <span class="lbl">高亮醫師（可多選）：</span>
+    <span class="lbl">醫師：</span>
   </div>
 
   <div id="printTitle" aria-hidden="true"></div>
@@ -619,11 +619,11 @@
     </div>
 
     <div class="chips" id="avSiteChips" hidden>
-      <span class="lbl">院區（可多選）：</span>
+      <span class="lbl">院區：</span>
     </div>
 
     <div class="chips" id="avChips" hidden>
-      <span class="lbl">高亮醫師（可多選）：</span>
+      <span class="lbl">醫師：</span>
     </div>
 
     <div class="tablecard">
@@ -768,13 +768,13 @@ window.__sched = {
     {i:3,  name:"早",     group:"院內時段", site:"花蓮"},
     {i:4,  name:"中",     group:"院內時段", site:"花蓮"},
     {i:5,  name:"晚",     group:"院內時段", site:"花蓮"},
-    {i:6,  name:"花蓮HD", group:null,      site:"花蓮"},
-    {i:7,  name:"特約",   group:null,      site:"花蓮"},
+    {i:6,  name:"花蓮洗腎診", group:null,  site:"花蓮"},
+    {i:7,  name:"花蓮特約診", group:null,  site:"花蓮"},
     {i:8,  name:"玉里",   group:"外派特約", site:"玉里"},
     {i:9,  name:"關山",   group:"外派特約", site:"關山"},
     {i:10, name:"聯安",   group:"外派特約", site:"聯安"},
     {i:11, name:"聯安掛名",group:"外派特約", site:"聯安"},
-    {leave:true, name:"休假", group:"假勤", left:true, site:null}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
+    {leave:true, name:"休假", group:"請假", left:true, site:null}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
   ];
 
   // 院區篩選器的固定順序（母表固定四院區）
@@ -1990,8 +1990,8 @@ window.__sched = {
     // 全天：值班、休假，加掛名欄（§0.1 無實際勞務，淡化同聯安掛名）
     pushAll("值班","值班","c-oncall");
     pushAll("聯安掛名","聯安掛名","c-nominal",true);
-    pushAll("花蓮HD","花蓮HD診","c-nominal",true);
-    pushAll("特約","花蓮特約診","c-nominal",true);
+    pushAll("花蓮洗腎診","花蓮HD診","c-nominal",true);
+    pushAll("花蓮特約診","花蓮特約診","c-nominal",true);
     pushAll("休假","休假","c-leave");
     for(var s=0;s<3;s++){
       var arr=[];
@@ -2335,11 +2335,11 @@ window.__sched = {
     return "l"+Math.min(5, Math.max(1, Math.ceil(v/max*5)));
   }
 
-  // ---- 大抽週六：每月第一個完整週一~週六的那個週六 ----
+  // ---- 大抽週六：對齊全站週定義「第1週＝含1號那週、週一為首」的週六 ----
+  //   即當月第一個週六（＝週1那週的週六，落在當月）。
   function bigSatDay(y,m){
     var dow=new Date(y,m,1).getDay();          // 0 日..6 六
-    var firstMon=1+((1-dow+7)%7);              // 當月第一個週一
-    return firstMon+5;                          // 該週週六（必落在當月）
+    return 1+((6-dow+7)%7);                     // 當月第一個週六
   }
   function bigSatSection(){
     var counts={}, dateList=[];
@@ -2348,10 +2348,11 @@ window.__sched = {
       var dt=new Date(curYear,m,d), rec=mapByKey[key(dt)];
       dateList.push({m:m, d:d, has:!!rec});
       if(!rec) continue;
-      for(var k=0;k<rec.attend.length;k++){ var nm=rec.attend[k]; counts[nm]=(counts[nm]||0)+1; }
+      var seen={};   // 每位醫師每個大抽週六計一次（早/中/晚同人不重複）
+      for(var k=0;k<rec.inhd.length;k++){ var nm=rec.inhd[k]; if(seen[nm]) continue; seen[nm]=1; counts[nm]=(counts[nm]||0)+1; }
     }
     var docs=orderRoster(counts);
-    var desc='大抽週六＝每月「第一個完整週一到週六」的那個週六；計當天<b>所有出勤醫師</b>各一次。';
+    var desc='大抽週六＝每月<b>第一個週六</b>（對齊全站週定義「第 1 週＝含 1 號那週、週一為首」的那個週六）；計當天<b>院內時段（早/中/晚）</b>的醫師各一次。';
     if(!docs.length) return sec("大抽週六次數", desc, '<div class="stat-empty">此年度沒有可對應的班表資料。</div>');
     var max=0; for(var i=0;i<docs.length;i++) if(counts[docs[i]]>max) max=counts[docs[i]];
     var body='<div class="barlist">';
