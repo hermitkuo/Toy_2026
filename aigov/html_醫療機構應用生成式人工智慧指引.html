@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>醫療機構應用生成式人工智慧指引・治理導入說明</title>
+<style>
+:root{
+  --green:#1f6b47; --green-d:#184f36; --green-l:#2e8a5e;
+  --ink:#1f2933; --mut:#6b7783; --line:#e3e8ec; --bg:#f4f6f7; --card:#fff;
+  --warn:#b4531f; --radius:16px; --radius-sm:12px;
+  --blue:#2563eb; --blue-b:#e8effd;
+  --purple:#7c3aed; --purple-b:#f0eafc;
+  --amber:#b4531f; --amber-b:#fbeee2;
+  --red:#b4231f; --red-b:#fbe7e4;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--green-l);text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:30px 26px 90px}
+
+/* header */
+.top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.logo{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--green),var(--green-d));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+.top b{font-size:22px;letter-spacing:.5px;display:block}
+.top span{font-size:12px;color:var(--mut)}
+.backflow{display:inline-block;font-size:13px;color:var(--green-l);margin:18px 0 10px;
+  padding:5px 13px;border:1px solid var(--line);border-radius:20px;background:#fff}
+.backflow:hover{background:#eef4f0;border-color:#cfe0d6}
+.eyebrow{color:var(--green-l);font-weight:700;font-size:13px;letter-spacing:.05em;margin:12px 0 4px}
+h1{font-size:29px;margin:0 0 8px;letter-spacing:.5px;line-height:1.25}
+.byline{font-size:13px;color:var(--mut);margin:0 0 16px}
+.lead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;color:#3a4650;
+  font-size:14.5px;margin:6px 0 18px}
+
+/* stat row */
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 26px}
+.stat{background:#fff;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:14px;padding:14px 16px}
+.stat strong{display:block;font-size:28px;line-height:1;color:var(--green-d)}
+.stat span{display:block;color:var(--mut);font-size:12.5px;margin-top:8px}
+@media(max-width:820px){.statrow{grid-template-columns:1fr 1fr}}
+
+/* toc */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:0 0 34px}
+.tocitem{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#fff;
+  display:flex;gap:11px;align-items:flex-start;transition:.15s}
+.tocitem:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,60,40,.09);border-color:#cfe0d6}
+.tocitem .qn{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.tocitem small{font-size:13px;color:var(--ink);line-height:1.45}
+
+/* section */
+section{margin-top:36px}
+.section-head{margin-bottom:16px}
+.section-head h3{font-size:22px;margin:0;letter-spacing:.02em;color:var(--green-d)}
+.section-head p{margin:6px 0 0;color:var(--mut);font-size:14px;max-width:820px}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px}
+.card h4{margin:0 0 8px;font-size:16px;color:var(--ink)}
+.card p{margin:0;color:#4a5560;font-size:13.5px}
+
+.tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:10px}
+.tag.green{background:#e7f2ec;color:var(--green)}
+.tag.blue{background:var(--blue-b);color:var(--blue)}
+.tag.purple{background:var(--purple-b);color:var(--purple)}
+.tag.amber{background:var(--amber-b);color:var(--amber)}
+.tag.red{background:var(--red-b);color:var(--red)}
+.tag.gray{background:#eef2f0;color:#41505a}
+
+.principle{display:flex;gap:14px;align-items:flex-start}
+.num{flex:0 0 auto;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:#e7f2ec;color:var(--green);font-weight:800}
+.principle strong{display:block;margin-bottom:5px;color:var(--ink)}
+.principle p{margin:0;color:#4a5560;font-size:13.5px}
+
+/* risk grid */
+.risk-grid{display:grid;grid-template-columns:repeat(6,minmax(145px,1fr));gap:12px}
+.risk{min-height:170px;padding:16px;border-radius:14px;border:1px solid var(--line);
+  background:#fff;position:relative;overflow:hidden}
+.risk:before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+.risk.r1:before{background:var(--purple)}
+.risk.r2:before{background:var(--green-l)}
+.risk.r3:before{background:var(--red)}
+.risk.r4:before{background:#d97706}
+.risk.r5:before{background:var(--warn)}
+.risk.r6:before{background:#475569}
+.risk h4{margin:12px 0 8px;font-size:15px}
+.risk p{margin:0;color:#4a5560;font-size:13px}
+
+/* timeline */
+.timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.phase{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:20px}
+.phase h4{margin:6px 0 6px;font-size:20px;color:var(--green-d)}
+.phase ul,.checklist ul{margin:12px 0 0;padding-left:1.2rem;color:#3a4650}
+.phase li,.checklist li{margin:7px 0;font-size:13.5px}
+.phase .mini{color:var(--mut);font-size:13px;margin:0}
+.phase .gate{margin-top:16px;padding:12px;border-radius:12px;background:#f0f6f3;border:1px dashed #bcd6c8;font-size:13px}
+.phase .gate strong{color:var(--green-d)}
+
+/* generic table */
+table{width:100%;border-collapse:collapse;overflow:hidden;background:#fff;font-size:13.5px}
+.panel table{border:1px solid var(--line);border-radius:12px}
+th,td{padding:11px 13px;border:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:#eaf2ee;color:var(--green-d);font-size:13px;font-weight:700}
+td small{color:var(--mut)}
+
+/* matrix */
+.matrix{display:grid;grid-template-columns:210px repeat(4,minmax(120px,1fr));border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden;background:#fff}
+.matrix>div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px;min-height:72px;font-size:13px}
+.matrix>div:nth-child(5n){border-right:0}
+.matrix .head{background:#eaf2ee;font-weight:800;color:var(--green-d);min-height:auto}
+.matrix .rowhead{background:#f5f8f6;font-weight:800}
+.matrix small{color:var(--mut)}
+.level-low{background:#e7f2ec}
+.level-med{background:#fbf3e6}
+.level-high{background:#fbe9e5}
+.level-critical{background:#f9e3e0;box-shadow:inset 5px 0 0 var(--red)}
+
+/* doc list */
+.doc-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.doc{display:flex;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.doc .icon{width:34px;height:34px;flex:0 0 auto;border-radius:9px;background:#e7f2ec;color:var(--green);
+  display:grid;place-items:center;font-weight:800;font-size:13px}
+.doc strong{display:block;font-size:14.5px}
+.doc span{display:block;color:var(--mut);font-size:12.5px;margin-top:3px}
+
+/* form grid */
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.field-block{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.field-block h4{margin:0 0 12px;font-size:15px;color:var(--green-d)}
+.field{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #eef2f0;font-size:13.5px}
+.field:first-of-type{border-top:0}
+.field span:last-child{color:var(--mut);text-align:right}
+
+/* callout / decision / notodo */
+.callout{border-radius:var(--radius);padding:18px 20px;border:1px solid var(--line);border-left:5px solid var(--warn);
+  background:#fbf6ee;font-size:14px}
+.callout strong{color:var(--warn)}
+.decision{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.decision .go{border-left:5px solid var(--green)}
+.decision .stop{border-left:5px solid var(--red)}
+.decision h4{margin:0 0 8px;font-size:16px}
+.decision .go h4{color:var(--green-d)}
+.decision .stop h4{color:var(--red)}
+.notodo{border-left:5px solid var(--red)}
+.checklist h4{margin:4px 0 4px;font-size:15px}
+.mini{color:var(--mut);font-size:13px}
+
+/* controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+button,.btn{border:1px solid var(--line);background:#fff;border-radius:20px;padding:9px 14px;
+  font:inherit;cursor:pointer;color:#41505a}
+button:hover,.btn:hover{background:#eef4f0;color:var(--green-l);border-color:#cfe0d6}
+.searchbox{flex:1;min-width:240px;border:1px solid var(--line);background:#fff;border-radius:20px;padding:10px 14px;font:inherit}
+mark{background:#fdf1b8;border-radius:4px;padding:0 2px}
+
+.src{font-size:12px;color:var(--mut);margin-top:40px;border-top:1px solid var(--line);padding-top:18px}
+
+@media(max-width:960px){
+  .grid-4,.risk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .timeline,.grid-3,.form-grid{grid-template-columns:1fr}
+  .matrix{grid-template-columns:150px repeat(4,minmax(96px,1fr));overflow-x:auto}
+}
+@media(max-width:640px){
+  h1{font-size:23px}
+  .statrow,.grid-2,.grid-4,.risk-grid,.doc-list,.decision{grid-template-columns:1fr}
+  .matrix{display:block}
+  .matrix>div{border-right:0;min-height:auto}
+  .matrix .head:not(:first-child){display:none}
+}
+@media print{
+  body{background:#fff}
+  .backflow,.controls{display:none}
+  .wrap{max-width:none;padding:0}
+  section{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">參考資料・衛福部函頒指引</div>
+  <h1>醫療機構應用生成式人工智慧指引<br>治理導入說明</h1>
+  <div class="byline">115 年 5 月 29 日衛部醫字第 1151663164 號函頒　·　<a href="html_醫療機構應用生成式人工智慧指引.html" target="_blank">↗ 另開新分頁</a></div>
+
+  <div class="lead">
+    本頁將衛福部函頒指引轉換為院內可執行的治理藍圖：先判斷是否納管，再分級風險、要求文件、完成測試驗證，最後進入持續監測與事件處置。適合拿來做院內教育訓練、AI 治理委員會簡報、採購需求書前導，或轉成「AI 系統導入申請」網頁欄位規格。
+  </div>
+
+  <div class="statrow">
+    <div class="stat"><strong>6</strong><span>風險類型：模型、資料、輸出、資安、依賴、中斷</span></div>
+    <div class="stat"><strong>5</strong><span>核心實施原則：主責、資安、整合、文化、監控</span></div>
+    <div class="stat"><strong>3</strong><span>生命週期階段：導入前、導入整合、導入後監管</span></div>
+    <div class="stat"><strong>9</strong><span>具體注意事項：由風險盤點到透明告知</span></div>
+  </div>
+
+  <div class="toc">
+    <a class="tocitem" href="#overview"><span class="qn">01</span><small>一頁式治理判讀</small></a>
+    <a class="tocitem" href="#scope"><span class="qn">02</span><small>目的、定義與適用範圍</small></a>
+    <a class="tocitem" href="#risk"><span class="qn">03</span><small>六大風險類型</small></a>
+    <a class="tocitem" href="#principles"><span class="qn">04</span><small>五項核心實施原則</small></a>
+    <a class="tocitem" href="#lifecycle"><span class="qn">05</span><small>三階段導入生命週期</small></a>
+    <a class="tocitem" href="#matrix"><span class="qn">06</span><small>建議風險分級矩陣</small></a>
+    <a class="tocitem" href="#documents"><span class="qn">07</span><small>院內應準備文件清單</small></a>
+    <a class="tocitem" href="#application"><span class="qn">08</span><small>網頁申請方案：欄位設計</small></a>
+    <a class="tocitem" href="#monitoring"><span class="qn">09</span><small>導入後監測指標</small></a>
+    <a class="tocitem" href="#notodo"><span class="qn">10</span><small>Not-to-do：不值得投入的方向</small></a>
+  </div>
+
+  <section id="overview">
+    <div class="section-head">
+      <h3>一頁式治理判讀</h3>
+      <p>這份指引不是單純採購規範，而是要求醫療機構把生成式 AI 視為「會改變臨床流程與責任分工的資訊系統」。</p>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <span class="tag blue">治理定位</span>
+        <h4>行政指導，但不是可忽略</h4>
+        <p>雖非強制規定，但可被用作內稽、採購、合規、醫療品質與事件檢討的最低參考架構。</p>
+      </div>
+      <div class="card">
+        <span class="tag green">導入門檻</span>
+        <h4>涉及真實病人資料即納管</h4>
+        <p>內部測試若介接 EMR、門診、病房或真實病人資料，應視為導入階段，而非單純展示。</p>
+      </div>
+      <div class="card">
+        <span class="tag amber">責任核心</span>
+        <h4>AI 只能輔助，不能取代確認</h4>
+        <p>涉及臨床判斷、病人溝通、醫療紀錄者，最終確認與責任仍由相應醫事人員承擔。</p>
+      </div>
+      <div class="card">
+        <span class="tag red">高風險界線</span>
+        <h4>臨床影響越直接，測試越重</h4>
+        <p>直接影響診斷、治療、用藥、病歷或病人溝通者，應採分階段導入與 go/no-go 門檻。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:16px;">
+      <strong>實務取捨：</strong>院內第一版不要先追求「所有 AI 都完整審查」，而應先建立全院 AI 系統清冊、新案登錄、風險分級、資料保護評估與高風險上線凍結。這四件事會比寫一份漂亮政策更能降低實際風險。
+    </div>
+  </section>
+
+  <section id="scope">
+    <div class="section-head">
+      <h3>目的、定義與適用範圍</h3>
+      <p>最重要的判斷不是「是不是 AI」，而是「是否已進入醫療機構環境、是否處理真實資料、是否影響臨床或管理作業」。</p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <span class="tag blue">目的</span>
+        <h4>全生命週期治理</h4>
+        <p>協助醫療機構在導入生成式 AI 前、中、後，有明確檢視重點、評估指標、風險管理與教育訓練制度。</p>
+      </div>
+      <div class="card">
+        <span class="tag purple">生成式 AI 系統</span>
+        <h4>不只是模型</h4>
+        <p>包含模型、資料處理、使用者介面、安全控制、輸出管理、資料流與醫療資訊系統整合的完整技術系統。</p>
+      </div>
+      <div class="card">
+        <span class="tag amber">AI Agent</span>
+        <h4>暫不納入本指引</h4>
+        <p>具自主或半自主行動能力，可能引發更高病人安全、醫療責任與合規風險，目前尚不列入適用對象。</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;">
+      <table>
+        <thead><tr><th>使用情境</th><th>是否建議納管</th><th>判斷理由</th><th>最低治理動作</th></tr></thead>
+        <tbody>
+          <tr><td>病歷撰寫輔助</td><td><span class="tag red">是</span></td><td>涉及醫療紀錄與醫事人員最終審核責任。</td><td>用途登錄、資料保護評估、輸出覆核、簽章規範。</td></tr>
+          <tr><td>臨床決策支援</td><td><span class="tag red">是，高風險</span></td><td>可能影響診斷、治療、用藥、檢查安排與病人安全。</td><td>臨床安全測試、專業審查、分階段試辦、持續監測。</td></tr>
+          <tr><td>行政文書撰擬</td><td><span class="tag amber">是，依資料判斷</span></td><td>若輸入或輸出含個資、病歷、內部機敏資訊，即需納管。</td><td>資料分類、權限控管、輸入安全訓練、留痕。</td></tr>
+          <tr><td>病人溝通工具</td><td><span class="tag red">是</span></td><td>直接面向民眾，需揭露 AI 參與範圍與限制。</td><td>透明告知、內容警語、人員確認、異常通報。</td></tr>
+          <tr><td>純教育示範、無真實資料</td><td><span class="tag green">可參照</span></td><td>未介接真實病人資料與臨床流程，風險較低。</td><td>保留測試紀錄，禁止上傳真實個資與病歷。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="risk">
+    <div class="section-head">
+      <h3>六大風險類型</h3>
+      <p>治理重點不只在幻覺；醫院真正會出事的點通常是資料流、服務變更、過度依賴與臨床流程未設替代方案。</p>
+    </div>
+    <div class="risk-grid">
+      <div class="risk r1"><h4>1. 基礎模型風險</h4><p>模型架構、訓練資料與微調流程造成系統性偏差，可能影響特定疾病、族群或臨床情境。</p></div>
+      <div class="risk r2"><h4>2. 資料來源風險</h4><p>RAG、EMR、外部資料庫或網路資料品質不一、過期、不可追溯或隱私不足。</p></div>
+      <div class="risk r3"><h4>3. 輸出結果風險</h4><p>產生看似合理但錯誤的內容，如假文獻、錯誤藥物交互作用或不符指引建議。</p></div>
+      <div class="risk r4"><h4>4. 資安攻擊風險</h4><p>prompt injection、對抗攻擊、模型竊取、資料中毒、資料外洩，可能同時影響病安與個資。</p></div>
+      <div class="risk r5"><h4>5. 使用者依賴風險</h4><p>醫事人員過度信任 AI，降低自主臨床判斷，造成 deskilling 或忽略異常訊號。</p></div>
+      <div class="risk r6"><h4>6. 服務中斷風險</h4><p>外部模型或雲端 API 停止、下架、版本變動、輸出漂移、限流、漲價或合約變更。</p></div>
+    </div>
+  </section>
+
+  <section id="principles">
+    <div class="section-head">
+      <h3>五項核心實施原則</h3>
+      <p>可直接轉成院內 AI 治理委員會章程、專案審查 checklist 與教育訓練主題。</p>
+    </div>
+    <div class="grid-2">
+      <div class="card principle"><div class="num">1</div><div><strong>指派主責單位或人員與風險辨識</strong><p>至少需有可負責盤點、審查、分級、核准、停用與追蹤的治理角色。</p></div></div>
+      <div class="card principle"><div class="num">2</div><div><strong>完成資訊安全與資料保護評估</strong><p>導入前確認資料蒐集、處理、儲存、利用、傳輸與保存政策符合法規與醫院資料治理要求。</p></div></div>
+      <div class="card principle"><div class="num">3</div><div><strong>規劃系統整合與作業持續</strong><p>系統要能追蹤輸出與使用軌跡，並有失效、緊急停用、服務中斷時的替代流程。</p></div></div>
+      <div class="card principle"><div class="num">4</div><div><strong>落實負責任的組織文化</strong><p>明確使用範圍、權限管理、操作訓練與限制說明，避免誤用、濫用與責任模糊。</p></div></div>
+      <div class="card principle"><div class="num">5</div><div><strong>持續監控與改進</strong><p>建立監測、通報、事件處置、版本控制、變更管理、回復與持續改善機制。</p></div></div>
+    </div>
+  </section>
+
+  <section id="lifecycle">
+    <div class="section-head">
+      <h3>三階段導入生命週期</h3>
+      <p>此區可作為院內申請流程：申請送出後先進入導入前評估，通過才允許測試與整合，上線後轉入監管。</p>
+    </div>
+    <div class="timeline">
+      <div class="phase">
+        <span class="tag blue">Phase 1</span>
+        <h4>導入前評估</h4>
+        <p class="mini">確認可行性、法規遵循與基礎風險。</p>
+        <ul>
+          <li>主責單位完成風險盤點與分級。</li>
+          <li>建立 AI 產品與系統清單。</li>
+          <li>檢視個資法、醫療法、病歷管理、專門職業法規。</li>
+          <li>判斷是否涉及醫療器材屬性。</li>
+          <li>完成資訊安全與資料保護評估。</li>
+        </ul>
+        <div class="gate"><strong>Gate：</strong>未完成用途、資料流、風險分級與責任人，不得進入真實臨床流程。</div>
+      </div>
+      <div class="phase">
+        <span class="tag amber">Phase 2</span>
+        <h4>導入與整合</h4>
+        <p class="mini">部署、介接、測試、供應商與採購管理。</p>
+        <ul>
+          <li>整合測試：EMR、HIS、PACS、臨床流程。</li>
+          <li>效能驗證、壓力測試與臨床安全測試。</li>
+          <li>設定 go/no-go criteria 與分階段試辦。</li>
+          <li>保留替代模型、替代服務或人工流程。</li>
+          <li>契約要求模型、資料、資安、支援與變更揭露。</li>
+        </ul>
+        <div class="gate"><strong>Gate：</strong>高風險應用需先完成隔離測試，再有限場域試辦，不宜直接全院上線。</div>
+      </div>
+      <div class="phase">
+        <span class="tag green">Phase 3</span>
+        <h4>導入後使用與監管</h4>
+        <p class="mini">監測品質、偏誤、事件、責任與透明告知。</p>
+        <ul>
+          <li>定期稽核輸出正確性、偏誤與臨床適用性。</li>
+          <li>監測錯誤率、覆核結果、手動修改率、異常通報。</li>
+          <li>發生系統性錯誤時暫停、限縮或停用。</li>
+          <li>建立輸入安全、惡意指令防護與通報文化。</li>
+          <li>病人互動或錄音錄影情境需透明告知。</li>
+        </ul>
+        <div class="gate"><strong>Gate：</strong>無法於合理期間修復且可能影響病安時，應啟動暫停、回復既有流程或停止使用。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="matrix">
+    <div class="section-head">
+      <h3>建議風險分級矩陣</h3>
+      <p>指引要求「依臨床影響性與系統可靠性」分級；下列矩陣可直接轉成院內審查規則。</p>
+    </div>
+    <div class="matrix">
+      <div class="head">臨床影響 × 資料複雜度</div>
+      <div class="head">低資料複雜度</div>
+      <div class="head">中資料複雜度</div>
+      <div class="head">高資料複雜度</div>
+      <div class="head">外部即時資料 / RAG / Agentic 工具</div>
+
+      <div class="rowhead">行政輔助，不含個資</div>
+      <div class="level-low">低風險<br><small>基本登錄與使用規範</small></div>
+      <div class="level-low">低至中<br><small>補資料來源檢視</small></div>
+      <div class="level-med">中風險<br><small>需資料保護評估</small></div>
+      <div class="level-med">中風險<br><small>需輸入安全控管</small></div>
+
+      <div class="rowhead">行政輔助，含個資或院內機敏資料</div>
+      <div class="level-med">中風險<br><small>權限、留痕、教育訓練</small></div>
+      <div class="level-med">中風險<br><small>資料流與保存政策</small></div>
+      <div class="level-high">高風險<br><small>資安與法遵審查</small></div>
+      <div class="level-high">高風險<br><small>供應商揭露與監測</small></div>
+
+      <div class="rowhead">病歷、病人溝通、臨床流程</div>
+      <div class="level-high">高風險<br><small>專業覆核與簽章</small></div>
+      <div class="level-high">高風險<br><small>臨床安全測試</small></div>
+      <div class="level-critical">極高風險<br><small>分階段試辦</small></div>
+      <div class="level-critical">極高風險<br><small>需停用門檻與替代流程</small></div>
+
+      <div class="rowhead">診斷、治療、用藥或直接病安影響</div>
+      <div class="level-critical">極高風險<br><small>醫材屬性判斷</small></div>
+      <div class="level-critical">極高風險<br><small>專責審查與驗證</small></div>
+      <div class="level-critical">極高風險<br><small>go/no-go criteria</small></div>
+      <div class="level-critical">原則上暫緩<br><small>除非具完整臨床驗證與法規路徑</small></div>
+    </div>
+  </section>
+
+  <section id="documents">
+    <div class="section-head">
+      <h3>院內應準備文件清單</h3>
+      <p>文件不是為了堆疊行政負擔，而是建立可稽核證據鏈：誰申請、用什麼資料、何種風險、誰審核、何時停用。</p>
+    </div>
+    <div class="controls">
+      <input class="searchbox" id="docSearch" placeholder="搜尋文件：例如 資料保護、契約、監測、病人告知..." />
+      <button onclick="window.print()">列印 / 存成 PDF</button>
+    </div>
+    <div class="doc-list" id="docList">
+      <div class="doc" data-key="申請 登錄 清冊 用途"><div class="icon">01</div><div><strong>AI 系統導入申請書</strong><span>申請單位、預定用途、使用者、場域、資料類型、是否接觸病人與預期效益。</span></div></div>
+      <div class="doc" data-key="清冊 盤點 系統 產品"><div class="icon">02</div><div><strong>全院 AI 產品與系統清冊</strong><span>系統名稱、供應商、模型、版本、部署型態、資料流、風險等級、上線狀態。</span></div></div>
+      <div class="doc" data-key="風險 分級 臨床 影響"><div class="icon">03</div><div><strong>風險盤點與分級表</strong><span>內部風險：可靠性、資料來源、資安、資料保護；外部風險：臨床流程與病安影響。</span></div></div>
+      <div class="doc" data-key="法規 個資 醫療法 醫材"><div class="icon">04</div><div><strong>法規遵循檢視表</strong><span>個資法、醫療法、病歷管理、專門職業法規、醫療器材屬性與預定用途限制。</span></div></div>
+      <div class="doc" data-key="DPIA 資料保護 隱私"><div class="icon">05</div><div><strong>資料保護評估 DPIA</strong><span>資料蒐集、處理、儲存、利用、傳輸、保存、刪除、去識別化與使用者權限。</span></div></div>
+      <div class="doc" data-key="資安 安全 事件"><div class="icon">06</div><div><strong>安全性說明文件</strong><span>架構、加密、存取控制、日誌、prompt injection 防護、資料外洩防護與監測。</span></div></div>
+      <div class="doc" data-key="事件 記錄 通報"><div class="icon">07</div><div><strong>風險與事件記錄表</strong><span>錯誤、偏誤、資安事件、服務中斷、使用者回報、原因分析與改善追蹤。</span></div></div>
+      <div class="doc" data-key="測試 驗證 壓力 臨床安全"><div class="icon">08</div><div><strong>效能驗證與臨床安全測試報告</strong><span>代表性案例、驗收標準、壓力測試、輸出品質、安全性與人工覆核結果。</span></div></div>
+      <div class="doc" data-key="變更 版本 rollback 回復"><div class="icon">09</div><div><strong>版本控制與變更管理紀錄</strong><span>版本鎖定、變更前後對照、上線核准、異常偵測、rollback 與替代流程。</span></div></div>
+      <div class="doc" data-key="供應商 契約 採購 模型"><div class="icon">10</div><div><strong>供應商揭露與契約附件</strong><span>模型服務商、版本、部署型態、資料使用、IP、支援承諾、事件通報、供應鏈來源。</span></div></div>
+      <div class="doc" data-key="監測 稽核 指標 偏誤"><div class="icon">11</div><div><strong>持續監測與偏誤管理計畫</strong><span>監測頻率、錯誤率、偏誤類型、手動修改率、覆核結果、停用條件與改善流程。</span></div></div>
+      <div class="doc" data-key="教育訓練 prompt 安全 使用者"><div class="icon">12</div><div><strong>教育訓練與使用者授權紀錄</strong><span>功能限制、幻覺、偏誤、人為覆核、輸入安全、通報流程與權限開通紀錄。</span></div></div>
+      <div class="doc" data-key="病人 告知 錄音 錄影 透明"><div class="icon">13</div><div><strong>病人告知與錄音錄影說明文件</strong><span>AI 參與範圍、用途、限制、風險提醒、錄音錄影必要性、拒絕後替代流程。</span></div></div>
+      <div class="doc" data-key="作業持續 BCP 中斷 替代"><div class="icon">14</div><div><strong>作業持續與服務中斷應變計畫</strong><span>AI 失效、API 中斷、模型下架、限流、漲價、資安事件時的人工替代與復原程序。</span></div></div>
+    </div>
+  </section>
+
+  <section id="application">
+    <div class="section-head">
+      <h3>網頁申請方案：欄位設計藍圖</h3>
+      <p>若要做成院內申請系統，建議不要把所有欄位一次塞給申請人；先用分流問題決定要填多少。</p>
+    </div>
+    <div class="form-grid">
+      <div class="field-block">
+        <h4>Step 1｜基本登錄</h4>
+        <div class="field"><span>系統名稱</span><span>必填</span></div>
+        <div class="field"><span>申請單位 / 負責人</span><span>必填</span></div>
+        <div class="field"><span>預定用途</span><span>必填</span></div>
+        <div class="field"><span>使用場域</span><span>門診 / 病房 / 行政 / 研究</span></div>
+        <div class="field"><span>預計使用者</span><span>醫師 / 護理 / 行政 / 病人</span></div>
+      </div>
+      <div class="field-block">
+        <h4>Step 2｜資料與系統</h4>
+        <div class="field"><span>是否使用真實病人資料</span><span>分流關鍵</span></div>
+        <div class="field"><span>是否介接 EMR/HIS/PACS</span><span>分流關鍵</span></div>
+        <div class="field"><span>資料類型</span><span>文字 / 影像 / 語音 / 結構化</span></div>
+        <div class="field"><span>模型與供應商</span><span>版本、部署型態</span></div>
+        <div class="field"><span>資料保存與刪除</span><span>政策與責任人</span></div>
+      </div>
+      <div class="field-block">
+        <h4>Step 3｜風險與責任</h4>
+        <div class="field"><span>是否影響診斷治療</span><span>高風險判斷</span></div>
+        <div class="field"><span>是否產生病歷內容</span><span>需覆核簽章</span></div>
+        <div class="field"><span>最終確認者</span><span>具專業資格者</span></div>
+        <div class="field"><span>異常通報窗口</span><span>必填</span></div>
+        <div class="field"><span>暫停 / 停用條件</span><span>go/no-go</span></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:18px;">
+      <table>
+        <thead><tr><th>分流問題</th><th>若回答「是」</th><th>自動要求附件</th><th>審查層級</th></tr></thead>
+        <tbody>
+          <tr><td>是否使用真實病人資料？</td><td>進入資料保護評估</td><td>DPIA、資料流向圖、權限設計</td><td>資料治理 / 資安 / 法遵</td></tr>
+          <tr><td>是否介接院內系統？</td><td>進入系統整合審查</td><td>系統架構圖、API 文件、日誌與稽核設計</td><td>資訊部門 / 資安</td></tr>
+          <tr><td>是否影響臨床決策或病人安全？</td><td>列為高風險</td><td>臨床安全測試、代表性案例、驗收標準</td><td>AI 治理委員會 / 醫品病安</td></tr>
+          <tr><td>是否直接與病人或家屬互動？</td><td>需要透明揭露</td><td>病人告知文字、風險提醒、人工確認流程</td><td>醫療品質 / 法遵 / 倫理</td></tr>
+          <tr><td>是否由外部供應商維運？</td><td>進入採購契約審查</td><td>模型揭露、資料使用條款、事件通報 SLA</td><td>採購 / 法務 / 資安</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="monitoring">
+    <div class="section-head">
+      <h3>導入後監測指標</h3>
+      <p>監測指標應連到停用條件，否則只是在收集沒有決策用途的數字。</p>
+    </div>
+    <div class="grid-3 checklist">
+      <div class="card">
+        <span class="tag red">輸出品質</span>
+        <h4>AI 內容是否可用</h4>
+        <ul>
+          <li>事實錯誤率與幻覺率</li>
+          <li>醫事人員手動修改頻率</li>
+          <li>不符指引或院內規範事件</li>
+          <li>原始資料或引用來源可追溯率</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag amber">流程安全</span>
+        <h4>是否改變臨床行為</h4>
+        <ul>
+          <li>過度依賴或跳過人工覆核事件</li>
+          <li>異常輸出未被發現的比例</li>
+          <li>流程延誤、病歷錯置、病人溝通錯誤</li>
+          <li>高風險使用情境擴散情形</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag purple">資安與供應鏈</span>
+        <h4>系統是否可控</h4>
+        <ul>
+          <li>prompt injection 或異常輸入事件</li>
+          <li>服務中斷、限流、輸出漂移</li>
+          <li>模型版本更新與未通知變更</li>
+          <li>資料外洩、權限異常、日誌缺漏</li>
+        </ul>
+      </div>
+    </div>
+    <div class="decision" style="margin-top:18px;">
+      <div class="card go">
+        <h4>可擴大條件</h4>
+        <p>試辦期間達成預設準確性與安全性門檻、無重大資安或病安事件、醫事人員覆核負擔可接受、病人告知與替代流程運作順暢，才考慮擴大場域。</p>
+      </div>
+      <div class="card stop">
+        <h4>暫停或停用條件</h4>
+        <p>發生系統性偏誤、錯誤無法合理期間修復、供應商未揭露重大變更、資料流失控、或可能造成病人安全影響時，應啟動暫停、限縮、rollback 或回復人工流程。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="notodo">
+    <div class="section-head">
+      <h3>Not-to-do：不值得投入的方向</h3>
+      <p>院內導入初期最常見失敗，不是技術不夠，而是把治理做成低價值 paperwork 或把風險外包給廠商。</p>
+    </div>
+    <div class="grid-2">
+      <div class="card notodo">
+        <h4>不要先做「全院大而全 AI 政策」</h4>
+        <p>政策會很漂亮，但臨床端仍不知道何時要申請、誰能核准、哪些案子要暫停。先做清冊、分級、申請表與停用門檻。</p>
+      </div>
+      <div class="card notodo">
+        <h4>不要只審模型準確率</h4>
+        <p>生成式 AI 的風險常來自資料來源、版本變更、prompt injection、使用者過度依賴與工作流程錯配。準確率只是其中一項。</p>
+      </div>
+      <div class="card notodo">
+        <h4>不要讓廠商文件取代院內責任</h4>
+        <p>廠商可提供模型與資安資訊，但臨床用途、病歷責任、病人告知、流程停用與醫事人員覆核仍是院方責任。</p>
+      </div>
+      <div class="card notodo">
+        <h4>不要把 AI Agent 偷渡成一般 GenAI</h4>
+        <p>具自主行動能力的系統風險層級不同。若會自動採取行動、呼叫工具、寫回系統或影響病人流程，應另行升級審查。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="references">
+    <div class="section-head">
+      <h3>參考架構來源</h3>
+      <p>本頁依「醫療機構應用生成式人工智慧指引」內容整理，並轉譯為院內治理與申請流程設計。</p>
+    </div>
+    <div class="panel">
+      <p><strong>指引資訊：</strong>醫療機構應用生成式人工智慧指引，115 年 5 月 29 日衛部醫字第 1151663164 號函頒。</p>
+      <p class="mini">原指引參考 ONC HTI-1、AMA、NHS ambient scribing guidance、EU AI Act、WHO AI ethics and governance、NIST AI RMF、NIST Generative AI Profile、NCSC secure AI development、NHS DCB0160、日本醫療資訊安全管理指南等國際文件。</p>
+    </div>
+  </section>
+
+  <div class="src">
+    製作日期：2026-07-09｜用途：院內治理說明、AI 系統導入申請前導、教育訓練與專案盤點。此頁為依提供文字整理之工作稿，正式制度仍需由院內法遵、資安、醫品病安與相關主管審核。
+  </div>
+</div>
+
+<script>
+  // 文件搜尋
+  const search = document.getElementById('docSearch');
+  const docs = Array.from(document.querySelectorAll('#docList .doc'));
+  search?.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    docs.forEach(doc => {
+      const hay = (doc.textContent + ' ' + (doc.dataset.key || '')).toLowerCase();
+      doc.style.display = hay.includes(q) ? 'flex' : 'none';
+    });
+  });
+</script>
+</body>
+</html>

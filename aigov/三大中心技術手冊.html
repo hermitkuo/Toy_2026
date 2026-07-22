@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>三大類型智慧醫療中心・技術手冊導覽</title>
+<style>
+:root{
+  --green:#1f6b47; --green-d:#184f36; --green-l:#2e8a5e;
+  --ink:#1f2933; --mut:#6b7783; --line:#e3e8ec; --bg:#f4f6f7; --card:#fff;
+  --warn:#b4531f; --radius:16px;
+  --c1:#1f6b47; --c1b:#e7f2ec;   /* 負責任AI執行中心 */
+  --c2:#2563eb; --c2b:#e8effd;   /* 取證驗證中心 */
+  --c3:#7c3aed; --c3b:#f0eafc;   /* 影響性研究中心 */
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--green-l);text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:30px 26px 90px}
+
+.top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.logo{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--green),var(--green-d));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+.top b{font-size:22px;letter-spacing:.5px;display:block}
+.top span{font-size:12px;color:var(--mut)}
+.backflow{display:inline-block;font-size:13px;color:var(--green-l);margin:18px 0 10px;
+  padding:5px 13px;border:1px solid var(--line);border-radius:20px;background:#fff}
+.backflow:hover{background:#eef4f0;border-color:#cfe0d6}
+.eyebrow{color:var(--green-l);font-weight:700;font-size:13px;margin:12px 0 4px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:.5px}
+.byline{font-size:13px;color:var(--mut);margin:0 0 18px}
+.lead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;color:#3a4650;
+  font-size:14.5px;margin:6px 0 8px}
+.hint{font-size:12.5px;color:var(--mut);margin:0 0 26px;padding-left:4px}
+
+/* flow strip */
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:14px 18px;margin:0 0 26px;font-size:13px;color:var(--mut)}
+.flow .st{display:flex;align-items:center;gap:8px}
+.flow .dot{width:26px;height:26px;border-radius:8px;color:#fff;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:13px}
+.flow .a1{background:var(--c1)}.flow .a2{background:var(--c2)}.flow .a3{background:var(--c3)}
+.flow .arr{color:#c3ccd2;font-weight:700}
+.flow b{color:var(--ink)}
+
+/* center cards */
+.centers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 0 10px}
+@media(max-width:860px){.centers{grid-template-columns:1fr}}
+.cc{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;cursor:pointer;
+  transition:.16s;border-top:5px solid;display:flex;flex-direction:column;gap:8px;position:relative}
+.cc:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(20,60,40,.12)}
+.cc.c1{border-top-color:var(--c1)}.cc.c2{border-top-color:var(--c2)}.cc.c3{border-top-color:var(--c3)}
+.cc .tag{font-size:11px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:20px;width:fit-content}
+.cc.c1 .tag{background:var(--c1b);color:var(--c1)}.cc.c2 .tag{background:var(--c2b);color:var(--c2)}
+.cc.c3 .tag{background:var(--c3b);color:var(--c3)}
+.cc .ic{font-size:30px}
+.cc h3{font-size:17px;margin:2px 0 0}
+.cc p{font-size:13px;color:var(--mut);margin:0}
+.cc .metric{font-size:12px;color:var(--ink);background:#f6f8f7;border:1px dashed var(--line);border-radius:9px;
+  padding:8px 10px;margin-top:2px}
+.cc .metric b{color:var(--green-d)}
+.cc .exp{margin-top:auto;font-size:12.5px;font-weight:600;color:var(--green-l);display:flex;align-items:center;gap:6px}
+.cc .exp .car{transition:.2s}
+.cc.open .exp .car{transform:rotate(180deg)}
+
+/* detail panel */
+.detail{display:none;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:6px 26px 26px;margin:16px 0 26px;border-top:5px solid var(--green)}
+.detail.open{display:block;animation:fade .25s ease}
+.detail.d1{border-top-color:var(--c1)}.detail.d2{border-top-color:var(--c2)}.detail.d3{border-top-color:var(--c3)}
+@keyframes fade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.detail h2{font-size:20px;margin:22px 0 6px}
+.detail .sub{color:var(--mut);font-size:13.5px;margin:0 0 16px}
+
+/* metric highlight box — 指標重點 */
+.mbox{border:1px solid var(--line);border-left:5px solid var(--green-l);border-radius:0 12px 12px 0;
+  background:#f0f6f3;padding:14px 18px;margin:16px 0}
+.mbox.m2{border-left-color:var(--c2);background:var(--c2b)}
+.mbox.m3{border-left-color:var(--c3);background:var(--c3b)}
+.mbox .mh{font-weight:700;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:7px;margin:0 0 10px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.mstat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.mstat .v{font-size:20px;font-weight:800;color:var(--green-d);line-height:1.2}
+.mstat.m2 .v{color:var(--c2)}.mstat.m3 .v{color:var(--c3)}
+.mstat .k{font-size:11.5px;color:var(--mut);margin-top:2px}
+.mnote{font-size:12.5px;color:#41505a;margin:10px 0 0}
+.mnote b{color:var(--warn)}
+
+/* collapsible sub-sections */
+.acc{border:1px solid var(--line);border-radius:11px;margin:10px 0;overflow:hidden}
+.acc>summary{list-style:none;cursor:pointer;padding:13px 16px;font-weight:600;font-size:14.5px;
+  background:#fafbfb;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary::after{content:"＋";color:var(--mut);font-weight:700}
+.acc[open]>summary::after{content:"－"}
+.acc[open]>summary{border-bottom:1px solid var(--line)}
+.acc .body{padding:14px 18px}
+.acc .body p{margin:8px 0}
+.acc .body ul{margin:8px 0;padding-left:20px}
+.acc .body li{margin:5px 0;font-size:14px}
+.acc .body li b{color:var(--green-d)}
+
+table.doc{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;display:block;overflow-x:auto}
+table.doc th,table.doc td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.doc th{background:#eaf2ee;color:var(--green-d);font-weight:700;white-space:nowrap}
+.chip{display:inline-block;font-size:12px;background:#eef2f0;border-radius:6px;padding:2px 8px;margin:2px 4px 2px 0;color:#41505a}
+
+.src{font-size:12px;color:var(--mut);margin-top:24px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">參考資料・智慧醫療政策</div>
+  <h1>三大類型智慧醫療中心</h1>
+  <div class="byline">依循衛生福利部資訊處《三大類型智慧醫療中心技術手冊》（113 年 7 月）　·　<a href="三大中心技術手冊.html" target="_blank">↗ 另開新分頁</a></div>
+  <div class="lead">
+    衛生福利部資訊處推動三類智慧醫療中心，分別對應 AI 產品從<b>院內落地 → 取證驗證 → 臨床效益</b>的完整鏈條。
+    本頁先看三張總覽卡，點卡片可展開細節；重點放在各中心的<b>量化指標</b>。
+  </div>
+  <div class="hint">💡 點下方任一中心卡片展開細節。細節內「📊 指標重點」預設展開，更深的方法說明摺疊收納，避免資訊過載。</div>
+
+  <div class="flow">
+    <div class="st"><span class="dot a1">1</span><b>負責任 AI 執行中心</b></div>
+    <span class="arr">→</span>
+    <div class="st"><span class="dot a2">2</span><b>臨床 AI 取證驗證中心</b></div>
+    <span class="arr">→</span>
+    <div class="st"><span class="dot a3">3</span><b>AI 影響性研究中心</b></div>
+    <span style="margin-left:auto">院內把關　→　跨院驗證　→　健保定價</span>
+  </div>
+
+  <!-- three center cards -->
+  <div class="centers">
+    <div class="cc c1" data-target="d1">
+      <span class="tag">中心一</span>
+      <div class="ic">🛡️</div>
+      <h3>負責任 AI 執行中心</h3>
+      <p>院內把關：解決 AI 不透明與偏差問題，落實 WHO 六原則、FAVES 框架與生命週期監測。</p>
+      <div class="metric">📊 指標核心：<b>九大透明性量化指標</b>、FAVES 五面向、生命週期停用門檻（靈敏度 &lt;85% 停用）</div>
+      <div class="exp">展開細節 <span class="car">▼</span></div>
+    </div>
+    <div class="cc c2" data-target="d2">
+      <span class="tag">中心二</span>
+      <div class="ic">🔬</div>
+      <h3>臨床 AI 取證驗證中心</h3>
+      <p>跨院驗證：整合跨體系醫院資料，加速 TFDA 取證。以 FHIR 建庫、聯邦學習跨院訓練。</p>
+      <div class="metric">📊 指標核心：<b>外部驗證準確性</b>、FHIR / OMOP 標準、聯邦學習演算法、CIRB 行政時效</div>
+      <div class="exp">展開細節 <span class="car">▼</span></div>
+    </div>
+    <div class="cc c3" data-target="d3">
+      <span class="tag">中心三</span>
+      <div class="ic">📈</div>
+      <h3>AI 影響性研究中心</h3>
+      <p>臨床效益：以多中心臨床試驗評估 AI 醫療與經濟價值，對接健保署做給付定價。</p>
+      <div class="metric">📊 指標核心：<b>QALYs / ICER</b>、臨床試驗主要終點、WHO 三倍人均 GDP 門檻</div>
+      <div class="exp">展開細節 <span class="car">▼</span></div>
+    </div>
+  </div>
+
+  <!-- DETAIL 1 -->
+  <div class="detail d1" id="d1">
+    <h2>🛡️ 中心一：負責任 AI 執行中心</h2>
+    <p class="sub">目的：解決醫師與民眾對 AI「不透明性」與「偏差」兩大疑慮，於院內建立負責任 AI 使用制度。</p>
+
+    <div class="mbox">
+      <div class="mh">📊 指標重點：九大透明性・量化指標（以乳攝 AI 揭露範例）</div>
+      <div class="mgrid">
+        <div class="mstat"><div class="v">95%</div><div class="k">準確率 Accuracy</div></div>
+        <div class="mstat"><div class="v">94.7%</div><div class="k">靈敏度 Sensitivity</div></div>
+        <div class="mstat"><div class="v">90%</div><div class="k">特異性 Specificity</div></div>
+        <div class="mstat"><div class="v">91%</div><div class="k">精確度 Precision</div></div>
+        <div class="mstat"><div class="v">0.949</div><div class="k">AUC</div></div>
+        <div class="mstat"><div class="v">92%</div><div class="k">召回率 Recall</div></div>
+      </div>
+      <p class="mnote">🔁 <b>生命週期停用門檻</b>：每年隨機抽 ≥300 例真實世界影像做獨立評估；當靈敏度低於 <b>85%</b> 服務即暫停，補充資料再訓練，性能回升至 <b>90%</b> 後才恢復使用。</p>
+    </div>
+
+    <details class="acc"><summary>FAVES 框架 — AI 決策支持五面向</summary>
+      <div class="body"><ul>
+        <li><b>Fair 公平</b>：模型不對個體或群體特徵表現偏見、偏袒或歧視。</li>
+        <li><b>Appropriate 適當</b>：模型與應用背景和目標人群相配合。</li>
+        <li><b>Valid 確實</b>：模型能準確估計目標值，內外部資料皆符合預期。</li>
+        <li><b>Effective 有效</b>：模型在現實條件下展現顯著益處與結果。</li>
+        <li><b>Safe 安全</b>：使用益處超過任何可能風險。</li>
+      </ul>
+      <p>依據：美國 ONC 之 HTI-1 規則、§170.315(b)(11) 決策支持介入（DSI）標準。</p></div>
+    </details>
+
+    <details class="acc"><summary>WHO 醫療 AI 六大原則</summary>
+      <div class="body"><ul>
+        <li><b>保護自主權</b>：AI 輔助而非取代人類決策，尊重病患權利與隱私。</li>
+        <li><b>促進福祉與安全</b>：優先病患安全，定期評估安全性與有效性。</li>
+        <li><b>透明、可解釋、可理解</b>：提供清晰決策說明，告知病患 AI 應用。</li>
+        <li><b>責任與當責</b>：明確界定當責機制，建立錯誤／故障處理流程。</li>
+        <li><b>包容與公平</b>：多元資料訓練避免偏見，監控結果差異。</li>
+        <li><b>可持續 AI</b>：節能、環境影響最小化。</li>
+      </ul></div>
+    </details>
+
+    <details class="acc"><summary>九大透明性揭露項目（公開網站需揭露）</summary>
+      <div class="body">
+      <p>使用 AI 工具的醫院須於專門網站公開：資料來源、訓練模型、驗證資料、適用臨床情境、FDA／醫學審核機構驗證結果等。揭露涵蓋三層九項：</p>
+      <ul>
+        <li><b>運用層</b>：介入詳情及輸出、介入目的、警告範圍外使用。</li>
+        <li><b>開發層</b>：開發詳情及輸入特徵、確保開發公平性、外部驗證過程。</li>
+        <li><b>維護層</b>：模型表現量化指標、實施與使用的持續維護、更新與持續驗證／公平性評估計劃。</li>
+      </ul></div>
+    </details>
+
+    <details class="acc"><summary>可解釋性分析方法（XAI 工具箱）</summary>
+      <div class="body">
+      <span class="chip">SHAP 值</span><span class="chip">顯著性圖 Saliency</span><span class="chip">LIME</span>
+      <span class="chip">PDP 部分依賴圖</span><span class="chip">ALE 累積局部效應</span>
+      <span class="chip">特徵重要性分數</span><span class="chip">反事實解釋</span>
+      <ul>
+        <li><b>SHAP</b>：源自博弈論，量化每個特徵對單一預測的貢獻（正／負向）。</li>
+        <li><b>Saliency Maps</b>：影像模型，亮區＝對預測最重要的區域，供放射科醫師驗證重點。</li>
+        <li><b>LIME</b>：局部以簡單模型近似複雜模型，解釋單一預測。</li>
+        <li><b>PDP / ALE</b>：呈現單一特徵對預測的平均效應（ALE 另考慮特徵交互）。</li>
+        <li><b>反事實解釋</b>：改變預測結果所需的最小特徵變化。</li>
+      </ul></div>
+    </details>
+
+    <details class="acc"><summary>資安隱私辦法・申請資格與作業要點</summary>
+      <div class="body">
+      <p><b>隱私保護</b>：依 HIPAA / GDPR 移除可辨識個資或加密；規範存儲地點期限、外部人員權限；定期查核、個資外洩應變。</p>
+      <p><b>資訊安全</b>：防火牆、IDS/IPS、網絡分割、自動化掃描。</p>
+      <p><b>申請資格</b>：醫院評鑑及教學醫院評鑑合格之醫學中心／區域／地區醫院；主持人完成 AI 工作坊（加分）。</p>
+      <p><b>具體工作</b>：成立智慧醫療委員會、制定落地管理辦法、單一窗口電子化申請、標準化審核表格、九大透明性即時查詢網頁、期中期末申報落地件數與效益。</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- DETAIL 2 -->
+  <div class="detail d2" id="d2">
+    <h2>🔬 中心二：臨床 AI 取證驗證中心</h2>
+    <p class="sub">目的：整合跨系統、跨層級醫院資料形成驗證聯盟，加速 AI 產品取得 TFDA 認證與商品化。</p>
+
+    <div class="mbox m2">
+      <div class="mh">📊 指標重點：驗證核心機制與標準</div>
+      <div class="mgrid">
+        <div class="mstat m2"><div class="v">145</div><div class="k">FHIR R4 Resource 種類</div></div>
+        <div class="mstat m2"><div class="v">2 種</div><div class="k">驗證形式：資料集中 / 聯邦學習</div></div>
+        <div class="mstat m2"><div class="v">TW Core</div><div class="k">資料串接核心 IG</div></div>
+        <div class="mstat m2"><div class="v">CIRB</div><div class="k">聯盟統一倫理審查</div></div>
+      </div>
+      <p class="mnote">✔ 品質指標涵蓋：<b>各階段行政流程時效</b>、分析方法正確性、分析報告完整度。驗證不佳者，中心提供部分去識別資料協助調校後<b>再驗證</b>。</p>
+    </div>
+
+    <details class="acc"><summary>FHIR 為基礎的整合電子病歷資料庫</summary>
+      <div class="body">
+      <p>採 FHIR（HL7 訂立，R4 版）為資料標準，亦為全國電子病歷標準化採用標準。FHIR server（HAPI FHIR、Azure API for FHIR、Google Cloud Healthcare API）作為跨院資料交換轉譯器。</p>
+      <p><b>整合流程</b>：資料模型選擇 → 萃取(Extraction) → 轉換(Transform) → 上傳(Load) → 儲存。</p>
+      <p><b>對接資料模型</b>：<span class="chip">OMOP CDM（觀察性研究）</span><span class="chip">cBioPortal（癌症基因組）</span><span class="chip">XNAT（影像）</span><span class="chip">i2b2 / tranSMART（組學整合）</span></p>
+      </div>
+    </details>
+
+    <details class="acc"><summary>聯邦學習平台與聚合演算法</summary>
+      <div class="body">
+      <p>去中心化訓練，資料留在本地，符合 GDPR / HIPAA。開源平台：<span class="chip">FLOWER</span><span class="chip">TensorFlow Federated (TFF)</span></p>
+      <table class="doc">
+        <thead><tr><th>演算法</th><th>特點 / 適用</th></tr></thead>
+        <tbody>
+          <tr><td><b>FedAvg</b></td><td>本地訓練後權重加權平均；適合疾病預測、醫學影像分析。</td></tr>
+          <tr><td><b>FedProx</b></td><td>加正則化項處理 non-i.i.d.；適合資料分佈不均或機構差異大。</td></tr>
+          <tr><td><b>SplitNN</b></td><td>模型切前端（本地特徵萃取）／後端（中央分類）；減本地算力負擔，適合大型網絡。</td></tr>
+        </tbody>
+      </table>
+      <p class="mnote">💡 聯邦學習適合同質性高資料（影像、檢驗）；異質性高（病例、NLP）建議資料集中驗證。</p>
+      </div>
+    </details>
+
+    <details class="acc"><summary>申請資格・具體工作・作業要點</summary>
+      <div class="body">
+      <p><b>申請資格</b>：醫院評鑑優等以上之醫學中心／區域醫院；需組建跨體系、跨層級聯盟由主責醫院申請；符合資通安全責任等級分級辦法 §11。</p>
+      <p><b>具體工作（節錄）</b>：建立 CIRB 統一倫理審查、以 TW Core 為核心 FHIR 串接跨院病歷庫、資料清理自動化工具、Smart on FHIR 規格 AI 應用、依產品性質選聯邦學習或資料集中驗證、統計分析完成有效性/安全性評估。</p>
+      <p><b>兩年查核</b>：第一年建 CIRB 架構＋FHIR/TW Core IG 串接＋啟動 1 案以上；第二年完成驗證評估報告、臨床學術報告、營運創收規劃、促成多中心資料庫二次利用。</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- DETAIL 3 -->
+  <div class="detail d3" id="d3">
+    <h2>📈 中心三：AI 影響性研究中心</h2>
+    <p class="sub">目的：由醫學中心多中心聯盟執行 AI 臨床試驗，對接健保署，為給付／定價提供本土科學證據。</p>
+
+    <div class="mbox m3">
+      <div class="mh">📊 指標重點：健康經濟評估指標</div>
+      <div class="mgrid">
+        <div class="mstat m3"><div class="v">QALYs</div><div class="k">品質調整生命年 = 生存年數 × 生活品質(0–1)</div></div>
+        <div class="mstat m3"><div class="v">ICER</div><div class="k">增量成本 ÷ 增量效果</div></div>
+        <div class="mstat m3"><div class="v">×3 GDP</div><div class="k">WHO 門檻：ICER &lt; 人均 GDP 三倍＝合理</div></div>
+      </div>
+      <p class="mnote">🧮 範例：多活 3 年 × 生活品質 0.8 = <b>2.4 QALYs</b>。輔以蒙地卡羅模擬估成本／效益不確定範圍，成本效益平面四象限判斷方案優劣。</p>
+    </div>
+
+    <details class="acc"><summary>📌 真實案例：指標成效對比（診斷 vs. 診斷＋介入）</summary>
+      <div class="body">
+      <p><b>案例 A｜Lång 2023 (Lancet Oncol) — 乳攝 AI 輔助篩檢</b>：群體隨機、以醫師分組（1:1），80,020 人。</p>
+      <table class="doc">
+        <thead><tr><th>指標</th><th>AI 輔助組</th><th>標準雙讀組</th></tr></thead>
+        <tbody>
+          <tr><td>癌症檢出率（每千人）</td><td>6.1</td><td>5.1（比例 1.2, p=0.052）</td></tr>
+          <tr><td>召回率</td><td>2.2%</td><td>2.0%</td></tr>
+          <tr><td>工作負擔</td><td colspan="2">AI 組 <b>減少 44.3%</b></td></tr>
+        </tbody>
+      </table>
+      <p class="mnote">➡ 結論：AI 提升效率、減負擔，但癌症檢出<b>統計未達顯著</b> — 診斷準確≠改善預後。</p>
+      <p><b>案例 B｜Viz LVO ContaCT — 中風大血管阻塞偵測（診斷＋轉診介入）</b>：AUC 0.91 通過 FDA。</p>
+      <ul>
+        <li>轉院時間縮短 <b>39%</b>（平均 −66 分）；到 NIR 通知中位 50 vs 89.5 分（p&lt;0.001）。</li>
+        <li>5 日神經學進步 51%、出院 37%、90 天 40%（皆顯著）。</li>
+        <li>獲美國 CMS 首個 AI 給付：每案 <b>+1040 美元</b>，納入 DRG，滾動調整綁品質指標。</li>
+      </ul>
+      <p class="mnote">➡ 結論：診斷工具結合<b>及時介入</b>並改善關鍵品質指標，即可取得健保給付。</p>
+      </div>
+    </details>
+
+    <details class="acc"><summary>AI 臨床試驗方法（三大類 + 主要終點分析）</summary>
+      <div class="body">
+      <p>AI 試驗特性：多以「系統／群體」而非個人隨機；診斷若無介入難改善預後。三大方法：</p>
+      <ul>
+        <li><b>對照前後試驗（CBAT）</b>：比較介入前後＋對照組。主要終點分析用 <b>DiD（差異中之差異）</b> 與 <b>ITS（中斷時間序列）</b>。</li>
+        <li><b>群集隨機對照試驗（CRCT）</b>：以醫院/診所為隨機單位，減交叉污染；樣本量以設計效果 DE = 1+(平均群集大小−1)×ICC 調整。</li>
+        <li><b>階梯楔形務實對照試驗</b>：各群體依隨機時間點依序轉入介入組，所有群體最終皆受益。</li>
+      </ul>
+      <p>分析採混合效應模型／GEE（納入群內相關性 ICC），意向性分析(ITT)；期中分析用 O'Brien-Fleming 或 Pocock 提前停止規則。</p>
+      </div>
+    </details>
+
+    <details class="acc"><summary>倫理考量・申請資格・團隊組成</summary>
+      <div class="body">
+      <p><b>倫理</b>：群體層級介入若個別成員無法避免，且風險極小，<b>同意豁免</b>適當；資料收集於個體層級時仍需考慮知情同意。</p>
+      <p><b>申請資格</b>：醫院評鑑優等以上；<b>跨體系三家醫院以上</b>組聯盟執行多中心試驗；有 TFDA 產品／試驗發表／經濟評估經驗（加分）。</p>
+      <p><b>團隊</b>：副院長以上主持人、醫療資訊室主任、AI 醫療資訊長(醫師)、臨床試驗中心主任、資料/電腦科學家、流病/生統學家、醫療經濟學家(加分)。</p>
+      <p><b>流程</b>：對接健保署諮詢 → 影響性中心設計執行試驗（CIRB 審查）→ 統計＋醫療經濟分析 → 報告交健保署做給付定價。</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="src">
+    資料來源：衛生福利部資訊處《三大類型智慧醫療中心技術手冊》（113 年 7 月，李建璋處長）。
+    本頁為 AI治理委員會網站原型之參考資料頁，供院內導讀；完整內容與文獻請見原始手冊 Markdown。
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.cc').forEach(function(card){
+  card.addEventListener('click',function(){
+    var id=card.getAttribute('data-target');
+    var panel=document.getElementById(id);
+    var isOpen=panel.classList.contains('open');
+    // close all
+    document.querySelectorAll('.detail').forEach(function(d){d.classList.remove('open')});
+    document.querySelectorAll('.cc').forEach(function(c){c.classList.remove('open')});
+    if(!isOpen){
+      panel.classList.add('open');
+      card.classList.add('open');
+      panel.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+</script>
+</body>
+</html>

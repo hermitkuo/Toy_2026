@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>臺灣 AI 臨床研究倫理審查・常見問題說明</title>
+<style>
+:root{
+  --green:#1f6b47; --green-d:#184f36; --green-l:#2e8a5e;
+  --ink:#1f2933; --mut:#6b7783; --line:#e3e8ec; --bg:#f4f6f7; --card:#fff;
+  --accent:#2e8a5e; --warn:#b4531f; --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--green-l);text-decoration:none}
+.wrap{max-width:1000px;margin:0 auto;padding:30px 26px 80px}
+
+/* header */
+.top{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.logo{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--green),var(--green-d));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px}
+.top b{font-size:22px;letter-spacing:.5px;display:block}
+.top span{font-size:12px;color:var(--mut)}
+.backflow{display:inline-block;font-size:13px;color:var(--green-l);margin:18px 0 10px;
+  padding:5px 13px;border:1px solid var(--line);border-radius:20px;background:#fff}
+.backflow:hover{background:#eef4f0;border-color:#cfe0d6}
+.eyebrow{color:var(--green-l);font-weight:700;font-size:13px;margin:12px 0 4px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:.5px}
+.byline{font-size:13px;color:var(--mut);margin:0 0 18px}
+.lead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;color:#3a4650;
+  font-size:14px;margin:6px 0 22px}
+
+/* toc */
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:0 0 30px}
+.tocitem{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#fff;
+  display:flex;gap:11px;align-items:flex-start;transition:.15s}
+.tocitem:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,60,40,.09);border-color:#cfe0d6}
+.tocitem .qn{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.tocitem small{font-size:13px;color:var(--ink);line-height:1.45}
+
+/* qa block */
+.qa{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin:0 0 18px;overflow:hidden}
+.qhead{display:flex;gap:12px;align-items:flex-start;padding:16px 20px;cursor:pointer;
+  background:#f0f4f2;border-bottom:1px solid var(--line);transition:.15s}
+.qhead:hover{background:#e7f0ea}
+.qhead .qn{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.qhead .qt{flex:1;font-weight:600;font-size:15px;color:var(--green-d);line-height:1.55}
+.qhead .caret{flex:0 0 auto;color:var(--mut);font-size:13px;transition:.2s;margin-top:4px}
+.qa.open .caret{transform:rotate(180deg)}
+.qbody{padding:6px 24px 22px;display:none}
+.qa.open .qbody{display:block}
+
+.qbody h3{font-size:15.5px;margin:20px 0 8px;color:var(--green-d)}
+.qbody h4{font-size:14px;margin:14px 0 6px;color:var(--ink)}
+.qbody p{margin:9px 0}
+.qbody ul{margin:9px 0;padding-left:22px}
+.qbody li{margin:5px 0}
+.qbody li b{color:var(--green-d)}
+
+table.doc{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px;display:block;overflow-x:auto}
+table.doc th,table.doc td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+table.doc th{background:#eaf2ee;color:var(--green-d);font-weight:700;white-space:nowrap}
+table.doc td b{color:var(--green-d)}
+.stars{color:var(--green-l);letter-spacing:2px;font-size:15px}
+
+.footer{margin-top:40px;font-size:12px;color:var(--mut);border-top:1px solid var(--line);padding-top:18px}
+@media(max-width:640px){h1{font-size:23px}.qbody{padding:6px 16px 18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">參考資料・倫理審查</div>
+  <h1>臺灣 AI 臨床研究倫理審查<br>常見問題說明</h1>
+  <div class="byline">衛生福利部資訊處　李建璋 處長　·　<a href="臨床研究倫理FAQ.html" target="_blank">↗ 另開新分頁</a></div>
+
+  <div class="lead">
+    本頁彙整 5 個 AI 臨床研究倫理審查常見問題，涵蓋 <b>CIRB 適用性</b>、<b>外部驗證中心審查重點</b>、
+    <b>三型 AI（推論／生成／代理人）× 三階段審查矩陣</b>、<b>美國 EHR 去識別化（HIPAA / Common Rule）</b>，
+    以及 <b>群組隨機試驗（CRT）知情同意豁免</b>。點擊各問題展開內容。
+  </div>
+
+  <div class="toc">
+    <a class="tocitem" href="#q1"><span class="qn">Q1</span><small>CIRB 機制是否適合延伸到 AI 研究（驗證／效益／開發）？</small></a>
+    <a class="tocitem" href="#q2"><span class="qn">Q2</span><small>AI 外部驗證中心的多中心研究，倫理審查重點為何？</small></a>
+    <a class="tocitem" href="#q3"><span class="qn">Q3</span><small>推論型／生成式／代理人 AI，審查重點分別為何？</small></a>
+    <a class="tocitem" href="#q4"><span class="qn">Q4</span><small>美國 EHR 研究的去識別與資料不出院原則？</small></a>
+    <a class="tocitem" href="#q5"><span class="qn">Q5</span><small>群組隨機試驗（CRT）病人是否仍需知情同意？</small></a>
+  </div>
+
+  <!-- Q1 -->
+  <div class="qa open" id="q1">
+    <div class="qhead"><span class="qn">Q1</span>
+      <span class="qt">目前臺灣已有 CIRB 機制，主要用於加速藥物臨床試驗的倫理審查。這樣的審查機制是否也適合延伸應用到 AI 相關研究？特別是 AI 模型驗證、臨床效益評估，還是模型開發的研究設計？AI 研究具有動態更新、資料依賴性高、跨機構整合等特性，是否適合沿用 CIRB「一次性審查、固定 protocol」為核心的機制？</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="qbody">
+      <p>現行的 CIRB（聯合人體試驗委員會）機制是為「標準化、不輕易變動」的流程設計的。根據這個特性，這三種 AI 研究的適合程度如下：</p>
+      <h3>一、外部驗證研究（Validation Study）— 最適合</h3>
+      <ul>
+        <li><b>原因：</b>這類研究通常是「收案、去識別化、跑模型、比對結果」，流程極度標準化。</li>
+        <li><b>CIRB 優勢：</b>AI 模型需要跨院（Multicenter）數據來證明通用性，CIRB 能一次解決多間醫院的行政審查，大幅加速數據收集與驗證的效率。</li>
+        <li><b>關鍵：</b>只要模型版本在驗證期間保持固定，它是目前最能直接套用 CIRB 的類別。</li>
+      </ul>
+      <h3>二、實務叢集隨機對照試驗（Pragmatic Cluster RCT）— 部分適合</h3>
+      <ul>
+        <li><b>原因：</b>這類試驗是在真實臨床流程中比較「有 AI」與「無 AI」的差異，通常以「病房」或「醫院」為隨機分配單位。</li>
+        <li><b>CIRB 挑戰：</b>雖然多中心審查有助於擴大規模，但每間醫院的臨床流程（Workflow）不同，AI 嵌入的方式可能需微調。</li>
+        <li><b>結論：</b>適合使用 CIRB 建立核心倫理架構，但各醫院仍需保留對其「流程變更」的最終核准權。</li>
+      </ul>
+      <h3>三、AI 模型開發研究（Development Study）— 最不適合</h3>
+      <ul>
+        <li><b>原因：</b>開發階段具有高度迭代性（Iterative）。工程師可能每天都在調整參數、更換特徵（Features）或清洗數據。</li>
+        <li><b>CIRB 衝突：</b>傳統 CIRB 要求「一次性核准固定 Protocol」。如果每次微調模型都要跑一次中央變更申請（Amendment），研發進度會被行政流程拖垮。</li>
+        <li><b>建議：</b>這類研究較適合由單一機構的 IRB 進行彈性滾動式審查，而非透過集中的 CIRB 處理。</li>
+      </ul>
+      <table class="doc">
+        <thead><tr><th>研究類型</th><th>適合程度</th><th>核心理由</th></tr></thead>
+        <tbody>
+          <tr><td>外部驗證</td><td><span class="stars">★★★★★</span></td><td>流程固定，最需跨院數據整合。</td></tr>
+          <tr><td>實務 RCT</td><td><span class="stars">★★★</span></td><td>倫理框架一致，但需兼顧各院流程差異。</td></tr>
+          <tr><td>模型開發</td><td><span class="stars">★</span></td><td>變動太快，行政審查速度趕不上開發速度。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qa" id="q2">
+    <div class="qhead"><span class="qn">Q2</span>
+      <span class="qt">在傳統推論型 AI 中，外部驗證相當重要。衛生福利部設置了 AI 外部驗證中心，收集各類疾病病患資料，以建立兼具族群平衡與區域平衡的全國性代表性資料集。請問在這種多中心研究情境下，倫理審查的重點為何？又應如何加速審查流程？</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="qbody">
+      <p>當驗證中心具備「資料合成」、「族群平衡」與「區域平衡」等功能時，IRB 委員會最關注以下面向：</p>
+      <h3>一、資料代表性與公平性（Algorithmic Fairness）</h3>
+      <ul>
+        <li><b>審查重點：</b>驗證中心如何定義「平衡」？是否涵蓋了罕見疾病、偏鄉族群或不同醫療體系（醫學中心 vs. 基層診所）的資料，以避免 AI 在落地後產生偏見。</li>
+      </ul>
+      <h3>二、去識別化與重識別風險（Re-identification Risk）</h3>
+      <ul>
+        <li><b>審查重點：</b>即使是合成資料（Synthetic Data），仍需審查其原始特徵是否可能被「反向推論」出真實病患。必須有第三方技術審計確保去識別化程度。</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa" id="q3">
+    <div class="qhead"><span class="qn">Q3</span>
+      <span class="qt">AI 可分為傳統推論型（例如 XGBoost、CNN）、生成式 AI（Generative AI），以及代理人 AI（Agentic AI）。請問這三種類型的 AI，在倫理審查上的重點分別為何？</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="qbody">
+      <table class="doc">
+        <thead><tr>
+          <th>研究階段</th>
+          <th>推論型 AI<br>(XGBoost, CNN)</th>
+          <th>生成式 AI<br>(GenAI, LLM)</th>
+          <th>代理人 AI<br>(Agentic AI)</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><b>1. 模型開發</b><br>(Development)</td>
+            <td><b>重點：資料正義性</b><br>1. 訓練資料的代表性（有無偏見）。<br>2. 標註者的資歷與一致性。<br>3. 原始資料的去識別化與隱私授權。</td>
+            <td><b>重點：隱私與真實性</b><br>1. 避免訓練資料包含敏感個資（防禦逆向推論）。<br>2. 基礎模型（Base model）的授權與合規性。<br>3. 幻覺風險的初步測試。</td>
+            <td><b>重點：任務範圍與安全邊界</b><br>1. 定義 Agent 可自主執行的「任務清單」。<br>2. 推理過程的記錄機制（Traceability）。<br>3. 模擬環境（Sandboxing）中的安全測試。</td>
+          </tr>
+          <tr>
+            <td><b>2. 模型驗證</b><br>(Validation)</td>
+            <td><b>重點：外部效能與可解釋性</b><br>1. 跨院驗證的穩定度。<br>2. 醫師是否能理解決策邏輯（SHAP/LIME 等工具）。<br>3. 效能基準（Baseline）的定義。</td>
+            <td><b>重點：產出安全性與幻覺監控</b><br>1. 用「挑戰者」角度測試：生成錯誤資訊（hallucination）。<br>2. 輸出有害內容（例如仇恨言論）。<br>3. 被誘導違反規範（例如教人做違法事情）。<br>4. 洩漏敏感資訊。<br>5. 醫療正確性與專家共識對比。<br>6. 輸出過濾機制（Filter）的有效性。</td>
+            <td><b>重點：決策鏈與干預機制</b><br>1. 測試 Agent 在複雜場景下的決策路徑。<br>2. 人工接管（Override）的觸發速度測試。<br>3. 長時間運作下的邏輯穩定性。</td>
+          </tr>
+          <tr>
+            <td><b>3. 模型落地</b><br>(Implementation)</td>
+            <td><b>重點：臨床效益與偏移監測</b><br>1. 對醫師決策行為的影響。<br>2. 效能漂移（Drift）的定期通報流程。<br>3. 輔助診斷與最終醫療責任的歸屬。</td>
+            <td><b>重點：責任歸屬與醫病溝通</b><br>1. 病患是否有權知悉正在與 AI 互動。<br>2. 醫師對產出內容的簽章核對（Final Sign-off）機制。<br>3. 誤導性醫學建議的即時下架機制。</td>
+            <td><b>重點：自主權限與問責體系</b><br>1. 建立權限分級（例如：輔助建議 vs. 自主執行）。<br>2. 事件發生時的「決策黑盒子」還原機制。<br>3. 系統自主權對醫療常規造成的倫理衝擊評估。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa" id="q4">
+    <div class="qhead"><span class="qn">Q4</span>
+      <span class="qt">關於資料去辨識以及資料不出院的原則，請問在美國，電子病歷相關研究的倫理審查是如何進行的？其具體要求為何？對這些標準是否有嚴格的規範？</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="qbody">
+      <h3>一、美國電子病歷相關研究的倫理審查作法</h3>
+      <p>在美國，電子病歷（EHR）相關研究的倫理審查主要由 HIPAA（醫療保險流通與責任法案）與 Common Rule（聯邦人體試驗保護法規）兩大架構共同規範。「資料去辨識」與「資料不出院」原則，美國的執行邏輯非常嚴謹且高度標準化，其核心在於「風險分級」與「法律責任」。</p>
+      <h4>i. 安全港法（Safe Harbor Method）— 最嚴格的清單法</h4>
+      <ul>
+        <li><b>要求：</b>必須移除 18 項特定的個人辨識碼（包括姓名、詳細地址、電話、傳真、所有早於「年」的日期、MRN、身分證號等）。</li>
+        <li><b>特性：</b>這是最常見的路徑。其標準極度明確，IRB 審查時只要確認清單中的 18 項確實移除，程序非常快。</li>
+        <li><b>缺點：</b>會大幅降低資料的臨床研究價值（例如無法分析 30 天內的再入院率，因為日期被刪除）。</li>
+      </ul>
+      <h4>ii. 專家判定法（Expert Determination Method）— 基於風險的統計法</h4>
+      <ul>
+        <li><b>要求：</b>由具備統計學背景的專家證明「剩餘資料被重新辨認的風險極小（Very Small Risk）」。</li>
+        <li><b>特性：</b>允許保留部分研究必要的細節（如具體入院日期）。這在 AI 模型開發中非常常見，但需要專家的統計證明報告供 IRB 備查。</li>
+      </ul>
+      <h3>二、資料不出院原則：有限資料集（Limited Data Set, LDS）</h3>
+      <p>當研究需要保留較多資訊（如 5 碼郵遞區號或完整日期），導致無法完全達到上述去辨識標準時，美國通常採取「資料不出院 / 受控輸出」的邏輯：</p>
+      <h4>i. 簽署資料使用協議（Data Use Agreement, DUA）</h4>
+      <ul><li>這是法律文件。研究者必須承諾資料僅用於特定目的、不嘗試重新辨認身分、且具備完善的安全保護措施。</li></ul>
+      <h4>ii. 電子安全邊界（Digital Firewall）</h4>
+      <ul><li>許多醫學中心（如 Stanford 或 Mayo Clinic）會建置「安全研究環境」（Secure Research Environment）。研究者透過遠端桌面登入醫院伺服器運算，「原始資料不出院，僅產出結果可下載」。這與衛福部推動的外部驗證中心邏輯高度一致。</li></ul>
+      <h3>三、倫理審查（IRB）的具體流程與要求</h3>
+      <p>美國 IRB 在審查 EHR 研究時，重點不在於「是否利用資料」，而在於「知情同意的豁免」。</p>
+      <h4>審查重點</h4>
+      <ul>
+        <li><b>隱私風險極小：</b>是否有完善的去辨識化或 DUA 協議？</li>
+        <li><b>研究不具可行性：</b>若不豁免知情同意（例如要找回十年前的萬名病患簽字），研究是否就無法進行？</li>
+        <li><b>對受試者權益無不良影響。</b></li>
+      </ul>
+      <h4>嚴格程度</h4>
+      <p>非常嚴格。如果研究者未經許可將 PHI 帶離醫院，醫院將面臨巨額民事罰款甚至刑事責任，因此醫院 IRB 通常會要求使用醫院內部的安全運算平台。</p>
+      <table class="doc">
+        <thead><tr><th>項目</th><th>美國標準 (HIPAA/Common Rule)</th><th>臺灣現狀／趨勢</th></tr></thead>
+        <tbody>
+          <tr><td>去辨識標準</td><td>Safe Harbor（18項）或 專家判定</td><td>依個資法及衛福部去識別化指引</td></tr>
+          <tr><td>日期處理</td><td>嚴格限制（Safe Harbor 僅能留年份）</td><td>臨床研究常需具體日期，審查較彈性</td></tr>
+          <tr><td>資料外傳</td><td>必須簽署 DUA，否則極難跨機構</td><td>去辨識並詳細說明資料保管、使用權限、使用目的。</td></tr>
+          <tr><td>技術配套</td><td>強調 Secure Enclave（研究沙盒）</td><td>規劃推動衛福部資料研究用多中心電子病歷暫存伺服器</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa" id="q5">
+    <div class="qhead"><span class="qn">Q5</span>
+      <span class="qt">如果是務實性隨機臨床試驗（pragmatic randomized trial），且採用群組隨機設計（cluster randomized trial），在許多情況下逐一取得個別受試者的知情同意有困難。國際上通行的倫理原則為何？當研究以醫師為單位進行隨機分配（例如分為使用 AI 輔助與未使用 AI 輔助兩組）時，個別病人是否仍需要簽署知情同意書？國際上（如倫理指引或專業學會）對於此類 CRT 的倫理審查作法為何？</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="qbody">
+      <p>針對「群組隨機對照試驗（Cluster Randomized Trial, CRT）」且以「醫師/單位」為隨機分配對象的情境，國際通行的倫理指引主要參考《渥太華聲明》（The Ottawa Statement）。</p>
+      <h3>一、核心倫理原則：誰才是「受試者」？</h3>
+      <p>在 CRT 中，倫理審查的第一步是界定「受試者（Human Subject）」的身分。這直接決定了是否需要取得知情同意（Informed Consent）：</p>
+      <ul>
+        <li><b>醫師作為受試者：</b>如果研究僅是觀察 AI 是否改變醫師的開藥行為、診斷準確度，且不涉及收集病人的私密個資，醫師才是主要受試者。此時通常僅需取得醫師同意。</li>
+        <li><b>病人作為受試者：</b>如果研究會收集病人的預後（如住院天數、死亡率）或介入措施直接影響病人的健康風險，病人即被視為受試者。</li>
+      </ul>
+      <h3>二、何時可以「豁免個別知情同意（Waiver of Consent）」？</h3>
+      <p>根據 CIOMS 指引與美國 Common Rule，若 CRT 符合以下條件，IRB 通常允許豁免個別病人的書面同意：</p>
+      <ul>
+        <li><b>i. 風險極小（Minimal Risk）：</b>AI 僅作為「輔助決策」，最終決策權仍在醫師手中，且該 AI 建議符合現行臨床指引（Standard of Care）。</li>
+        <li><b>ii. 研究不具可行性（Impracticability）：</b>在務實性試驗中，若要逐一對數萬名門診病人進行招募與簽署，會產生嚴重的「選擇性偏差（Selection Bias）」，導致研究結果失去科學價值。</li>
+        <li><b>iii. 不影響受試者權益：</b>豁免同意不會對病人的治療權利或隱私造成實質損害。</li>
+        <li><b>iv. 專業實務：</b>在以醫師為單位的 AI 研究中，常見的做法是「告知而非取得簽署」。例如在診間張貼告示或在掛號系統顯示：「本院正進行 AI 輔助診斷研究，您的醫師可能會參考 AI 建議，如您有疑慮可告知醫師」。</li>
+      </ul>
+      <h3>三、國際專業學會與指引的審查作法</h3>
+      <h4>i. 《渥太華聲明》（The Ottawa Statement）</h4>
+      <p>這是全球首部專門規範 CRT 倫理的指引，強調：</p>
+      <ul>
+        <li><b>區分介入對象：</b>區分「群組成員（病患）」與「群組守門人（醫護/院長）」。</li>
+        <li><b>群組守門人（Gatekeepers）的角色：</b>當個別病患難以簽署時，必須由醫院主管或科主任作為守門人，審查該研究是否符合該群體（如全體病患）的利益。</li>
+      </ul>
+      <h4>ii. 學習型醫療系統（Learning Healthcare System）框架</h4>
+      <p>美國醫學研究院（NAM）提倡，當 AI 驗證已成為提升醫療品質的「常規活動」時，倫理審查應趨向簡化。只要資料受到嚴格保護，且 AI 介入不超過臨床標準，應視為「品質改善（Quality Improvement, QI）」而非傳統研究，從而簡化同意程序。</p>
+      <table class="doc">
+        <thead><tr><th>比較項目</th><th>傳統藥物 RCT</th><th>AI 務實性群組試驗（pCRT）</th></tr></thead>
+        <tbody>
+          <tr><td>隨機分配單位</td><td>個人（Individual）</td><td>群組（Cluster，如醫師、診間、病房）</td></tr>
+          <tr><td>研究環境</td><td>高度受控的實驗環境（Explanatory）</td><td>真實臨床工作流（Pragmatic / Real-world）</td></tr>
+          <tr><td>介入性質</td><td>實驗性藥物或侵入性治療</td><td>資訊介入（AI 建議）</td></tr>
+          <tr><td>知情同意</td><td>必須逐一簽署</td><td>常採「豁免簽署」或「告知選擇制」</td></tr>
+          <tr><td>風險程度</td><td>通常較高（藥物副作用未知）</td><td>通常為極小風險（Minimal Risk）</td></tr>
+          <tr><td>受試者定義</td><td>僅為病患</td><td>包含醫師（介入對象）與病患（預後對象）</td></tr>
+          <tr><td>資料來源</td><td>專案收集的 CRF 數據</td><td>自動化提取電子病歷（EHR）數據</td></tr>
+          <tr><td>主要倫理挑戰</td><td>受試者安全性與臨床盲性</td><td>自主權豁免的理據與群體公平性</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    資料來源：衛生福利部資訊處《臺灣 AI 臨床研究倫理審查常見問題說明》（李建璋 處長）。
+    本頁為 AI治理委員會網站原型之參考資料頁，內容供院內討論參考。
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.qhead').forEach(function(h){
+  h.addEventListener('click',function(){ h.parentElement.classList.toggle('open'); });
+});
+document.querySelectorAll('.tocitem').forEach(function(a){
+  a.addEventListener('click',function(){
+    var el=document.querySelector(a.getAttribute('href'));
+    if(el) el.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>
