@@ -1,0 +1,2571 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI治理委員會 — 花蓮慈濟醫院</title>
+<style>
+:root{
+  --green:#1f6b47; --green-d:#184f36; --green-l:#2e8a5e;
+  --ink:#1f2933; --mut:#6b7783; --line:#e3e8ec; --bg:#f4f6f7; --card:#fff;
+  --accent:#2e8a5e; --warn:#b4531f; --radius:14px;
+  /* 版面常數（取代散落魔數） */
+  --topbar-h:48px; --refgap:230px; --swimmin:900px;
+  /* z-index 階梯：內容 1 < 貼頂工具列 20 < 主標列 30 < 拖曳把手 40 < 浮層/彈窗 50 */
+  --z-raise:1; --z-formbar:20; --z-topbar:30; --z-grip:40; --z-overlay:50;
+  /* 身份色（流程圖） */
+  --r1:#1f6b47; --r1b:#e7f2ec; --r2:#2563eb; --r2b:#e8effd; --r3:#7c3aed; --r3b:#f0eafc;
+  --r4:#0d9488; --r4b:#e3f5f2; --r5:#b45309; --r5b:#fbeddd;
+}
+*{box-sizing:border-box}
+/* 內嵌 SVG icon：跟隨上下文字級與顏色（取代 emoji icon） */
+.ic-svg{width:1.15em;height:1.15em;vertical-align:-.18em;display:inline-block;flex:0 0 auto}
+html,body{margin:0;padding:0}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  color:var(--ink);background:var(--bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--green-l);text-decoration:none}
+/* 鍵盤焦點：全域可見外框（無障礙） */
+:focus-visible{outline:2px solid var(--green-l);outline-offset:2px;border-radius:6px}
+.side :focus-visible,.side-grip:focus-visible{outline-color:#fff;outline-offset:-2px}
+.app{display:flex;min-height:100vh}
+
+/* Sidebar */
+.app{--sidew:270px}
+.side{width:var(--sidew);flex:0 0 var(--sidew);min-width:0;background:linear-gradient(180deg,var(--green),var(--green-d));
+  color:#fff;position:sticky;top:0;height:100vh;overflow-y:auto;overflow-x:hidden;padding:22px 16px 40px;
+  transition:width .18s ease,flex-basis .18s ease,padding .18s ease}
+.app.side-collapsed{--sidew:0px}
+.app.side-collapsed .side{padding-left:0;padding-right:0;border-right:0}
+.app.resizing .side{transition:none}
+.app.resizing{user-select:none;cursor:col-resize}
+/* drag handle pinned to sidebar right edge (viewport-fixed so它不隨捲動消失) */
+.side-grip{position:fixed;top:0;height:100vh;width:9px;left:calc(var(--sidew) - 4px);
+  cursor:col-resize;z-index:var(--z-grip);transition:left .18s ease}
+.app.resizing .side-grip{transition:none}
+.side-grip::after{content:"";position:absolute;top:0;left:3px;width:2px;height:100%;background:rgba(31,107,71,.12);transition:.15s}
+.side-grip:hover::after,.app.resizing .side-grip::after{background:var(--green-l);width:3px}
+.app.side-collapsed .side-grip{display:none}
+/* topbar toggle */
+.navtoggle{border:1px solid var(--line);background:#fff;border-radius:8px;width:40px;height:38px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mut);font-size:16px;flex:0 0 auto}
+.navtoggle:hover{background:#f4f6f7;color:var(--ink)}
+.brand{display:flex;gap:12px;align-items:center;padding:4px 6px 14px}
+.brand .logo{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.14);
+  display:flex;align-items:center;justify-content:center;font-size:22px}
+.brand b{font-size:17px;display:block;letter-spacing:.5px}
+.brand span{font-size:11.5px;opacity:.85}
+.orgline{font-size:11.5px;opacity:.85;padding:0 8px 16px;border-bottom:1px solid rgba(255,255,255,.13);margin-bottom:14px}
+.navgrp{font-size:11.5px;letter-spacing:2px;opacity:.8;margin:18px 8px 8px;font-weight:700}
+.navitem{display:flex;gap:10px;align-items:center;padding:11px 12px;border-radius:9px;
+  color:#eaf3ee;cursor:pointer;font-size:14.5px;transition:.15s;margin-bottom:2px;min-height:44px}
+.navitem .n{opacity:.72;font-size:12.5px;min-width:18px}
+.navitem:hover{background:rgba(255,255,255,.09)}
+.navitem.active{background:rgba(255,255,255,.18);font-weight:600;box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.navitem.home{font-size:11.5px;letter-spacing:2px;font-weight:700;opacity:.8;margin:18px 8px 8px;padding-left:0}
+.navitem.home.active{opacity:.92}
+.navitem.primary{background:none}
+
+/* Main */
+.main{flex:1;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:5px 40px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:var(--z-topbar);min-height:var(--topbar-h)}
+.crumb{color:var(--mut);font-size:13.5px}
+.crumb b{color:var(--ink)}
+.activebox{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.activebox .cchip{display:inline-flex;align-items:center;gap:8px;background:#eef4f0;border:1px solid #cfe0d6;
+  border-radius:20px;padding:5px 12px;color:var(--green-d);font-weight:600;cursor:pointer}
+.activebox .cchip small{color:var(--mut);font-weight:400}
+.activebox .none{color:var(--mut);border:1px dashed var(--line);border-radius:20px;padding:5px 12px;cursor:pointer}
+.mini{font-size:12px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 11px;cursor:pointer;color:var(--mut)}
+.mini:hover{background:#f4f6f7}
+.wrap{max-width:960px;margin:0 auto;padding:34px 40px 90px}
+.wrap.wide{max-width:1180px}
+.eyebrow{color:var(--green-l);font-weight:700;font-size:14px;margin:0 0 4px}
+.backflow{display:inline-block;font-size:13px;color:var(--green-l);text-decoration:none;margin:0 0 10px;
+  padding:4px 11px;border:1px solid var(--line);border-radius:20px;background:#fff;cursor:pointer}
+.backflow:hover{background:#eef4f0;border-color:#cfe0d6}
+h1.page{font-size:30px;margin:0 0 18px;letter-spacing:.5px}
+.lead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;color:#3a4650;margin-bottom:28px}
+
+.sec-title{font-size:16px;font-weight:700;margin:26px 0 14px;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid.two{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){.grid,.grid.two{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+  cursor:pointer;transition:.16s;display:flex;flex-direction:column;gap:6px}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,60,40,.10);border-color:#cfe0d6}
+.card .ic{font-size:26px}
+.card b{font-size:15px}
+.card small{color:var(--mut);font-size:13px}
+.card.hero{background:linear-gradient(135deg,#1f6b47,#184f36);color:#fff;border:none}
+.card.hero small{color:rgba(255,255,255,.82)}
+.card.hero .ic{font-size:30px}
+
+/* Content article */
+article h2{font-size:20px;margin:30px 0 10px;padding-bottom:8px;border-bottom:2px solid #eef2f0}
+article h3{font-size:16px;margin:20px 0 8px;color:var(--green-d)}
+article p{margin:10px 0}
+article ul{margin:10px 0;padding-left:22px}
+article li{margin:5px 0}
+article .src{font-size:12px;color:var(--mut);background:#f0f4f2;border-left:3px solid var(--green-l);
+  padding:8px 12px;border-radius:0 8px 8px 0;margin-bottom:20px}
+.valuegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:14px 0}
+@media(max-width:820px){.valuegrid{grid-template-columns:1fr}}
+.valuebox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.valuebox b{color:var(--green-l)}
+table.doc{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+table.doc th,table.doc td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.doc th{background:#f0f4f2}
+
+/* Forms */
+.formbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 22px;
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;position:sticky;top:var(--topbar-h);z-index:var(--z-formbar)}
+.formbar .saved{font-size:12px;color:var(--mut);margin-right:auto}
+.formbar .saved.on{color:var(--green-l)}
+.btn{border:1px solid var(--green);background:var(--green);color:#fff;border-radius:8px;
+  padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600}
+.btn:hover{background:var(--green-d)}
+.btn.ghost{background:#fff;color:var(--green-d)}
+.btn.ghost:hover{background:#f0f4f2}
+.btn.warn{border-color:#d9b3a0;color:var(--warn);background:#fff}
+.btn.warn:hover{background:#fbf1eb}
+.btn.lg{padding:11px 20px;font-size:14px}
+
+fieldset{border:1px solid var(--line);border-radius:12px;padding:16px 18px 6px;margin:0 0 20px;background:#fff}
+legend{font-weight:700;padding:0 8px;color:var(--green-d);font-size:15px}
+.field{margin-bottom:14px}
+.field>label{display:block;font-size:13.5px;font-weight:600;margin-bottom:5px}
+.field .hint{font-weight:400;color:var(--mut);font-size:12.5px}
+.field input[type=text],.field input[type=date],.field textarea,.field select{
+  width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;color:var(--ink);background:#fff}
+.field textarea{min-height:64px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--green-l);box-shadow:0 0 0 3px rgba(46,138,94,.12)}
+.opts{display:flex;flex-wrap:wrap;gap:8px 16px}
+.opt{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:400}
+.opt input{width:auto}
+.opt .oi{border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-size:13px;min-width:120px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.row2,.row3{grid-template-columns:1fr}}
+
+.casebanner{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#eef4f0;border:1px solid #cfe0d6;
+  border-radius:10px;padding:10px 14px;margin:0 0 18px;font-size:13px;color:var(--green-d)}
+.casebanner.warn{background:#fbf3ec;border-color:#e6cdb8;color:var(--warn)}
+
+/* Security control item */
+.secmeta{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}
+.secmeta .pill{background:#f0f4f2;border-radius:20px;padding:5px 12px;font-size:12.5px;color:var(--green-d)}
+.domain-h{font-weight:800;font-size:15px;color:var(--green-d);margin:24px 0 4px;padding-top:8px;border-top:2px solid #eef2f0}
+.sub-h{font-weight:600;font-size:13px;color:var(--mut);margin:0 0 10px}
+.ctl{border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:14px;background:#fff}
+.ctl .top{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.ctl .no{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.ctl .lvl{flex:0 0 auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px}
+.lvl.普{background:#e5f2ec;color:#1f6b47}.lvl.中{background:#fdf2e3;color:#a2661a}.lvl.高{background:#fbe9e6;color:#b4342a}
+.ctl .measure{font-size:13.5px;flex:1}
+.ctl .inp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:760px){.ctl .inp{grid-template-columns:1fr}}
+.ctl .full{grid-column:1/-1}
+
+.signbox{border:1px dashed var(--line);border-radius:10px;padding:14px;color:var(--mut);font-size:13px;background:#fafbfb}
+.footer{border-top:1px solid var(--line);padding:22px 40px;color:var(--mut);font-size:12px;text-align:center;background:#fff}
+
+/* ---- Wizard ---- */
+.wsteps{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.wstep{flex:1;min-width:120px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;font-size:12.5px;color:var(--mut)}
+.wstep b{display:block;font-size:13px;color:var(--ink)}
+.wstep.on{border-color:var(--green-l);background:#eef4f0}
+.wstep.on b{color:var(--green-d)}
+.wstep.done{border-color:#cfe0d6}
+.choicegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:6px 0 4px}
+.choice{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;cursor:pointer;transition:.15s}
+.choice:hover{border-color:#cfe0d6;transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,60,40,.08)}
+.choice.on{border-color:var(--green);background:#eef4f0;box-shadow:0 0 0 2px rgba(31,107,71,.15)}
+.choice .ic{font-size:24px}
+.choice b{display:block;margin:6px 0 2px}
+.choice small{color:var(--mut);font-size:12px}
+.qrow{display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#fff}
+.qrow .qt{font-size:13.5px}
+.qrow .qt small{display:block;color:var(--mut);font-size:11.5px}
+.toggle{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:0 0 auto}
+.toggle button{border:none;background:#fff;padding:10px 16px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--mut)}
+.toggle button.on.yes{background:var(--warn);color:#fff}
+.toggle button.on.no{background:var(--green);color:#fff}
+.wnav{display:flex;gap:10px;justify-content:space-between;margin-top:22px}
+.rescard{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff;margin-bottom:18px}
+.riskbadge{display:inline-block;font-weight:800;font-size:15px;padding:4px 14px;border-radius:20px;color:#fff}
+.rL1{background:#2e8a5e}.rL2{background:#a2661a}.rL3{background:#b4531f}.rL4{background:#b4342a}
+.checklist{list-style:none;padding:0;margin:12px 0}
+.checklist li{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;margin-bottom:8px;background:#fff;cursor:pointer;transition:.15s}
+.checklist li:hover{border-color:#cfe0d6;background:#f7faf8}
+.checklist .st{flex:0 0 auto;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:700}
+.st.ok{background:#e5f2ec;color:#1f6b47}.st.empty{background:#f0f2f2;color:#9aa4ac}
+.checklist .fl{flex:1}.checklist .fl b{font-size:14px}.checklist .fl small{display:block;color:var(--mut);font-size:12px}
+.tagreq{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:#fbe9e6;color:#b4342a}
+.tagopt{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:#eef1f2;color:#6b7783}
+
+/* ---- Registry table ---- */
+.rtable{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rtable th,.rtable td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.rtable th{background:#f0f4f2;font-size:12px;color:var(--green-d)}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr.clickrow{cursor:pointer}
+.rtable tr.clickrow:hover{background:#f7faf8}
+.rtable .no{font-weight:700;color:var(--green-d)}
+.rtable select{border:1px solid var(--line);border-radius:6px;padding:4px 6px;font:inherit;font-size:12px}
+.rlvl{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+.emptybox{border:1px dashed var(--line);border-radius:12px;padding:36px;text-align:center;color:var(--mut);background:#fff}
+
+/* ---- Flow swimlane ---- */
+.roles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:0 0 24px}
+@media(max-width:820px){.roles{grid-template-columns:repeat(2,1fr)}}
+/* 流程圖：角色卡與泳道共用同一五欄 Grid（含 104px stepno 前導欄），確保逐欄垂直對齊 */
+.roles.swimroles{grid-template-columns:104px repeat(5,minmax(150px,1fr));gap:0 12px;min-width:var(--swimmin);margin:0 0 16px;align-items:stretch}
+.roles.swimroles .rolespacer{grid-column:1}
+@media(max-width:820px){.roles.swimroles{grid-template-columns:104px repeat(5,minmax(150px,1fr))}}
+.rolecard{border:1px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;border-top:4px solid}
+.rolecard .rn{font-weight:700;font-size:14px;display:flex;align-items:center;gap:7px}
+.rolecard .dot{width:11px;height:11px;border-radius:50%}
+.rolecard p{margin:6px 0 0;font-size:12px;color:var(--mut);line-height:1.5}
+.r1c{border-top-color:var(--r1)}.r2c{border-top-color:var(--r2)}.r3c{border-top-color:var(--r3)}
+.r4c{border-top-color:var(--r4)}.r5c{border-top-color:var(--r5)}
+.d1{background:var(--r1)}.d2{background:var(--r2)}.d3{background:var(--r3)}.d4{background:var(--r4)}.d5{background:var(--r5)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 4px;border-bottom:2px solid var(--line)}
+.tab{padding:10px 18px;border:1px solid var(--line);border-bottom:none;border-radius:11px 11px 0 0;
+  background:#eef1f2;color:var(--mut);font-size:14px;font-weight:600;cursor:pointer;position:relative;top:2px}
+.tab.on{background:#fff;color:var(--green);border-color:var(--line);box-shadow:0 -2px 0 var(--green) inset}
+.panel{display:none;background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 14px 14px;padding:24px 20px;overflow-x:auto}
+.panel.on{display:block}
+.panel h2{font-size:18px;margin:0 0 4px}
+.panel .desc{font-size:13px;color:var(--mut);margin:0 0 20px}
+.subhdr{font-weight:700;margin:6px 0 10px}
+.swim{display:grid;grid-template-columns:104px repeat(5,minmax(150px,1fr));gap:0 12px;min-width:var(--swimmin);align-items:stretch}
+.lanehead{font-size:13px;font-weight:700;color:#fff;text-align:center;padding:8px 6px;border-radius:9px;margin-bottom:6px}
+.lanehead.blank{background:transparent}
+.h1{background:var(--r1)}.h2{background:var(--r2)}.h3{background:var(--r3)}.h4{background:var(--r4)}.h5{background:var(--r5)}
+.stepno{grid-column:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:19px;font-weight:800;color:var(--green);border-right:2px dashed var(--line);padding:6px 4px}
+.stepno small{font-size:11px;color:var(--mut);font-weight:600;margin-top:2px;text-align:center;line-height:1.3}
+.railcell{border-left:1px dashed #eef1f2}
+.node{display:block;border-radius:11px;padding:11px 12px;font-size:13px;position:relative;border:1px solid var(--line);background:#fff;transition:.15s}
+.node .who{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.85;margin-bottom:3px}
+.node .t{font-weight:700;font-size:13.5px}
+.node .m{font-size:12.5px;color:var(--mut);margin-top:3px;line-height:1.5}
+.node.n1{background:var(--r1b);border-color:#bfe0cf}.node.n2{background:var(--r2b);border-color:#c3d6f7}
+.node.n3{background:var(--r3b);border-color:#d8c9f2}.node.n4{background:var(--r4b);border-color:#bfe6e0}
+.node.n5{background:var(--r5b);border-color:#f0d3ac}
+.node.form{cursor:pointer}.node.form:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,60,40,.13)}
+.node.form .t::after{content:" ↗";font-size:12px;opacity:.6}
+.node .tag{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:var(--green-l);padding:1px 7px;border-radius:20px;margin-top:6px}
+.node.n2 .tag{background:var(--r2)}.node.n3 .tag{background:var(--r3)}.node.n4 .tag{background:var(--r4)}.node.n5 .tag{background:var(--r5)}
+.node .arrow{position:absolute;left:50%;bottom:-15px;transform:translateX(-50%);color:var(--mut);font-size:15px;z-index:var(--z-raise)}
+.cellwrap{padding-bottom:16px;position:relative}
+.node.dec{background:#fff;border:2px dashed var(--r5);text-align:center}
+.node.dec .t{color:var(--r5)}
+.branches{display:flex;gap:8px;margin-top:8px;justify-content:center;flex-wrap:wrap}
+.branch{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.pass{background:#e7f2ec;color:var(--r1)}.fail{background:#fbe4e4;color:#b42318}.loop{background:#fff4e0;color:var(--r5)}
+.note{font-size:12.5px;color:var(--mut);background:#f7faf8;border:1px solid var(--line);border-left:3px solid var(--green-l);border-radius:8px;padding:10px 13px;margin-top:18px}
+
+@media print{
+  .side,.side-grip,.navtoggle,.topbar,.formbar,.footer,.card,.wnav,.tabs,.mini{display:none!important}
+  .main{width:100%}.wrap{max-width:100%;padding:0}
+  body{background:#fff}
+  fieldset,.ctl{break-inside:avoid;border-color:#999}
+  .panel{display:block!important;page-break-after:always;border:none}
+  .btn{display:none}
+}
+.hidden{display:none!important}
+
+/* 尊重系統「減少動態效果」偏好（前庭敏感） */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .card:hover,.choice:hover,.node.form:hover,.deskrole:hover,.loginrole:hover,
+  .rolecard:hover .av,.deskrole:hover{transform:none!important}
+}
+
+/* ---- IMDRF SaMD 風險分級對照表（heatmap + hover tooltip）---- */
+.imdrf{margin:6px 0 4px}
+.imdrf .cap{font-size:13px;font-weight:700;color:var(--green-d);margin-bottom:8px}
+.imdrf .cap small{font-weight:400;color:var(--mut)}
+.imdrf table{border-collapse:separate;border-spacing:3px;width:100%;font-size:13px}
+.imdrf th,.imdrf td{padding:9px 8px;text-align:center;border-radius:8px;line-height:1.35}
+.imdrf thead th{background:#f0f4f2;color:var(--green-d);font-weight:700;vertical-align:middle}
+.imdrf thead th.corner{background:transparent}
+.imdrf tbody th{background:#f7faf8;color:var(--ink);font-weight:700;text-align:left;padding-left:11px;white-space:nowrap}
+.imdrf td .lv{font-weight:800;font-size:15px}
+/* heatmap：I 綠 → IV 紅 */
+.imdrf .lc1{background:#d9f0e2;color:#166534}
+.imdrf .lc2{background:#fdf3c8;color:#854d0e}
+.imdrf .lc3{background:#fcd9b6;color:#9a3412}
+.imdrf .lc4{background:#f9c0bd;color:#991b1b}
+/* hover：可懸浮欄位加虛下底線 + tooltip */
+.imdrf .tip{position:relative;cursor:help;border-bottom:1px dashed currentColor}
+.imdrf td.tip{border-bottom:none}
+.imdrf .tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);
+  width:230px;max-width:70vw;background:#1f2933;color:#fff;font-weight:400;font-size:12px;line-height:1.5;text-align:left;
+  padding:9px 11px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.28);white-space:normal;
+  opacity:0;visibility:hidden;transition:opacity .12s;z-index:45;pointer-events:none}
+.imdrf .tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 2px);transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:#1f2933;opacity:0;visibility:hidden;transition:opacity .12s;z-index:45}
+.imdrf .tip:hover::after,.imdrf .tip:hover::before{opacity:1;visibility:visible}
+.imdrf .foot{font-size:12px;color:var(--mut);margin-top:9px;background:#f7faf8;border-left:3px solid var(--green-l);
+  border-radius:6px;padding:8px 11px;line-height:1.55}
+@media (max-width:640px){.imdrf table{font-size:11.5px}.imdrf .tip::after{width:180px}}
+@media print{.imdrf .tip::after,.imdrf .tip::before{display:none}.imdrf .tip{border-bottom:none}}
+
+/* ---- 九大透明性指標（scoped）---- */
+.ninewrap{--use:#2e8a5e;--use-bg:#eaf5ef;--use-d:#1f6b47;
+  --dev:#2b5d8a;--dev-bg:#e9f0f7;--dev-d:#204869;
+  --mnt:#b4531f;--mnt-bg:#f8efe7;--mnt-d:#8a3f16}
+.ninewrap .lead{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;color:#3a4650;font-size:14.5px;margin:6px 0 26px}
+.ninewrap .lead b{color:var(--green-d)}
+.ninewrap .cycle{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px 18px;margin:0 0 26px}
+.ninewrap .cycle h2{font-size:16px;margin:0 0 4px;color:var(--ink);border:none;padding:0}
+.ninewrap .cycle .sub{font-size:12.5px;color:var(--mut);margin:0 0 14px}
+.ninewrap .cyclefig{width:100%;height:auto;display:block}
+.ninewrap .sec{display:flex;align-items:center;gap:12px;margin:34px 0 14px}
+.ninewrap .sec .chip{font-size:12px;font-weight:700;color:#fff;padding:4px 12px;border-radius:20px}
+.ninewrap .sec h2{font-size:19px;margin:0;letter-spacing:.5px;border:none;padding:0}
+.ninewrap .sec .rng{font-size:12.5px;color:var(--mut);font-weight:500}
+.ninewrap .sec.use .chip{background:var(--use)}.ninewrap .sec.dev .chip{background:var(--dev)}.ninewrap .sec.mnt .chip{background:var(--mnt)}
+.ninewrap .sec.use h2{color:var(--use-d)}.ninewrap .sec.dev h2{color:var(--dev-d)}.ninewrap .sec.mnt h2{color:var(--mnt-d)}
+.ninewrap .sectip{font-size:13px;color:#4a5661;margin:-6px 0 16px;padding-left:2px}
+.ninewrap .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.ninewrap .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.15s;border-top:none;cursor:default;padding:0}
+.ninewrap .card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(20,60,40,.10);border-color:#cfe0d6}
+.ninewrap .card .band{height:5px}
+.ninewrap .card.use .band{background:var(--use)}.ninewrap .card.dev .band{background:var(--dev)}.ninewrap .card.mnt .band{background:var(--mnt)}
+.ninewrap .chead{display:flex;align-items:center;gap:13px;padding:16px 18px 10px}
+.ninewrap .num{flex:0 0 auto;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#fff}
+.ninewrap .card.use .num{background:var(--use)}.ninewrap .card.dev .num{background:var(--dev)}.ninewrap .card.mnt .num{background:var(--mnt)}
+.ninewrap .icon{flex:0 0 auto;width:46px;height:46px;margin-left:auto}
+.ninewrap .icon svg{width:46px;height:46px}
+.ninewrap .ctitle{padding:0 18px 8px}
+.ninewrap .ctitle .zh{font-size:16px;font-weight:700;line-height:1.4;color:var(--ink)}
+.ninewrap .ctitle .en{font-size:11.5px;color:var(--mut);letter-spacing:.2px;margin-top:2px}
+.ninewrap .ask{margin:4px 18px 12px;padding:11px 13px;border-radius:10px;font-size:13.5px;line-height:1.55}
+.ninewrap .card.use .ask{background:var(--use-bg)}.ninewrap .card.dev .ask{background:var(--dev-bg)}.ninewrap .card.mnt .ask{background:var(--mnt-bg)}
+.ninewrap .ask .lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:3px;text-transform:uppercase}
+.ninewrap .card.use .ask .lbl{color:var(--use-d)}.ninewrap .card.dev .ask .lbl{color:var(--dev-d)}.ninewrap .card.mnt .ask .lbl{color:var(--mnt-d)}
+.ninewrap .eg{margin:auto 0 0;padding:12px 18px 16px;border-top:1px dashed var(--line);font-size:13px;color:#3a4650}
+.ninewrap .eg .lbl{display:block;font-size:11px;font-weight:700;color:var(--mut);letter-spacing:.5px;margin-bottom:4px}
+.ninewrap .eg b{color:var(--ink)}
+.ninewrap .threeq{background:linear-gradient(135deg,#f0f6f2,#eaf3ee);border:1px solid #d4e6db;border-radius:var(--radius);padding:20px 22px;margin:34px 0 0}
+.ninewrap .threeq h2{font-size:17px;margin:0 0 12px;color:var(--green-d);border:none;padding:0}
+.ninewrap .threeq .qs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.ninewrap .threeq .q{display:flex;gap:11px;align-items:flex-start}
+.ninewrap .threeq .q .n{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.ninewrap .threeq .q p{margin:0;font-size:13.5px}
+.ninewrap .threeq .q b{color:var(--green-d)}
+.ninewrap .ninefoot{margin-top:40px;font-size:12px;color:var(--mut);border-top:1px solid var(--line);padding-top:18px}
+
+/* ---- 治理層・委員會工作台 ---- */
+.wm{display:flex;align-items:center;gap:10px;background:#fff7e8;border:1px solid #f0d9a8;color:#8a6516;
+  border-radius:10px;padding:10px 14px;margin:0 0 20px;font-size:12.5px}
+.wm .btn{margin-left:auto}
+.kpirow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:0 0 24px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kpi .v{font-size:28px;font-weight:800;color:var(--green-d);line-height:1.1}
+.kpi .k{font-size:12.5px;color:var(--mut);margin-top:4px}
+.kpi.warnv .v{color:var(--warn)}
+.charts{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:820px){.charts{grid-template-columns:1fr}}
+.chartbox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.chartbox h3{font-size:14px;margin:0 0 14px;color:var(--ink)}
+.barrow{display:grid;grid-template-columns:96px 1fr 42px;align-items:center;gap:10px;margin-bottom:9px;font-size:12.5px}
+.bartrack{background:#f0f2f2;border-radius:20px;height:16px;overflow:hidden}
+.barfill{height:100%;border-radius:20px;min-width:2px}
+.barrow .bv{text-align:right;font-weight:700;color:var(--ink)}
+.pie{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.pie .disc{width:130px;height:130px;border-radius:50%;flex:0 0 auto}
+.pie .leg{font-size:12.5px}
+.pie .leg div{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.pie .leg .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.riskcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.rc{border:1px solid var(--line);border-radius:11px;padding:13px 14px;background:#fff}
+.rc .v{font-size:22px;font-weight:800;color:var(--warn)}
+.rc .k{font-size:12px;color:var(--mut);margin-top:2px}
+.agcard{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:#fff}
+.agcard.L4{border-left-color:#b4342a}.agcard.L3{border-left-color:#b4531f}
+.agcard .ah{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.agcard .ah b{font-size:15px}
+.agflags{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}
+.agflag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;background:#fbe9e6;color:#b4342a}
+.agmeta{font-size:12.5px;color:var(--mut);margin-top:6px}
+.decform{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.decform .full{grid-column:1/-1}
+.decform label{font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:var(--mut)}
+.decform select,.decform input{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:inherit;font-size:13px}
+@media(max-width:760px){.decform{grid-template-columns:1fr}}
+.exec{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.exec.done{background:#e5f2ec;color:#1f6b47}.exec.wait{background:#fdf2e3;color:#a2661a}.exec.late{background:#fbe9e6;color:#b4342a}
+.dectype{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:#eef4f0;color:var(--green-d)}
+
+/* ---- 導覽收合 + 參考頁 iframe ---- */
+.navgrp.collapser{cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.navgrp.collapser:hover{opacity:.85}
+.navgrp .caret{transition:.15s;font-size:10px;opacity:.7}
+.navgrp.collapser.open .caret{transform:rotate(90deg)}
+.navcollapse.collapsed{display:none}
+.refframe{width:100%;height:calc(100vh - var(--refgap));min-height:560px;border:1px solid var(--line);
+  border-radius:12px;background:#fff;margin-top:6px}
+/* 角色頭像 */
+.rolecard{text-align:center}
+.rolecard .av{width:64px;height:64px;margin:0 auto 8px;display:block;transition:transform .2s ease}
+.rolecard:hover .av{transform:translateY(-3px) scale(1.05)}
+.rolecard .rn{justify-content:center}
+/* 審查工作台 */
+.deskroles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:0 0 10px}
+.deskrole{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;cursor:pointer;text-align:center;position:relative;transition:.15s}
+.deskrole:hover{border-color:#cfe0d6;transform:translateY(-2px)}
+.deskrole.on{border-color:var(--green);box-shadow:0 0 0 2px rgba(31,107,71,.15);background:#f7faf8}
+.deskrole .av{width:56px;height:56px;margin:0 auto 6px;display:block}
+.deskrole b{display:block;font-size:14px}
+.deskrole small{color:var(--mut);font-size:11.5px}
+/* 登入者頭像 / 身份（右上 topbar） */
+.topright{display:flex;align-items:center;gap:14px}
+.userchip{display:flex;align-items:center;gap:9px;background:#f2f5f3;border:1px solid var(--line);
+  border-radius:30px;padding:5px 12px 5px 5px;cursor:pointer;transition:.15s}
+.userchip:hover{background:#e9efeb;border-color:#cfe0d6}
+.userchip .uav{width:26px;height:26px;border-radius:50%;flex:0 0 auto;background:#fff;overflow:hidden}
+.userchip .uav svg{width:26px;height:26px;display:block}
+.userchip .ui{min-width:0;line-height:1.25}
+.userchip .ui b{font-size:12.5px;display:block;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.userchip .ui span{font-size:11px;color:var(--mut)}
+.userchip .sw{font-size:14px;color:var(--mut)}
+@media(max-width:640px){.userchip .ui{display:none}}
+.loginmask{position:fixed;inset:0;background:rgba(18,38,28,.55);z-index:var(--z-overlay);display:none;align-items:center;justify-content:center;padding:24px}
+.loginmask.show{display:flex}
+.loginbox{background:#fff;border-radius:18px;max-width:780px;width:100%;max-height:90vh;overflow:auto;padding:28px 30px;box-shadow:0 24px 60px rgba(0,0,0,.32)}
+.loginbox h2{margin:0 0 4px;font-size:22px}
+.loginbox .sub{color:var(--mut);font-size:13px;margin:0 0 20px}
+.loginroles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.loginrole{border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:.15s}
+.loginrole:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 22px rgba(20,60,40,.13)}
+.loginrole .av{width:60px;height:60px;margin:0 auto 8px;display:block}
+.loginrole b{display:block;font-size:15px}
+.loginrole small{color:var(--mut);font-size:12px}
+.loginfoot{margin-top:18px;font-size:12px;color:var(--mut);text-align:center}
+.rolebanner{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#eef6f1,#e7f2ec);
+  border:1px solid #d4e6db;border-radius:14px;padding:14px 18px;margin:0 0 22px}
+.rolebanner .uav{width:46px;height:46px;border-radius:50%;background:#fff;overflow:hidden;flex:0 0 auto}
+.rolebanner .uav svg{width:46px;height:46px;display:block}
+.rolebanner b{font-size:15px}.rolebanner small{color:var(--mut);font-size:12.5px;display:block}
+.deskrole .cnt{position:absolute;top:10px;right:10px;min-width:22px;height:22px;border-radius:11px;background:var(--warn);
+  color:#fff;font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.deskrole .cnt:empty{display:none}
+</style>
+
+<div class="app">
+  <div class="side-grip" title="拖曳調整寬度"></div>
+  <nav class="side">
+    <div class="brand">
+      <div class="logo">🧭</div>
+      <div><b>AI治理委員會</b><span>AI Governance Committee</span></div>
+    </div>
+    <div class="orgline">花蓮慈濟醫院・智慧醫療創新中心<br>整合申請入口原型（工程參考用）</div>
+    <div class="navitem home active" data-go="home">總覽首頁</div>
+    <div class="navgrp collapser open" data-target="grp-apply-box">申請作業 <span class="caret">▸</span></div>
+    <div id="grp-apply-box" class="navcollapse">
+      <div class="navitem primary" data-go="wizard">🧙&nbsp; 申請精靈（自動分流）</div>
+      <div class="navitem" data-go="flow">🗺️&nbsp; 申請流程圖</div>
+      <div class="navitem" data-go="registry">🗂️&nbsp; AI 系統清冊</div>
+    </div>
+    <div class="navgrp collapser open" data-target="grp-content-box">中心說明 <span class="caret">▸</span></div>
+    <div id="grp-content-box" class="navcollapse">
+      <div id="nav-content"></div>
+      <div class="navitem" data-go="ref:tech"><span class="n">04</span>&nbsp;🏛️ 三大類型智慧醫療中心</div>
+      <div class="navitem" data-go="ref:faq"><span class="n">05</span>&nbsp;📋 AI 臨床研究倫理審查 FAQ</div>
+      <div class="navitem" data-go="ref:genai"><span class="n">06</span>&nbsp;🤖 醫療機構應用生成式 AI 指引</div>
+    </div>
+    <div class="navgrp collapser" data-target="nav-forms">線上申請表單 <span class="caret">▸</span></div>
+    <div id="nav-forms" class="navcollapse collapsed"></div>
+    <div class="navgrp collapser open" data-target="grp-gov-box">委員會工作台 <span class="caret">▸</span></div>
+    <div id="grp-gov-box" class="navcollapse">
+      <div class="navitem" data-go="desk">🧑‍⚕️&nbsp; 審查工作台（角色）</div>
+      <div class="navitem" data-go="dash">📊&nbsp; 統計看板</div>
+      <div class="navitem" data-go="agenda">🗳️&nbsp; 待審議程</div>
+      <div class="navitem" data-go="track">📌&nbsp; 決議追蹤</div>
+      <div class="navitem" data-go="freeze">⏸️&nbsp; 暫停 / 退場</div>
+      <div class="navitem" data-go="mtg">🖨️&nbsp; 會議輸出</div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
+        <div class="navtoggle" id="navtoggle" title="收合 / 展開側欄">☰</div>
+        <div class="crumb" id="crumb"><b>總覽</b></div>
+      </div>
+      <div class="topright">
+        <div class="activebox" id="activebox"></div>
+        <div class="userchip" id="userchip" title="切換登入身份"></div>
+      </div>
+    </div>
+    <div class="wrap" id="view"></div>
+    <div class="footer">
+      本站為原型（prototype），資料彙整自花蓮慈濟醫院AI治理委員會官方網頁（page/8316–8325）與申請表單 PDF。
+      表單、案件與清冊皆為前端互動 demo，僅存於瀏覽器 localStorage，未連接後端；正式送審請以官方系統／原始 PDF 為準。
+    </div>
+  </div>
+</div>
+
+<div class="loginmask" id="loginmask">
+  <div class="loginbox">
+    <h2>選擇登入身份（模擬）</h2>
+    <p class="sub">原型無真實帳號密碼。選一個身份即以隨機模擬帳號登入；導覽與頁面內容會依身份別調整。登入後可隨時點左上角頭像切換。</p>
+    <div class="loginroles" id="loginroles"></div>
+    <div class="loginfoot">🔒 純前端展示，資料僅存於本機瀏覽器。</div>
+  </div>
+</div>
+
+<script>
+/* ==================================================================
+   中心說明內容
+   ================================================================== */
+const CONTENT = [
+ {id:"about",n:"01",icon:"🎯",title:"成立緣由與組織成員",sub:"背景、國際趨勢、跨領域組成",src:"page/8316–8317",html:`
+  <h2>成立緣由</h2>
+  <p>近年來人工智慧迅速發展，其在醫療領域的應用已從疾病診斷、風險預測、醫學影像判讀，進一步擴展至醫療文書撰寫等重要環節。然而，AI 深度參與醫療後，如何確保技術運作符合倫理、保護隱私、維持透明可解釋並真正提升病人福祉，已成為國際共同重視的議題。世界衛生組織亦提醒，各國在推動醫療 AI 時，應以人為核心，建立安全、可信且負責任的應用環境。</p>
+  <p>美國、歐盟等地已陸續提出醫療 AI 相關法規與管理框架，反映全球監管需求日益迫切。臺灣提出的《人工智慧基本法》草案，將自主、當責、透明、安全、公平、永續、隱私等價值納入核心原則，為國內發展醫療 AI 建立了重要的治理方向。</p>
+  <p>因應行政院《人工智慧基本法草案》與衛福部推動之「七大 AI 倫理價值」，我們成立「AI治理委員會」，以保障智慧醫療應用發展下之倫理、資訊安全、病人權益，旨在協助醫療機構落實人工智慧的安全與可信任使用。中心將建立標準化流程，包括導入 AI 前的資安與隱私檢查、模型偏誤與效能評估、臨床使用期間的監測機制，以及長期的再驗證與風險控管，確保 AI 能夠持續、安全地服務醫療現場。</p>
+  <p>透過負責任 AI 執行中心的推動，我們期望打造透明、安全且受信任的醫療 AI 應用環境，使人工智慧真正成為提升醫療品質的助力，同時讓臺灣在醫療 AI 治理與落地實施上與國際接軌，展現前瞻的政策視野與實務成效。</p>
+  <h2>AI 發展七大價值精神</h2>
+  <p>為確保人工智慧技術的發展符合社會需求並促進產業創新，行政院提出《人工智慧管理基本法》，並依據其核心精神訂定 AI 發展七大核心原則。本院依據 AI 發展七大價值做為表單的規劃基礎。</p>
+  <div class="valuegrid">
+   <div class="valuebox"><b>自主</b><p>以支持人類自主權、尊重人格權等基本權利與文化價值，並允許人類監督，落實以人為本並尊重法治及民主價值觀。</p></div>
+   <div class="valuebox"><b>透明</b><p>人工智慧之產出應做適當資訊揭露或標記，以利評估風險並瞭解對相關權益之影響，提升可信任度。</p></div>
+   <div class="valuebox"><b>安全</b><p>研發與應用過程應建立資安防護措施，防範安全威脅及攻擊，確保系統之穩健性與安全性。</p></div>
+   <div class="valuebox"><b>公平</b><p>盡可能避免演算法產生偏差及歧視等風險，不應對特定群體造成歧視之結果。</p></div>
+   <div class="valuebox"><b>永續</b><p>兼顧社會公平及環境永續，提供適當教育及培訓，降低數位落差。</p></div>
+   <div class="valuebox"><b>隱私</b><p>妥善保護個人資料隱私，採用資料最小化原則；同時促進非敏感資料之開放及再利用。</p></div>
+   <div class="valuebox"><b>當責</b><p>確保承擔相應之責任，包含內部治理責任及外部社會責任。</p></div>
+  </div>
+  <h2>組織成員</h2>
+  <h3>組織成員構成</h3><p>該中心由跨領域成員組成，包含臨床專科醫師、資安專家、資訊人員、行政團隊及外部顧問。</p>
+  <h3>組織架構</h3><ul>
+   <li><b>主責單位：</b>智慧醫療創新中心</li>
+   <li><b>督導單位：</b>智慧醫療委員會</li>
+   <li><b>職能：</b>確保 AI 技術在醫療環境中的應用安全且合乎規範</li></ul>
+  <h3>服務功能</h3><p>中心設置專責窗口，提供洽案諮詢及申請受理服務，協助各單位推動相關 AI 應用。</p>
+  <h3>聯絡資訊</h3><ul><li>地址：花蓮市中央路三段707號</li><li>電話：〔　〕</li></ul>`},
+
+ {id:"strategy",n:"02",icon:"🧭",title:"三大落地實施策略",sub:"資安、透明性、生命週期",src:"page/8319",html:`
+  <h2>一、資安維護與隱私保護</h2>
+  <h3>1. 國內外資安法規與標準</h3><p>依據衛生福利部的規定，國內醫學中心須遵守《醫療機構資通安全管理指引》、《資通安全管理法》及《個人資料保護法》等相關法規。目前本院內部更新醫療資訊系統時，需依據資安檢核表達到「B 級」等級，並定期進行維護與資安稽核，確保病患資料的保護與系統安全。</p>
+  <h3>2. 標準化管理流程確保 AI 應用安全</h3><p>本中心相關辦法與標準，制定標準化流程涵蓋 AI 產品申請、審核及持續監測三大核心環節，以確保負責任 AI 應用的安全性與隱私保護，為醫療團隊及使用者提供更可靠的智慧醫療把關。</p>
+  <h2>二、九大透明性原則</h2><p>我們透過九大透明性原則，結合可解釋性分析（Explainability Analysis），確保醫療 AI 的決策過程可理解、可信賴，並為醫療機構提供清晰的監管框架。依據九大透明度原則裡的量化指標及可解釋性分析為標準依據，定期監測與管理機制為負責任 AI 落地管理重要原則，並落實停用或再調校機制，具有明確啟動停用程序權責單位、標準化作業流程、標準下限值等定義與執行方式。</p>
+  <h2>三、AI 生命週期管理</h2>
+  <h3>1. 簡介</h3><p>人工智慧在醫療領域的應用須確保安全性、合規性及持續有效性，因此 AI 生命週期管理（AI Lifecycle）成為醫院導入 AI 的重要管理機制。AI 技術應用全程均需納入風險評估與監測，以確保模型的穩定性、準確性與透明性。</p>
+  <h3>2. 醫院作法：監測標準與應變機制</h3>
+  <p><b>監測標準：</b>依據九大透明性原則與可解釋性分析，訂定可量化的監測指標（如模型準確度、偏差率、解釋性評估分數等），定期（如每年）進行監測。</p>
+  <p><b>異常應變機制：</b>若監測指標低於規範下限，負責任 AI 執行中心即啟動 AI 停用機制，並提報至AI治理委員會審查。</p>
+  <p><b>修正與重新驗證：</b>停用後，原申請單位須重新驗證並校調 AI 模型，直至監測指標回復至合格範圍，才允許恢復 AI 應用。</p>`},
+
+ {id:"transparency",n:"03",icon:"🔍",title:"九大透明性指標",sub:"運用・開發・維護三層",src:"page/8321",html:`
+ <div class="ninewrap">
+  <div class="lead">
+    當一套 AI 進到臨床現場，臨床醫師需要能<b>快速判斷「它能不能信、該怎麼用」</b>。
+    九大透明性指標把這件事拆成三個層面 —— <b>運用（怎麼用）</b>、<b>開發（怎麼造）</b>、<b>維護（上線後怎麼把關）</b>，
+    共九項需公開揭露的資訊。以下每一項附<b>臨床醫師該問的白話問題</b>與<b>乳房攝影 AI 的示範案例</b>，
+    協助您在採用或審議 AI 工具時，一眼看懂關鍵。
+  </div>
+
+  <div class="cycle">
+    <h2>透明度貫穿 AI 生命週期</h2>
+    <p class="sub">從開發、驗證、運用到維護，全程可被檢視 —— 這是「負責任 AI」的核心。</p>
+    <svg class="cyclefig" viewBox="0 0 900 190" role="img" aria-label="AI 生命週期三層面示意圖">
+      <defs>
+        <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L7,3 L0,6 Z" fill="#9aa7b0"/>
+        </marker>
+      </defs>
+      <g>
+        <rect x="30" y="45" width="240" height="86" rx="14" fill="#e9f0f7" stroke="#2b5d8a"/>
+        <text x="150" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#204869">開發層面</text>
+        <text x="150" y="94" text-anchor="middle" font-size="12" fill="#3a4650">怎麼造出來的</text>
+        <text x="150" y="114" text-anchor="middle" font-size="11.5" fill="#6b7783">指標 4・5・6</text>
+      </g>
+      <line x1="272" y1="88" x2="316" y2="88" stroke="#9aa7b0" stroke-width="2" marker-end="url(#ar)"/>
+      <g>
+        <rect x="330" y="45" width="240" height="86" rx="14" fill="#eaf5ef" stroke="#2e8a5e"/>
+        <text x="450" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#1f6b47">運用層面</text>
+        <text x="450" y="94" text-anchor="middle" font-size="12" fill="#3a4650">臨床端怎麼用</text>
+        <text x="450" y="114" text-anchor="middle" font-size="11.5" fill="#6b7783">指標 1・2・3</text>
+      </g>
+      <line x1="572" y1="88" x2="616" y2="88" stroke="#9aa7b0" stroke-width="2" marker-end="url(#ar)"/>
+      <g>
+        <rect x="630" y="45" width="240" height="86" rx="14" fill="#f8efe7" stroke="#b4531f"/>
+        <text x="750" y="72" text-anchor="middle" font-size="15" font-weight="700" fill="#8a3f16">維護層面</text>
+        <text x="750" y="94" text-anchor="middle" font-size="12" fill="#3a4650">上線後怎麼把關</text>
+        <text x="750" y="114" text-anchor="middle" font-size="11.5" fill="#6b7783">指標 7・8・9</text>
+      </g>
+      <path d="M750,131 L750,165 L150,165 L150,131" fill="none" stroke="#c3ced6" stroke-width="2"
+        stroke-dasharray="5 5" marker-end="url(#ar)"/>
+      <text x="450" y="182" text-anchor="middle" font-size="11.5" fill="#9aa7b0">持續回饋・再驗證・再訓練</text>
+    </svg>
+  </div>
+
+  <div class="sec use">
+    <span class="chip">運用</span><h2>運用層面</h2><span class="rng">指標 1–3</span>
+  </div>
+  <p class="sectip">臨床端在<b>「用之前」</b>該知道的事：這套 AI 輸出什麼、為了什麼、什麼情況不能用。</p>
+  <div class="grid">
+    <div class="card use">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">1</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2e8a5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="9" width="34" height="26" rx="3"/><path d="M13 29l6-7 5 5 6-9 5 6"/><line x1="18" y1="41" x2="30" y2="41"/><line x1="24" y1="35" x2="24" y2="41"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">運用細節及輸出結果</div><div class="en">Details & output of the intervention</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>這套 AI 到底會輸出「什麼」？分數、標記、分類各代表什麼、怎麼解讀？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>標記可疑鈣化／病灶位置；區域評分 <b>0–100</b>（越高越可疑）；檢查評分 <b>1–10</b>（經校準，無癌族群每級約占 10%）。</div>
+    </div>
+    <div class="card use">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">2</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2e8a5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="15"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="3" fill="#2e8a5e"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">運用目的</div><div class="en">Purpose of the intervention</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>它被設計來解決哪個臨床問題？預期效益是什麼？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>輔助放射科醫師辨識乳癌病灶，<b>提高早期發現機率</b>、減少診斷遺漏、優化工作流程。</div>
+    </div>
+    <div class="card use">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">3</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2e8a5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 8 L42 39 H6 Z"/><line x1="24" y1="20" x2="24" y2="30"/><circle cx="24" cy="34.5" r="1.4" fill="#2e8a5e" stroke="none"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">警告與範圍外使用</div><div class="en">Cautioned out-of-scope use</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>什麼情況「不能用」？有哪些已知限制與誤用風險？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span><b>不可單獨作為診斷工具</b>、不取代醫師；勿用於 MRI／超音波；目標人群與訓練人群差異大時須重新評估。</div>
+    </div>
+  </div>
+
+  <div class="sec dev">
+    <span class="chip">開發</span><h2>開發層面</h2><span class="rng">指標 4–6</span>
+  </div>
+  <p class="sectip">這個模型<b>「怎麼被造出來」</b>：用什麼資料訓練、公不公平、有沒有在外部驗證過。</p>
+  <div class="grid">
+    <div class="card dev">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">4</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2b5d8a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="13" rx="13" ry="5"/><path d="M11 13v10c0 2.8 5.8 5 13 5s13-2.2 13-5V13"/><path d="M11 23v10c0 2.8 5.8 5 13 5s13-2.2 13-5V23"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">開發詳情及輸入特徵</div><div class="en">Development details & input features</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>用什麼資料、哪些特徵、什麼演算法訓練出來的？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>匿名 <b>2D（FFDM）＋3D（DBT）</b> 影像；特徵含鈣化點、腫塊、密度、結構變形、年齡、乳房密度；演算法為 <b>CNN</b>。</div>
+    </div>
+    <div class="card dev">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">5</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2b5d8a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="24" y1="9" x2="24" y2="38"/><line x1="14" y1="38" x2="34" y2="38"/><path d="M24 13 L11 20 M24 13 L37 20"/><path d="M6 24a5 5 0 0 0 10 0z" fill="#e9f0f7"/><path d="M32 24a5 5 0 0 0 10 0z" fill="#e9f0f7"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">確保開發公平性</div><div class="en">Fairness in development</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>訓練資料涵蓋不同族群嗎？有沒有做偏差偵測與緩解？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>資料集經分析以涵蓋<b>不同年齡、種族、乳房密度</b>；採用偏差偵測與緩解方法，並執行公平性審查。</div>
+    </div>
+    <div class="card dev">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">6</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#2b5d8a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6 L39 12 V24 C39 33 32 39 24 42 C16 39 9 33 9 24 V12 Z"/><path d="M18 24l4.5 4.5L31 19"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">外部驗證過程</div><div class="en">External validation process</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>有沒有在「別家醫院、沒看過的資料」上驗證過通用性？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>於 <b>7 個歐盟國家＋美國多中心</b> 外部資料驗證；含 <b>7,882 例無癌＋1,240 例有癌</b>，橫跨多家機台廠牌。</div>
+    </div>
+  </div>
+
+  <div class="sec mnt">
+    <span class="chip">維護</span><h2>維護層面</h2><span class="rng">指標 7–9</span>
+  </div>
+  <p class="sectip">上線<b>「之後怎麼把關」</b>：表現數字是多少、誰在監控、多久重新驗證一次。</p>
+  <div class="grid">
+    <div class="card mnt">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">7</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#b4531f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 32a15 15 0 0 1 30 0"/><line x1="24" y1="32" x2="33" y2="21"/><circle cx="24" cy="32" r="2.4" fill="#b4531f" stroke="none"/><line x1="24" y1="32" x2="9" y2="32"/><line x1="39" y1="32" x2="24" y2="32"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">模型表現的量化指標</div><div class="en">Quantitative measures of performance</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>準確度到底多少？敏感度、特異度、AUC 各是多少？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>準確率 <b>95%</b>、敏感度 <b>94.7%</b>、特異度 <b>90%</b>、精確度 91%、<b>AUC 0.949</b>、召回率 92%。</div>
+    </div>
+    <div class="card mnt">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">8</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#b4531f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 12a7 7 0 0 0-9.5 8.5L9 30l3 3 9.5-9.5A7 7 0 0 0 30 14z"/><line x1="30" y1="30" x2="38" y2="38"/><line x1="33" y1="27" x2="41" y2="35"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">實施與使用的持續維護</div><div class="en">Ongoing maintenance of use</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>上線後誰負責監控？出問題時如何回報與處理？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>設<b>專責團隊</b>於部署後持續監控與處理問題；系統定期更新，並提供使用者支援與故障排除服務。</div>
+    </div>
+    <div class="card mnt">
+      <div class="band"></div>
+      <div class="chead">
+        <div class="num">9</div>
+        <div class="icon"><svg viewBox="0 0 48 48" fill="none" stroke="#b4531f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M38 20a15 15 0 1 0 .5 8"/><polyline points="38,9 38,20 27,20"/><line x1="24" y1="16" x2="24" y2="24"/><polyline points="24,24 29,28"/></svg></div>
+      </div>
+      <div class="ctitle"><div class="zh">更新與持續驗證／公平性評估計畫</div><div class="en">Update & continued validation schedule</div></div>
+      <div class="ask"><span class="lbl">醫師該問</span>多久重新驗證一次？表現掉下來會啟動什麼機制？</div>
+      <div class="eg"><span class="lbl">乳攝 AI 示範</span>每年抽 <b>≥300 例</b> 真實影像重評；敏感度 <b>&lt;85% 即暫停</b>，補資料再訓練至 ≥90% 才恢復使用。</div>
+    </div>
+  </div>
+
+  <div class="threeq">
+    <h2>臨床醫師 30 秒速判三問</h2>
+    <div class="qs">
+      <div class="q"><span class="n">1</span><p><b>它為誰而做、輸出什麼？</b><br>對照指標 1–2，確認用途與輸出符合我的病人與情境。</p></div>
+      <div class="q"><span class="n">2</span><p><b>它在「像我的病人」身上驗證過嗎？</b><br>對照指標 3・5・6，看範圍外警告、族群公平性與外部驗證。</p></div>
+      <div class="q"><span class="n">3</span><p><b>數字多少、誰在持續把關？</b><br>對照指標 7–9，確認效能指標、監控機制與再驗證計畫。</p></div>
+    </div>
+  </div>
+
+  <div class="ninefoot">
+    資料來源：衛生福利部資訊處《三大類型智慧醫療中心技術手冊》透明度強化章節；負責任 AI 中心九大透明性指標揭露框架。
+    示範案例（乳房攝影 AI）取自技術手冊揭露項目示範表。
+  </div>
+ </div>`},
+
+];
+
+/* ==================================================================
+   表單共用區塊
+   ================================================================== */
+const APPLICANT = {legend:"申請人資料",rows:[
+  {type:"row3",fields:[{t:"text",k:"ap_name",l:"姓名"},{t:"text",k:"ap_dept",l:"單位"},{t:"text",k:"ap_tel",l:"連絡電話"}]},
+  {type:"row3",fields:[{t:"text",k:"ap_eid",l:"員工編號"},{t:"text",k:"ap_title",l:"職稱"},{t:"text",k:"ap_email",l:"Email"}]},
+]};
+const HEADERROW = {type:"row2",fields:[{t:"text",k:"doc_no",l:"編號"},{t:"date",k:"doc_date",l:"申請日期"}]};
+
+/* ==================================================================
+   申請表單 01–07 schema
+   field types: text,date,textarea,checks(options[],可含{l,input}),radios,note,row2,row3,sub
+   ================================================================== */
+const FORMS = [
+ {id:"f01",n:"01",icon:"📝",title:"臨床試用申請表",sub:"新案試用週期",full:"人工智慧醫療器材軟體臨床試用申請表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW]}, APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"field",t:"text",k:"sw_name",l:"軟體中/英名稱"},
+     {type:"row2",fields:[{t:"text",k:"sw_field",l:"試用場域"},{t:"text",k:"sw_months",l:"試用時間(月)",hint:"如：3 個月"}]},
+   ]},
+   {legend:"軟體來源",rows:[
+     {type:"checks",k:"src_type",l:"來源類型",options:["醫療軟體製造商(非自購)","申請單位自購",{l:"院內自行研發，研發代表單位/同仁",input:true},{l:"外部合作研發，單位",input:true},{l:"其他，說明(註明單位)",input:true}]},
+     {type:"text",k:"tfda_no",l:"TFDA 醫材證號",hint:"若非本院開發/合作產品，請檢附 TFDA 醫材許可證"},
+     {type:"text",k:"irb_no",l:"IRB 編號/核准日期",hint:"未取得 TFDA 許可證者，請檢附開發模型所申請 IRB 核准證明"},
+   ]},
+   {legend:"自評風險分級",rows:[
+     {type:"radios",k:"risk_level",l:"風險分級（依附表一 IMDRF 自評）",options:["第Ⅰ級","第Ⅱ級","第Ⅲ級","第Ⅳ級"]},
+     {type:"riskmatrix"},
+   ]},
+   {legend:"智慧財產權歸屬",rows:[
+     {type:"radios",k:"ip_has",l:"是否有醫療器材智慧財產歸屬權",options:["是","否"]},
+     {type:"textarea",k:"ip_desc",l:"請詳細說明本產品智慧財產權歸屬"},
+   ]},
+   {legend:"維護",rows:[
+     {type:"checks",k:"maint_unit",l:"負責維護單位",options:[{l:"外部機構",input:true},{l:"研發團隊，主負責人",input:true},{l:"資訊室",input:true},{l:"其他",input:true}]},
+     {type:"checks",k:"maint_item",l:"維護檢查項目",options:["列入資訊室列管軟體之例行系統安全性更新相容性檢測","列入資訊室列管軟體之例行系統備份及還原機制維護","本機防火牆監控紀錄",{l:"不適用，說明",input:true}]},
+   ]},
+   {legend:"使用資料類別",rows:[
+     {type:"checks",k:"data_kind",l:"使用資料類別",options:["X-ray 影像","CT 影像","MRI 影像","超音波影像","病理影像","心電圖","生理監測結果","腦波","細胞組織切片","藥物相關","基因","臨床影片","語音轉錄","結構化病歷資料",{l:"預測模型",input:true},{l:"大型語言模型",input:true},{l:"照片(如皮膚、眼睛)，說明",input:true},{l:"行政作業資料數據，說明",input:true},{l:"其他",input:true}]},
+   ]},
+   {legend:"軟硬體設備配置",rows:[
+     {type:"checks",k:"compute_loc",l:"運算系統配置地點",options:["院內-資訊室機房",{l:"院內-使用單位，說明",input:true},{l:"院外",input:true},{l:"其他",input:true}]},
+     {type:"text",k:"hw_model",l:"運算硬體設備廠牌/型號"},
+     {type:"checks",k:"os_type",l:"運算軟體作業系統/版本",options:[{l:"Windows，版本",input:true},{l:"Linux，版本",input:true},{l:"其他，說明",input:true}]},
+     {type:"radios",k:"need_gpu",l:"是否需要本院提供 GPU、CPU 等運算資源",options:["是","否"]},
+     {type:"textarea",k:"gpu_desc",l:"預測/判讀資源配置說明（填「是」需說明）"},
+     {type:"checks",k:"docker",l:"Docker image",options:["自備 Docker image",{l:"詳列安裝環境套件版本",input:true},{l:"其他，說明",input:true}]},
+     {type:"radios",k:"client_sw",l:"需安裝 Client 端軟體於院內電腦",options:["是","否"]},
+     {type:"text",k:"client_desc",l:"Client 端安裝說明"},
+   ]},
+   {legend:"文件與附件",rows:[
+     {type:"radios",k:"manual_user",l:"是否有使用手冊",options:["是","否"]},
+     {type:"radios",k:"manual_tech",l:"是否有技術手冊",options:["是","否"]},
+     {type:"text",k:"arch_att",l:"系統架構圖（附件名稱）"},
+     {type:"text",k:"ui_att",l:"軟體操作畫面（附件名稱）"},
+   ]},
+   {legend:"輸入與輸出",rows:[
+     {type:"text",k:"input_size",l:"輸入資料大小、筆數預估",hint:"以每日最大量計算"},
+     {type:"checks",k:"return_way",l:"回傳方式",options:["Web Service","API","中繼資料表","結果即時回傳(顯示)",{l:"結果批次回傳，說明(頻次/時段/數量)",input:true}]},
+     {type:"textarea",k:"input_desc",l:"輸入資料說明",hint:"詳細說明資料來源、欄位名稱及資料型態"},
+     {type:"textarea",k:"other_desc",l:"其他說明",hint:"如無其他說明事項則免填"},
+     {type:"checks",k:"out_purpose",l:"輸出目的",options:["診斷輔助","治療輔助","生理訊號監測","醫療風險預測","提升工作效率",{l:"其他",input:true}]},
+     {type:"checks",k:"out_format",l:"輸出格式",options:["結構化資料(如機率值)","圖片(標註結果)","網頁呈現","視窗呈現","文字報告",{l:"其他",input:true}]},
+   ]},
+   {legend:"確效評估",rows:[
+     {type:"checks",k:"eval_method",l:"觀察型確效評估方式",options:[{l:"蒐集歷史性資料測試正確性，資料區間",input:true},"試用期前瞻性收集，期滿與參考標準相比正確率","試用期前瞻性收集，平行與醫療人員評估標準相比正確率",{l:"其他",input:true}]},
+     {type:"text",k:"eval_n",l:"確效評估最小樣本數",hint:"請詳細填寫臨床樣本數及相關說明"},
+     {type:"checks",k:"eval_std",l:"評估標準定義",options:["3 位以上專家共同判定","臨床系統記錄",{l:"其他",input:true}]},
+     {type:"checks",k:"eval_metric",l:"評估結果度量單位",options:["準確率(Accuracy)","精準率(Precision)","召回率(Recall)","F1 Score","ROC/AUC","Dice Score","IOU","特異度(Specificity)","靈敏度(Sensitivity)","真陽率(TPR)","假陽率(FPR)",{l:"其他",input:true}]},
+     {type:"radios",k:"ext_valid",l:"外部驗證",options:["否","是"]},
+     {type:"text",k:"ext_valid_org",l:"外部驗證合作機構"},
+   ]},
+   {legend:"個資去識別、保存及銷毀管理",note:"三類資料：醫院端輸入資料／運算過程資料／運算結果資料，請分別填寫",rows:[
+     {type:"sub",label:"① 醫院端輸入資料"},
+     {type:"row2",fields:[{t:"radios",k:"pi1_keep",l:"是否保留",options:["保留","不保留"]},{t:"radios",k:"pi1_deid",l:"是否去識別",options:["是","否"]}]},
+     {type:"checks",k:"pi1_loc",l:"存放位置",options:["回傳院內系統","上傳院外系統",{l:"其他",input:true}]},
+     {type:"text",k:"pi1_period",l:"保留期限(個月)"},
+     {type:"sub",label:"② 運算過程資料"},
+     {type:"row2",fields:[{t:"radios",k:"pi2_keep",l:"是否保留",options:["保留","不保留"]},{t:"radios",k:"pi2_deid",l:"是否去識別",options:["是","否"]}]},
+     {type:"checks",k:"pi2_loc",l:"存放位置",options:["回傳院內系統","上傳院外系統",{l:"其他",input:true}]},
+     {type:"text",k:"pi2_period",l:"保留期限(個月)"},
+     {type:"sub",label:"③ 運算結果資料"},
+     {type:"row2",fields:[{t:"radios",k:"pi3_keep",l:"是否保留",options:["保留","不保留"]},{t:"radios",k:"pi3_deid",l:"是否去識別",options:["是","否"]}]},
+     {type:"checks",k:"pi3_loc",l:"存放位置",options:["回傳院內系統","上傳院外系統",{l:"其他",input:true}]},
+     {type:"text",k:"pi3_period",l:"保留期限(個月)"},
+     {type:"textarea",k:"pi_auth",l:"權限管控／銷毀機制／回饋機制補充說明"},
+   ]},
+   {legend:"資訊安全與隱私保護審查",rows:[
+     {type:"radios",k:"rev_secure",l:"軟體安全性：通過資通訊安全性審查，無安全漏洞或風險",options:["是","否"]},
+     {type:"radios",k:"rev_compat",l:"系統相容性：與現有系統具備足夠相容性",options:["是","否"]},
+     {type:"radios",k:"rev_dataprot",l:"資料保護：病人資料是否在試用過程中不外洩",options:["是","否"]},
+     {type:"radios",k:"rev_install",l:"軟體安裝：已完成安裝與設定並能正常運行",options:["是","否"]},
+     {type:"radios",k:"rev_teach",l:"臨床試用：為使用者提供完整教學或指導",options:["是","否"]},
+     {type:"radios",k:"rev_record",l:"試用過程：記錄使用情況、問題及改進建議",options:["是","否"]},
+   ]},
+  ]},
+
+ {id:"f02",n:"02",icon:"📃",title:"揭露事項宣告表",sub:"九大透明性揭露",full:"人工智慧醫療器材軟體揭露事項宣告表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW]}, APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sw_zh",l:"中文名稱"},{t:"text",k:"sw_en",l:"英文名稱"}]},
+     {type:"row2",fields:[{t:"text",k:"tfda_no",l:"TFDA 醫材證號"},{t:"text",k:"irb_no",l:"IRB 編號/核准日期"}]},
+     {type:"row2",fields:[{t:"text",k:"dev_unit",l:"開發單位"},{t:"text",k:"use_unit",l:"使用單位"}]},
+     {type:"textarea",k:"sw_desc",l:"軟體敘述",hint:"如：應用場域及是否強制性使用等"},
+     {type:"textarea",k:"sw_use",l:"軟體用途",hint:"如：軟體適用條件、排除條件及產出解讀方式等"},
+   ]},
+   {legend:"揭露項目（九大透明性指標）",rows:[
+     {type:"textarea",k:"t1",l:"1. 運用細節及輸出結果",hint:"說明 AI 功能及輸出結果解讀"},
+     {type:"textarea",k:"t2",l:"2. 運用目的",hint:"說明目的及設計初衷"},
+     {type:"textarea",k:"t3",l:"3. 警告與範圍外使用",hint:"適用範圍及可能誤用情形"},
+     {type:"textarea",k:"t4",l:"4. 開發詳情及輸入特徵",hint:"開發細節及輸入特徵因子"},
+     {type:"textarea",k:"t5",l:"5. 確保開發公平性",hint:"確保公平性之措施"},
+     {type:"textarea",k:"t6",l:"6. 外部驗證過程",hint:"外部驗證過程與結果"},
+     {type:"textarea",k:"t7",l:"7. 模型表現的量化指標",hint:"需與臨床試用申請表評估結果度量單位一致"},
+     {type:"textarea",k:"t8",l:"8. 實施與使用的持續維護",hint:"實施及持續維護計畫"},
+     {type:"textarea",k:"t9",l:"9. 更新與持續驗證或公平性評估計畫",hint:"含模型品質下限門檻值"},
+   ]},
+   {legend:"經辦人填寫（申請人勿填）",rows:[
+     {type:"row3",fields:[{t:"date",k:"d_trial",l:"試用起訖日期"},{t:"date",k:"d_online",l:"上線日期"},{t:"date",k:"d_end",l:"終止日期"}]},
+   ]},
+  ]},
+
+ {id:"f03",n:"03",icon:"✅",title:"成效檢核表",sub:"試用/上線/維運",full:"人工智慧醫療器材軟體成效檢核表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW,
+     {type:"checks",k:"check_type",l:"檢核類型",options:["試用週期","上線週期","維運週期",{l:"其他",input:true}]},
+     {type:"text",k:"check_period",l:"檢核期程",hint:"請填寫起訖日期區間"}]},
+   APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sw_zh",l:"中文名稱"},{t:"text",k:"sw_en",l:"英文名稱"}]},
+     {type:"text",k:"sw_no",l:"軟體編號",hint:"檢核類型若為試用週期則免填"},
+     {type:"textarea",k:"evidence",l:"佐證資料",hint:"請說明佐證資料，以利審查"},
+   ]},
+   {legend:"整體/軟體成效",rows:[
+     {type:"radios",k:"e_scope",l:"範圍是否涵蓋所有預定目標",options:["是","否"]},
+     {type:"radios",k:"e_stable",l:"是否能夠穩定運行",options:["是","否"]},
+     {type:"radios",k:"e_sample",l:"是否達到預期最小樣本數",options:["是","否"]},
+     {type:"radios",k:"e_expect",l:"評估結果是否符合預期",options:["是","否"]},
+   ]},
+   {legend:"臨床成效",rows:[
+     {type:"radios",k:"c_treat",l:"是否有效提升治療效果",options:["是","否","不適用"]},
+     {type:"radios",k:"c_risk",l:"是否能有效預測臨床風險",options:["是","否","不適用"]},
+     {type:"radios",k:"c_safe",l:"是否有效提升病人安全",options:["是","否","不適用"]},
+   ]},
+   {legend:"工作效率",rows:[
+     {type:"radios",k:"w_load",l:"是否有效減少同仁工作負擔",options:["是","否","不適用"]},
+     {type:"radios",k:"w_time",l:"是否顯著節省同仁工作時間",options:["是","否","不適用"]},
+     {type:"radios",k:"w_eff",l:"是否提高醫療服務整體效率",options:["是","否","不適用"]},
+   ]},
+   {legend:"滿意度",rows:[
+     {type:"radios",k:"s_psat",l:"病人是否滿意此 AI 軟體之輔助",options:["是","否","不適用"]},
+     {type:"radios",k:"s_ptrust",l:"病人是否信任此 AI 軟體之輔助",options:["是","否","不適用"]},
+     {type:"radios",k:"s_usat",l:"使用者是否滿意此 AI 軟體之輔助",options:["是","否","不適用"]},
+     {type:"radios",k:"s_utrust",l:"使用者是否信任此 AI 軟體之輔助",options:["是","否","不適用"]},
+   ]},
+   {legend:"成本效益",rows:[
+     {type:"radios",k:"b_cost",l:"AI 軟體是否節省醫療成本",options:["是","否","不適用"]},
+     {type:"radios",k:"b_roi",l:"投資回報是否達到預期",options:["是","否","不適用"]},
+     {type:"radios",k:"b_res",l:"是否提高醫療資源利用效率",options:["是","否","不適用"]},
+   ]},
+   {legend:"風險管理／法規／培訓",rows:[
+     {type:"radios",k:"r_fail",l:"系統運作異常是否有妥善因應措施並確實實施",options:["是","否"]},
+     {type:"radios",k:"r_wrong",l:"運算結果不準確之因應措施是否已制定並落實",options:["是","否"]},
+     {type:"radios",k:"r_law",l:"是否符合相關法律法規",options:["是","否"]},
+     {type:"radios",k:"r_train",l:"使用者是否接受足夠教育培訓",options:["是","否"]},
+     {type:"radios",k:"r_manual",l:"是否有使用手冊或教材可方便查閱",options:["是","否"]},
+   ]},
+  ]},
+
+ {id:"f04",n:"04",icon:"🚀",title:"臨床上線申請表",sub:"新案上線週期",full:"人工智慧醫療器材軟體臨床上線申請表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW]}, APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sw_zh",l:"中文名稱"},{t:"text",k:"sw_en",l:"英文名稱"}]},
+   ]},
+   {legend:"試用通過報告（檢附佐證資料）",rows:[
+     {type:"checks",k:"attach",l:"佐證資料",options:[{l:"臨床試用申請表，案件編號",input:true},"揭露事項宣告表 [必要]","成效檢核表(試用週期) [必要]",{l:"其他(如 TFDA 許可證)",input:true}]},
+     {type:"textarea",k:"scale",l:"上線場域規模",hint:"請詳細說明上線院區、科室等"},
+     {type:"text",k:"benefit_cycle",l:"效益評估週期",hint:"如：3 個月"},
+   ]},
+  ]},
+
+ {id:"f05",n:"05",icon:"🟥",title:"終止使用申請表",sub:"維運及終止週期",full:"人工智慧醫療器材軟體終止使用申請表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW]}, APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sw_name",l:"中/英名稱"},{t:"text",k:"sw_no",l:"軟體編號"}]},
+     {type:"date",k:"online_date",l:"上線日期"},
+     {type:"checks",k:"end_type",l:"終止類型",options:["使用者接受度低","功能不符使用","授權到期","法規限制","效益評估不符標準","成本效益不佳","維護困難","支援服務不足","其他產品可取代或涵蓋功能","資通安全與隱私保護未達標準",{l:"其他",input:true}]},
+     {type:"textarea",k:"end_reason",l:"原因說明",hint:"請詳細說明終止原因"},
+   ]},
+   {legend:"影響評估",rows:[
+     {type:"textarea",k:"imp_flow",l:"流程端（對現有業務流程的影響）"},
+     {type:"textarea",k:"imp_patient",l:"病人端（對病人的影響）"},
+     {type:"textarea",k:"imp_other",l:"其他相關影響"},
+   ]},
+   {legend:"替代方案與風險",rows:[
+     {type:"radios",k:"alt_has",l:"替代方案",options:["無","有"]},
+     {type:"textarea",k:"alt_desc",l:"替代方案說明"},
+     {type:"textarea",k:"risk_desc",l:"終止過程之風險管理措施與因應"},
+   ]},
+   {legend:"作業事項",note:"項目：終止通知／數據備份／系統下線／相關事項處理",rows:[
+     {type:"textarea",k:"ops",l:"各項作業之主負責人/單位、預計完成日期、備註"},
+   ]},
+  ]},
+
+ {id:"f06",n:"06",icon:"🔧",title:"異動申請表",sub:"異動週期",full:"人工智慧醫療器材軟體異動申請表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[HEADERROW,
+     {type:"checks",k:"change_type",l:"異動類型",options:["錯誤更正","介面異動","功能異動(含增刪修)","性能優化(如模型重訓練或改版)","適應性升級或改版",{l:"其他",input:true}]}]},
+   APPLICANT,
+   {legend:"軟體資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sw_zh",l:"中文名稱"},{t:"text",k:"sw_en",l:"英文名稱"}]},
+     {type:"text",k:"sw_no",l:"軟體編號"},
+     {type:"textarea",k:"evidence",l:"佐證資料",hint:"請說明佐證資料，以利審查"},
+   ]},
+   {legend:"異動項目",rows:[
+     {type:"radios",k:"chg_risk",l:"風險等級是否異動（依附表一自評）",options:["否","是"]},
+     {type:"row2",fields:[{t:"text",k:"chg_risk_from",l:"原等級"},{t:"text",k:"chg_risk_to",l:"異動後等級"}]},
+     {type:"textarea",k:"chg_risk_desc",l:"說明"},
+     {type:"radios",k:"chg_hw",l:"運算硬體配置地點是否異動",options:["否","是"]},
+     {type:"textarea",k:"chg_hw_desc",l:"說明"},
+     {type:"radios",k:"chg_sec",l:"資訊安全與隱私保護程度是否影響",options:["否","是（需會辦資通安全委員會評估並檢附結果）"]},
+     {type:"textarea",k:"chg_sec_desc",l:"說明"},
+   ]},
+   {legend:"影響評估",rows:[
+     {type:"radios",k:"imp_patient",l:"對病人之不良影響",options:["無影響","不顯著","顯著"]},
+     {type:"textarea",k:"imp_patient_desc",l:"病人影響說明與因應"},
+     {type:"radios",k:"imp_user",l:"對使用者之不良影響",options:["無影響","不顯著","顯著"]},
+     {type:"textarea",k:"imp_user_desc",l:"使用者影響說明與因應"},
+     {type:"textarea",k:"train_desc",l:"教育訓練方式說明"},
+     {type:"textarea",k:"other_desc",l:"其他影響說明"},
+   ]},
+  ]},
+
+ {id:"f07",n:"07",icon:"🛡️",title:"資通系統防護需求等級評估表",sub:"機密性/完整性/可用性/法遵",full:"資通系統防護需求等級評估表",src:"page/8318",
+  sections:[
+   {legend:"表單資訊",rows:[
+     {type:"row2",fields:[{t:"text",k:"sys_name",l:"資通系統名稱"},{t:"date",k:"eval_date",l:"評估日期"}]},
+     {type:"textarea",k:"main_func",l:"主要功能說明"},
+   ]},
+   {legend:"① 資通系統基本資料",rows:[
+     {type:"text",k:"subsys",l:"子功能資通系統項目"},
+     {type:"radios",k:"is_core",l:"是否為支持核心業務持續運作必要之核心資通系統",options:["Y","N"]},
+     {type:"radios",k:"has_sensitive",l:"是否含機敏資料",options:["Y","N"]},
+   ]},
+   {legend:"② 設定影響構面等級",note:"防護需求等級：普／中／高",rows:[
+     {type:"sub",label:"1. 機密性"},
+     {type:"row2",fields:[{t:"radios",k:"c_init",l:"初估等級",options:["普","中","高"]},{t:"radios",k:"c_chg",l:"異動等級",options:["普","中","高"]}]},
+     {type:"textarea",k:"c_reason",l:"原因說明",hint:"醫療資訊符合個資法第二條個人資料定義範圍，寫入病歷資料可能性低"},
+     {type:"sub",label:"2. 完整性"},
+     {type:"row2",fields:[{t:"radios",k:"i_init",l:"初估等級",options:["普","中","高"]},{t:"radios",k:"i_chg",l:"異動等級",options:["普","中","高"]}]},
+     {type:"textarea",k:"i_reason",l:"原因說明",hint:"電子病歷內容需保有完整紀錄可供查核"},
+     {type:"sub",label:"3. 可用性"},
+     {type:"row2",fields:[{t:"radios",k:"a_init",l:"初估等級",options:["普","中","高"]},{t:"radios",k:"a_chg",l:"異動等級",options:["普","中","高"]}]},
+     {type:"textarea",k:"a_reason",l:"原因說明",hint:"資訊服務中斷不影響病人治療業務且不危及病人安全"},
+     {type:"sub",label:"4. 法律遵循性"},
+     {type:"row2",fields:[{t:"radios",k:"l_init",l:"初估等級",options:["普","中","高"]},{t:"radios",k:"l_chg",l:"異動等級",options:["普","中","高"]}]},
+     {type:"textarea",k:"l_reason",l:"原因說明",hint:"業務資訊須遵循醫療法、個人資料保密法等規範辦理"},
+   ]},
+   {legend:"綜合評估",rows:[
+     {type:"radios",k:"final_level",l:"資通系統防護需求等級（綜合）",options:["普","中","高"]},
+   ]},
+  ]},
+];
+
+/* ==================================================================
+   資通系統防護基準：主控制目錄（80 項，共用）
+   [項次, 構面, 子類, 最低等級, 安全控制措施]
+   ================================================================== */
+const SEC_CATALOG = [
+ [1,"存取控制","(1) 帳號管理","普","建立帳號管理機制，包含帳號之申請、建立、修改、啟用、停用及刪除之程序。"],
+ [2,"存取控制","(1) 帳號管理","普","已逾期之臨時或緊急帳號應刪除或禁用。"],
+ [3,"存取控制","(1) 帳號管理","普","資通系統閒置帳號應禁用。"],
+ [4,"存取控制","(1) 帳號管理","普","定期審核資通系統帳號之申請、建立、修改、啟用、停用及刪除。"],
+ [5,"存取控制","(1) 帳號管理","中","機關應定義各系統之閒置時間或可使用期限與資通系統之使用情況及條件。"],
+ [6,"存取控制","(1) 帳號管理","中","逾越機關所許可之閒置時間或可使用期限時，系統應自動將使用者登出。"],
+ [7,"存取控制","(1) 帳號管理","高","應依機關規定之情況及條件，使用資通系統。"],
+ [8,"存取控制","(1) 帳號管理","高","監控資通系統帳號，如發現帳號違常使用時回報管理者。"],
+ [9,"存取控制","(2) 最小權限","普","採最小權限原則，僅允許使用者（或代表使用者行為之程序）依機關任務及業務功能，完成指派任務所需之授權存取。"],
+ [10,"存取控制","(3) 遠端存取","普","對於每一種允許之遠端存取類型，均應先取得授權，建立使用限制、組態需求、連線需求及文件化。"],
+ [11,"存取控制","(3) 遠端存取","普","使用者之權限檢查作業應於伺服器端完成。"],
+ [12,"存取控制","(3) 遠端存取","普","應監控遠端存取機關內部網段或資通系統後臺之連線。"],
+ [13,"存取控制","(3) 遠端存取","普","應採用加密機制。"],
+ [14,"存取控制","(3) 遠端存取","中","遠端存取之來源應為機關已預先定義及管理之存取控制點。"],
+ [15,"事件日誌與可歸責性","(1) 記錄事件","普","訂定日誌之記錄時間週期及留存政策，並保留日誌至少 6 個月。"],
+ [16,"事件日誌與可歸責性","(1) 記錄事件","普","確保資通系統有記錄特定事件之功能，並決定應記錄之特定資通系統事件。"],
+ [17,"事件日誌與可歸責性","(1) 記錄事件","普","應記錄資通系統管理者帳號所執行之各項功能。"],
+ [18,"事件日誌與可歸責性","(1) 記錄事件","中","應定期審查機關所保留資通系統產生之日誌。"],
+ [19,"事件日誌與可歸責性","(2) 日誌紀錄內容","普","資通系統產生之日誌應包含事件類型、發生時間、發生位置及任何與事件相關之使用者身分識別等資訊，採用單一日誌機制，確保輸出格式之一致性，並應依資通安全政策及法規要求納入其他相關資訊。"],
+ [20,"事件日誌與可歸責性","(3) 日誌儲存容量","普","依據日誌儲存需求，配置所需之儲存容量。"],
+ [21,"事件日誌與可歸責性","(4) 日誌處理失效之回應","普","資通系統於日誌處理失效時，應採取適當之行動。"],
+ [22,"事件日誌與可歸責性","(4) 日誌處理失效之回應","高","機關規定需要即時通報之日誌處理失效事件發生時，資通系統應於機關規定之時效內，對特定人員提出警告。"],
+ [23,"事件日誌與可歸責性","(5) 時戳及校時","普","資通系統應使用系統內部時鐘產生日誌所需時戳，並可以對應到世界協調時間(UTC)或格林威治標準時間(GMT)。"],
+ [24,"事件日誌與可歸責性","(5) 時戳及校時","普","系統內部時鐘應定期與基準時間源進行同步。"],
+ [25,"事件日誌與可歸責性","(6) 日誌資訊之保護","普","對日誌之存取管理，僅限於有權限之使用者。"],
+ [26,"事件日誌與可歸責性","(6) 日誌資訊之保護","中","應運用雜湊或其他適當方式之完整性確保機制。"],
+ [27,"事件日誌與可歸責性","(6) 日誌資訊之保護","高","定期備份日誌至原系統外之其他實體系統。"],
+ [28,"營運持續計畫","(1) 系統備份","普","訂定系統可容忍資料損失之時間要求。"],
+ [29,"營運持續計畫","(1) 系統備份","普","執行系統源碼與資料備份。"],
+ [30,"營運持續計畫","(1) 系統備份","中","應定期測試備份資訊，以驗證備份媒體之可靠性及資訊之完整性。"],
+ [31,"營運持續計畫","(1) 系統備份","高","應將備份還原，作為營運持續計畫測試之一部分。"],
+ [32,"營運持續計畫","(1) 系統備份","高","應建立資料異地備份機制。"],
+ [33,"營運持續計畫","(2) 系統備援","普","訂定資通系統從中斷後至重新恢復服務之可容忍時間要求。"],
+ [34,"營運持續計畫","(2) 系統備援","中","原服務中斷時，於可容忍時間內，由備援設備或其他方式取代並提供服務。"],
+ [35,"營運持續計畫","(2) 系統備援","高","應將備援啟動作為營運持續計畫演練之一部分。"],
+ [36,"識別與鑑別","(1) 使用者之識別與鑑別","普","資通系統應識別及鑑別使用者，並禁止使用者使用共用帳號。"],
+ [37,"識別與鑑別","(1) 使用者之識別與鑑別","高","對資通系統之存取採取多因子鑑別技術。"],
+ [38,"識別與鑑別","(2) 身分驗證管理","普","使用預設密碼登入系統時，應於登入後要求立即變更。"],
+ [39,"識別與鑑別","(2) 身分驗證管理","普","身分驗證相關資訊不以明文傳輸。"],
+ [40,"識別與鑑別","(2) 身分驗證管理","普","具備帳戶鎖定機制，帳號登入進行身分驗證失敗達五次後，至少十五分鐘內不允許該帳號繼續嘗試登入或使用機關自建之失敗驗證機制。"],
+ [41,"識別與鑑別","(2) 身分驗證管理","普","使用密碼進行驗證時，應強制最低密碼複雜度；依機關密碼效期規定變更密碼。"],
+ [42,"識別與鑑別","(2) 身分驗證管理","普","密碼變更時，至少不可以與前三次使用過之密碼相同。"],
+ [43,"識別與鑑別","(2) 身分驗證管理","普","上述兩點所定措施，對非內部使用者，可依機關自行規範辦理。"],
+ [44,"識別與鑑別","(2) 身分驗證管理","中","身分驗證機制應防範自動化程式之登入或密碼更換嘗試。"],
+ [45,"識別與鑑別","(2) 身分驗證管理","中","密碼重設機制對使用者重新身分確認後，發送一次性及具有時效性符記。"],
+ [46,"識別與鑑別","(3) 鑑別資訊回饋","普","資通系統應遮蔽鑑別過程中之資訊。"],
+ [47,"識別與鑑別","(3) 鑑別資訊回饋","中","資通系統如以密碼進行鑑別時，該密碼應加密或經雜湊處理後儲存。"],
+ [48,"系統與服務獲得","(1) 系統發展生命週期—需求階段","普","針對系統安全需求（含機密性、可用性、完整性），進行確認。"],
+ [49,"系統與服務獲得","(2) 系統發展生命週期—設計階段","中","根據系統功能與要求，識別可能影響系統之威脅，進行風險分析及評估。"],
+ [50,"系統與服務獲得","(2) 系統發展生命週期—設計階段","中","將風險評估結果回饋需求階段的檢核項目，並提出安全需求修正。"],
+ [51,"系統與服務獲得","(3) 系統發展生命週期—開發階段","普","應針對安全需求實作必要控制措施。"],
+ [52,"系統與服務獲得","(3) 系統發展生命週期—開發階段","普","應注意避免軟體常見漏洞及實作必要控制措施。"],
+ [53,"系統與服務獲得","(3) 系統發展生命週期—開發階段","普","發生錯誤時，使用者頁面僅顯示簡短錯誤訊息及代碼，不包含詳細的錯誤訊息。"],
+ [54,"系統與服務獲得","(3) 系統發展生命週期—開發階段","高","執行「源碼掃描」安全檢測。"],
+ [55,"系統與服務獲得","(3) 系統發展生命週期—開發階段","高","系統應具備發生嚴重錯誤時之通知機制。"],
+ [56,"系統與服務獲得","(4) 系統發展生命週期—測試階段","普","執行「弱點掃描」安全檢測。"],
+ [57,"系統與服務獲得","(4) 系統發展生命週期—測試階段","高","執行「滲透測試」安全檢測。"],
+ [58,"系統與服務獲得","(5) 系統發展生命週期—部署與維運階段","普","於部署環境中應針對相關資通安全威脅，進行更新與修補，並關閉不必要服務及埠口。"],
+ [59,"系統與服務獲得","(5) 系統發展生命週期—部署與維運階段","普","識別並關閉不必要服務及埠口。"],
+ [60,"系統與服務獲得","(5) 系統發展生命週期—部署與維運階段","普","資通系統不使用預設密碼。"],
+ [61,"系統與服務獲得","(5) 系統發展生命週期—部署與維運階段","普","執行系統源碼備份。"],
+ [62,"系統與服務獲得","(5) 系統發展生命週期—部署與維運階段","中","於系統發展生命週期之維運階段，應執行版本控制與變更管理。"],
+ [63,"系統與服務獲得","(6) 系統發展生命週期—委外階段","普","資通系統開發如委外辦理，應將系統發展生命週期各階段依等級將安全需求（含機密性、可用性、完整性）納入委外契約。"],
+ [64,"系統與服務獲得","(7) 獲得程序","普","識別資通系統使用之第三方軟體、服務、函式庫或其他元件。"],
+ [65,"系統與服務獲得","(7) 獲得程序","中","開發、測試以及正式作業環境應為區隔。"],
+ [66,"系統與服務獲得","(8) 系統文件","普","應儲存與管理系統發展生命週期之相關文件。"],
+ [67,"系統與通訊保護","(1) 傳輸之機密性與完整性","高","資通系統應採用加密機制，以防止未授權之資訊揭露或偵測資訊之變更。但傳輸過程中有替代之實體保護措施者，不在此限。"],
+ [68,"系統與通訊保護","(1) 傳輸之機密性與完整性","高","使用公開、國際機構驗證且未遭破解的演算法。"],
+ [69,"系統與通訊保護","(1) 傳輸之機密性與完整性","高","加密金鑰或憑證週期性更換。"],
+ [70,"系統與通訊保護","(1) 傳輸之機密性與完整性","高","伺服器端之金鑰保管應製定管理規則及實施應有之安全防護措施。"],
+ [71,"系統與通訊保護","(2) 資料儲存之安全","高","資通系統重要組態設定檔案及其他具保護需求之資訊應加密或以其他適當方式儲存。"],
+ [72,"系統與資訊完整性","(1) 漏洞修復","普","系統之漏洞修復應測試有效性及潛在影響，並定期更新。"],
+ [73,"系統與資訊完整性","(1) 漏洞修復","中","定期確認資通系統相關漏洞修復之狀態。"],
+ [74,"系統與資訊完整性","(2) 資訊系統監控","普","發現資通系統有被入侵跡象時，應通報機關特定人員。"],
+ [75,"系統與資訊完整性","(2) 資訊系統監控","中","監控資通系統，以偵測攻擊與未授權之連線，並識別資通系統之未授權使用。"],
+ [76,"系統與資訊完整性","(2) 資訊系統監控","高","資通系統應採用自動化工具監控進出之通信流量，並於發現不尋常或未授權之活動時，針對該事件進行分析。"],
+ [77,"系統與資訊完整性","(3) 軟體及資訊完整性","普","使用者輸入資料合法性檢查應置放於應用系統伺服器端。"],
+ [78,"系統與資訊完整性","(3) 軟體及資訊完整性","中","使用完整性驗證工具，以偵測未授權變更特定軟體及資訊。"],
+ [79,"系統與資訊完整性","(3) 軟體及資訊完整性","中","發現違反完整性時，資通系統應實施機關指定之安全保護措施。"],
+ [80,"系統與資訊完整性","(3) 軟體及資訊完整性","高","應定期執行軟體和資訊完整性檢查。"],
+];
+const LVL_ORDER={"普":1,"中":2,"高":3};
+const SEC_FORMS=[
+ {id:"f08",n:"08",icon:"🗒️",title:"普級防護基準評估表",sub:"最低等級＝普",level:"普"},
+ {id:"f09",n:"09",icon:"🗒️",title:"中級防護基準評估表",sub:"最低等級 ≤ 中",level:"中"},
+ {id:"f10",n:"10",icon:"🗒️",title:"高級防護基準評估表",sub:"全部控制措施",level:"高"},
+];
+
+/* ==================================================================
+   週期 → 應填表單 對照（自動分流引擎用）
+   ================================================================== */
+const CYCLES = [
+ {id:"trial", icon:"🧪", label:"試用週期",  desc:"新 AI 導入院內試用前的申請與審查"},
+ {id:"online",icon:"🚀", label:"上線週期",  desc:"試用通過後正式上線"},
+ {id:"ops",   icon:"📈", label:"維運週期",  desc:"上線後定期監測成效與品質下限"},
+ {id:"change",icon:"🔧", label:"異動週期",  desc:"已上線 AI 的變更、改版、模型重訓"},
+ {id:"stop",  icon:"🟥", label:"終止週期",  desc:"AI 系統退場、停止使用"},
+];
+const CYCLE_FORMS = {
+ trial: [{id:"f01",req:true},{id:"f02",req:true},{id:"f07",req:true},{id:"f03",req:true,note:"試用週期"}],
+ online:[{id:"f04",req:true},{id:"f03",req:true,note:"上線週期"}],
+ ops:   [{id:"f03",req:true,note:"維運週期"}],
+ change:[{id:"f06",req:true},{id:"f07",req:false,note:"僅資安受影響時"}],
+ stop:  [{id:"f05",req:true}],
+};
+/* 風險初篩題（自動分級用） */
+const RISK_Q = [
+ {k:"clinical",t:"AI 會影響診斷、治療、分流、用藥或檢查安排？",s:"臨床責任風險"},
+ {k:"patient", t:"系統會直接對病人／家屬輸出醫療內容或互動？",s:"醫病溝通風險"},
+ {k:"pid",     t:"使用可識別病人資料（未去識別）？",s:"個資風險"},
+ {k:"emr",     t:"與 HIS／EMR／PACS／LIS 介接？",s:"院內系統資料流風險"},
+ {k:"cloud",   t:"使用外部雲端／API（資料離開院內）？",s:"外傳與供應商風險"},
+ {k:"agent",   t:"具自主行動能力（AI agent，可自動執行動作）？",s:"權限與可中止風險"},
+ {k:"device",  t:"可能屬 AI/ML 醫療器材但尚無 TFDA 許可？",s:"法規風險"},
+];
+
+/* ==================================================================
+   申請流程圖（swimlane 資料化）
+   cell: {n:1-5, form:"fxx", t, m, tag, dec, branches:[[cls,label]...]}
+   ================================================================== */
+const LANES = ["申請者","行政審核","資安稽核","AI 稽核","AI 治理委員會"];
+const FLOW = [
+ {id:"c1",title:"① 新案試用週期",desc:"新 AI 應用導入院內試用前的申請與審查。表單：f01 臨床試用申請表、f02 揭露宣告、f07 資安審查、f03 成效檢核。",
+  note:"步驟 3 資安稽核與 AI 稽核<b>並行</b>；任一未過即回步驟 1 補正。",
+  steps:[
+   {no:"1",cap:"提出申請",cells:{0:{n:1,form:"f01",t:"填 f01 臨床試用申請表",m:"＋f02 揭露宣告、IMDRF 風險自評",tag:"f01 · f02"}}},
+   {no:"2",cap:"收件初審",cells:{1:{n:2,t:"收件・編號・完整性審查",m:"缺件退回補正；齊備後分派審查"}}},
+   {no:"3",cap:"並行審查",cells:{2:{n:3,form:"f07",t:"f07 資安審查",m:"防護需求等級（普/中/高級）",tag:"f07"},3:{n:4,t:"技術・倫理・公平性審查",m:"依 IMDRF 分級核對風險與確效"}}},
+   {no:"4",cap:"審議決議",cells:{4:{n:5,dec:true,t:"審議決議",branches:[["pass","通過→試用"],["fail","不通過"],["loop","退回補正→步驟1"]]}}},
+   {no:"5",cap:"執行試用",cells:{0:{n:1,t:"執行臨床試用",m:"依核定場域與期程試用並蒐集數據"}}},
+   {no:"6",cap:"成效檢核",cells:{0:{n:1,form:"f03",t:"f03 成效檢核（試用週期）",m:"送 AI 治理委員會認可",tag:"f03"},4:{n:5,t:"試用結果認可",m:"通過即具備上線申請資格"}}},
+  ]},
+ {id:"c2",title:"② 新案上線週期",desc:"試用通過後正式上線。表單：f04 臨床上線申請表（附 f01/f02/f03 佐證）、f03 成效檢核（上線週期）。",
+  note:"上線後即進入 <b>③ 維運週期</b> 的定期監測。",
+  steps:[
+   {no:"1",cap:"提出上線",cells:{0:{n:1,form:"f04",t:"填 f04 臨床上線申請表",m:"附 f01／f02／f03 試用佐證",tag:"f04"}}},
+   {no:"2",cap:"佐證審查",cells:{1:{n:2,t:"審查佐證完整性",m:"確認試用成效與必附文件齊備"}}},
+   {no:"3",cap:"上線審查",cells:{3:{n:4,t:"上線技術／風險複審",m:"確認擴大場域規模之風險可控"}}},
+   {no:"4",cap:"審議決議",cells:{4:{n:5,dec:true,t:"上線審議",branches:[["pass","通過→上線"],["fail","不通過"],["loop","退回補正"]]}}},
+   {no:"5",cap:"正式上線",cells:{0:{n:1,t:"正式上線・進入維運",m:"依效益評估週期定期回報"}}},
+  ]},
+ {id:"c3",title:"③ 維運監測週期",desc:"上線後定期監測成效與品質下限。表單：f03 成效檢核（維運週期）。指標低於門檻即觸發暫停/重驗或終止。",
+  note:"「暫停/重驗」須由申請者重新驗證並校調模型至合格；無法回復則轉 <b>④ 終止</b> 流程。",
+  steps:[
+   {no:"1",cap:"定期檢核",cells:{0:{n:1,form:"f03",t:"f03 成效檢核（維運週期）",m:"依效益評估週期定期提交",tag:"f03"}}},
+   {no:"2",cap:"指標監測",cells:{1:{n:2,t:"彙整監測指標"},3:{n:4,t:"審查品質下限門檻",m:"對照揭露宣告表之量化指標"}}},
+   {no:"3",cap:"研判",cells:{4:{n:5,dec:true,t:"指標是否達標？",branches:[["pass","達標→續維運"],["loop","未達→暫停/重驗"],["fail","無法回復→終止"]]}}},
+  ]},
+ {id:"c4",title:"④ 異動・終止週期",desc:"已上線 AI 的變更或退場。表單：f06 異動申請表、f05 終止使用申請表。異動若影響資安須會辦資安稽核。",
+  note:"異動路線 A3 資安會辦為<b>條件式</b>觸發（f06「資安是否影響＝是」）；否則跳過直接進 A4。",
+  subflows:[
+   {label:"路線 A・異動",color:"var(--r2)",steps:[
+     {no:"A1",cap:"提出異動",cells:{0:{n:1,form:"f06",t:"填 f06 異動申請表",m:"錯誤更正／功能／模型重訓／改版",tag:"f06"}}},
+     {no:"A2",cap:"分類",cells:{1:{n:2,t:"分類異動類型・風險研判"}}},
+     {no:"A3",cap:"條件會辦",cells:{2:{n:3,t:"會辦資安評估",m:"僅當異動影響資安時觸發"},3:{n:4,t:"風險等級變更複審"}}},
+     {no:"A4",cap:"審議",cells:{4:{n:5,dec:true,t:"異動審議",branches:[["pass","通過→實施"],["fail","不通過"]]}}},
+   ]},
+   {label:"路線 B・終止",color:"#b42318",steps:[
+     {no:"B1",cap:"提出終止",cells:{0:{n:1,form:"f05",t:"填 f05 終止使用申請表",m:"含影響評估（流程/病人）與風險因應",tag:"f05"}}},
+     {no:"B2",cap:"審查",cells:{1:{n:2,t:"審查終止理由與影響評估"}}},
+     {no:"B3",cap:"核示",cells:{4:{n:5,dec:true,t:"終止核示"}}},
+     {no:"B4",cap:"退場作業",cells:{0:{n:1,t:"退場作業",m:"終止通知・數據備份・系統下線"}}},
+   ]},
+  ]},
+];
+
+/* ==================================================================
+   工具：案件主檔 / localStorage
+   ================================================================== */
+const view=document.getElementById("view"), crumb=document.getElementById("crumb"), activebox=document.getElementById("activebox");
+let saveTimer=null;
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+/* ==================================================================
+   SVG icon set（stroke／currentColor，取代 emoji UI icon）
+   ================================================================== */
+const ICONS={
+ compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z"/>',
+ sparkles:'<path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7z"/><path d="M19 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+ map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+ archive:'<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/>',
+ landmark:'<path d="M12 3 4 7h16z"/><path d="M4 10h16M3 21h18"/><path d="M6 10v11M10 10v11M14 10v11M18 10v11"/>',
+ clipboard:'<rect x="5" y="4" width="14" height="17" rx="2"/><rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h4"/>',
+ bot:'<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9.5" cy="14" r="1"/><circle cx="14.5" cy="14" r="1"/>',
+ stethoscope:'<path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M4 3h2M12 3h2"/><path d="M10 15a5 5 0 0 0 10 0v-1"/><circle cx="20" cy="12" r="2"/>',
+ barchart:'<path d="M4 4v16h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="8" width="3" height="9"/><rect x="17" y="14" width="3" height="3"/>',
+ vote:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+ pin:'<path d="M12 17v5"/><path d="M9 3h6l-1 6 3 3H7l3-3z"/>',
+ pause:'<circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/>',
+ printer:'<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M8 17h8v4H8z"/><circle cx="17" cy="12" r="1"/>',
+ target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ filepen:'<path d="M14 3v5h5"/><path d="M20 8v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8z"/><path d="M8.5 15.5 13 14l4-4-2.5-2.5-4 4z"/>',
+ filetext:'<path d="M14 3v5h5"/><path d="M20 8v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8z"/><path d="M8 13h8M8 17h6"/>',
+ check:'<circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+ rocket:'<path d="M12 3c3 2 4.5 6 4.5 9L12 15l-4.5-3c0-3 1.5-7 4.5-9z"/><path d="M8 15l-2 4M16 15l2 4"/><circle cx="12" cy="10" r="1.5"/>',
+ alert:'<path d="M12 4 2 20h20z"/><path d="M12 10v5M12 18h.01"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4z"/>',
+ shield:'<path d="M12 3 5 6v5c0 4 3 8 7 10 4-2 7-6 7-10V6z"/>',
+ notebook:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v18"/><path d="M13 8h3M13 12h3"/>',
+ flask:'<path d="M9 3h6M10 3v6l-5 9a1 1 0 0 0 1 1.5h12a1 1 0 0 0 1-1.5l-5-9V3"/><path d="M8 15h8"/>',
+ trending:'<path d="m3 17 6-6 4 4 8-8"/><path d="M17 7h4v4"/>',
+ folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'
+};
+const EMOJI2KEY={
+ "🧑‍⚕️":"stethoscope","🗺️":"map","🗂️":"archive","🏛️":"landmark","📋":"clipboard","🤖":"bot",
+ "📊":"barchart","🗳️":"vote","📌":"pin","⏸️":"pause","🖨️":"printer","🎯":"target","🔍":"search",
+ "🧭":"compass","🧙":"sparkles","📝":"filepen","📃":"filetext","✅":"check","🚀":"rocket","🟥":"alert",
+ "🔧":"wrench","🛡️":"shield","🗒️":"notebook","🧪":"flask","📈":"trending","📁":"folder","🔒":"lock",
+ "🖨":"printer","⚠️":"alert","⚠":"alert","📄":"filetext"
+};
+const EMOJI_RE=new RegExp("("+Object.keys(EMOJI2KEY).map(e=>e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")","g");
+function ico(s){const k=EMOJI2KEY[s];return k
+ ?`<svg class="ic-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]}</svg>`
+ :s;}
+/* 掃描 DOM 文字節點，將已知 emoji 就地換成 SVG（一處集中，免改各 render 模板） */
+function iconizeIn(root){
+  if(!root)return;
+  const nodes=[]; const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  while(w.nextNode())nodes.push(w.currentNode);
+  nodes.forEach(node=>{
+    const v=node.nodeValue; if(!v||v.indexOf("️")<0&&!/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(v))return;
+    const parts=v.split(EMOJI_RE); if(parts.length<2)return;
+    const frag=document.createDocumentFragment();
+    parts.forEach(p=>{ if(!p)return;
+      if(EMOJI2KEY[p]){const t=document.createElement("template");t.innerHTML=ico(p);if(t.content.firstChild)frag.appendChild(t.content.firstChild);}
+      else frag.appendChild(document.createTextNode(p));
+    });
+    node.parentNode.replaceChild(frag,node);
+  });
+}
+function getCases(){try{return JSON.parse(localStorage.getItem("aigov:cases")||"[]")}catch(e){return[]}}
+function setCases(a){localStorage.setItem("aigov:cases",JSON.stringify(a))}
+function getActive(){return localStorage.getItem("aigov:active")||""}
+function setActive(id){id?localStorage.setItem("aigov:active",id):localStorage.removeItem("aigov:active");renderActiveBox();}
+function activeCase(){const id=getActive();return getCases().find(c=>c.id===id)||null;}
+function touchCase(){const c=activeCase();if(!c)return;c.updatedAt=new Date().toISOString();const cs=getCases().map(x=>x.id===c.id?c:x);setCases(cs);}
+function formKey(fid){const a=getActive();return a?("aigov:c:"+a+":"+fid):("aigov:draft:"+fid);}
+function loadForm(fid){try{return JSON.parse(localStorage.getItem(formKey(fid))||"{}")}catch(e){return{}}}
+function loadCaseForm(caseId,fid){try{return JSON.parse(localStorage.getItem("aigov:c:"+caseId+":"+fid)||"{}")}catch(e){return{}}}
+function formMeta(id){return FORMS.find(f=>f.id===id)||SEC_FORMS.find(f=>f.id===id)||null;}
+function isSecForm(id){return !!SEC_FORMS.find(f=>f.id===id);}
+function cycleLabel(id){const c=CYCLES.find(x=>x.id===id);return c?c.label:id;}
+function secFormByLevel(l){return l==="高"?"f10":l==="中"?"f09":"f08";}
+/* 建案時自動預帶的識別欄位 — 進度計算時不計入，避免新案一建立就顯示「已完成」 */
+const SEED_KEYS=["ap_name","ap_dept","sw_name","sw_zh","sys_name"];
+function fieldHasVal(v){
+  if(!v||typeof v!=="object")return false;
+  if(v.val!==undefined&&String(v.val).trim()!=="")return true;
+  if(v.sel&&Object.values(v.sel).some(Boolean))return true;
+  if(v.txt&&Object.values(v.txt).some(t=>String(t).trim()!==""))return true;
+  return false;
+}
+function hasData(store){return Object.values(store||{}).some(fieldHasVal);}
+/* 表單是否被「實際填寫」（忽略自動預帶欄位） */
+function formFilled(store){return Object.keys(store||{}).some(k=>!SEED_KEYS.includes(k)&&fieldHasVal(store[k]));}
+
+/* 一個案件應填的表單清單（含依資安等級展開的基準表） */
+function caseForms(c){
+  const out=(CYCLE_FORMS[c.cycle]||[]).map(x=>Object.assign({},x));
+  if(c.cycle==="trial"){ out.push({id:secFormByLevel(c.secLevel||"普"),req:true,note:"資安基準（依等級）"}); }
+  return out;
+}
+function caseProgress(c){
+  const fs=caseForms(c); let done=0;
+  fs.forEach(f=>{ if(formFilled(loadCaseForm(c.id,f.id))) done++; });
+  return {done,total:fs.length};
+}
+
+/* ==================================================================
+   風險分級引擎
+   ================================================================== */
+function computeRisk(q){
+  let level="L1";
+  if(q.agent||q.device) level="L4";
+  else if(q.clinical||q.patient) level="L3";
+  else if(q.pid||q.emr||q.cloud) level="L2";
+  const sec=(level==="L3"||level==="L4")?"高":(level==="L2")?"中":"普";
+  const path=(level==="L3"||level==="L4")?"AI 治理委員會審查":(level==="L2")?"AI 辦公室快速審":"登錄即可";
+  return {level,sec,path};
+}
+const RISK_DESC={L1:"登錄級：不涉及病人資料、不影響臨床、不對病人輸出",
+ L2:"低風險：行政/內部輔助，可能使用去識別資料",
+ L3:"中高風險：進入臨床流程、產出臨床輔助或介接院內系統",
+ L4:"暫停/專案審查：直接影響診療或屬醫材未釐清，不得直接上線"};
+
+/* ==================================================================
+   Nav build
+   ================================================================== */
+document.getElementById("nav-content").innerHTML=CONTENT.map(c=>
+  `<div class="navitem" data-go="c:${c.id}"><span class="n">${c.n}</span> ${c.title}</div>`).join("");
+document.getElementById("nav-forms").innerHTML=
+  FORMS.map(f=>`<div class="navitem" data-go="f:${f.id}"><span class="n">${f.n}</span> ${f.title}</div>`).join("")+
+  SEC_FORMS.map(f=>`<div class="navitem" data-go="s:${f.id}"><span class="n">${f.n}</span> ${f.title}</div>`).join("");
+document.querySelector(".side").addEventListener("click",e=>{
+  const el=e.target.closest("[data-go]"); if(el) location.hash=el.dataset.go;
+});
+document.querySelectorAll(".navgrp.collapser").forEach(g=>g.addEventListener("click",()=>{
+  const t=document.getElementById(g.dataset.target); if(!t)return;
+  t.classList.toggle("collapsed"); g.classList.toggle("open");
+  g.setAttribute("aria-expanded", g.classList.contains("open"));
+}));
+
+/* ==================================================================
+   無障礙：讓 <div> 互動元素可用鍵盤操作（Tab 可達、Enter/Space 觸發、role=button）
+   ================================================================== */
+const A11Y_SEL="[data-go],[data-open],[data-cyc],[data-role],.navgrp.collapser,.card,.choice,.tab,.deskrole,.loginrole,.cchip,.none,.node.form,.clickrow,.checklist li";
+function enhanceA11y(root){
+  (root||document).querySelectorAll(A11Y_SEL).forEach(el=>{
+    const tag=el.tagName;
+    if(tag==="BUTTON"||tag==="A"||tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
+    if(!el.hasAttribute("tabindex"))el.tabIndex=0;
+    if(!el.hasAttribute("role"))el.setAttribute("role","button");
+    if(el.classList.contains("collapser"))el.setAttribute("aria-expanded",el.classList.contains("open"));
+  });
+}
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Enter"&&e.key!==" "&&e.key!=="Spacebar")return;
+  const el=e.target;
+  if(!el||!el.matches||el.matches("input,textarea,select,button,a[href]"))return;
+  if(el.getAttribute("role")!=="button")return;
+  e.preventDefault(); el.click();
+});
+
+/* ==================================================================
+   Sidebar 收合 / 寬度調整（localStorage 記憶）
+   ================================================================== */
+(function(){
+  const app=document.querySelector(".app"), side=document.querySelector(".side");
+  const MIN=180, MAX=460, KW="ui.sidew", KC="ui.sidecollapsed";
+  // 還原寬度
+  const savedW=parseInt(localStorage.getItem(KW),10);
+  if(savedW>=MIN&&savedW<=MAX) app.style.setProperty("--sidew",savedW+"px");
+  // 還原收合狀態
+  if(localStorage.getItem(KC)==="1") app.classList.add("side-collapsed");
+  // 收合按鈕
+  document.getElementById("navtoggle").addEventListener("click",()=>{
+    app.classList.toggle("side-collapsed");
+    localStorage.setItem(KC, app.classList.contains("side-collapsed")?"1":"0");
+  });
+  // 拖曳調整寬度
+  const grip=document.querySelector(".side-grip"); let dragging=false;
+  grip.addEventListener("pointerdown",e=>{
+    dragging=true; app.classList.add("resizing"); grip.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  grip.addEventListener("pointermove",e=>{
+    if(!dragging)return;
+    let w=e.clientX-side.getBoundingClientRect().left;
+    w=Math.max(MIN,Math.min(MAX,w));
+    app.style.setProperty("--sidew",w+"px");
+  });
+  const stop=e=>{
+    if(!dragging)return; dragging=false; app.classList.remove("resizing");
+    try{grip.releasePointerCapture(e.pointerId)}catch(_){}
+    const w=parseInt(getComputedStyle(app).getPropertyValue("--sidew"),10);
+    if(w) localStorage.setItem(KW,w);
+  };
+  grip.addEventListener("pointerup",stop);
+  grip.addEventListener("pointercancel",stop);
+})();
+
+/* ==================================================================
+   Active-case indicator (topbar)
+   ================================================================== */
+function renderActiveBox(){
+  const c=activeCase();
+  if(c){
+    const p=caseProgress(c);
+    activebox.innerHTML=`<span class="cchip"><b>${esc(c.no)}</b> <small>${esc(c.name)}｜${cycleLabel(c.cycle)}｜${p.done}/${p.total}</small></span>
+      <button class="mini" id="ab-switch">切換</button>`;
+    activebox.querySelector(".cchip").onclick=()=>location.hash="case";
+    activebox.querySelector("#ab-switch").onclick=()=>location.hash="registry";
+  }else{
+    activebox.innerHTML=`<span class="none" id="ab-new">未選案件 · 點此新申請</span>`;
+    activebox.querySelector("#ab-new").onclick=()=>location.hash="wizard";
+  }
+}
+
+/* ==================================================================
+   Home
+   ================================================================== */
+const ROLE_HINT={
+ applicant:"從「申請精靈」開始，依風險自動分流該填哪些表；用清冊追蹤自己的案件。",
+ admin:"到「審查工作台」處理收件與完整性初審，並可將 L3/L4 案排入委員會議程。",
+ security:"到「審查工作台」完成資安審查與防護需求等級評估（f07–f10）。",
+ ai:"到「審查工作台」進行技術、倫理、公平性與風險審查。",
+ committee:"查看「統計看板」與「待審議程」，進行審議決議並追蹤執行。",
+ sysadmin:"全功能存取：可操作所有申請、審查與治理頁面（示範用）。",
+};
+const HERO_MAP={
+ wizard:["🧙","開始新申請（申請精靈）","選週期 → 風險初篩 → 自動建案"],
+ desk:["🧑‍⚕️","我的審查工作台","查看輪到我、尚未處理的案件"],
+ dash:["📊","治理統計看板","風險分佈、待審、Shadow AI 總覽"],
+ home:["🧙","開始新申請（申請精靈）","選週期 → 風險初篩 → 自動建案"],
+};
+function homeCard(d){return `<div class="card" data-go="${d[0]}"><div class="ic">${d[1]}</div><b>${d[2]}</b><small>${d[3]}</small></div>`;}
+function renderHome(){
+  crumb.innerHTML='<b>總覽</b>';
+  const u=getUser();const role=currentRole();const cfg=roleCfg(role);
+  const cases=getCases().slice().sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||"")).slice(0,5);
+  const recent = cases.length? `<div class="sec-title">最近案件</div><table class="rtable">
+     <tr><th>案號</th><th>系統名稱</th><th>週期</th><th>風險</th><th>進度</th></tr>
+     ${cases.map(c=>{const p=caseProgress(c);return `<tr class="clickrow" data-open="${c.id}">
+       <td class="no">${esc(c.no)}</td><td>${esc(c.name)}</td><td>${cycleLabel(c.cycle)}</td>
+       <td><span class="rlvl r${c.riskLevel}">${c.riskLevel||"—"}</span></td><td>${p.done}/${p.total}</td></tr>`}).join("")}
+     </table>` : "";
+  const banner=u?`<div class="rolebanner"><span class="uav" style="box-shadow:0 0 0 2px hsl(${u.hue},68%,68%)">${AVATARS[cfg.av]}</span>
+     <div><b>歡迎，${esc(u.name)}（${cfg.label}）</b><small>${ROLE_HINT[role]||""}</small></div></div>`:"";
+  const hp=HERO_MAP[cfg.home]||HERO_MAP.home; const hgo=cfg.home==="home"?"wizard":cfg.home;
+  const applyDefs=[
+    ...(visOK("wizard",role)?[["wizard","🧙","申請精靈（自動分流）","選週期 → 答風險初篩 → 自動列出應填表單並建案"]]:[]),
+    ["flow","🗺️","申請流程圖","四大週期・五身份泳道，點節點直接跳表單"],
+    ["registry","🗂️","AI 系統清冊","檢視、切換、匯出所有案件"],
+  ];
+  const govDefs=[
+    ["desk","🧑‍⚕️","審查工作台（角色）","依身份別看「輪到我、待審」工作"],
+    ["dash","📊","統計看板","風險/狀態/資料風險/Shadow AI 總覽"],
+    ["agenda","🗳️","待審議程","L3/L4 待審，委員當場決議"],
+    ["track","📌","決議追蹤","執行率、複審日、逾期"],
+    ["freeze","⏸️","暫停 / 退場","凍結案風險控管"],
+    ["mtg","🖨️","會議輸出","議程 / 紀錄 / 決議書套版"],
+  ].filter(d=>visOK(d[0],role));
+  view.innerHTML=`
+   <p class="eyebrow">花蓮慈濟醫院・智慧醫療創新中心</p><h1 class="page">AI 應用治理・整合申請入口</h1>
+   ${banner}
+   <div class="grid two">
+     <div class="card hero" data-go="${hgo}"><div class="ic">${hp[0]}</div><b>${hp[1]}</b><small>${hp[2]}</small></div>
+     <div class="card hero" data-go="registry"><div class="ic">🗂️</div><b>AI 系統清冊</b><small>檢視、切換、匯出所有案件；對應 30 天治理盤點</small></div>
+   </div>
+   ${recent}
+   <div class="sec-title">申請作業</div>
+   <div class="grid">${applyDefs.map(homeCard).join("")}</div>
+   <div class="sec-title">中心說明</div>
+   <div class="grid">${
+     CONTENT.map(c=>`<div class="card" data-go="c:${c.id}"><div class="ic">${c.icon}</div><b>${c.title}</b><small>${c.sub}</small></div>`).join("")+
+     `<div class="card" data-go="ref:tech"><div class="ic">🏛️</div><b>三大類型智慧醫療中心</b><small>衛福部技術手冊導覽</small></div>`+
+     `<div class="card" data-go="ref:faq"><div class="ic">📋</div><b>AI 臨床研究倫理審查 FAQ</b><small>衛福部常見問題說明</small></div>`+
+     `<div class="card" data-go="ref:genai"><div class="ic">🤖</div><b>醫療機構應用生成式 AI 指引</b><small>衛福部函頒・治理導入說明</small></div>`
+   }</div>
+   ${visOK("grp-forms",role)?`<div class="sec-title">線上申請表單（10 種）</div>
+   <div class="grid">${
+     FORMS.map(f=>`<div class="card" data-go="f:${f.id}"><div class="ic">${f.icon}</div><b>${f.title}</b><small>${f.sub}</small></div>`).join("")+
+     SEC_FORMS.map(f=>{const n=SEC_CATALOG.filter(x=>LVL_ORDER[x[3]]<=LVL_ORDER[f.level]).length;
+       return `<div class="card" data-go="s:${f.id}"><div class="ic">${f.icon}</div><b>${f.title}</b><small>${n} 項控制措施</small></div>`}).join("")
+   }</div>`:""}
+   ${govDefs.length?`<div class="sec-title">委員會工作台</div>
+   <div class="grid">${govDefs.map(homeCard).join("")}</div>`:""}`;
+  view.querySelectorAll("[data-go]").forEach(el=>el.onclick=()=>location.hash=el.dataset.go);
+  view.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{setActive(el.dataset.open);location.hash="case";});
+  window.scrollTo(0,0);
+}
+
+/* ==================================================================
+   Wizard（自動分流精靈）
+   ================================================================== */
+let wiz={step:1,name:"",dept:"",applicant:"",origin:"new",cycle:"",q:{}};
+function renderWizard(){
+  crumb.innerHTML='申請作業 / <b>申請精靈</b>';
+  const steps=["基本資料","選擇週期","風險初篩","結果與建案"];
+  const bar=`<div class="wsteps">${steps.map((s,i)=>{const n=i+1;const cls=n===wiz.step?"on":(n<wiz.step?"done":"");
+    return `<div class="wstep ${cls}"><b>Step ${n}</b>${s}</div>`}).join("")}</div>`;
+  let body="";
+  if(wiz.step===1){
+    body=`<fieldset><legend>Step 1・基本資料</legend>
+     <div class="field"><label>AI 系統名稱</label><input type="text" id="w_name" value="${esc(wiz.name)}" placeholder="如：腎臟科 Hb 預測"></div>
+     <div class="row2">
+      <div class="field"><label>申請單位</label><input type="text" id="w_dept" value="${esc(wiz.dept)}" placeholder="如：腎臟科"></div>
+      <div class="field"><label>申請人</label><input type="text" id="w_app" value="${esc(wiz.applicant)}" placeholder="姓名"></div>
+     </div>
+     <div class="field"><label>案件來源</label><div class="opts">
+       <label class="opt"><input type="radio" name="w_origin" value="new" ${wiz.origin!=="existing"?"checked":""}> 新導入</label>
+       <label class="opt"><input type="radio" name="w_origin" value="existing" ${wiz.origin==="existing"?"checked":""}> 既有補登（Shadow AI 盤點）</label>
+     </div></div></fieldset>
+     <div class="wnav"><span></span><button class="btn lg" id="w_next">下一步 →</button></div>`;
+  }else if(wiz.step===2){
+    body=`<fieldset><legend>Step 2・這是哪一個生命週期階段？</legend>
+     <div class="choicegrid">${CYCLES.map(c=>`<div class="choice ${wiz.cycle===c.id?"on":""}" data-cyc="${c.id}">
+       <div class="ic">${c.icon}</div><b>${c.label}</b><small>${c.desc}</small></div>`).join("")}</div></fieldset>
+     <div class="wnav"><button class="btn ghost" id="w_prev">← 上一步</button><button class="btn lg" id="w_next">下一步 →</button></div>`;
+  }else if(wiz.step===3){
+    const skip=(wiz.cycle==="ops"||wiz.cycle==="stop");
+    body=`<fieldset><legend>Step 3・風險初篩${skip?"（本週期可略過，直接下一步）":""}</legend>
+     <p class="hint" style="color:var(--mut);font-size:12.5px;margin:0 0 14px">任一為「是」即提升風險等級；多項為「是」可能列入 L4 需專案審查。</p>
+     ${RISK_Q.map(q=>{const v=wiz.q[q.k];return `<div class="qrow">
+       <div class="qt">${q.t}<small>${q.s}</small></div>
+       <div class="toggle" data-q="${q.k}">
+         <button class="no ${v===false?"on":""}" data-v="0">否</button>
+         <button class="yes ${v===true?"on":""}" data-v="1">是</button>
+       </div></div>`}).join("")}</fieldset>
+     <div class="wnav"><button class="btn ghost" id="w_prev">← 上一步</button><button class="btn lg" id="w_next">看結果 →</button></div>`;
+  }else{
+    const r=computeRisk(wiz.q);
+    const fs=caseForms({cycle:wiz.cycle,secLevel:r.sec});
+    const flags=[];
+    if(wiz.q.pid||wiz.q.cloud) flags.push("涉個資外傳／雲端：務必完成 f07 資安審查與資料流評估。");
+    if(wiz.q.device) flags.push("疑似醫療器材未取得 TFDA：不得直接上線，需醫材分流與專案審查。");
+    if(wiz.q.agent) flags.push("AI agent 自主行動：暫列高風險，須界定權限與可中止機制。");
+    body=`<div class="rescard">
+       <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+         <span class="riskbadge r${r.level}">${r.level}</span>
+         <div><b>${cycleLabel(wiz.cycle)}</b>　·　審查路徑：${r.path}　·　資安基準：${r.sec}級</div>
+       </div>
+       <p style="color:var(--mut);font-size:13px;margin:10px 0 0">${RISK_DESC[r.level]}</p>
+       ${flags.length?`<div class="casebanner warn" style="margin:14px 0 0">⚠ ${flags.join("<br>⚠ ")}</div>`:""}
+     </div>
+     <div class="sec-title">本案應填表單（${fs.length}）</div>
+     <ul class="checklist">${fs.map(f=>{const m=formMeta(f.id);return `<li>
+        <span class="st empty">${m.n}</span>
+        <span class="fl"><b>${m.title}</b><small>${m.full||m.sub||""}${f.note?"　·　"+f.note:""}</small></span>
+        ${f.req?'<span class="tagreq">必填</span>':'<span class="tagopt">條件</span>'}</li>`}).join("")}</ul>
+     <div class="wnav"><button class="btn ghost" id="w_prev">← 上一步</button>
+       <button class="btn lg" id="w_create">✔ 建立案件並開始填寫</button></div>`;
+  }
+  view.innerHTML=`<p class="eyebrow">🧙 申請精靈</p><h1 class="page">自動分流・依風險決定該填哪些表</h1>${bar}${body}`;
+  bindWizard();
+  window.scrollTo(0,0);
+}
+function bindWizard(){
+  const q=id=>document.getElementById(id);
+  if(q("w_name"))q("w_name").oninput=e=>wiz.name=e.target.value;
+  if(q("w_dept"))q("w_dept").oninput=e=>wiz.dept=e.target.value;
+  if(q("w_app"))q("w_app").oninput=e=>wiz.applicant=e.target.value;
+  view.querySelectorAll('[name="w_origin"]').forEach(r=>r.onclick=()=>wiz.origin=r.value);
+  view.querySelectorAll("[data-cyc]").forEach(el=>el.onclick=()=>{wiz.cycle=el.dataset.cyc;renderWizard();});
+  view.querySelectorAll(".toggle").forEach(t=>t.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    wiz.q[t.dataset.q]=b.dataset.v==="1";renderWizard();}));
+  if(q("w_prev"))q("w_prev").onclick=()=>{wiz.step--;renderWizard();};
+  if(q("w_next"))q("w_next").onclick=()=>{
+    if(wiz.step===1&&!wiz.name.trim()){alert("請先填 AI 系統名稱");return;}
+    if(wiz.step===2&&!wiz.cycle){alert("請選擇一個週期");return;}
+    wiz.step++;renderWizard();};
+  if(q("w_create"))q("w_create").onclick=wizCreate;
+}
+function wizCreate(){
+  const r=computeRisk(wiz.q);
+  const d=new Date();
+  const ymd=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
+  const cs=getCases();
+  const seq=String(cs.filter(c=>(c.no||"").indexOf("AI-"+ymd)===0).length+1).padStart(2,"0");
+  const c={id:"case_"+d.getTime(),no:`AI-${ymd}-${seq}`,name:wiz.name.trim()||"(未命名)",
+    dept:wiz.dept.trim(),applicant:wiz.applicant.trim(),cycle:wiz.cycle,
+    origin:wiz.origin||"new",riskLevel:r.level,secLevel:r.sec,riskQ:Object.assign({},wiz.q),decisions:[],
+    status:"草稿",createdAt:d.toISOString(),updatedAt:d.toISOString()};
+  c.reviews=defaultReviews(c);
+  cs.push(c);setCases(cs);setActive(c.id);
+  /* 把申請人與系統名稱預帶到各表單 */
+  caseForms(c).forEach(f=>{
+    const key="aigov:c:"+c.id+":"+f.id;
+    const cur=JSON.parse(localStorage.getItem(key)||"{}");
+    const seed={ap_name:{val:c.applicant},ap_dept:{val:c.dept},sw_name:{val:c.name},sw_zh:{val:c.name},sys_name:{val:c.name}};
+    localStorage.setItem(key,JSON.stringify(Object.assign(seed,cur)));
+  });
+  wiz={step:1,name:"",dept:"",applicant:"",origin:"new",cycle:"",q:{}};
+  location.hash="case";
+}
+
+/* ==================================================================
+   Case dashboard
+   ================================================================== */
+function renderCase(){
+  const c=activeCase();
+  if(!c){view.innerHTML=`<h1 class="page">尚未選擇案件</h1>
+    <div class="emptybox">目前沒有作用中的案件。<br><br>
+    <button class="btn" onclick="location.hash='wizard'">🧙 用申請精靈建立</button>
+    <button class="btn ghost" onclick="location.hash='registry'">🗂️ 從清冊選一個</button></div>`;
+    crumb.innerHTML='<b>案件</b>';return;}
+  crumb.innerHTML=`案件 / <b>${esc(c.no)}</b>`;
+  const fs=caseForms(c);const p=caseProgress(c);
+  view.innerHTML=`<p class="eyebrow">🗂️ 案件工作區</p><h1 class="page">${esc(c.name)}</h1>
+   <div class="rescard">
+     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+       <span class="riskbadge r${c.riskLevel}">${c.riskLevel}</span>
+       <div><b>${esc(c.no)}</b>　·　${cycleLabel(c.cycle)}　·　資安基準 ${c.secLevel}級　·　進度 ${p.done}/${p.total}</div>
+     </div>
+     <div style="margin-top:12px;color:var(--mut);font-size:13px">
+       單位：${esc(c.dept||"—")}　申請人：${esc(c.applicant||"—")}　狀態：${esc(c.status)}　建立：${(c.createdAt||"").slice(0,10)}</div>
+     <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+       <button class="btn ghost" onclick="exportCase('${c.id}')">⬇ 匯出整案 JSON</button>
+       <button class="btn ghost" onclick="window.print()">🖨 列印整案</button>
+       <button class="btn ghost" onclick="location.hash='wizard'">＋ 另開新案</button>
+     </div>
+   </div>
+   <div class="sec-title">應填表單清單（點擊填寫）</div>
+   <ul class="checklist">${fs.map(f=>{const m=formMeta(f.id);const ok=formFilled(loadCaseForm(c.id,f.id));
+      const go=isSecForm(f.id)?"s:"+f.id:"f:"+f.id;
+      return `<li data-go="${go}"><span class="st ${ok?"ok":"empty"}">${ok?"✓":m.n}</span>
+        <span class="fl"><b>${m.title}</b><small>${m.full||m.sub||""}${f.note?"　·　"+f.note:""}</small></span>
+        ${f.req?'<span class="tagreq">必填</span>':'<span class="tagopt">條件</span>'}</li>`}).join("")}</ul>`;
+  view.querySelectorAll("[data-go]").forEach(el=>el.onclick=()=>location.hash=el.dataset.go);
+  window.scrollTo(0,0);
+}
+function exportCase(id){
+  const c=getCases().find(x=>x.id===id);if(!c)return;
+  const forms={};caseForms(c).forEach(f=>forms[f.id]=loadCaseForm(id,f.id));
+  const blob=new Blob([JSON.stringify({case:c,forms,exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=c.no+".json";a.click();
+}
+
+/* ==================================================================
+   Registry（AI 系統清冊）
+   ================================================================== */
+const STATUSES=["草稿","已送出","審查中","條件式核准","已核准","暫停","退件","已上線","已退場"];
+function renderRegistry(){
+  crumb.innerHTML='<b>AI 系統清冊</b>';
+  const cs=getCases().slice().sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+  const rows=cs.map(c=>{const p=caseProgress(c);
+    return `<tr class="clickrow" data-open="${c.id}">
+      <td class="no">${esc(c.no)}</td>
+      <td>${esc(c.name)}</td><td>${esc(c.dept||"—")}</td>
+      <td>${cycleLabel(c.cycle)}</td>
+      <td><span class="rlvl r${c.riskLevel}">${c.riskLevel||"—"}</span></td>
+      <td>${c.secLevel||"—"}</td>
+      <td>${p.done}/${p.total}</td>
+      <td onclick="event.stopPropagation()"><select data-status="${c.id}">${STATUSES.map(s=>`<option ${s===c.status?"selected":""}>${s}</option>`).join("")}</select></td>
+      <td>${(c.updatedAt||"").slice(0,10)}</td>
+      <td onclick="event.stopPropagation()"><button class="mini" data-del="${c.id}">刪除</button></td>
+    </tr>`}).join("");
+  view.innerHTML=`<p class="eyebrow">🗂️ AI 系統清冊</p><h1 class="page">院內 AI 系統單一名冊</h1>
+   <div class="lead">每一個經「申請精靈」建立的案件即為清冊一列，串起該案所有表單。對應 30 天治理盤點的「AI 系統清冊主表」。</div>
+   <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+     <button class="btn" onclick="location.hash='wizard'">🧙 新增申請</button>
+     <button class="btn ghost" onclick="exportRegistryCSV()">⬇ 匯出 CSV</button>
+     <button class="btn ghost" onclick="exportRegistryJSON()">⬇ 匯出 JSON</button>
+   </div>
+   ${cs.length?`<div style="overflow-x:auto"><table class="rtable">
+     <tr><th>案號</th><th>系統名稱</th><th>單位</th><th>週期</th><th>風險</th><th>資安</th><th>進度</th><th>狀態</th><th>更新</th><th></th></tr>
+     ${rows}</table></div>`:`<div class="emptybox">清冊尚無案件。<br><br><button class="btn" onclick="location.hash='wizard'">🧙 建立第一個案件</button></div>`}`;
+  view.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{setActive(el.dataset.open);location.hash="case";});
+  view.querySelectorAll("[data-del]").forEach(el=>el.onclick=()=>deleteCase(el.dataset.del));
+  view.querySelectorAll("[data-status]").forEach(el=>el.onchange=()=>{
+    const list=getCases().map(c=>c.id===el.dataset.status?Object.assign(c,{status:el.value,updatedAt:new Date().toISOString()}):c);
+    setCases(list);renderActiveBox();});
+  window.scrollTo(0,0);
+}
+function deleteCase(id){
+  const c=getCases().find(x=>x.id===id);if(!c)return;
+  if(!confirm(`確定刪除案件 ${c.no}（${c.name}）？其所有表單草稿一併刪除，無法復原。`))return;
+  Object.keys(localStorage).filter(k=>k.indexOf("aigov:c:"+id+":")===0).forEach(k=>localStorage.removeItem(k));
+  setCases(getCases().filter(x=>x.id!==id));
+  if(getActive()===id)setActive("");
+  renderRegistry();
+}
+function exportRegistryJSON(){
+  const blob=new Blob([JSON.stringify({cases:getCases(),exportedAt:new Date().toISOString()},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="AI系統清冊.json";a.click();
+}
+function exportRegistryCSV(){
+  const hdr=["案號","系統名稱","單位","申請人","週期","風險等級","資安基準","狀態","建立日","更新日"];
+  const q=s=>'"'+String(s==null?"":s).replace(/"/g,'""')+'"';
+  const lines=[hdr.map(q).join(",")].concat(getCases().map(c=>[c.no,c.name,c.dept,c.applicant,cycleLabel(c.cycle),c.riskLevel,c.secLevel,c.status,(c.createdAt||"").slice(0,10),(c.updatedAt||"").slice(0,10)].map(q).join(",")));
+  const blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="AI系統清冊.csv";a.click();
+}
+
+/* ==================================================================
+   Flow（申請流程圖・in-SPA）
+   ================================================================== */
+function swimHTML(steps){
+  let h=`<div class="swim"><div class="lanehead blank"></div>`+
+    LANES.map((l,i)=>`<div class="lanehead h${i+1}">${l}</div>`).join("");
+  steps.forEach(st=>{
+    h+=`<div class="stepno">${st.no}<small>${st.cap}</small></div>`;
+    for(let i=0;i<5;i++){
+      const cell=st.cells[i];
+      if(!cell){h+=`<div class="railcell"></div>`;continue;}
+      const tag=cell.tag?`<span class="tag">${cell.tag}</span>`:"";
+      const m=cell.m?`<div class="m">${cell.m}</div>`:"";
+      const arrow=`<span class="arrow">▼</span>`;
+      if(cell.dec){
+        const br=cell.branches?`<div class="branches">${cell.branches.map(b=>`<span class="branch ${b[0]}">${b[1]}</span>`).join("")}</div>`:"";
+        h+=`<div class="cellwrap"><div class="node dec n${cell.n}"><div class="who">${LANES[i]}</div><div class="t">${cell.t}</div>${br}${arrow}</div></div>`;
+      }else if(cell.form){
+        h+=`<div class="cellwrap"><a class="node form n${cell.n}" data-go="f:${cell.form}"><div class="who">${LANES[i]}</div><div class="t">${cell.t}</div>${m}${tag}${arrow}</a></div>`;
+      }else{
+        h+=`<div class="cellwrap"><div class="node n${cell.n}"><div class="who">${LANES[i]}</div><div class="t">${cell.t}</div>${m}${arrow}</div></div>`;
+      }
+    }
+  });
+  return h+`</div>`;
+}
+function renderFlow(){
+  crumb.innerHTML='申請作業 / <b>申請流程圖</b>';
+  const tabs=`<div class="tabs">${FLOW.map((f,i)=>`<div class="tab ${i===0?"on":""}" data-tab="${f.id}">${f.title}</div>`).join("")}</div>`;
+  const rolesHTML=`<div class="roles swimroles">
+     <div class="rolespacer"></div>
+     <div class="rolecard r1c">${AVATARS.applicant}
+       <div class="rn"><span class="dot d1"></span>申請者</div><p>提出申請、填表、執行試用/上線、送成效檢核</p></div>
+     <div class="rolecard r2c">${AVATARS.admin}
+       <div class="rn"><span class="dot d2"></span>行政審核</div><p>負責任 AI 中心經辦：收件、編號、完整性初審、退補件、流程控管</p></div>
+     <div class="rolecard r3c">${AVATARS.security}
+       <div class="rn"><span class="dot d3"></span>資安稽核</div><p>資訊室／資通安全委員會：資安審查、防護需求等級</p></div>
+     <div class="rolecard r4c">${AVATARS.ai}
+       <div class="rn"><span class="dot d4"></span>AI 稽核</div><p>智慧醫療委員會審核小組：技術、倫理、公平性、風險審查</p></div>
+     <div class="rolecard r5c">${AVATARS.committee}
+       <div class="rn"><span class="dot d5"></span>AI 治理委員會</div><p>審議決議：通過／不通過／退回，最終核示與監督</p></div>
+   </div>`;
+  const panels=FLOW.map((f,i)=>{
+    let inner;
+    if(f.subflows){inner=f.subflows.map(sf=>`<div class="subhdr" style="color:${sf.color}">${sf.label}</div>${swimHTML(sf.steps)}`).join("");}
+    else inner=swimHTML(f.steps);
+    return `<div class="panel ${i===0?"on":""}" id="pan_${f.id}"><h2>${f.title}</h2><div class="desc">${f.desc}</div>${i===0?rolesHTML:""}${inner}
+      ${f.note?`<div class="note">📌 ${f.note}</div>`:""}</div>`;
+  }).join("");
+  view.innerHTML=`<p class="eyebrow">🗺️ GOVERNANCE WORKFLOW</p><h1 class="page">申請流程圖・五種身份分工</h1>
+   <div class="lead">依 AI 生命週期<b>四大週期</b>（試用→上線→維運→異動/終止）拆解，橫向為<b>五種身份</b>泳道，直向為步驟。<b>點擊表單節點（↗）</b>直接跳對應線上申請表。</div>
+   ${tabs}${panels}`;
+  view.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+    view.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    view.querySelectorAll(".panel").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");document.getElementById("pan_"+t.dataset.tab).classList.add("on");});
+  view.querySelectorAll("[data-go]").forEach(el=>el.onclick=()=>location.hash=el.dataset.go);
+  window.scrollTo(0,0);
+}
+
+/* ==================================================================
+   Content
+   ================================================================== */
+function renderContent(id){
+  const c=CONTENT.find(x=>x.id===id); if(!c)return renderHome();
+  crumb.innerHTML=`中心說明 / <b>${c.title}</b>`;
+  view.innerHTML=`<p class="eyebrow">${c.icon} 中心說明</p><h1 class="page">${c.title}</h1>
+    <article><div class="src">來源：花蓮慈濟醫院官方網頁（${c.src}）</div>${c.html}</article>`;
+  window.scrollTo(0,0);
+}
+
+/* 參考資料頁（內嵌獨立 html，保留左側導覽） */
+const REFPAGES={
+  tech:{icon:"🏛️",title:"三大類型智慧醫療中心・技術手冊導覽",file:"三大中心技術手冊.html",src:"衛福部資訊處・三大類型智慧醫療中心技術手冊 v20250512"},
+  faq:{icon:"📋",title:"AI 臨床研究倫理審查・常見問題說明",file:"臨床研究倫理FAQ.html",src:"衛福部・臺灣 AI 臨床研究倫理審查常見問題說明"},
+  genai:{icon:"🤖",title:"醫療機構應用生成式人工智慧指引・治理導入說明",file:"html_醫療機構應用生成式人工智慧指引.html",src:"衛福部・115 年 5 月 29 日衛部醫字第 1151663164 號函頒"},
+};
+function renderRef(id){
+  const r=REFPAGES[id]; if(!r)return renderHome();
+  crumb.innerHTML=`中心說明 / <b>${r.title}</b>`;
+  view.innerHTML=`<iframe class="refframe" src="${encodeURI(r.file)}" title="${esc(r.title)}"></iframe>`;
+  window.scrollTo(0,0);
+}
+
+/* ==================================================================
+   Form rendering
+   ================================================================== */
+function inputEl(f,store){
+  const v=store[f.k]!==undefined?store[f.k]:{};
+  const val=(typeof v==="object")?v:{val:v};
+  if(f.t==="text"||f.t==="date"){
+    return `<input type="${f.t}" data-k="${f.k}" value="${esc(val.val||"")}">`;
+  }
+  if(f.t==="textarea") return `<textarea data-k="${f.k}">${esc(val.val||"")}</textarea>`;
+  if(f.t==="radios"){
+    return `<div class="opts">`+f.options.map(o=>{
+      const on=val.val===o;
+      return `<label class="opt"><input type="radio" name="${f.k}" data-k="${f.k}" data-radio="1" value="${esc(o)}" ${on?"checked":""}> ${esc(o)}</label>`;
+    }).join("")+`</div>`;
+  }
+  if(f.t==="checks"){
+    const sel=val.sel||{}, txt=val.txt||{};
+    return `<div class="opts">`+f.options.map((o,i)=>{
+      const label=(typeof o==="object")?o.l:o, hasInput=(typeof o==="object"&&o.input);
+      const ck=sel[i]?"checked":"";
+      return `<label class="opt"><input type="checkbox" data-k="${f.k}" data-check="${i}" ${ck}> ${esc(label)}`+
+        (hasInput?` <input class="oi" data-k="${f.k}" data-checktxt="${i}" value="${esc(txt[i]||"")}" placeholder="說明">`:"")+`</label>`;
+    }).join("")+`</div>`;
+  }
+  return "";
+}
+function fieldBlock(f,store){
+  const lab=f.l?`<label>${esc(f.l)}${f.hint?` <span class="hint">（${esc(f.hint)}）</span>`:""}</label>`:"";
+  return `<div class="field">${lab}${inputEl(f,store)}</div>`;
+}
+function rowBlock(r,store){
+  if(r.type==="field"||["text","date","textarea","radios","checks"].includes(r.type)){
+    return fieldBlock({t:r.type==="field"?r.t:r.type,...r},store);
+  }
+  if(r.type==="row2"||r.type==="row3"){
+    return `<div class="${r.type}">`+r.fields.map(f=>fieldBlock(f,store)).join("")+`</div>`;
+  }
+  if(r.type==="sub") return `<div class="sub-h" style="margin-top:14px;font-weight:700;color:var(--green-d)">${esc(r.label)}</div>`;
+  if(r.type==="note") return `<p class="hint" style="color:var(--mut);font-size:12.5px">${esc(r.note)}</p>`;
+  if(r.type==="riskmatrix") return imdrfMatrix();
+  return "";
+}
+/* IMDRF SaMD 風險分級對照表（附表一）— 熱區圖 + hover 說明 */
+function imdrfMatrix(){
+  const A=(t)=>` data-tip="${esc(t)}"`;
+  // 欄：資訊對醫療決策重要性（左高右低）
+  const cols=[
+    {n:"治療或診斷",e:"Treat / Diagnose",tip:"提供臨床處置的直接依據（例如：決定治療方向、提供明確診斷）。"},
+    {n:"驅動臨床管理",e:"Drive",tip:"協助臨床人員進一步瞭解病況、驅動後續臨床處置方向。"},
+    {n:"告知臨床管理",e:"Inform",tip:"作為補充資訊，協助臨床人員進行進一步的醫療決策。"},
+  ];
+  // 列：疾病或病況嚴重程度
+  const rows=[
+    {n:"危急情況",e:"Critical",tip:"狀態危急或屬致死性病況，需要立即介入治療以挽救生命或防止重大致殘。",lv:[4,3,2]},
+    {n:"嚴重情況",e:"Serious",tip:"狀態會導致顯著的發病率，屬於漸進性致殘或需要重大介入治療之病況。",lv:[3,2,1]},
+    {n:"非嚴重情況",e:"Non-serious",tip:"屬於緩解、輕微症狀，介入治療主要是為了改善生活品質或緩解不適。",lv:[2,1,1]},
+  ];
+  const rn=["","I","II","III","IV"];
+  const cellTip={
+    1:"第 I 級：最低風險。通常以較簡化的實證與內部驗證即可。",
+    2:"第 II 級：低至中風險。需適度臨床實證支持。",
+    3:"第 III 級：中高風險。需較完整臨床實證與查驗登記。",
+    4:"第 IV 級：最高風險。通常需要完整臨床實證與嚴格查驗登記。",
+  };
+  const thead=`<thead><tr><th class="corner"></th>`+
+    cols.map(c=>`<th class="tip"${A(c.tip)}>${esc(c.n)}<br><small style="font-weight:400;color:var(--mut)">${esc(c.e)}</small></th>`).join("")+
+    `</tr></thead>`;
+  const tbody=`<tbody>`+rows.map(r=>
+    `<tr><th class="tip"${A(r.tip)}>${esc(r.n)}<br><small style="font-weight:400;color:var(--mut)">${esc(r.e)}</small></th>`+
+    r.lv.map(l=>`<td class="lc${l} tip"${A(cellTip[l])}><span class="lv">${rn[l]}</span> 級</td>`).join("")+
+    `</tr>`).join("")+`</tbody>`;
+  return `<div class="imdrf">
+    <div class="cap">風險分級對照表 · 附表一 IMDRF SaMD 自評 <small>（滑鼠懸浮欄位／格子可看說明）</small></div>
+    <table>${thead}${tbody}</table>
+    <div class="foot">風險評級 = <b>疾病嚴重程度（列）</b> × <b>資訊對醫療決策的重要性（欄）</b> 交叉比對。等級由 <b>I</b> 至 <b>IV</b> 遞增，<b>IV 級為最高風險</b>，通常需要完整的臨床實證與嚴格的查驗登記。</div>
+  </div>`;
+}
+function caseBanner(){
+  const c=activeCase();
+  if(c){return `<div class="casebanner">📁 作用中案件：<b>${esc(c.no)}</b>｜${esc(c.name)}　·　此表單存入本案。<button class="mini" onclick="location.hash='case'">回案件工作區</button></div>`;}
+  return `<div class="casebanner warn">⚠ 未選案件：目前為<b>暫存草稿</b>，未歸屬任何案件。建議先用精靈建立案件再填寫。<button class="mini" onclick="location.hash='wizard'">前往精靈</button></div>`;
+}
+function renderForm(id){
+  const f=FORMS.find(x=>x.id===id); if(!f)return renderHome();
+  crumb.innerHTML=`線上申請表單 / <b>${f.title}</b>`;
+  const store=loadForm(f.id);
+  const body=f.sections.map(s=>{
+    const note=s.note?`<p class="hint" style="color:var(--mut);font-size:12.5px;margin:-4px 0 12px">${esc(s.note)}</p>`:"";
+    return `<fieldset><legend>${esc(s.legend)}</legend>${note}`+s.rows.map(r=>rowBlock(r,store)).join("")+`</fieldset>`;
+  }).join("");
+  view.innerHTML=formShell(f,`
+    ${caseBanner()}
+    <div class="secmeta"><span class="pill">📄 原始檔：${f.n}_${esc(f.title)}.pdf</span><span class="pill">來源：${f.src}</span></div>
+    ${body}
+    <fieldset><legend>核章欄</legend>
+      <div class="signbox">申請人　／　申請單位主管　／　經辦人　／　資通安全委員會　／　智慧醫療委員會<br>（靜態原型：核章與簽核流程由正式系統處理，此處僅示意）</div>
+    </fieldset>`);
+  bindForm(f.id);
+}
+function formShell(f,inner){
+  return `<span class="backflow" onclick="location.hash='flow'">← 回申請流程圖</span>
+   <p class="eyebrow">${f.icon} 線上申請表單 ${f.n}</p><h1 class="page">${esc(f.full||f.title)}</h1>
+   <div class="formbar">
+     <span class="saved" id="savedFlag">草稿自動儲存於本機瀏覽器</span>
+     <button class="btn ghost" onclick="printForm()">🖨 列印 / 轉 PDF</button>
+     <button class="btn ghost" onclick="exportForm('${f.id}')">⬇ 匯出 JSON</button>
+     <button class="btn ghost" onclick="importForm('${f.id}')">⬆ 匯入 JSON</button>
+     <button class="btn warn" onclick="clearForm('${f.id}')">清除草稿</button>
+   </div>${inner}`;
+}
+function renderSec(id){
+  const f=SEC_FORMS.find(x=>x.id===id); if(!f)return renderHome();
+  crumb.innerHTML=`線上申請表單 / <b>${f.title}</b>`;
+  const store=loadForm(f.id);
+  const items=SEC_CATALOG.filter(x=>LVL_ORDER[x[3]]<=LVL_ORDER[f.level]);
+  const g0=k=>esc((store[k]||{}).val||"");
+  const head=`<fieldset><legend>表單資訊</legend>
+    <div class="row2"><div class="field"><label>評估日期</label><input type="date" data-k="eval_date" value="${g0("eval_date")}"></div>
+    <div class="field"><label>軟體中文名稱</label><input type="text" data-k="sw_zh" value="${g0("sw_zh")}"></div></div>
+    <div class="field"><label>軟體英文名稱</label><input type="text" data-k="sw_en" value="${g0("sw_en")}"></div>
+    </fieldset>
+    <fieldset><legend>申請人資料</legend>
+     <div class="row3">
+      <div class="field"><label>姓名</label><input type="text" data-k="ap_name" value="${g0("ap_name")}"></div>
+      <div class="field"><label>單位</label><input type="text" data-k="ap_dept" value="${g0("ap_dept")}"></div>
+      <div class="field"><label>連絡電話</label><input type="text" data-k="ap_tel" value="${g0("ap_tel")}"></div></div>
+     <div class="row3">
+      <div class="field"><label>員工編號</label><input type="text" data-k="ap_eid" value="${g0("ap_eid")}"></div>
+      <div class="field"><label>職稱</label><input type="text" data-k="ap_title" value="${g0("ap_title")}"></div>
+      <div class="field"><label>Email</label><input type="text" data-k="ap_email" value="${g0("ap_email")}"></div></div>
+    </fieldset>`;
+  let lastDomain="",lastSub="";
+  const bodyItems=items.map(it=>{
+    const [no,dom,sub,lvl,measure]=it;
+    let h="";
+    if(dom!==lastDomain){h+=`<div class="domain-h">${esc(dom)}</div>`;lastDomain=dom;lastSub="";}
+    if(sub!==lastSub){h+=`<div class="sub-h">${esc(sub)}</div>`;lastSub=sub;}
+    const comply=(store["c_"+no]||{}).val||"";
+    const g=k=>esc((store[k+"_"+no]||{}).val||"");
+    h+=`<div class="ctl">
+      <div class="top"><div class="no">${no}</div><div class="lvl ${lvl}">${lvl}</div><div class="measure">${esc(measure)}</div></div>
+      <div class="inp">
+        <div class="field full"><label>是否符合</label><div class="opts">
+          ${["符合","不符合","不適用"].map(o=>`<label class="opt"><input type="radio" name="c_${no}" data-k="c_${no}" data-radio="1" value="${o}" ${comply===o?"checked":""}> ${o}</label>`).join("")}
+        </div></div>
+        <div class="field full"><label>現況說明</label><textarea data-k="now_${no}">${g("now")}</textarea></div>
+        <div class="field"><label>佐證</label><input type="text" data-k="ev_${no}" value="${g("ev")}"></div>
+        <div class="field"><label>目標日期</label><input type="date" data-k="due_${no}" value="${g("due")}"></div>
+        <div class="field full"><label>矯正作為</label><textarea data-k="fix_${no}">${g("fix")}</textarea></div>
+        <div class="field full"><label>備註說明</label><input type="text" data-k="note_${no}" value="${g("note")}"></div>
+      </div></div>`;
+    return h;
+  }).join("");
+  view.innerHTML=formShell({id:f.id,icon:f.icon,n:f.n,full:"花蓮慈濟醫院－"+f.title,title:f.title,src:"page/8318"},
+    `${caseBanner()}
+     <div class="secmeta"><span class="pill">📄 原始檔：${f.n}_${esc(f.title)}.pdf</span><span class="pill">共 ${items.length} 項控制措施</span><span class="pill">等級門檻：${f.level}</span></div>
+     ${head}${bodyItems}
+     <fieldset><legend>核章欄</legend><div class="signbox">申請人　／　承辦單位　／　資訊室　／　資通安全長</div></fieldset>`);
+  bindForm(f.id);
+}
+
+/* ==================================================================
+   Form binding / persistence
+   ================================================================== */
+function collect(id){
+  const store=loadForm(id);
+  view.querySelectorAll("[data-k]").forEach(el=>{
+    const k=el.dataset.k;
+    if(el.dataset.radio){ if(el.checked) store[k]={val:el.value}; }
+    else if(el.dataset.check!==undefined){ store[k]=store[k]||{sel:{},txt:{}}; store[k].sel=store[k].sel||{}; store[k].sel[el.dataset.check]=el.checked; }
+    else if(el.dataset.checktxt!==undefined){ store[k]=store[k]||{sel:{},txt:{}}; store[k].txt=store[k].txt||{}; store[k].txt[el.dataset.checktxt]=el.value; }
+    else { store[k]={val:el.value}; }
+  });
+  return store;
+}
+function bindForm(id){
+  const flag=document.getElementById("savedFlag");
+  view.querySelectorAll("[data-k]").forEach(el=>{
+    el.addEventListener("input",()=>save(id,flag));
+    el.addEventListener("change",()=>save(id,flag));
+  });
+  window.scrollTo(0,0);
+}
+function save(id,flag){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    localStorage.setItem(formKey(id),JSON.stringify(collect(id)));
+    touchCase();renderActiveBox();
+    if(flag){flag.textContent="✔ 已儲存草稿 "+new Date().toLocaleTimeString();flag.classList.add("on");}
+  },250);
+}
+function clearForm(id){
+  if(!confirm("確定清除此表單的本機草稿？此動作無法復原。"))return;
+  localStorage.removeItem(formKey(id)); route();
+}
+function exportForm(id){
+  const data=collect(id);
+  const blob=new Blob([JSON.stringify({form:id,exportedAt:new Date().toISOString(),data},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=id+"_draft.json";a.click();
+}
+function importForm(id){
+  const inp=document.createElement("input");inp.type="file";inp.accept="application/json";
+  inp.onchange=()=>{const fr=new FileReader();fr.onload=()=>{try{
+    const o=JSON.parse(fr.result); const d=o.data||o;
+    localStorage.setItem(formKey(id),JSON.stringify(d)); route();
+  }catch(e){alert("匯入失敗：檔案格式錯誤")}};fr.readAsText(inp.files[0])};
+  inp.click();
+}
+function printForm(){window.print()}
+
+/* ==================================================================
+   治理層・委員會工作台
+   ================================================================== */
+const DECISION_TYPES=["登錄即可","快速核准","條件式核准 PoC","條件式臨床試用","補件後再審","暫停上線","不予導入","退場"];
+const DEC_STATUS={"登錄即可":"已核准","快速核准":"已核准","條件式核准 PoC":"條件式核准","條件式臨床試用":"條件式核准",
+  "補件後再審":"審查中","暫停上線":"暫停","不予導入":"退件","退場":"已退場"};
+const APPROVED_SET=["已核准","條件式核准","已上線"];
+const RCOL={L1:"#2e8a5e",L2:"#a2661a",L3:"#b4531f",L4:"#b4342a"};
+const CCOL=["#1f6b47","#2563eb","#7c3aed","#0d9488","#b45309","#6b7783"];
+const SCOL={"普":"#2e8a5e","中":"#a2661a","高":"#b4342a"};
+
+function latestDecision(c){return (c.decisions&&c.decisions.length)?c.decisions[c.decisions.length-1]:null;}
+function riskFlags(c){const q=c.riskQ||{};const f=[];
+  if(q.device)f.push("醫材未釐清");if(q.agent)f.push("AI agent");
+  if(q.pid||q.cloud)f.push("個資外傳");if(q.clinical)f.push("影響臨床");if(q.patient)f.push("病人互動");return f;}
+function addDecision(caseId,d){
+  const cs=getCases();const c=cs.find(x=>x.id===caseId);if(!c)return;
+  c.decisions=c.decisions||[];c.decisions.push(d);
+  if(DEC_STATUS[d.type])c.status=DEC_STATUS[d.type];
+  c.updatedAt=new Date().toISOString();setCases(cs);renderActiveBox();
+}
+function setExec(caseId,idx,v){const cs=getCases();const c=cs.find(x=>x.id===caseId);
+  if(!c||!c.decisions||!c.decisions[idx])return;c.decisions[idx].executed=v;setCases(cs);renderTrack();}
+
+/* ---- 示範資料（含已知 4 案）---- */
+const DEMO_CASES=[
+ {id:"demo1",no:"AI-20260703-01",name:"腎臟科 Hb 預測",dept:"腎臟科",applicant:"示範",cycle:"trial",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,emr:true},status:"審查中",
+  createdAt:"2026-07-03T00:00:00.000Z",updatedAt:"2026-07-10T00:00:00.000Z",decisions:[]},
+ {id:"demo2",no:"AI-20260705-01",name:"腎臟科 CaIP 預測",dept:"腎臟科",applicant:"示範",cycle:"trial",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,emr:true},status:"已送出",
+  createdAt:"2026-07-05T00:00:00.000Z",updatedAt:"2026-07-05T00:00:00.000Z",decisions:[]},
+ {id:"demo3",no:"AI-20260512-02",name:"醫事室 住院天數預測",dept:"醫事室",applicant:"示範",cycle:"online",
+  origin:"new",riskLevel:"L2",secLevel:"中",riskQ:{pid:true},status:"已上線",
+  createdAt:"2026-05-12T00:00:00.000Z",updatedAt:"2026-06-01T00:00:00.000Z",
+  decisions:[{date:"2026-05-20",type:"快速核准",scope:"醫事室內部",conditions:"每季回報使用率",owner:"醫事室",reviewDate:"2026-11-20",executed:"已執行"}]},
+ {id:"demo4",no:"AI-20260708-01",name:"醫事室 Weekly Summary（GenAI）",dept:"醫事室",applicant:"示範",cycle:"trial",
+  origin:"existing",riskLevel:"L2",secLevel:"中",riskQ:{cloud:true},status:"審查中",
+  createdAt:"2026-07-08T00:00:00.000Z",updatedAt:"2026-07-12T00:00:00.000Z",decisions:[]},
+ {id:"demo5",no:"AI-20260415-01",name:"放射科 肺結節 CT 標記",dept:"放射科",applicant:"示範",cycle:"trial",
+  origin:"existing",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,device:true},status:"暫停",
+  createdAt:"2026-04-15T00:00:00.000Z",updatedAt:"2026-06-20T00:00:00.000Z",
+  decisions:[{date:"2026-06-18",type:"暫停上線",scope:"—",conditions:"疑似醫材未取得 TFDA，完成醫材分流前不得臨床使用",owner:"放射科／醫材窗口",reviewDate:"2026-08-18",executed:"待執行"}]},
+ {id:"demo6",no:"AI-20260710-01",name:"急診 檢傷分流建議",dept:"急診部",applicant:"示範",cycle:"trial",
+  origin:"new",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,patient:true,emr:true},status:"審查中",
+  createdAt:"2026-07-10T00:00:00.000Z",updatedAt:"2026-07-15T00:00:00.000Z",decisions:[]},
+ {id:"demo7",no:"AI-20260618-01",name:"藥劑部 交互作用警示",dept:"藥劑部",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,emr:true},status:"條件式核准",
+  createdAt:"2026-06-18T00:00:00.000Z",updatedAt:"2026-07-01T00:00:00.000Z",
+  decisions:[{date:"2026-06-28",type:"條件式臨床試用",scope:"限藥劑部覆核後發出",conditions:"需藥師人工覆核，禁止自動攔截醫囑",owner:"藥劑部",reviewDate:"2026-07-15",executed:"待執行"}]},
+ {id:"demo8",no:"AI-20260220-01",name:"門診 衛教問答機器人",dept:"家醫科",applicant:"示範",cycle:"stop",
+  origin:"new",riskLevel:"L3",secLevel:"高",riskQ:{patient:true,cloud:true},status:"已退場",
+  createdAt:"2026-02-20T00:00:00.000Z",updatedAt:"2026-05-30T00:00:00.000Z",
+  decisions:[{date:"2026-05-28",type:"退場",scope:"—",conditions:"回覆正確率不足且供應商 API 停止服務",owner:"家醫科",reviewDate:"",executed:"已執行"}]},
+ {id:"demo9",no:"AI-20260115-01",name:"眼科 糖尿病視網膜病變篩檢",dept:"眼科",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,device:true,emr:true},status:"已上線",
+  createdAt:"2026-01-15T00:00:00.000Z",updatedAt:"2026-06-10T00:00:00.000Z",
+  decisions:[{date:"2026-02-10",type:"條件式臨床試用",scope:"限眼科門診轉診用途",conditions:"已取得 TFDA 第二等級醫材許可，需眼科醫師覆核陽性個案",owner:"眼科",reviewDate:"2026-08-10",executed:"已執行"}]},
+ {id:"demo10",no:"AI-20260322-01",name:"心臟內科 12 導程心電圖判讀",dept:"心臟內科",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,device:true,emr:true},status:"條件式核准",
+  createdAt:"2026-03-22T00:00:00.000Z",updatedAt:"2026-07-14T00:00:00.000Z",
+  decisions:[{date:"2026-04-30",type:"條件式核准",scope:"心臟內科與急診共用",conditions:"僅供輔助判讀，最終診斷須由心臟科醫師確認",owner:"心臟內科",reviewDate:"2026-10-30",executed:"待執行"}]},
+ {id:"demo11",no:"AI-20260701-01",name:"胸部 X 光 肺炎偵測",dept:"影像醫學部",applicant:"示範",cycle:"trial",
+  origin:"new",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,device:true,emr:true},status:"審查中",
+  createdAt:"2026-07-01T00:00:00.000Z",updatedAt:"2026-07-16T00:00:00.000Z",decisions:[]},
+ {id:"demo12",no:"AI-20260620-02",name:"ICU 敗血症早期預警",dept:"重症醫學部",applicant:"示範",cycle:"trial",
+  origin:"new",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,patient:true,emr:true},status:"已送出",
+  createdAt:"2026-06-20T00:00:00.000Z",updatedAt:"2026-06-22T00:00:00.000Z",decisions:[]},
+ {id:"demo13",no:"AI-20260528-01",name:"護理部 住院跌倒風險預測",dept:"護理部",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L2",secLevel:"中",riskQ:{pid:true,emr:true},status:"已上線",
+  createdAt:"2026-05-28T00:00:00.000Z",updatedAt:"2026-07-05T00:00:00.000Z",
+  decisions:[{date:"2026-06-15",type:"快速核准",scope:"全院住院病房",conditions:"每季回報預警命中率與護理處置紀錄",owner:"護理部",reviewDate:"2026-12-15",executed:"已執行"}]},
+ {id:"demo14",no:"AI-20260408-01",name:"病理科 數位切片乳癌分級",dept:"病理科",applicant:"示範",cycle:"change",
+  origin:"existing",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,device:true},status:"審查中",
+  createdAt:"2026-04-08T00:00:00.000Z",updatedAt:"2026-07-11T00:00:00.000Z",
+  decisions:[{date:"2026-07-08",type:"變更審查",scope:"病理科",conditions:"模型自 v1.2 改版至 v2.0，須重新驗證外部資料集效能後始得沿用",owner:"病理科",reviewDate:"2026-09-08",executed:"待執行"}]},
+ {id:"demo15",no:"AI-20260712-01",name:"復健科 語音病歷轉錄（GenAI）",dept:"復健科",applicant:"示範",cycle:"trial",
+  origin:"new",riskLevel:"L2",secLevel:"中",riskQ:{cloud:true,pid:true},status:"草稿",
+  createdAt:"2026-07-12T00:00:00.000Z",updatedAt:"2026-07-18T00:00:00.000Z",decisions:[]},
+ {id:"demo16",no:"AI-20260306-01",name:"藥劑部 抗生素抗藥性預測",dept:"藥劑部",applicant:"示範",cycle:"ops",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,emr:true},status:"已上線",
+  createdAt:"2026-03-06T00:00:00.000Z",updatedAt:"2026-07-02T00:00:00.000Z",
+  decisions:[{date:"2026-04-02",type:"條件式核准",scope:"感染科會診使用",conditions:"每半年重驗抗藥性資料分布漂移",owner:"藥劑部／感染科",reviewDate:"2026-10-02",executed:"已執行"}]},
+ {id:"demo17",no:"AI-20260225-01",name:"骨科 骨折 X 光偵測",dept:"骨科",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L3",secLevel:"高",riskQ:{clinical:true,device:true,emr:true},status:"退件",
+  createdAt:"2026-02-25T00:00:00.000Z",updatedAt:"2026-05-20T00:00:00.000Z",
+  decisions:[{date:"2026-05-18",type:"退件",scope:"—",conditions:"未提供本地測試資料與敏感度/特異度佐證，退回補件",owner:"骨科",reviewDate:"",executed:"已執行"}]},
+ {id:"demo18",no:"AI-20260710-02",name:"資訊室 院內客服聊天機器人（GenAI）",dept:"資訊室",applicant:"示範",cycle:"trial",
+  origin:"existing",riskLevel:"L2",secLevel:"中",riskQ:{cloud:true,agent:true},status:"審查中",
+  createdAt:"2026-07-10T00:00:00.000Z",updatedAt:"2026-07-17T00:00:00.000Z",decisions:[]},
+ {id:"demo19",no:"AI-20260118-01",name:"麻醉科 術中低血壓預測",dept:"麻醉科",applicant:"示範",cycle:"online",
+  origin:"existing",riskLevel:"L4",secLevel:"高",riskQ:{clinical:true,patient:true,device:true,emr:true},status:"已核准",
+  createdAt:"2026-01-18T00:00:00.000Z",updatedAt:"2026-06-28T00:00:00.000Z",
+  decisions:[{date:"2026-03-01",type:"條件式核准",scope:"限手術室麻醉監測",conditions:"須與現行監測儀併行，警示由麻醉醫師判讀，滿一年回報成效",owner:"麻醉科",reviewDate:"2027-03-01",executed:"已執行"}]},
+ {id:"demo20",no:"AI-20260512-03",name:"檢驗醫學部 血液抹片白血球分類",dept:"檢驗醫學部",applicant:"示範",cycle:"trial",
+  origin:"new",riskLevel:"L2",secLevel:"中",riskQ:{device:true},status:"已送出",
+  createdAt:"2026-05-12T00:00:00.000Z",updatedAt:"2026-05-14T00:00:00.000Z",decisions:[]},
+];
+const DEMO_REVIEWS={
+ demo1:{admin:{state:"通過",date:"2026-07-06"},security:{state:"待審"},ai:{state:"待審"}},
+ demo2:{admin:{state:"待審"},security:{state:"待審"},ai:{state:"待審"}},
+ demo3:{admin:{state:"通過",date:"2026-05-15"},security:{state:"通過",date:"2026-05-18"},ai:{state:"不適用"}},
+ demo4:{admin:{state:"通過",date:"2026-07-10"},security:{state:"待審"},ai:{state:"不適用"}},
+ demo5:{admin:{state:"通過",date:"2026-04-18"},security:{state:"通過",date:"2026-05-02"},ai:{state:"退補",date:"2026-06-18"}},
+ demo6:{admin:{state:"待審"},security:{state:"待審"},ai:{state:"待審"}},
+ demo7:{admin:{state:"通過",date:"2026-06-20"},security:{state:"通過",date:"2026-06-25"},ai:{state:"通過",date:"2026-06-28"}},
+ demo8:{admin:{state:"通過"},security:{state:"通過"},ai:{state:"通過"}},
+};
+const SEED_VER="2";
+function isSeeded(){return localStorage.getItem("aigov:seeded")===SEED_VER;}
+function seedDemo(){
+  if(!isSeeded()){const cs=getCases().filter(c=>!c.demo);
+    DEMO_CASES.forEach(d=>{const c=Object.assign({demo:true},JSON.parse(JSON.stringify(d)));
+      c.reviews=DEMO_REVIEWS[d.id]||defaultReviews(c);cs.push(c);});
+    setCases(cs);localStorage.setItem("aigov:seeded",SEED_VER);}
+  route();
+}
+function clearDemo(){setCases(getCases().filter(c=>!c.demo));localStorage.removeItem("aigov:seeded");route();}
+function wmBanner(){return `<div class="wm">🎬 目前含<b>示範資料</b>，統計數字僅供介面展示，非真實盤點。
+  <button class="btn ghost" onclick="clearDemo()">清除示範資料</button></div>`;}
+
+/* ---- 統計（從清冊即時算）---- */
+function stats(){
+  const cs=getCases();
+  const by=f=>cs.reduce((m,c)=>{const k=f(c)||"—";m[k]=(m[k]||0)+1;return m;},{});
+  const now=new Date();const qStart=new Date(now.getFullYear(),Math.floor(now.getMonth()/3)*3,1).toISOString();
+  const flag=k=>cs.filter(c=>(c.riskQ||{})[k]).length;
+  const shadow=cs.filter(c=>c.origin==="existing").length;
+  return {total:cs.length,
+    qnew:cs.filter(c=>(c.createdAt||"")>=qStart).length,
+    pending:cs.filter(c=>c.status==="已送出"||c.status==="審查中").length,
+    online:cs.filter(c=>c.status==="已上線").length,
+    paused:cs.filter(c=>c.status==="暫停").length,
+    risk:by(c=>c.riskLevel),cycle:by(c=>cycleLabel(c.cycle)),sec:by(c=>c.secLevel),status:by(c=>c.status),
+    pid:flag("pid"),cloud:flag("cloud"),emr:flag("emr"),device:flag("device"),agent:flag("agent"),
+    shadow,shadowNew:cs.length-shadow,
+    shadowUnrev:cs.filter(c=>c.origin==="existing"&&(c.riskLevel==="L3"||c.riskLevel==="L4")&&!APPROVED_SET.includes(c.status)).length};
+}
+function barChart(title,items){
+  const max=Math.max(1,...items.map(i=>i.value));
+  return `<div class="chartbox"><h3>${title}</h3>${items.map(i=>`
+    <div class="barrow"><span>${i.label}</span>
+      <div class="bartrack"><div class="barfill" style="width:${i.value/max*100}%;background:${i.color||'var(--green-l)'}"></div></div>
+      <span class="bv">${i.value}</span></div>`).join("")}</div>`;
+}
+function pieChart(title,items){
+  const tot=items.reduce((s,i)=>s+i.value,0)||1;let a=0;
+  const stops=items.filter(i=>i.value>0).map(i=>{const s=a/tot*360;a+=i.value;return `${i.color} ${s}deg ${a/tot*360}deg`;}).join(",")||"#eee 0deg 360deg";
+  return `<div class="chartbox"><h3>${title}</h3><div class="pie">
+    <div class="disc" style="background:conic-gradient(${stops})"></div>
+    <div class="leg">${items.map(i=>`<div><span class="sw" style="background:${i.color}"></span>${i.label}　<b>${i.value}</b></div>`).join("")}</div>
+  </div></div>`;
+}
+
+function renderDash(){
+  crumb.innerHTML='委員會工作台 / <b>統計看板</b>';
+  const s=stats();
+  if(!s.total){view.innerHTML=`<p class="eyebrow">📊 統計看板</p><h1 class="page">院內 AI 治理總覽</h1>
+    <div class="emptybox">清冊尚無案件，圖表無資料。<br><br>
+    <button class="btn" onclick="seedDemo()">🎬 載入示範資料（20 筆）</button>
+    <button class="btn ghost" onclick="location.hash='wizard'">🧙 建立真實案件</button></div>`;window.scrollTo(0,0);return;}
+  const riskItems=["L1","L2","L3","L4"].map(k=>({label:k,value:s.risk[k]||0,color:RCOL[k]}));
+  const cycleItems=Object.keys(s.cycle).map((k,i)=>({label:k,value:s.cycle[k],color:CCOL[i%CCOL.length]}));
+  const secItems=["普","中","高"].map(k=>({label:k+"級",value:s.sec[k]||0,color:SCOL[k]}));
+  const statusItems=Object.keys(s.status).map((k,i)=>({label:k,value:s.status[k],color:CCOL[i%CCOL.length]}));
+  view.innerHTML=`<p class="eyebrow">📊 統計看板</p><h1 class="page">院內 AI 治理總覽</h1>
+   ${isSeeded()?wmBanner():""}
+   <div class="kpirow">
+     <div class="kpi"><div class="v">${s.total}</div><div class="k">案件總數</div></div>
+     <div class="kpi"><div class="v">${s.qnew}</div><div class="k">本季新增</div></div>
+     <div class="kpi warnv"><div class="v">${s.pending}</div><div class="k">待審（送出/審查中）</div></div>
+     <div class="kpi"><div class="v">${s.online}</div><div class="k">已上線</div></div>
+     <div class="kpi warnv"><div class="v">${s.paused}</div><div class="k">暫停中</div></div>
+   </div>
+   <div class="charts">
+     ${barChart("風險分佈 L1–L4",riskItems)}
+     ${pieChart("生命週期分佈",cycleItems)}
+     ${barChart("資安基準等級",secItems)}
+     ${barChart("案件狀態分佈",statusItems)}
+   </div>
+   <div class="sec-title">資料 / 系統風險（命中件數）</div>
+   <div class="riskcards">
+     <div class="rc"><div class="v">${s.pid}</div><div class="k">用可識別病人資料</div></div>
+     <div class="rc"><div class="v">${s.cloud}</div><div class="k">接外部雲端 / API</div></div>
+     <div class="rc"><div class="v">${s.emr}</div><div class="k">介接 HIS/EMR/PACS</div></div>
+     <div class="rc"><div class="v">${s.device}</div><div class="k">疑似醫材未釐清</div></div>
+     <div class="rc"><div class="v">${s.agent}</div><div class="k">AI agent 自主行動</div></div>
+   </div>
+   <div class="sec-title">Shadow AI 盤點</div>
+   <div class="riskcards">
+     <div class="rc"><div class="v" style="color:var(--green-d)">${s.shadowNew}</div><div class="k">新導入申請</div></div>
+     <div class="rc"><div class="v" style="color:var(--green-d)">${s.shadow}</div><div class="k">既有補登錄</div></div>
+     <div class="rc"><div class="v">${s.shadowUnrev}</div><div class="k">既有高風險・未審先用</div></div>
+   </div>`;
+  window.scrollTo(0,0);
+}
+
+function renderAgenda(){
+  crumb.innerHTML='委員會工作台 / <b>待審議程</b>';
+  const cs=getCases().filter(c=>(c.status==="已送出"||c.status==="審查中")&&(c.riskLevel==="L3"||c.riskLevel==="L4"))
+    .sort((a,b)=>((a.riskLevel==="L4")?0:1)-((b.riskLevel==="L4")?0:1)||(a.createdAt||"").localeCompare(b.createdAt||""));
+  const cards=cs.map(c=>{const p=caseProgress(c);const flags=riskFlags(c);
+    return `<div class="agcard ${c.riskLevel}">
+      <div class="ah"><span class="riskbadge r${c.riskLevel}">${c.riskLevel}</span>
+        <b>${esc(c.name)}</b><span class="dectype">${esc(c.no)}</span></div>
+      <div class="agmeta">單位：${esc(c.dept||"—")}　·　${cycleLabel(c.cycle)}　·　資安 ${c.secLevel}級　·　表單完成 ${p.done}/${p.total}${p.done<p.total?'　·　<b style="color:var(--warn)">待補件</b>':''}</div>
+      ${flags.length?`<div class="agflags">${flags.map(f=>`<span class="agflag">⚠ ${f}</span>`).join("")}</div>`:""}
+      <div class="decform">
+        <div><label>決議</label><select data-dec="${c.id}">${DECISION_TYPES.map(t=>`<option>${t}</option>`).join("")}</select></div>
+        <div><label>後續負責人</label><input data-owner="${c.id}" placeholder="單位 / 人"></div>
+        <div class="full"><label>條件 / 範圍 / 禁止事項</label><input data-cond="${c.id}" placeholder="核准範圍、附帶條件或禁止事項"></div>
+        <div><label>複審日</label><input type="date" data-review="${c.id}"></div>
+        <div style="display:flex;align-items:flex-end"><button class="btn" data-submit="${c.id}">✔ 作出決議</button></div>
+      </div></div>`;}).join("");
+  view.innerHTML=`<p class="eyebrow">🗳️ 待審議程</p><h1 class="page">本次委員會待審案（L3 / L4）</h1>
+   <div class="lead">依風險排序（L4 優先）。委員可當場作出決議；送出後同步更新案件狀態並進入<b>決議追蹤</b>。</div>
+   ${isSeeded()?wmBanner():""}
+   ${cs.length?cards:`<div class="emptybox">目前無待審的 L3/L4 案件。<br><br><button class="btn" onclick="location.hash='dash'">回統計看板</button></div>`}`;
+  view.querySelectorAll("[data-submit]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.submit;const g=s=>view.querySelector(`[data-${s}="${id}"]`);
+    const d={date:new Date().toISOString().slice(0,10),type:g("dec").value,scope:"",
+      conditions:g("cond").value,owner:g("owner").value,reviewDate:g("review").value,executed:"待執行"};
+    addDecision(id,d);alert("已作出決議："+d.type);renderAgenda();
+  });
+  window.scrollTo(0,0);
+}
+
+function renderTrack(){
+  crumb.innerHTML='委員會工作台 / <b>決議追蹤</b>';
+  const today=new Date().toISOString().slice(0,10);
+  const rows=[];let done=0,total=0,late=0,due=0;
+  getCases().forEach(c=>{(c.decisions||[]).forEach((d,idx)=>{
+    total++;let st=d.executed||"待執行";
+    if(st!=="已執行"&&d.reviewDate&&d.reviewDate<today)st="逾期";
+    if(st==="已執行")done++;else if(st==="逾期")late++;else if(d.reviewDate&&d.reviewDate>=today)due++;
+    rows.push({c,d,idx,st});});});
+  rows.sort((a,b)=>(a.d.reviewDate||"9999").localeCompare(b.d.reviewDate||"9999"));
+  const rate=total?Math.round(done/total*100):0;
+  const body=rows.map(r=>`<tr>
+     <td class="no">${esc(r.c.no)}</td><td>${esc(r.c.name)}</td>
+     <td><span class="dectype">${esc(r.d.type)}</span></td><td>${esc(r.d.date||"—")}</td>
+     <td>${esc(r.d.conditions||"—")}</td><td>${esc(r.d.owner||"—")}</td>
+     <td>${r.d.reviewDate||"—"}</td>
+     <td><select data-exec="${r.c.id}" data-idx="${r.idx}">
+       ${["待執行","已執行","逾期"].map(o=>`<option ${o===r.st?"selected":""}>${o}</option>`).join("")}</select></td></tr>`).join("");
+  view.innerHTML=`<p class="eyebrow">📌 決議追蹤</p><h1 class="page">決議執行與複審追蹤</h1>
+   ${isSeeded()?wmBanner():""}
+   <div class="kpirow">
+     <div class="kpi"><div class="v">${rate}%</div><div class="k">決議執行率</div></div>
+     <div class="kpi"><div class="v">${done}/${total}</div><div class="k">已執行 / 總決議</div></div>
+     <div class="kpi warnv"><div class="v">${late}</div><div class="k">逾期未執行</div></div>
+     <div class="kpi"><div class="v">${due}</div><div class="k">待複審</div></div>
+   </div>
+   ${total?`<div style="overflow-x:auto"><table class="rtable">
+     <tr><th>案號</th><th>系統名稱</th><th>決議</th><th>決議日</th><th>條件/範圍</th><th>負責人</th><th>複審日</th><th>執行狀態</th></tr>
+     ${body}</table></div>`:`<div class="emptybox">尚無決議紀錄。到<b>待審議程</b>作出決議後，這裡會出現追蹤列。</div>`}`;
+  view.querySelectorAll("[data-exec]").forEach(sel=>sel.onchange=()=>setExec(sel.dataset.exec,+sel.dataset.idx,sel.value));
+  window.scrollTo(0,0);
+}
+
+function renderFreeze(){
+  crumb.innerHTML='委員會工作台 / <b>暫停 / 退場</b>';
+  const FZ=["暫停","退件","已退場"];
+  const cs=getCases().filter(c=>FZ.includes(c.status));
+  const rows=cs.map(c=>{const d=latestDecision(c);
+    return `<tr class="clickrow" data-open="${c.id}">
+      <td class="no">${esc(c.no)}</td><td>${esc(c.name)}</td><td>${esc(c.dept||"—")}</td>
+      <td><span class="rlvl r${c.riskLevel}">${c.riskLevel}</span></td>
+      <td><span class="dectype">${esc(c.status)}</span></td>
+      <td>${d?esc(d.conditions||d.type):"—"}</td>
+      <td>${d?esc(d.date||"—"):"—"}</td>
+      <td>${d&&d.reviewDate?d.reviewDate:"—"}</td></tr>`;}).join("");
+  view.innerHTML=`<p class="eyebrow">⏸️ 暫停 / 退場</p><h1 class="page">凍結與退場案件（風險控管）</h1>
+   <div class="lead">列出目前狀態為暫停、退件、已退場的案件，供委員會追蹤高風險處置與解除條件。點列進案件工作區。</div>
+   ${isSeeded()?wmBanner():""}
+   ${cs.length?`<div style="overflow-x:auto"><table class="rtable">
+     <tr><th>案號</th><th>系統名稱</th><th>單位</th><th>風險</th><th>狀態</th><th>原因 / 條件</th><th>決議日</th><th>複審日</th></tr>
+     ${rows}</table></div>`:`<div class="emptybox">目前沒有凍結或退場的案件。</div>`}`;
+  view.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{setActive(el.dataset.open);location.hash="case";});
+  window.scrollTo(0,0);
+}
+
+function renderMtg(){
+  crumb.innerHTML='委員會工作台 / <b>會議輸出</b>';
+  view.innerHTML=`<p class="eyebrow">🖨️ 會議輸出</p><h1 class="page">一鍵產生會議文件</h1>
+   <div class="lead">依目前清冊資料套版產生議程、會議紀錄與決議書，可列印或另存 PDF。此為靜態範本示意。</div>
+   <div class="grid">
+     <div class="card" onclick="mtgDoc('agenda')"><div class="ic">🗓️</div><b>會議議程</b><small>帶入待審 L3/L4 案清單</small></div>
+     <div class="card" onclick="mtgDoc('minutes')"><div class="ic">📝</div><b>會議紀錄模板</b><small>出席、逐案討論、決議欄</small></div>
+     <div class="card" onclick="mtgDoc('decision')"><div class="ic">📜</div><b>決議書</b><small>逐案：決議、範圍、禁止事項、複審</small></div>
+   </div>
+   <div id="mtgout" style="margin-top:24px"></div>`;
+  window.scrollTo(0,0);
+}
+function mtgDoc(kind){
+  const today=new Date().toISOString().slice(0,10);
+  const pend=getCases().filter(c=>(c.status==="已送出"||c.status==="審查中")&&(c.riskLevel==="L3"||c.riskLevel==="L4"));
+  const decided=getCases().filter(c=>c.decisions&&c.decisions.length);
+  let h="";
+  if(kind==="agenda"){
+    h=`<h2 style="text-align:center">花蓮慈濟醫院 AI 治理委員會・會議議程</h2>
+      <p style="text-align:center;color:var(--mut)">日期：${today}　地點：〔　〕　主席：〔　〕</p>
+      <table class="doc"><tr><th>序</th><th>案號</th><th>系統名稱</th><th>單位</th><th>風險</th><th>審查重點</th></tr>
+      ${pend.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.no)}</td><td>${esc(c.name)}</td><td>${esc(c.dept||"—")}</td><td>${c.riskLevel}</td><td>${riskFlags(c).join("、")||"—"}</td></tr>`).join("")||`<tr><td colspan="6">無待審案</td></tr>`}</table>`;
+  }else if(kind==="minutes"){
+    h=`<h2 style="text-align:center">花蓮慈濟醫院 AI 治理委員會・會議紀錄</h2>
+      <p style="text-align:center;color:var(--mut)">日期：${today}　出席委員：〔　〕　列席：〔　〕</p>
+      ${pend.map((c,i)=>`<div class="rescard"><b>案 ${i+1}｜${esc(c.no)} ${esc(c.name)}</b>（${c.riskLevel}／${esc(c.dept||"—")}）
+        <p style="color:var(--mut);font-size:13px">討論：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿</p>
+        <p style="color:var(--mut);font-size:13px">決議：□登錄即可　□快速核准　□條件式核准　□補件再審　□暫停　□不予導入　□退場</p></div>`).join("")||"<p>無待審案</p>"}`;
+  }else{
+    h=`<h2 style="text-align:center">花蓮慈濟醫院 AI 治理委員會・決議書</h2>
+      ${decided.map(c=>{const d=latestDecision(c);return `<div class="rescard">
+        <b>${esc(c.no)}　${esc(c.name)}</b>　<span class="dectype">${esc(d.type)}</span>
+        <table class="doc"><tr><th>單位</th><td>${esc(c.dept||"—")}</td><th>風險等級</th><td>${c.riskLevel}</td></tr>
+        <tr><th>核准範圍</th><td colspan="3">${esc(d.scope||d.conditions||"—")}</td></tr>
+        <tr><th>附帶條件 / 禁止</th><td colspan="3">${esc(d.conditions||"—")}</td></tr>
+        <tr><th>後續負責人</th><td>${esc(d.owner||"—")}</td><th>複審日</th><td>${d.reviewDate||"—"}</td></tr></table></div>`;}).join("")||"<p>尚無決議紀錄</p>"}`;
+  }
+  document.getElementById("mtgout").innerHTML=`<div style="display:flex;gap:10px;margin-bottom:12px">
+     <button class="btn" onclick="window.print()">🖨 列印 / 轉 PDF</button></div><article>${h}</article>`;
+}
+
+/* ==================================================================
+   身份頭像（流程圖 + 審查工作台共用）
+   ================================================================== */
+const AVATARS={
+ applicant:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="申請者頭像">
+   <circle cx="32" cy="32" r="31" fill="#e7f2ec"/>
+   <path d="M20 40h24v14a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4z" fill="#1f6b47"/>
+   <circle cx="32" cy="23" r="15" fill="#ffe0c2"/>
+   <path d="M18 22a14 14 0 0 1 28 0c0 2-2 3-3 2-3-2-8-3-11-3s-8 1-11 3c-1 1-3 0-3-2z" fill="#3f2d1e"/>
+   <circle cx="26" cy="24" r="2.4" fill="#2b2b2b"/><circle cx="38" cy="24" r="2.4" fill="#2b2b2b"/>
+   <circle cx="25.4" cy="23.2" r=".8" fill="#fff"/><circle cx="37.4" cy="23.2" r=".8" fill="#fff"/>
+   <circle cx="22" cy="28" r="2.4" fill="#ff9d8a" opacity=".55"/><circle cx="42" cy="28" r="2.4" fill="#ff9d8a" opacity=".55"/>
+   <path d="M28 29q4 3.5 8 0" stroke="#7a4a2b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+   <rect x="26" y="42" width="16" height="20" rx="2" fill="#fff" stroke="#cfe3d7" stroke-width="1.5"/>
+   <path d="M29 47h10M29 51h10M29 55h6" stroke="#1f6b47" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+ admin:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="行政審核頭像">
+   <circle cx="32" cy="32" r="31" fill="#e8effd"/>
+   <path d="M43 20c9 2 12 10 11 20-1 8-5 12-9 12 3-6 3-12 1-18-2-6-5-10-4-14z" fill="#4a3526"/>
+   <ellipse cx="44.5" cy="20.5" rx="3" ry="2.2" fill="#2563eb" transform="rotate(30 44.5 20.5)"/>
+   <path d="M20 41h24v13a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4z" fill="#2563eb"/>
+   <path d="M28 41h8l-2 6h-4z" fill="#fff" opacity=".9"/>
+   <circle cx="32" cy="23" r="15" fill="#ffe1cd"/>
+   <path d="M17 24c0-10 7-15 15-15s15 5 15 15c0-4-3-6-6-6l-2 4-3-4-3 4-2-3-2 3-2-2c-4 0-8 2-8 8z" fill="#4a3526"/>
+   <circle cx="26" cy="24" r="2.8" fill="#3a2b22"/><circle cx="38" cy="24" r="2.8" fill="#3a2b22"/>
+   <circle cx="25.2" cy="23" r="1" fill="#fff"/><circle cx="37.2" cy="23" r="1" fill="#fff"/>
+   <path d="M23 21.5l1.5 1M41 21.5l-1.5 1" stroke="#3a2b22" stroke-width="1.2" stroke-linecap="round"/>
+   <circle cx="21.5" cy="28" r="2.6" fill="#ff9db0" opacity=".6"/><circle cx="42.5" cy="28" r="2.6" fill="#ff9db0" opacity=".6"/>
+   <path d="M28 29.5q4 3.5 8 0" stroke="#c96b6b" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+ security:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="資安稽核頭像">
+   <circle cx="32" cy="32" r="31" fill="#f0eafc"/>
+   <path d="M20 41h24v13a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4z" fill="#7c3aed"/>
+   <circle cx="32" cy="23" r="15" fill="#ffe0c2"/>
+   <path d="M17 23a15 15 0 0 1 30 0l-4-2a20 20 0 0 0-22 0z" fill="#33265a"/>
+   <circle cx="26" cy="24" r="2.4" fill="#2b2b2b"/><circle cx="38" cy="24" r="2.4" fill="#2b2b2b"/>
+   <circle cx="25.4" cy="23.2" r=".8" fill="#fff"/><circle cx="37.4" cy="23.2" r=".8" fill="#fff"/>
+   <circle cx="22" cy="28" r="2.4" fill="#ff9d8a" opacity=".55"/><circle cx="42" cy="28" r="2.4" fill="#ff9d8a" opacity=".55"/>
+   <path d="M28 29q4 3 8 0" stroke="#7a4a2b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+   <path d="M32 42l10 3v6c0 5-5 8-10 10-5-2-10-5-10-10v-6z" fill="#fff" stroke="#d8c9f2" stroke-width="1.5"/>
+   <path d="M27.5 52.5l3 3 6-6.5" stroke="#7c3aed" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ ai:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="AI 稽核頭像">
+   <circle cx="32" cy="32" r="31" fill="#e3f5f2"/>
+   <path d="M18 43h28v11a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z" fill="#fff" stroke="#bfe6e0" stroke-width="1.5"/>
+   <path d="M30 43l2 6 2-6 6 2v13H24V45z" fill="#f3fbf9"/><path d="M32 49l-3-6h6z" fill="#0d9488"/>
+   <path d="M30 44c-1 6-6 7-9 5" fill="none" stroke="#0b7d72" stroke-width="1.6" stroke-linecap="round"/>
+   <path d="M34 44c1 5 5 6 8 4" fill="none" stroke="#0b7d72" stroke-width="1.6" stroke-linecap="round"/>
+   <circle cx="42.5" cy="47" r="2.4" fill="#0d9488"/>
+   <circle cx="32" cy="23" r="15" fill="#ffe0c2"/>
+   <path d="M17 23c0-9 7-14 15-14s15 5 15 14c0-4-2-7-5-8l-2 3-3-3-2 3-3-3-2 3-3-2c-4 1-7 4-7 7z" fill="#2b2417"/>
+   <path d="M23 19.5l6 1.5M41 19.5l-6 1.5" stroke="#2b2417" stroke-width="1.8" stroke-linecap="round"/>
+   <circle cx="26" cy="24.5" r="2.3" fill="#2b2b2b"/><circle cx="38" cy="24.5" r="2.3" fill="#2b2b2b"/>
+   <circle cx="25.4" cy="23.8" r=".8" fill="#fff"/><circle cx="37.4" cy="23.8" r=".8" fill="#fff"/>
+   <path d="M29 30.5h6" stroke="#7a4a2b" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+ committee:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="AI 治理委員會頭像">
+   <circle cx="32" cy="32" r="31" fill="#fbeddd"/>
+   <path d="M18 42h28v12a4 4 0 0 1-4 4H22a4 4 0 0 1-4-4z" fill="#b45309"/>
+   <path d="M25 44h14l-2 6h-10z" fill="#fff" opacity=".85"/>
+   <circle cx="32" cy="23" r="15" fill="#f3d3b3"/>
+   <path d="M17 23a15 15 0 0 1 30 0c0 2-2 2-3 1-3-3-7-4-12-4s-9 1-12 4c-1 1-3 1-3-1z" fill="#eef1f4"/>
+   <path d="M17.5 22c-.5 4 0 8 1.5 11-3-1-4-4-4-7 0-2 .8-3 2.5-4zM46.5 22c.5 4 0 8-1.5 11 3-1 4-4 4-7 0-2-.8-3-2.5-4z" fill="#e2e6ea"/>
+   <path d="M22.5 19.5l5 1M41.5 19.5l-5 1" stroke="#d7dbe0" stroke-width="2" stroke-linecap="round"/>
+   <g stroke="#1c1c1c" stroke-width="2.4" fill="#ffffff" fill-opacity=".28"><rect x="19.5" y="21" width="11" height="9" rx="3"/><rect x="33.5" y="21" width="11" height="9" rx="3"/></g>
+   <path d="M30.5 25.5h3M44.5 24.5l2.5-1M19.5 24.5l-2.5-1" stroke="#1c1c1c" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+   <circle cx="25" cy="25.5" r="2" fill="#2b2b2b"/><circle cx="39" cy="25.5" r="2" fill="#2b2b2b"/>
+   <path d="M28 31.5q4 3 8 0" stroke="#8a5a34" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+   <path d="M21 30l2 1.5M43 30l-2 1.5" stroke="#c9a985" stroke-width="1.2" stroke-linecap="round"/>
+   <g transform="rotate(38 40 50)"><rect x="30" y="48" width="20" height="7" rx="3.5" fill="#8a3d06"/><rect x="38" y="42" width="4" height="20" rx="2" fill="#a8560c"/></g>
+   <rect x="22" y="57" width="16" height="4" rx="2" fill="#8a3d06"/></svg>`,
+ sysadmin:`<svg class="av" viewBox="0 0 64 64" role="img" aria-label="系統管理員頭像">
+   <circle cx="32" cy="32" r="31" fill="#fdeaf1"/>
+   <path d="M19 43h26v11a4 4 0 0 1-4 4H23a4 4 0 0 1-4-4z" fill="#be185d"/>
+   <path d="M28 43h8l-2 5h-4z" fill="#fff" opacity=".85"/>
+   <rect x="29" y="35" width="6" height="9" rx="3" fill="#f3c9a8"/>
+   <path d="M15 40c-3-15 3-30 17-30s20 15 17 30c-1-6-2-9-4-11 1-8-3-14-13-14s-14 6-13 14c-2 2-3 5-4 11z" fill="#2b2019"/>
+   <circle cx="32" cy="24" r="15" fill="#ffe0c2"/>
+   <path d="M17 25c-1-11 6-17 15-17s16 6 15 17c-1-4-2-6-4-7 0 3-1 5-2 6l-1-6c-2 2-5 3-8 3s-6-1-8-3l-1 6c-1-1-2-3-2-6-2 1-3 3-4 7z" fill="#33261d"/>
+   <path d="M17 25c-1 6 0 11 2 15l2.4-1-1.2-13z" fill="#33261d"/>
+   <path d="M47 25c1 6 0 11-2 15l-2.4-1 1.2-13z" fill="#33261d"/>
+   <circle cx="26" cy="25" r="2.3" fill="#2b2b2b"/><circle cx="38" cy="25" r="2.3" fill="#2b2b2b"/>
+   <circle cx="25.3" cy="24.3" r=".8" fill="#fff"/><circle cx="37.3" cy="24.3" r=".8" fill="#fff"/>
+   <path d="M23 22.5l1.6 1M41 22.5l-1.6 1" stroke="#2b2b2b" stroke-width="1.2" stroke-linecap="round"/>
+   <circle cx="22" cy="29" r="2.4" fill="#ff9db0" opacity=".6"/><circle cx="42" cy="29" r="2.4" fill="#ff9db0" opacity=".6"/>
+   <path d="M29 31q3 2.5 6 0" stroke="#d6567a" stroke-width="2" fill="none" stroke-linecap="round"/>
+   <circle cx="18.5" cy="33" r="1.5" fill="#f5b301"/><circle cx="45.5" cy="33" r="1.5" fill="#f5b301"/></svg>`,
+};
+
+/* ==================================================================
+   審查工作台（依身份別・每角色簽核）
+   ================================================================== */
+const REVIEW_ROLES=[
+ {key:"admin",   av:"admin",   label:"行政審核",short:"行政",desc:"收件、編號、完整性初審、退補件"},
+ {key:"security",av:"security",label:"資安稽核",short:"資安",desc:"資安審查、防護需求等級"},
+ {key:"ai",      av:"ai",      label:"AI 稽核",short:"AI",desc:"技術、倫理、公平性、風險審查"},
+];
+function defaultReviews(c){
+  const q=c.riskQ||{};
+  return {
+    admin:{state:"待審"},
+    security:{state:((c.secLevel&&c.secLevel!=="普")||q.pid||q.cloud||q.emr)?"待審":"不適用"},
+    ai:{state:(c.riskLevel==="L3"||c.riskLevel==="L4")?"待審":"不適用"},
+  };
+}
+function ensureReviews(c){
+  const d=defaultReviews(c);
+  if(!c.reviews)c.reviews=d;
+  else REVIEW_ROLES.forEach(r=>{if(!c.reviews[r.key])c.reviews[r.key]=d[r.key];});
+  return c.reviews;
+}
+function setReview(caseId,role,state){
+  const cs=getCases();const c=cs.find(x=>x.id===caseId);if(!c)return;
+  ensureReviews(c);c.reviews[role]={state,date:new Date().toISOString().slice(0,10)};
+  c.updatedAt=new Date().toISOString();setCases(cs);renderActiveBox();renderDesk();
+}
+function deskCount(role){return getCases().filter(c=>ensureReviews(c)[role].state==="待審").length;}
+function otherReviews(c,exclude){
+  return REVIEW_ROLES.filter(r=>r.key!==exclude)
+    .map(r=>`${r.short}:${(c.reviews[r.key]||{}).state||"—"}`).join("　");
+}
+let deskRole="admin";
+function renderDesk(){
+  crumb.innerHTML='委員會工作台 / <b>審查工作台</b>';
+  const picker=REVIEW_ROLES.map(r=>{const n=deskCount(r.key);
+    return `<div class="deskrole ${deskRole===r.key?"on":""}" data-role="${r.key}">
+      <span class="cnt">${n||""}</span>${AVATARS[r.av]}<b>${r.label}</b><small>${r.desc}</small></div>`;}).join("");
+  const role=REVIEW_ROLES.find(r=>r.key===deskRole);
+  const cs=getCases().map(c=>{ensureReviews(c);return c;})
+    .filter(c=>c.reviews[deskRole].state==="待審")
+    .sort((a,b)=>((a.riskLevel==="L4")?0:1)-((b.riskLevel==="L4")?0:1)||(a.createdAt||"").localeCompare(b.createdAt||""));
+  const cards=cs.map(c=>{const p=caseProgress(c);const flags=riskFlags(c);
+    return `<div class="agcard ${c.riskLevel}">
+      <div class="ah"><span class="riskbadge r${c.riskLevel}">${c.riskLevel}</span><b>${esc(c.name)}</b><span class="dectype">${esc(c.no)}</span></div>
+      <div class="agmeta">單位：${esc(c.dept||"—")}　·　${cycleLabel(c.cycle)}　·　資安 ${c.secLevel}級　·　表單 ${p.done}/${p.total}${p.done<p.total?'　·　<b style="color:var(--warn)">待補件</b>':''}　·　其他關 ${otherReviews(c,deskRole)}</div>
+      ${flags.length?`<div class="agflags">${flags.map(f=>`<span class="agflag">⚠ ${f}</span>`).join("")}</div>`:""}
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn" data-rev="通過" data-id="${c.id}">✔ 本關通過</button>
+        <button class="btn warn" data-rev="退補" data-id="${c.id}">↩ 退補件</button>
+        <button class="btn ghost" data-rev="不適用" data-id="${c.id}">— 不適用</button>
+        <button class="btn ghost" data-open="${c.id}">🗂️ 開啟案件</button>
+      </div></div>`;}).join("");
+  view.innerHTML=`<p class="eyebrow">🧑‍⚕️ 審查工作台</p><h1 class="page">依身份別・我的待審工作</h1>
+    <div class="lead">選身份查看「這關輪到我、尚未處理」的案件。<b>資安稽核</b>與 <b>AI 稽核</b>為並行關卡，各自獨立打勾；三關皆綠燈後由委員會於<b>待審議程</b>作最終決議。（預設顯示你登入身份的關卡，可點卡切換檢視）</div>
+    ${isSeeded()?wmBanner():""}
+    <div class="deskroles">${picker}</div>
+    <div class="sec-title">${role.label}・待審（${cs.length}）<span style="font-weight:400;color:var(--mut);font-size:12.5px">　${role.desc}</span></div>
+    ${cs.length?cards:`<div class="emptybox">${role.label} 目前沒有待審案件 🎉</div>`}`;
+  view.querySelectorAll("[data-role]").forEach(el=>el.onclick=()=>{deskRole=el.dataset.role;renderDesk();});
+  view.querySelectorAll("[data-rev]").forEach(b=>b.onclick=()=>setReview(b.dataset.id,deskRole,b.dataset.rev));
+  view.querySelectorAll("[data-open]").forEach(el=>el.onclick=()=>{setActive(el.dataset.open);location.hash="case";});
+  window.scrollTo(0,0);
+}
+
+/* ==================================================================
+   模擬登入・身份別
+   ================================================================== */
+const USER_ROLES=[
+ {key:"applicant",av:"applicant",label:"申請者",name:"張佳慧",desc:"提出 AI 導入申請、填表",home:"wizard"},
+ {key:"admin",    av:"admin",    label:"行政審核（經辦）",name:"溫劭婕",desc:"收件、初審、流程控管",home:"desk"},
+ {key:"security", av:"security", label:"資安稽核",name:"蔡杰欣",desc:"資安審查、防護等級",home:"desk"},
+ {key:"ai",       av:"ai",       label:"AI 稽核",name:"王志傑",desc:"技術、倫理、風險審查",home:"desk"},
+ {key:"committee",av:"committee",label:"AI 治理委員會",name:"吳老闆",desc:"審議決議、監督",home:"dash"},
+ {key:"sysadmin", av:"sysadmin",label:"系統管理員",name:"蝦蝦",desc:"全功能存取（示範用）",home:"home"},
+];
+const ALLROLES=USER_ROLES.map(r=>r.key);
+const VIS={
+ wizard:["applicant","admin","sysadmin"],
+ flow:ALLROLES,
+ registry:ALLROLES,
+ "grp-content-box":ALLROLES,
+ "grp-forms":["applicant","admin","security","ai","sysadmin"],
+ desk:["admin","security","ai","sysadmin"],
+ dash:["admin","committee","sysadmin"],
+ agenda:["admin","committee","sysadmin"],
+ track:["admin","committee","sysadmin"],
+ freeze:["admin","committee","sysadmin"],
+ mtg:["admin","committee","sysadmin"],
+};
+function visOK(key,role){const a=VIS[key];return !a||a.includes(role);}
+const SURN=["陳","林","黃","張","李","王","吳","劉","蔡","楊","許","鄭","謝","洪","郭","曾","賴","周"];
+const GIVN=["怡君","家豪","冠廷","雅婷","宗翰","淑芬","建宏","詩涵","俊傑","佩珊","志明","美玲","柏翰","欣怡","承恩","雅雯","立群","筱雯"];
+function genName(){return SURN[Math.floor(Math.random()*SURN.length)]+GIVN[Math.floor(Math.random()*GIVN.length)];}
+function genEmp(){return "E"+String(10000+Math.floor(Math.random()*89999));}
+function getUser(){try{return JSON.parse(localStorage.getItem("aigov:user")||"null")}catch(e){return null}}
+function setUser(u){localStorage.setItem("aigov:user",JSON.stringify(u));}
+function currentRole(){const u=getUser();return u?u.role:"sysadmin";}
+function roleCfg(k){return USER_ROLES.find(r=>r.key===k)||USER_ROLES[USER_ROLES.length-1];}
+function roleHome(role){return roleCfg(role).home;}
+
+function renderUserChip(){
+  const el=document.getElementById("userchip");if(!el)return;const u=getUser();
+  if(!u){el.innerHTML=`<span class="ui"><b>未登入</b><span>點此選擇身份</span></span><span class="sw">→</span>`;el.onclick=openLogin;return;}
+  const cfg=roleCfg(u.role);
+  el.innerHTML=`<span class="uav" style="box-shadow:0 0 0 2px hsl(${u.hue},68%,68%)">${AVATARS[cfg.av]}</span>
+    <span class="ui"><b>${esc(u.name)}　<span style="font-weight:400;opacity:.7">${esc(u.empId)}</span></b><span>${cfg.label}</span></span><span class="sw">⇄</span>`;
+  el.onclick=openLogin;
+}
+function openLogin(){
+  const box=document.getElementById("loginroles");
+  box.innerHTML=USER_ROLES.map(r=>`<div class="loginrole" data-role="${r.key}">${AVATARS[r.av]}<b>${r.label}</b><small>${r.desc}</small></div>`).join("");
+  box.querySelectorAll("[data-role]").forEach(el=>el.onclick=()=>login(el.dataset.role));
+  enhanceA11y(box);
+  document.getElementById("loginmask").classList.add("show");
+}
+function login(roleKey){
+  const cfg=roleCfg(roleKey);
+  setUser({role:roleKey,name:cfg.name||genName(),empId:genEmp(),hue:Math.floor(Math.random()*360)});
+  if(["admin","security","ai"].includes(roleKey))deskRole=roleKey;
+  document.getElementById("loginmask").classList.remove("show");
+  renderUserChip();applyRoleView(roleKey);
+  const target=cfg.home;
+  if((location.hash.replace(/^#/,"")||"home")===target)route(); else location.hash=target;
+}
+function toggleGroup(boxId,show){
+  const box=document.getElementById(boxId);if(!box)return;
+  box.classList.toggle("hidden",!show);
+  const hd=[...document.querySelectorAll(".navgrp.collapser")].find(g=>g.dataset.target===boxId);
+  if(hd)hd.classList.toggle("hidden",!show);
+}
+function applyRoleView(role){
+  document.querySelectorAll(".side .navitem[data-go]").forEach(el=>{
+    const go=el.dataset.go;
+    if(go.startsWith("c:")||go.startsWith("ref:")||go.startsWith("f:")||go.startsWith("s:"))return;
+    if(el.closest("#grp-gov-box"))return;
+    el.classList.toggle("hidden",!visOK(go,role));
+  });
+  toggleGroup("grp-content-box",visOK("grp-content-box",role));
+  toggleGroup("nav-forms",visOK("grp-forms",role));
+  const govItems=["desk","dash","agenda","track","freeze","mtg"];
+  govItems.forEach(k=>{const el=document.querySelector(`#grp-gov-box [data-go="${k}"]`);if(el)el.classList.toggle("hidden",!visOK(k,role));});
+  toggleGroup("grp-gov-box",govItems.some(k=>visOK(k,role)));
+}
+
+/* ==================================================================
+   Router
+   ================================================================== */
+function route(){
+  const h=location.hash.replace(/^#/,"")||"home";
+  const _role=currentRole();
+  applyRoleView(_role);
+  const _bk=(h.startsWith("c:")||h.startsWith("ref:"))?"grp-content-box":(h.startsWith("f:")||h.startsWith("s:"))?"grp-forms":h;
+  if(VIS[_bk]&&!VIS[_bk].includes(_role)){location.hash=roleHome(_role);return;}
+  document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active",n.dataset.go===h));
+  view.classList.toggle("wide", h==="flow"||h==="registry"||h==="dash"||h==="agenda"||h==="track"||h==="freeze"||h==="desk"||h.startsWith("ref:"));
+  const act=document.querySelector(".navitem.active");
+  if(act){const box=act.closest(".navcollapse");
+    if(box&&box.classList.contains("collapsed")){box.classList.remove("collapsed");
+      const hd=[...document.querySelectorAll(".navgrp.collapser")].find(g=>g.dataset.target===box.id);
+      if(hd)hd.classList.add("open");}}
+  if(h==="home"){document.querySelector(".navitem.home").classList.add("active");renderHome();}
+  else if(h==="wizard")renderWizard();
+  else if(h==="flow")renderFlow();
+  else if(h==="registry")renderRegistry();
+  else if(h==="desk")renderDesk();
+  else if(h==="dash")renderDash();
+  else if(h==="agenda")renderAgenda();
+  else if(h==="track")renderTrack();
+  else if(h==="freeze")renderFreeze();
+  else if(h==="mtg")renderMtg();
+  else if(h==="case")renderCase();
+  else if(h.startsWith("ref:"))renderRef(h.slice(4));
+  else if(h.startsWith("c:"))renderContent(h.slice(2));
+  else if(h.startsWith("f:"))renderForm(h.slice(2));
+  else if(h.startsWith("s:"))renderSec(h.slice(2));
+  else renderHome();
+  renderActiveBox();
+  enhanceA11y();
+  iconizeIn(view);
+}
+window.addEventListener("hashchange",route);
+/* icon-only 控制項：補 role / aria-label / 鍵盤可達（無障礙） */
+(function(){
+  const nt=document.getElementById("navtoggle");
+  if(nt){nt.setAttribute("role","button");nt.tabIndex=0;nt.setAttribute("aria-label","收合或展開側欄");}
+  const uc=document.getElementById("userchip");
+  if(uc){uc.setAttribute("role","button");uc.tabIndex=0;uc.setAttribute("aria-label","切換登入身份");}
+  const gr=document.querySelector(".side-grip");
+  if(gr){gr.setAttribute("role","separator");gr.setAttribute("aria-orientation","vertical");gr.setAttribute("aria-label","拖曳調整側欄寬度");}
+})();
+enhanceA11y();
+iconizeIn(document.querySelector(".side"));
+iconizeIn(document.querySelector(".loginbox"));
+renderActiveBox();
+renderUserChip();
+{const _u=getUser(); if(_u&&["admin","security","ai"].includes(_u.role))deskRole=_u.role;}
+if(getUser()){route();}
+else{applyRoleView("sysadmin");openLogin();}
+</script>
