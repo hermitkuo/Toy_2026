@@ -2570,6 +2570,7 @@ iconizeIn(document.querySelector(".side"));
 iconizeIn(document.querySelector(".loginbox"));
 renderActiveBox();
 renderUserChip();
+if(!isSeeded())seedDemo();   /* 首次訪問自動載入 20 筆示範案件 */
 {const _u=getUser(); if(_u&&["admin","security","ai"].includes(_u.role))deskRole=_u.role;}
 if(getUser()){route();}
 else{applyRoleView("sysadmin");openLogin();}
