@@ -1716,10 +1716,14 @@ window.__sched = {
 
   function parse(table){
     var rows = table.rows||[];
-    // header row 0: "2026/07" in col0
+    // header row 0: "2026/07" in col0 = 週期樣式表的「規則起始月」（非固定顯示月）
     var mh = valOf(rows[0] && rows[0].c && rows[0].c[0]).match(/(\d{4})\D+(\d{1,2})/);
-    if (mh){ year=+mh[1]; m0=(+mh[2])-1; monthTitle=year+"年"+(+mh[2])+"月"; }
-    else { monthTitle="輪值母表"; }
+    var baseYear=null, baseM0=null;
+    if (mh){ baseYear=+mh[1]; baseM0=(+mh[2])-1; }
+    // 顯示月份＝實際「現在」所在月，永遠自動跟著今天走；不早於母表規則起始月
+    var now=new Date(); year=now.getFullYear(); m0=now.getMonth();
+    if (baseYear!=null && (year<baseYear || (year===baseYear && m0<baseM0))){ year=baseYear; m0=baseM0; }
+    monthTitle = year+"年"+(m0+1)+"月";
 
     byWeek={}; siteOrder=[]; var seenSite={}; var freq={}; var rosterSet={};
     for (var r=2; r<rows.length; r++){
