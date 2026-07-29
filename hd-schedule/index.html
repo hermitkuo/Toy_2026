@@ -612,6 +612,10 @@
     /* 醫師縮寫：放大＋加粗，行政人員易讀；沿用亮色配色（灰階列印仍有底色/文字對比），可換行容納多名字 */
     td .nm{font-size:14px!important; font-weight:600; padding:0 5px!important; margin:1px!important;
       line-height:1.45; white-space:normal!important;}
+    /* 請假欄：多位醫師時仍維持單列高度，欄位加寬吸收其餘欄讓出的空間，內容強制不換行 */
+    th.c-left,td.c-left{width:17%!important;}
+    td.c-left{white-space:nowrap!important; overflow:visible!important;}
+    td.c-left .nm{white-space:nowrap!important; padding:0 3px!important; margin:0 1px!important;}
   }
 </style>
 <script>
@@ -874,7 +878,7 @@ window.__sched = {
     {i:8,  name:"玉里",   group:"外派特約", site:"玉里"},
     {i:9,  name:"關山",   group:"外派特約", site:"關山"},
     {i:10, name:"聯安",   group:"外派特約", site:"聯安"},
-    {i:11, name:"聯安掛名",group:"外派特約", site:"聯安"},
+    {i:11, name:"聯安掛名",group:"外派特約", site:"聯安", hidden:true},   // 找班表隱藏顯示；資料仍供「我的時段」等模組使用
     {leave:true, name:"休假", group:"請假", left:true, site:"請假"}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
   ];
 
@@ -1152,6 +1156,7 @@ window.__sched = {
   function siteFilterOn(){ return siteSelListD().length > 0; }
   // 欄位可見：無篩選→全可見；有篩選→休假恆顯示，其餘須屬選中院區
   function colVisible(i){
+    if (SHIFT_COLS[i].hidden) return false;
     if (!siteFilterOn()) return true;
     var st = SHIFT_COLS[i].site;
     if (!st) return true;
@@ -1256,7 +1261,8 @@ window.__sched = {
       } else {
         // standalone col, single-col group (show group label), or group collapsed to one visible col
         var nm = (sec.group && sec.cols.length > 1) ? vis[0].name : (sec.group ? sec.group : vis[0].name);
-        top += '<th class="gsep" rowspan="2">'+esc(nm)+'</th>';
+        var thCls = "gsep" + (vis[0].left ? " c-left" : "");
+        top += '<th class="'+thCls+'" rowspan="2">'+esc(nm)+'</th>';
       }
     }
     return top + '</tr>' + sub + '</tr>';
@@ -2802,9 +2808,19 @@ window.__sched = {
     }
     return {counts:counts, dateList:dateList};
   }
+  // 大抽週五／週六 專用排序：次數多→少優先；同次數再依固定順序 徐王賴林郭鄧超翔祺
+  var BIGDRAW_ORDER = ["徐","王","賴","林","郭","鄧","超","翔","祺"];
+  function orderByCountThenBigdraw(totals){
+    var list=Object.keys(totals);
+    function rank(n){ var i=BIGDRAW_ORDER.indexOf(n); return i===-1?999:i; }
+    list.sort(function(a,b){
+      return (totals[b]-totals[a]) || (rank(a)-rank(b)) || a.localeCompare(b,"zh-Hant");
+    });
+    return list;
+  }
   function drawBlock(title, wdName, targetDow, barCls){
     var r=drawCounts(targetDow), counts=r.counts, dateList=r.dateList;
-    var docs=orderRoster(counts);
+    var docs=orderByCountThenBigdraw(counts);
     if(!docs.length) return '<div class="col"><h3>'+esc(title)+'</h3><div class="stat-empty">此年度沒有可對應的班表資料。</div></div>';
     var max=0; for(var i=0;i<docs.length;i++) if(counts[docs[i]]>max) max=counts[docs[i]];
     var body='<div class="barlist '+barCls+'">';
