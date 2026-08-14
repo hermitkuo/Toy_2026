@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiro 使用小技巧 — 2026 社群精選</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,700;1,500&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   THEME — Notebook Tabs (cream paper on dark, colored tabs)
+   Change these variables to re-skin the whole deck.
+   =========================================== */
+:root {
+  --bg-outer:#2b2b2b;
+  --bg-outer-grad:radial-gradient(ellipse at 50% 0%, #383838 0%, #262626 60%, #1e1e1e 100%);
+  --bg-page:#f8f6f1;
+  --text-primary:#1a1a1a;
+  --text-muted:#8a8578;
+  --text-body:#413d34;
+  --line:#1a1a1a;
+
+  /* section accent colors (one per act) */
+  --c-spec:#98d4bb;   /* mint  */
+  --c-steer:#c7b8ea;  /* lavender */
+  --c-hooks:#f4b8c5;  /* pink */
+  --c-mode:#a8d8ea;   /* sky */
+  --c-skill:#ffd97d;  /* gold */
+  --c-adv:#f0a878;    /* peach */
+
+  --font-display:'Bodoni Moda','Noto Serif TC',serif;
+  --font-body:'DM Sans','Noto Sans TC',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+
+/* === PASTE viewport-base.css (mandatory viewport fitting) === */
+html, body { height:100%; overflow-x:hidden; }
+html { scroll-snap-type:y mandatory; scroll-behavior:smooth; }
+.slide {
+  width:100vw; height:100vh; height:100dvh; overflow:hidden;
+  scroll-snap-align:start; display:flex; flex-direction:column; position:relative;
+}
+.slide-content { flex:1; display:flex; flex-direction:column; justify-content:center; max-height:100%; overflow:hidden; padding:var(--slide-padding); }
+:root {
+  --title-size:clamp(1.5rem,5vw,4rem);
+  --h2-size:clamp(1.25rem,3.5vw,2.5rem);
+  --h3-size:clamp(1rem,2.5vw,1.75rem);
+  --body-size:clamp(0.75rem,1.5vw,1.125rem);
+  --small-size:clamp(0.65rem,1vw,0.875rem);
+  --slide-padding:clamp(1rem,4vw,4rem);
+  --content-gap:clamp(0.5rem,2vw,2rem);
+  --element-gap:clamp(0.25rem,1vw,1rem);
+}
+.card,.container,.content-box { max-width:min(90vw,1000px); max-height:min(80vh,700px); }
+img,.image-container { max-width:100%; max-height:min(50vh,400px); object-fit:contain; }
+@media (max-height:700px){ :root{ --slide-padding:clamp(0.75rem,3vw,2rem); --title-size:clamp(1.25rem,4.5vw,2.5rem); --h2-size:clamp(1rem,3vw,1.75rem);} }
+@media (max-height:600px){ :root{ --slide-padding:clamp(0.5rem,2.5vw,1.5rem); --title-size:clamp(1.1rem,4vw,2rem); --body-size:clamp(0.7rem,1.2vw,0.95rem);} .nav-dots,.keyboard-hint,.decorative{display:none;} }
+@media (max-height:500px){ :root{ --slide-padding:clamp(0.4rem,2vw,1rem); --title-size:clamp(1rem,3.5vw,1.5rem); --body-size:clamp(0.65rem,1vw,0.85rem);} }
+@media (max-width:600px){ :root{ --title-size:clamp(1.25rem,7vw,2.5rem);} .grid{grid-template-columns:1fr;} }
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.2s!important;} html{scroll-behavior:auto;} }
+
+/* ===========================================
+   BASE
+   =========================================== */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:var(--bg-outer);
+  background-image:var(--bg-outer-grad);
+  font-family:var(--font-body);
+  color:var(--text-primary);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* The paper card that holds every slide's content */
+.slide { align-items:center; justify-content:center; padding:clamp(.8rem,3vw,2.4rem); }
+.page {
+  position:relative;
+  width:min(94vw,1180px);
+  height:min(88vh,720px);
+  background:var(--bg-page);
+  border-radius:4px 3px 3px 6px;
+  box-shadow:0 30px 70px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.05);
+  padding:clamp(1.6rem,4.5vw,4.2rem) clamp(2rem,6vw,5.5rem);
+  display:flex; flex-direction:column; justify-content:center;
+  overflow:hidden;
+}
+/* subtle ruled-paper texture */
+.page::after {
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:repeating-linear-gradient(0deg, transparent 0 calc(2.2rem - 1px), rgba(26,26,26,.028) calc(2.2rem - 1px) 2.2rem);
+  opacity:.5;
+}
+/* binder holes on the left edge */
+.holes { position:absolute; left:clamp(8px,1vw,16px); top:0; height:100%; display:flex; flex-direction:column; justify-content:space-evenly; padding:9% 0; z-index:3; }
+.holes span { width:clamp(9px,1vw,13px); height:clamp(9px,1vw,13px); border-radius:50%; background:var(--bg-outer); box-shadow:inset 0 1px 2px rgba(0,0,0,.6); }
+
+/* vertical color tab strip on the right edge (dividers + title) */
+.tabs { position:absolute; right:calc(-1 * clamp(16px,2vw,28px)); top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:clamp(5px,.8vh,9px); z-index:4; }
+.tabs a { width:clamp(26px,3vw,40px); height:clamp(52px,9vh,86px); border-radius:0 6px 6px 0;
+  writing-mode:vertical-rl; text-orientation:mixed; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-body); font-size:clamp(.48rem,1vh,.68rem); font-weight:700; letter-spacing:.12em;
+  color:#1a1a1a; text-decoration:none; box-shadow:2px 2px 6px rgba(0,0,0,.28);
+  opacity:.55; transition:opacity .3s var(--ease), width .3s var(--ease); }
+.tabs a:hover { opacity:.85; }
+.tabs a.on { opacity:1; width:clamp(34px,3.8vw,50px); font-weight:700; }
+.tab-spec{background:var(--c-spec)} .tab-steer{background:var(--c-steer)} .tab-hooks{background:var(--c-hooks)}
+.tab-mode{background:var(--c-mode)} .tab-skill{background:var(--c-skill)} .tab-adv{background:var(--c-adv)}
+
+/* section chip (small colored label on content slides) */
+.chip { display:inline-flex; align-items:center; gap:.5em; align-self:flex-start;
+  font-family:var(--font-body); font-weight:700; font-size:var(--small-size); letter-spacing:.18em; text-transform:uppercase;
+  padding:.42em .9em; border-radius:2px; color:#1a1a1a; margin-bottom:clamp(.8rem,2.4vh,1.6rem); }
+.chip.spec{background:var(--c-spec)} .chip.steer{background:var(--c-steer)} .chip.hooks{background:var(--c-hooks)}
+.chip.mode{background:var(--c-mode)} .chip.skill{background:var(--c-skill)} .chip.adv{background:var(--c-adv)}
+
+.kicker { font-family:var(--font-body); font-size:clamp(.65rem,1.3vw,.9rem); letter-spacing:.34em; text-transform:uppercase; color:var(--text-muted); }
+h1 { font-family:var(--font-display); font-weight:700; font-size:clamp(2.2rem,6.5vw,5rem); line-height:.98; color:var(--text-primary); }
+h1 em { font-style:italic; font-weight:500; }
+h2 { font-family:var(--font-display); font-weight:700; font-size:var(--h2-size); line-height:1.05; color:var(--text-primary); }
+h2 .zh { font-family:'Noto Serif TC',serif; }
+.rule { width:clamp(50px,7vw,110px); height:3px; background:var(--line); margin:clamp(.9rem,2.4vh,1.7rem) 0; }
+p.lead { font-family:'Noto Serif TC',serif; font-size:clamp(.95rem,1.9vw,1.4rem); color:var(--text-body); line-height:1.55; max-width:60ch; }
+.meta { font-size:clamp(.6rem,1.1vw,.8rem); letter-spacing:.2em; color:var(--text-muted); text-transform:uppercase; }
+
+/* big section number on divider slides */
+.divider-num { font-family:var(--font-display); font-weight:700; font-size:clamp(4rem,16vw,12rem); line-height:.8; color:var(--text-primary); }
+.divider-wrap { position:relative; z-index:2; }
+.divider-sub { font-family:var(--font-body); font-size:var(--body-size); color:var(--text-body); margin-top:clamp(.6rem,1.6vh,1.2rem); max-width:48ch; line-height:1.5; }
+
+/* tip cards grid */
+.tip-head { position:relative; z-index:2; }
+.tip-grid { position:relative; z-index:2; display:grid; gap:clamp(.7rem,1.6vw,1.3rem); margin-top:clamp(.9rem,2.4vh,1.6rem); }
+.tip-grid.two { grid-template-columns:1fr 1fr; }
+.tip-grid.three { grid-template-columns:repeat(3,1fr); }
+.tip {
+  background:#fff; border:1px solid rgba(26,26,26,.1); border-left:4px solid var(--accent,#98d4bb);
+  border-radius:3px; padding:clamp(.8rem,2vw,1.4rem); box-shadow:0 4px 14px rgba(0,0,0,.06);
+  display:flex; flex-direction:column; gap:.45em;
+}
+.tip .n { font-family:var(--font-display); font-weight:700; font-size:clamp(1rem,2vw,1.5rem); color:var(--accent,#1a1a1a); line-height:1; }
+.tip h3 { font-family:'Noto Sans TC',sans-serif; font-weight:700; font-size:clamp(.9rem,1.7vw,1.2rem); color:var(--text-primary); line-height:1.25; }
+.tip p { font-family:'Noto Sans TC',sans-serif; font-size:clamp(.72rem,1.35vw,.98rem); color:var(--text-body); line-height:1.5; }
+.tip code, .inline-code { font-family:var(--font-mono); font-size:.88em; background:#efece5; padding:.05em .35em; border-radius:3px; }
+
+/* code block */
+.code { position:relative; z-index:2; background:#1e1e1e; border-radius:6px; padding:clamp(1rem,2.5vw,1.8rem); margin-top:clamp(.8rem,2vh,1.4rem);
+  box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:auto; max-height:58vh; }
+.code pre { font-family:var(--font-mono); font-size:clamp(.66rem,1.25vw,.95rem); line-height:1.65; color:#e8e4df; white-space:pre; }
+.code .cm { color:#7d8a99; }
+.code .kw { color:#98d4bb; }
+.code .st { color:#ffd97d; }
+.code .em2 { color:#f4b8c5; }
+
+/* comparison table */
+.ctable { position:relative; z-index:2; margin-top:clamp(.8rem,2vh,1.4rem); width:100%; border-collapse:collapse; font-family:'Noto Sans TC',sans-serif; }
+.ctable th,.ctable td { text-align:left; padding:clamp(.5rem,1.4vw,.95rem) clamp(.6rem,1.5vw,1.1rem); border-bottom:1px solid rgba(26,26,26,.13); font-size:clamp(.72rem,1.35vw,1rem); vertical-align:top; }
+.ctable th { font-family:var(--font-body); font-weight:700; letter-spacing:.04em; color:#1a1a1a; border-bottom:2px solid var(--line); }
+.ctable td:first-child { font-weight:700; color:#1a1a1a; white-space:nowrap; }
+.ctable .kiro { background:rgba(152,212,187,.18); }
+
+.two-col { position:relative; z-index:2; display:grid; grid-template-columns:1fr 1fr; gap:clamp(1rem,3vw,2.4rem); margin-top:clamp(.8rem,2vh,1.4rem); align-items:start; }
+.col h3 { font-family:'Noto Sans TC',sans-serif; font-weight:700; font-size:clamp(.9rem,1.8vw,1.25rem); margin-bottom:.5em; display:flex; align-items:center; gap:.5em; }
+.col .badge { font-size:.6em; padding:.3em .7em; border-radius:2px; letter-spacing:.1em; }
+.col ul { list-style:none; display:flex; flex-direction:column; gap:.5em; }
+.col li { font-family:'Noto Sans TC',sans-serif; font-size:clamp(.75rem,1.4vw,1rem); color:var(--text-body); line-height:1.45; padding-left:1.2em; position:relative; }
+.col li::before { content:"—"; position:absolute; left:0; color:var(--text-muted); }
+
+.src-list { position:relative; z-index:2; columns:2; column-gap:clamp(1.5rem,4vw,3rem); margin-top:clamp(.8rem,2vh,1.4rem); }
+.src-list a { font-family:'Noto Sans TC',sans-serif; display:block; break-inside:avoid; font-size:clamp(.68rem,1.3vw,.92rem); color:var(--text-body); text-decoration:none; padding:.35em 0; border-bottom:1px dotted rgba(26,26,26,.2); }
+.src-list a:hover { color:var(--c-adv); }
+
+/* ===========================================
+   ENTRANCE ANIMATIONS (Intersection Observer adds .visible)
+   =========================================== */
+.reveal { opacity:0; transform:translateY(26px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.slide.visible .reveal { opacity:1; transform:translateY(0); }
+.slide.visible .reveal:nth-child(1){transition-delay:.05s}
+.slide.visible .reveal:nth-child(2){transition-delay:.15s}
+.slide.visible .reveal:nth-child(3){transition-delay:.25s}
+.slide.visible .reveal:nth-child(4){transition-delay:.35s}
+.slide.visible .reveal:nth-child(5){transition-delay:.45s}
+.tip { opacity:0; transform:translateY(20px); transition:opacity .6s var(--ease), transform .6s var(--ease); }
+.slide.visible .tip { opacity:1; transform:translateY(0); }
+.slide.visible .tip:nth-child(2){transition-delay:.12s}
+.slide.visible .tip:nth-child(3){transition-delay:.24s}
+.tabs a { opacity:0; transform:translateX(-8px); transition:opacity .5s var(--ease), transform .5s var(--ease), width .3s var(--ease); }
+.slide.visible .tabs a { opacity:.55; transform:translateX(0); }
+.slide.visible .tabs a.on { opacity:1; }
+.slide.visible .tabs a:nth-child(1){transition-delay:.3s}
+.slide.visible .tabs a:nth-child(2){transition-delay:.36s}
+.slide.visible .tabs a:nth-child(3){transition-delay:.42s}
+.slide.visible .tabs a:nth-child(4){transition-delay:.48s}
+.slide.visible .tabs a:nth-child(5){transition-delay:.54s}
+.slide.visible .tabs a:nth-child(6){transition-delay:.60s}
+
+/* ===========================================
+   CHROME — progress bar, nav dots, hint
+   =========================================== */
+.progress-bar { position:fixed; top:0; left:0; height:3px; width:0; background:var(--c-adv); z-index:9000; transition:width .2s ease; }
+.nav-dots { position:fixed; right:clamp(10px,1.4vw,20px); top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:9000; }
+.nav-dots button { width:9px; height:9px; border-radius:50%; border:none; background:rgba(255,255,255,.28); cursor:pointer; padding:0; transition:all .3s ease; }
+.nav-dots button.active { background:#f8f6f1; transform:scale(1.4); }
+.keyboard-hint { position:fixed; bottom:clamp(10px,2vh,20px); left:50%; transform:translateX(-50%); font-family:var(--font-body); font-size:clamp(.6rem,1vw,.78rem); color:rgba(255,255,255,.4); letter-spacing:.1em; z-index:9000; }
+.page-num { position:absolute; bottom:clamp(1rem,2.6vh,1.8rem); right:clamp(1.6rem,4vw,3.4rem); z-index:3; font-family:var(--font-body); font-size:clamp(.6rem,1.1vw,.8rem); letter-spacing:.15em; color:var(--text-muted); }
+
+/* ===========================================
+   INLINE EDITING (opted in)
+   =========================================== */
+.edit-hotzone { position:fixed; top:0; left:0; width:80px; height:80px; z-index:10000; cursor:pointer; }
+.edit-toggle { position:fixed; top:16px; left:16px; width:44px; height:44px; border-radius:50%; border:none;
+  background:#f8f6f1; color:#1a1a1a; font-size:20px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.4);
+  opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:10001; }
+.edit-toggle.show,.edit-toggle.active { opacity:1; pointer-events:auto; }
+.edit-toggle.active { background:var(--c-spec); }
+.edit-banner { position:fixed; top:16px; left:74px; background:rgba(26,26,26,.9); color:#f8f6f1; font-family:var(--font-body);
+  font-size:13px; padding:10px 16px; border-radius:6px; opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:10001; letter-spacing:.03em; }
+.edit-banner.active { opacity:1; }
+body.edit-active [contenteditable]{ outline:1px dashed rgba(240,168,120,.8); outline-offset:3px; border-radius:2px; }
+body.edit-active [contenteditable]:focus{ outline:2px solid var(--c-adv); background:rgba(240,168,120,.08); }
+</style>
+</head>
+<body>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="投影片導航"></nav>
+<div class="keyboard-hint">← → / 空白鍵 切換 · E 編輯</div>
+
+<!-- inline editing controls -->
+<div class="edit-hotzone" title="編輯模式"></div>
+<button class="edit-toggle" id="editToggle" title="編輯模式 (E)">✏️</button>
+<div class="edit-banner" id="editBanner">編輯中 — 點文字修改 · Ctrl/⌘+S 匯出</div>
+
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section class="slide title-slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec on">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="kicker reveal" contenteditable="true">AWS · Agentic IDE</div>
+    <h1 class="reveal" contenteditable="true">Kiro<br><em>使用小技巧</em></h1>
+    <div class="rule reveal"></div>
+    <p class="lead reveal" contenteditable="true">20 個 2026 社群熱門技巧 ＋ Harness 五層架構、Loop Engineer 自迴圈、Skill 設計哲學</p>
+    <div style="height:clamp(1rem,3vh,2rem)"></div>
+    <div class="meta reveal" contenteditable="true">Internal Presentation · 2026</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 — OVERVIEW ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <div class="kicker reveal" contenteditable="true">本場地圖 · What's inside</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">三大主題，一次講清</span></h2>
+      <div class="rule reveal"></div>
+    </div>
+    <div class="tip-grid three">
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">A</div><h3 contenteditable="true">20 個實戰技巧</h3><p contenteditable="true">Spec 流程、Steering、Hooks、執行模式、Skills/Powers/MCP、Credit 優化。</p></div>
+      <div class="tip" style="--accent:var(--c-mode)"><div class="n">B</div><h3 contenteditable="true">Harness ＆ Loop Engineer</h3><p contenteditable="true">五層 harness 架構；用 <code>/goal</code> 與 Ralph Loop 打造自迴圈工程師。</p></div>
+      <div class="tip" style="--accent:var(--c-skill)"><div class="n">C</div><h3 contenteditable="true">Skill 設計差異</h3><p contenteditable="true">Kiro vs Claude Code vs Codex — 同格式、不同觸發與哲學。</p></div>
+    </div>
+    <div class="page-num">02</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 — DIVIDER: SPEC ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec on">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">第一幕</div>
+      <div class="divider-num reveal">01</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">規格驅動 Spec</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">Kiro 的核心：先把 prompt 變成 requirements → design → tasks，再生成程式碼。規劃便宜，重寫最貴。</p>
+    </div>
+    <div class="page-num">03</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 — TIPS 1-2 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip spec reveal">Spec</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">先規劃，別急著生</span></h2>
+    </div>
+    <div class="tip-grid two">
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">01</div><h3 contenteditable="true">能用 Spec 就別純 vibe coding</h3><p contenteditable="true">Vibe coding 適合原型；production code 走 spec-driven，才有文件、稽核軌跡與可維護性。</p></div>
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">02</div><h3 contenteditable="true">先在 Spec 模式規劃，省實作 credit</h3><p contenteditable="true">設計階段反覆迭代最便宜，避免用錯方向燒掉昂貴的實作 credit。</p></div>
+    </div>
+    <div class="page-num">04</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 — TIPS 3-5 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip spec reveal">Spec</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">拆細、早課正、留一手</span></h2>
+    </div>
+    <div class="tip-grid three">
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">03</div><h3 contenteditable="true">Tasks 拆細</h3><p contenteditable="true">在 <code>tasks.md</code> 拆成小而明確的任務，agent 越不易走偏，也好逐項驗收。</p></div>
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">04</div><h3 contenteditable="true">早期就課正方向</h3><p contenteditable="true">走偏立刻 course-correct。放任蓋錯再重寫 = 雙倍 credit 罰款。</p></div>
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">05</div><h3 contenteditable="true">不是每件事都丟 agent</h3><p contenteditable="true">小改動手打更快。知道何時該自己動手，何時該叫 agent。</p></div>
+    </div>
+    <div class="page-num">05</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 — DIVIDER: STEER ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer on">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">第二幕</div>
+      <div class="divider-num reveal">02</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Steering 持久知識</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">用 <code style="background:#efece5;padding:.1em .4em;border-radius:3px;font-family:var(--font-mono)">.kiro/steering/*.md</code> 給 Kiro 持久的專案慣例，不必每次對話重講規則。</p>
+    </div>
+    <div class="page-num">06</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 — TIPS 6-7 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip steer reveal">Steering</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">早設定，寫給 AI 看</span></h2>
+    </div>
+    <div class="tip-grid two">
+      <div class="tip" style="--accent:var(--c-steer)"><div class="n">06</div><h3 contenteditable="true">一開始就設好 Steering 檔</h3><p contenteditable="true">開場填好用的 library、標準、pattern，脈絡理解大幅提升。</p></div>
+      <div class="tip" style="--accent:var(--c-steer)"><div class="n">07</div><h3 contenteditable="true">是寫給 AI，不是給人的文件</h3><p contenteditable="true">簡潔、具體。Steering 越長吃越多 context。別寫成人類文件。</p></div>
+    </div>
+    <div class="page-num">07</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 — TIPS 8-9 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip steer reveal">Steering</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">按領域拆、用內建三檔</span></h2>
+    </div>
+    <div class="tip-grid two">
+      <div class="tip" style="--accent:var(--c-steer)"><div class="n">08</div><h3 contenteditable="true">專案長大就按 domain 拆</h3><p contenteditable="true">單一巨大 steering 難維護；依前端/後端/測試分檔，只在相關時載入。</p></div>
+      <div class="tip" style="--accent:var(--c-steer)"><div class="n">09</div><h3 contenteditable="true">善用 product / tech / structure</h3><p contenteditable="true">標準分工：產品意圖、技術棧、專案結構。開新專案先填這三類。</p></div>
+    </div>
+    <div class="page-num">08</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 — DIVIDER: HOOKS ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks on">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">第三幕</div>
+      <div class="divider-num reveal">03</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Hooks 事件自動化</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">存檔、建檔、刪檔觸發預定動作，解決「agent babysitting」問題 — 例行雜事自動跑。</p>
+    </div>
+    <div class="page-num">09</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 — TIPS 10-12 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip hooks reveal">Hooks</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">自動化，但別亂燒 token</span></h2>
+    </div>
+    <div class="tip-grid three">
+      <div class="tip" style="--accent:var(--c-hooks)"><div class="n">10</div><h3 contenteditable="true">解決 agent babysitting</h3><p contenteditable="true">自動 git commit、更新文件、跑測試、code quality check，不用每次手動叫。</p></div>
+      <div class="tip" style="--accent:var(--c-hooks)"><div class="n">11</div><h3 contenteditable="true">存檔跑測試／同步字串</h3><p contenteditable="true">改 code 存檔就跑對應測試；改一種語言字串就同步各語系。</p></div>
+      <div class="tip" style="--accent:var(--c-hooks)"><div class="n">12</div><h3 contenteditable="true">別讓 Hook 亂燒 token</h3><p contenteditable="true">只在 pattern 已明確時自動化；格式交給 linter，別花 credit 叫 Kiro 修。</p></div>
+    </div>
+    <div class="page-num">10</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 — DIVIDER: MODE ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode on">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">第四幕</div>
+      <div class="divider-num reveal">04</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">執行模式</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">Supervised（提議＋核可）vs Autopilot（全自動）。何時放手，何時盯著。</p>
+    </div>
+    <div class="page-num">11</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 — TIPS 13-14 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip mode reveal">Mode</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">先盯著，信任後放手</span></h2>
+    </div>
+    <div class="tip-grid two">
+      <div class="tip" style="--accent:var(--c-mode)"><div class="n">13</div><h3 contenteditable="true">Production 從 Supervised 起步</h3><p contenteditable="true">正式 codebase 先讓 Kiro 提議、你核可；調好 steering、有信心後再切 Autopilot。</p></div>
+      <div class="tip" style="--accent:var(--c-mode)"><div class="n">14</div><h3 contenteditable="true">Autopilot 留給綠地／低風險</h3><p contenteditable="true">範圍明確、風險低（加測試、對齊文件、greenfield）用全自動最划算。</p></div>
+    </div>
+    <div class="page-num">12</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13 — DIVIDER: SKILL ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill on">SKILL</a><a class="tab-adv">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">第五幕</div>
+      <div class="divider-num reveal">05</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Skills · Powers · MCP</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">按需灌領域知識與工具，不撐爆每次請求；再把外部資料源接進來。</p>
+    </div>
+    <div class="page-num">13</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 14 — TIPS 15-17 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip skill reveal">Skills</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">放對位置、寫準描述</span></h2>
+    </div>
+    <div class="tip-grid three">
+      <div class="tip" style="--accent:var(--c-skill)"><div class="n">15</div><h3 contenteditable="true">SKILL.md 要放子資料夾</h3><p contenteditable="true">全域 <code>~/.kiro/skills/&lt;name&gt;/SKILL.md</code>；丟在根目錄不會被認。</p></div>
+      <div class="tip" style="--accent:var(--c-skill)"><div class="n">16</div><h3 contenteditable="true">description 特別重要</h3><p contenteditable="true">Kiro 只在關鍵字命中 metadata 才載入；描述準不準決定它會不會被叫出。</p></div>
+      <div class="tip" style="--accent:var(--c-skill)"><div class="n">17</div><h3 contenteditable="true">用 Powers 灌 context</h3><p contenteditable="true">按需把領域知識與工具掛到 agent，不讓每個請求塞滿重複脈絡。</p></div>
+    </div>
+    <div class="page-num">14</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 15 — TIPS 18-20 ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip skill reveal">MCP · Credit</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">接外部、省 credit</span></h2>
+    </div>
+    <div class="tip-grid three">
+      <div class="tip" style="--accent:var(--c-mode)"><div class="n">18</div><h3 contenteditable="true">接 MCP 拉外部資料源</h3><p contenteditable="true">原生支援 MCP，接 API、資料庫、文件；別硬塞進 prompt。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">19</div><h3 contenteditable="true">相關改動合併成一個 prompt</h3><p contenteditable="true">「加 A、重構 B、修 C」一句 = 1 credit；拆三句 = 3 credit。能合就合。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">20</div><h3 contenteditable="true">給明確 context</h3><p contenteditable="true">用 <code>#File</code> 引用，Kiro 不必花 tool call 到處讀 code。探索越少越省。</p></div>
+    </div>
+    <div class="page-num">15</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 16 — DIVIDER: HARNESS ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv on">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">進階 · 第六幕</div>
+      <div class="divider-num reveal">06</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">建立 Harness</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">Harness ≠ 從零造 agent。Kiro 已內建 agent loop；你在外圍配 5 層 config，設定產出天花板。</p>
+    </div>
+    <div class="page-num">16</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 17 — HARNESS 5 LAYERS ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip adv reveal">Harness</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">五層架構（由下往上疊）</span></h2>
+    </div>
+    <div class="tip-grid three" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr">
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">L0</div><h3 contenteditable="true">選模型</h3><p contenteditable="true">Opus 4.8 關鍵 · Sonnet 日常 · Haiku 輕量。<code>/effort</code> 調力度，記 credit 倍率。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">L1</div><h3 contenteditable="true">Context 管理</h3><p contenteditable="true"><code>/context</code>、<code>/compact</code>、<code>/rewind</code>、<code>#</code> 引用檔。~90% 自動壓縮。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">L2</div><h3 contenteditable="true">知識與工具</h3><p contenteditable="true">Steering · Skills · Hooks · MCP，全放 <code>.kiro/</code>。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">L3</div><h3 contenteditable="true">編排</h3><p contenteditable="true">IDE spec 三件套 · CLI <code>/plan</code> · Subagents（CLI 最多 4 並行）。</p></div>
+      <div class="tip" style="--accent:var(--c-adv)"><div class="n">L4</div><h3 contenteditable="true">驗證</h3><p contenteditable="true">生成／評估分離，獨立 review agent。CLI review loop 上限 10。</p></div>
+      <div class="tip" style="--accent:var(--c-spec)"><div class="n">✦</div><h3 contenteditable="true">會腐朽，要維護</h3><p contenteditable="true">模型變強就拆鷹架；保留恆常紀律。每 3–6 個月審一次。</p></div>
+    </div>
+    <div class="page-num">17</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 18 — HARNESS DIRECTORY ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip adv reveal">Harness</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">.kiro/ 目錄骨架</span></h2>
+    </div>
+    <div class="code reveal"><pre>.kiro/
+├── <span class="kw">steering/</span>     product.md <span class="cm">(always)</span> · tech.md <span class="cm">(fileMatch)</span>
+│                debugging.md <span class="cm">(auto)</span>
+├── <span class="kw">skills/</span>&lt;name&gt;/SKILL.md · scripts/ · references/
+├── <span class="kw">specs/</span>&lt;feature&gt;/{requirements,design,tasks}.md
+├── <span class="kw">hooks/</span>*.kiro.hook
+├── <span class="kw">agents/</span>reviewer.md          <span class="cm"># CLI 自訂 subagent</span>
+└── <span class="kw">settings/</span>mcp.json           <span class="cm"># 外部工具/API</span></pre></div>
+    <div class="page-num">18</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 19 — DIVIDER: LOOP ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv on">ADV</a>
+    </nav>
+    <div class="divider-wrap">
+      <div class="kicker reveal" contenteditable="true">進階 · 第七幕</div>
+      <div class="divider-num reveal">07</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Loop Engineer 自迴圈</span></h2>
+      <p class="divider-sub reveal" contenteditable="true">兩條路：內建 <code>/goal</code>（最簡），或外掛 Ralph Loop（可審、含自我修正日誌）。</p>
+    </div>
+    <div class="page-num">19</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 20 — /goal ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip adv reveal">Loop · 內建</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">/goal — 目標驅動迴圈</span></h2>
+    </div>
+    <div class="code reveal"><pre><span class="cm"># 自主 loop：plan → implement → verify → iterate → complete（預設 5 圈）</span>
+<span class="kw">/goal</span> refactor the auth module to use JWT tokens and ensure all tests pass
+<span class="kw">/goal</span> --max 10 migrate the test suite from Jest to Vitest
+<span class="kw">/goal</span> clear   <span class="cm"># 取消</span></pre></div>
+    <p class="lead reveal" contenteditable="true" style="font-size:clamp(.82rem,1.5vw,1.1rem);margin-top:clamp(.6rem,1.6vh,1rem)">關鍵：<b>驗收條件寫死在句子裡</b>。「all tests pass」= 具體；「improve the code」= 模糊會空轉。跑一半可 <code>Ctrl+S</code> queue steering 改方向。</p>
+    <div class="page-num">20</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 21 — Ralph Loop ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip adv reveal">Loop · Ralph</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Ralph Loop — 逐 task 自我修正</span></h2>
+    </div>
+    <div class="two-col">
+      <div class="col">
+        <h3 contenteditable="true">每圈 6 phase</h3>
+        <ul>
+          <li contenteditable="true">讀 context（steering + spec + progress）</li>
+          <li contenteditable="true">挑<b>一個</b>最小編號未完成 task</li>
+          <li contenteditable="true">實作前先讀過往修正，不重犯</li>
+          <li contenteditable="true">實作＋跑 check，失敗即修即記</li>
+          <li contenteditable="true">對 requirements.md 驗收</li>
+          <li contenteditable="true">更新 progress／timing</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3 contenteditable="true">跑法</h3>
+        <div class="code" style="margin-top:.4rem"><pre><span class="cm"># &lt;圈數&gt; &lt;spec 名&gt;</span>
+./ralph-loop-kiro-specs-script.sh <span class="st">15</span> auth-feature
+
+<span class="cm"># 迴圈本體</span>
+echo "$prompt" | kiro-cli chat \
+  --trust-all-tools --no-interactive</pre></div>
+        <p style="font-family:'Noto Sans TC';font-size:clamp(.72rem,1.35vw,.95rem);color:var(--text-body);margin-top:.7em;line-height:1.5" contenteditable="true">核心是 <code>progress.md</code> 的 Corrections 區，每圈先讀、禁止重犯。</p>
+      </div>
+    </div>
+    <div class="page-num">21</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 22 — SKILL DIFF TABLE ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <div class="tip-head">
+      <span class="chip skill reveal">Skill 差異</span>
+      <h2 class="reveal" contenteditable="true"><span class="zh">Kiro vs Claude Code vs Codex</span></h2>
+    </div>
+    <table class="ctable reveal">
+      <thead><tr><th></th><th>Kiro</th><th>Claude Code / Codex</th></tr></thead>
+      <tbody>
+        <tr><td>格式</td><td class="kiro" colspan="1">同一份 SKILL.md，跨 agent 可攜</td><td>同源（起於 Anthropic）</td></tr>
+        <tr><td>觸發</td><td class="kiro">關鍵字命中 metadata 才載入</td><td>幾乎常載</td></tr>
+        <tr><td>description</td><td class="kiro">準不準＝會不會被叫出</td><td>影響較小</td></tr>
+        <tr><td>哲學</td><td class="kiro">綁在 spec 閘控流程內</td><td>彈性、快速、隨手掛</td></tr>
+      </tbody>
+    </table>
+    <p class="lead reveal" contenteditable="true" style="font-size:clamp(.8rem,1.5vw,1.05rem);margin-top:clamp(.6rem,1.6vh,1rem)">搬進 Kiro 記得：<b>①</b> description 更具體 · <b>②</b> 預期它嵌進 spec 閘控流程。</p>
+    <div class="page-num">22</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 23 — CLOSING / SOURCES ============ -->
+<section class="slide">
+  <div class="page">
+    <div class="holes"><span></span><span></span><span></span><span></span></div>
+    <nav class="tabs" aria-hidden="true">
+      <a class="tab-spec">SPEC</a><a class="tab-steer">STEER</a><a class="tab-hooks">HOOKS</a>
+      <a class="tab-mode">MODE</a><a class="tab-skill">SKILL</a><a class="tab-adv on">ADV</a>
+    </nav>
+    <div class="tip-head">
+      <div class="kicker reveal" contenteditable="true">收束</div>
+      <h2 class="reveal" contenteditable="true"><span class="zh">一句話帶走</span></h2>
+      <div class="rule reveal"></div>
+      <p class="lead reveal" contenteditable="true" style="max-width:52ch">Kiro 把「規格」變成工作單位：<b>先講清楚要什麼，再讓 agent 迴圈交付。</b>規劃便宜、重寫最貴，harness 決定天花板。</p>
+    </div>
+    <div style="height:clamp(.6rem,2vh,1.2rem)"></div>
+    <div class="src-list reveal">
+      <a href="https://www.genai-playbook.com/articles/kiro-harness-playbook-en.html" target="_blank">GenAI Playbook — Kiro harness 指南</a>
+      <a href="https://kiro.dev/docs/cli/chat/goal/" target="_blank">Kiro Docs — /goal 指令</a>
+      <a href="https://github.com/mreferre/ralph-loop-kiro-specs" target="_blank">GitHub — ralph-loop-kiro-specs</a>
+      <a href="https://kiro.dev/docs/specs/best-practices/" target="_blank">Kiro Docs — Specs best practices</a>
+      <a href="https://dev.to/aws/pushing-kiros-free-tier-to-its-limits-5e34" target="_blank">DEV — Pushing Kiro's Free Tier</a>
+      <a href="https://www.buildthisnow.com/blog/tools/extensions/claude-code-vs-kiro" target="_blank">Build This Now — Claude Code vs Kiro 2026</a>
+    </div>
+    <div class="page-num">23</div>
+  </div>
+</section>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   Keyboard / wheel / touch nav · progress bar · nav dots · IO animations
+   =========================================== */
+class SlidePresentation {
+  constructor() {
+    this.slides = Array.from(document.querySelectorAll('.slide'));
+    this.current = 0;
+    this.navDotsContainer = document.querySelector('.nav-dots');
+    this.progressBar = document.querySelector('.progress-bar');
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupWheel();
+    this.setupTouch();
+    this.setupNavDots();
+    this.updateChrome();
+  }
+  setupObserver() {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          this.current = this.slides.indexOf(e.target);
+          this.updateChrome();
+        }
+      });
+    }, { threshold: 0.55 });
+    this.slides.forEach(s => io.observe(s));
+  }
+  goTo(i) {
+    i = Math.max(0, Math.min(this.slides.length - 1, i));
+    this.slides[i].scrollIntoView({ behavior: 'smooth' });
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute && e.target.getAttribute('contenteditable')) return;
+      if (['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)) { e.preventDefault(); this.goTo(this.current + 1); }
+      if (['ArrowLeft','ArrowUp','PageUp'].includes(e.key)) { e.preventDefault(); this.goTo(this.current - 1); }
+      if (e.key === 'Home') { e.preventDefault(); this.goTo(0); }
+      if (e.key === 'End') { e.preventDefault(); this.goTo(this.slides.length - 1); }
+    });
+  }
+  setupWheel() {
+    let lock = false;
+    window.addEventListener('wheel', (e) => {
+      if (document.body.classList.contains('edit-active')) return;
+      if (lock) return;
+      if (Math.abs(e.deltaY) < 24) return;
+      lock = true;
+      this.goTo(this.current + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(() => lock = false, 750);
+    }, { passive: true });
+  }
+  setupTouch() {
+    let y0 = null;
+    window.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchend', (e) => {
+      if (y0 === null) return;
+      const dy = y0 - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 50) this.goTo(this.current + (dy > 0 ? 1 : -1));
+      y0 = null;
+    }, { passive: true });
+  }
+  setupNavDots() {
+    this.navDotsContainer.innerHTML = ''; // clear before build (avoid dupes on re-open)
+    this.slides.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', '前往第 ' + (i + 1) + ' 張');
+      b.addEventListener('click', () => this.goTo(i));
+      this.navDotsContainer.appendChild(b);
+    });
+  }
+  updateChrome() {
+    const pct = this.slides.length > 1 ? (this.current / (this.slides.length - 1)) * 100 : 100;
+    this.progressBar.style.width = pct + '%';
+    Array.from(this.navDotsContainer.children).forEach((d, i) => d.classList.toggle('active', i === this.current));
+  }
+}
+
+/* ===========================================
+   INLINE EDITOR (opt-in) — hotzone hover + E key + Ctrl/Cmd+S export
+   =========================================== */
+class InlineEditor {
+  constructor() {
+    this.isActive = false;
+    this.toggle = document.getElementById('editToggle');
+    this.banner = document.getElementById('editBanner');
+    this.bind();
+    this.restore();
+  }
+  bind() {
+    const hotzone = document.querySelector('.edit-hotzone');
+    let hideTimeout = null;
+    const show = () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); };
+    const hideLater = () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+    hotzone.addEventListener('mouseenter', show);
+    hotzone.addEventListener('mouseleave', hideLater);
+    this.toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    this.toggle.addEventListener('mouseleave', hideLater);
+    this.toggle.addEventListener('click', () => this.toggleEditMode());
+    hotzone.addEventListener('click', () => this.toggleEditMode());
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) this.toggleEditMode();
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); this.exportFile(); }
+    });
+    // persist edits
+    document.querySelectorAll('[contenteditable]').forEach((el, i) => {
+      el.addEventListener('input', () => this.save());
+    });
+  }
+  toggleEditMode() {
+    this.isActive = !this.isActive;
+    document.body.classList.toggle('edit-active', this.isActive);
+    this.toggle.classList.toggle('active', this.isActive);
+    this.banner.classList.toggle('active', this.isActive);
+    this.toggle.textContent = this.isActive ? '✓' : '✏️';
+  }
+  save() {
+    const data = {};
+    document.querySelectorAll('[contenteditable]').forEach((el, i) => data['e' + i] = el.innerHTML);
+    try { localStorage.setItem('kiro-slides-edits', JSON.stringify(data)); } catch (e) {}
+  }
+  restore() {
+    try {
+      const data = JSON.parse(localStorage.getItem('kiro-slides-edits') || '{}');
+      document.querySelectorAll('[contenteditable]').forEach((el, i) => { if (data['e' + i] !== undefined) el.innerHTML = data['e' + i]; });
+    } catch (e) {}
+  }
+  exportFile() {
+    // strip edit state so the saved file opens clean
+    const editable = Array.from(document.querySelectorAll('[contenteditable]'));
+    editable.forEach(el => el.removeAttribute('contenteditable'));
+    document.body.classList.remove('edit-active');
+    this.toggle.classList.remove('active', 'show');
+    this.banner.classList.remove('active');
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    // restore
+    document.body.classList.add('edit-active');
+    editable.forEach(el => el.setAttribute('contenteditable', 'true'));
+    this.toggle.classList.add('active');
+    this.banner.classList.add('active');
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Kiro-slides.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+}
+
+new SlidePresentation();
+new InlineEditor();
+// first slide visible immediately
+document.querySelector('.slide').classList.add('visible');
+</script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>上台報告評分攻略｜智慧醫療專案</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --surface:#ffffff;
+  --ink:#162033;
+  --muted:#657089;
+  --line:#dfe5ef;
+  --accent:#275efe;
+  --accent-soft:#eaf0ff;
+  --green:#0e8a67;
+  --green-soft:#e9f7f2;
+  --amber:#b66b00;
+  --amber-soft:#fff4df;
+  --purple:#7147d7;
+  --purple-soft:#f0eafe;
+  --shadow:0 10px 30px rgba(18,32,65,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.55;
+}
+button,input{font:inherit}
+.hero{
+  padding:42px 24px 28px;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(39,94,254,.18), transparent 28%),
+    linear-gradient(135deg,#111a2d,#1d2b4a 65%,#24345c);
+  color:#fff;
+}
+.hero-inner{max-width:1200px;margin:auto}
+.eyebrow{
+  display:inline-flex;gap:8px;align-items:center;
+  padding:6px 10px;border-radius:999px;
+  background:rgba(255,255,255,.12);
+  font-size:13px;font-weight:700;letter-spacing:.04em
+}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.08;margin:18px 0 14px}
+.hero p{max-width:820px;color:#dce4f4;font-size:18px;margin:0}
+.score-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  margin-top:26px
+}
+.score-box{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;padding:16px
+}
+.score-box b{display:block;font-size:24px}
+.score-box span{font-size:13px;color:#dce4f4}
+.toolbar{
+  position:sticky;top:0;z-index:20;
+  background:rgba(244,247,251,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.toolbar-inner{
+  max-width:1200px;margin:auto;padding:12px 24px;
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap
+}
+.progress-wrap{flex:1;min-width:220px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
+.progress{
+  height:8px;background:#dfe5ef;border-radius:999px;overflow:hidden
+}
+.progress > div{height:100%;width:0;background:var(--accent);transition:.25s}
+.btn{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700
+}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.container{max-width:1200px;margin:auto;padding:28px 24px 64px}
+.nav{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px
+}
+.nav a{
+  text-decoration:none;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  box-shadow:0 4px 14px rgba(18,32,65,.04)
+}
+.nav b{display:block}
+.nav small{color:var(--muted)}
+.section{margin-top:28px;scroll-margin-top:86px}
+.section-head{
+  display:flex;justify-content:space-between;gap:14px;align-items:end;
+  margin-bottom:14px
+}
+.section-head h2{margin:0;font-size:27px}
+.section-head p{margin:0;color:var(--muted)}
+.badge{
+  flex:0 0 auto;padding:7px 11px;border-radius:999px;
+  font-weight:800;font-size:14px
+}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:18px;box-shadow:var(--shadow);overflow:hidden
+}
+.card-top{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card h3{margin:6px 0 0;font-size:20px;line-height:1.35}
+.actions{padding:10px 12px 14px}
+.action{
+  display:grid;grid-template-columns:28px 1fr;gap:10px;
+  padding:10px 8px;border-radius:10px
+}
+.action:hover{background:#f7f9fc}
+.action input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.action strong{display:block;margin-bottom:2px}
+.action span{display:block;color:var(--muted);font-size:14px}
+.callout{
+  margin-top:24px;background:#111a2d;color:#fff;border-radius:20px;padding:22px;
+  display:grid;grid-template-columns:1.1fr .9fr;gap:22px
+}
+.callout h2{margin:0 0 8px}
+.callout p{margin:0;color:#dce4f4}
+.script{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:16px
+}
+.script b{display:block;margin-bottom:6px}
+.footer-note{margin-top:20px;color:var(--muted);font-size:13px;text-align:center}
+@media(max-width:860px){
+  .score-strip,.nav,.cards,.callout{grid-template-columns:1fr}
+  .hero{padding-top:30px}
+  .section-head{align-items:flex-start}
+}
+@media print{
+  .toolbar,.nav,.btn{display:none!important}
+  body{background:#fff}
+  .hero{background:#fff;color:#111;padding:10px 0 18px}
+  .hero p,.score-box span{color:#555}
+  .score-strip{grid-template-columns:repeat(4,1fr)}
+  .score-box{background:#fff;border:1px solid #bbb;color:#111}
+  .container{padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+  .callout{background:#fff;color:#111;border:1px solid #bbb}
+  .callout p{color:#555}
+  .script{border:1px solid #bbb}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">上台報告作戰頁 · 智慧醫療專案</div>
+    <h1>把評分表，轉成<br>可被看見的得分動作</h1>
+    <p>每一個評分項目都對應五個具體動作。不是增加內容，而是讓評審在有限時間內，明確看到重要性、設計品質、實際成效與專業表現。</p>
+    <div class="score-strip">
+      <div class="score-box"><b>30 分</b><span>重要性與發展性</span></div>
+      <div class="score-box"><b>30 分</b><span>智慧化設計特色</span></div>
+      <div class="score-box"><b>30 分</b><span>整體運作與成效</span></div>
+      <div class="score-box"><b>10 分</b><span>現場表現</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="progress-wrap">
+      <div class="progress-label"><span>準備完成度</span><span id="progressText">0 / 100</span></div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+    <button class="btn" id="resetBtn">清除勾選</button>
+    <button class="btn primary" onclick="window.print()">列印 / 匯出 PDF</button>
+  </div>
+</div>
+
+<main class="container">
+  <nav class="nav">
+    <a href="#importance"><b>01 重要性與發展性</b><small>問題、資源、目標、未來</small></a>
+    <a href="#smart"><b>02 智慧化設計特色</b><small>簡化、自動化、標準、UX</small></a>
+    <a href="#outcome"><b>03 整體運作與成效</b><small>導入、維護、成果、影響</small></a>
+    <a href="#delivery"><b>04 現場表現</b><small>結構、圖表、口語、時間</small></a>
+  </nav>
+
+  <div id="app"></div>
+
+  <section class="callout">
+    <div>
+      <h2>建議報告主線：問題 → 設計 → 證據 → 擴張</h2>
+      <p>評審最容易扣分的，不是沒有做事，而是聽不出「為何現在必須做、具體改了什麼、成效是否可信、下一步能否複製」。所有頁面都應服務這四個問題。</p>
+    </div>
+    <div class="script">
+      <b>30 秒開場模板</b>
+      「我們要解決的不是單一流程不便，而是＿＿造成的病人安全／效率／管理缺口。這套方案透過＿＿，把原本＿＿的流程改成＿＿，目前已達成＿＿，下一階段將擴展至＿＿。」
+    </div>
+  </section>
+
+  <div class="footer-note">瀏覽器會自動保存勾選狀態；正式簡報前可逐項完成。</div>
+</main>
+
+<script>
+const sections = [
+{
+ id:"importance", title:"重要性與發展性", score:"30 分", color:"var(--accent)", soft:"var(--accent-soft)",
+ desc:"讓評審相信：這是值得現在投入、且可持續擴張的問題。",
+ items:[
+  {title:"與當前社會、醫界或院內重要議題之相關性", actions:[
+   ["用一張數據定義痛點","開場 60 秒內呈現院內量體、風險或成本，不先談功能。"],
+   ["連結外部趨勢","對應高齡化、缺工、病安、智慧醫療、資料治理或評鑑政策。"],
+   ["指出不處理的代價","說明延誤、重工、錯誤、病人風險或機會成本。"],
+   ["加入利害關係人原話","用一句臨床人員、病人或管理者的真實需求作為證據。"],
+   ["把議題濃縮成一句話","格式：誰，在什麼情境，因何問題，造成什麼後果。"]
+  ]},
+  {title:"資訊科技導入前評估完整性", actions:[
+   ["畫出資源盤點表","以軟體、硬體、經費、人力、資料、資安六欄呈現。"],
+   ["標示現況與缺口","每一資源註明已有、缺少、外購、合作或待核准。"],
+   ["交代整合邊界","說明與 HIS、EMR、FHIR、API、帳號權限及既有系統的關係。"],
+   ["呈現總持有成本","不只開發費，也列維護、授權、教育、監控及升級成本。"],
+   ["準備替代方案","對關鍵依賴列出 Plan B，例如人工備援、分階段導入或低成本版本。"]
+  ]},
+  {title:"預期目標合理性", actions:[
+   ["目標必須有基線","先說現在是多少，再說要改善到多少。"],
+   ["分開輸出與結果","輸出是上線、使用率；結果是時間、錯誤率、病安或成本改善。"],
+   ["設定時間範圍","清楚區分三個月、半年、一年的目標。"],
+   ["使用可驗證指標","避免「提升效率」，改成平均作業時間下降 30%。"],
+   ["交代目標推估依據","用試辦數據、流程觀察、文獻或同類案例支持。"]
+  ]},
+  {title:"未來發展性", actions:[
+   ["畫三階段路線圖","試辦、擴科、全院或跨院，每階段有明確門檻。"],
+   ["說明可複製單元","指出哪些模組、資料接口與流程可直接複用。"],
+   ["加入平台化視角","從單點工具升級為共用資料層、規則引擎或服務平台。"],
+   ["提出下一個高價值情境","選一個最合理擴張場景，不要一次列十個。"],
+   ["定義停止或轉向條件","若使用率、成效或維護成本未達門檻，何時縮減或調整。"]
+  ]}
+ ]},
+{
+ id:"smart", title:"智慧化設計特色", score:"30 分", color:"var(--green)", soft:"var(--green-soft)",
+ desc:"讓評審看見：系統不是把舊流程搬上螢幕，而是重構工作方式。",
+ items:[
+  {title:"有明顯簡化、優化之綜效", actions:[
+   ["呈現 Before / After","以同一個任務比較步驟數、時間、交接點與錯誤點。"],
+   ["刪除不必要步驟","明確說出哪些查詢、抄寫、等待或重複確認被移除。"],
+   ["量化綜效","至少提供時間、點擊、表單欄位或人力節省之一。"],
+   ["指出跨角色效益","不只對單一使用者，說明醫師、護理、行政或病人如何共同受益。"],
+   ["展示最短任務路徑","現場示範核心任務在三步內完成。"]
+  ]},
+  {title:"行動化、自動化程度", actions:[
+   ["標出自動化層級","區分提醒、建議、半自動執行、全自動執行。"],
+   ["說明觸發條件","誰、何時、因何事件啟動流程。"],
+   ["展示行動端場景","用手機、平板、推播或床邊設備示範實際使用。"],
+   ["保留人工覆核","對高風險決策清楚標示 human-in-the-loop。"],
+   ["呈現例外處理","網路中斷、資料缺漏、判斷衝突時如何安全降級。"]
+  ]},
+  {title:"系統／資料標準化與交換串接", actions:[
+   ["畫資料流向圖","從資料來源、轉換、規則、介面到回寫位置。"],
+   ["標示標準規格","明列 FHIR Resource、LOINC、SNOMED CT、ICD 或院內代碼。"],
+   ["區分標準與客製","哪些可跨系統通用，哪些是院內特殊規則。"],
+   ["展示接口契約","用簡化 API 或欄位映射範例證明可串接。"],
+   ["提出資料品質治理","說明缺值、重複、時間戳、版本與欄位定義管理。"]
+  ]},
+  {title:"合理化及時效性", actions:[
+   ["定義正確出現時點","資訊必須在決策前出現，而不是工作完成後。"],
+   ["交代更新頻率","即時、每小時、每日批次或事件觸發要說清楚。"],
+   ["避免過度警示","說明如何分級、去重與抑制低價值提醒。"],
+   ["展示延遲指標","從資料產生到使用者看到，總延遲是多少。"],
+   ["以臨床節奏驗證","確認系統符合交班、查房、門診或出院流程。"]
+  ]},
+  {title:"設計思考與使用者經驗設計", actions:[
+   ["證明你真的看過使用者","呈現訪談、影隨或流程觀察的對象與次數。"],
+   ["展示需求到設計的轉換","每一核心功能對應一個具體痛點。"],
+   ["用角色分層介面","醫療人員、病人與管理者看到不同資訊密度。"],
+   ["呈現可用性測試","至少報告任務完成率、錯誤或回饋摘要。"],
+   ["說明迭代紀錄","展示一個因使用者回饋而被刪除或重做的設計。"]
+  ]}
+ ]},
+{
+ id:"outcome", title:"整體運作與成效", score:"30 分", color:"var(--purple)", soft:"var(--purple-soft)",
+ desc:"讓評審相信：專案已可運作、有治理、成效可信，且確實造成改變。",
+ items:[
+  {title:"資訊科技導入過程適切性", actions:[
+   ["呈現導入階段","需求、原型、測試、試辦、上線、擴散依序清楚。"],
+   ["交代決策關卡","哪些節點由臨床、資訊、資安或管理者核准。"],
+   ["用小規模試辦降低風險","說明先在哪個單位、哪些使用者、多久驗證。"],
+   ["展示教育與變更管理","不只上課，還包括超級使用者、現場支援與回饋管道。"],
+   ["列出導入問題與修正","主動承認一至兩個問題，說明如何解決。"]
+  ]},
+  {title:"維護、管理或持續改善機制", actions:[
+   ["指定系統責任人","產品、臨床、資料、資訊與資安各有 owner。"],
+   ["建立監測儀表板","追蹤可用率、錯誤、效能、使用率與成效。"],
+   ["定義回饋閉環","問題如何收集、排序、修正、驗證與公告。"],
+   ["規劃版本與變更管理","每次修改有版本、測試、核准與回復機制。"],
+   ["設定定期檢討節奏","每月營運檢討、每季成效檢視或年度重評。"]
+  ]},
+  {title:"預期改善目標之達成程度", actions:[
+   ["用目標對照表","每項 KPI 顯示基線、目標、目前值與差距。"],
+   ["呈現趨勢而非單點","至少用前後數週或數月趨勢避免偶然。"],
+   ["區分試辦與正式成效","不要把小樣本測試包裝成全院成果。"],
+   ["交代樣本與分母","使用人次、案件數、使用者數與期間必須完整。"],
+   ["解釋未達標項目","說明阻礙、修正方案與下一個驗證時間點。"]
+  ]},
+  {title:"功能優化／改進性或創新性", actions:[
+   ["先定義普遍作法","沒有比較基準，就無法證明創新。"],
+   ["指出核心差異","聚焦一至兩個真正不同的機制。"],
+   ["避免把新技術當創新","AI、App、雲端只是手段，創新應落在工作模式改變。"],
+   ["展示難以取代的能力","例如跨系統整合、閉環執行、個人化或即時協作。"],
+   ["提出可防守性","說明資料資產、流程整合、臨床 know-how 或治理門檻。"]
+  ]},
+  {title:"整體成效之突破性", actions:[
+   ["提出一個突破指標","挑最能代表質變的數字放大呈現。"],
+   ["證明不是局部改善","說明是否跨越單位、角色或流程邊界。"],
+   ["呈現能力躍升","從被動查詢變成主動預警，或從人工彙整變成即時決策。"],
+   ["用臨床案例佐證","選一個具代表性的病人或事件，描述改變前後。"],
+   ["說明突破可持續","排除一次性投入或短期加班造成的假性成效。"]
+  ]},
+  {title:"貢獻及影響程度", actions:[
+   ["建立影響層級","個人、單位、全院、病人、社會分層呈現。"],
+   ["同時談質與量","數據之外，加入病安、體驗、治理或文化改變。"],
+   ["列出直接受益者","受益人數、使用者人數或涵蓋案件數。"],
+   ["連結醫院策略","對應品質、財務、人才、品牌或智慧醫療目標。"],
+   ["描述外溢效益","例如形成共用資料標準、培養人才或支援其他專案。"]
+  ]},
+  {title:"減輕人員工作負荷", actions:[
+   ["量化節省時間","以每人每日、每案或每月節省多少分鐘呈現。"],
+   ["拆分工作負荷類型","減少搜尋、抄寫、核對、等待、溝通或認知負荷。"],
+   ["避免轉嫁工作","證明沒有把負擔從醫師移到護理、資訊或行政。"],
+   ["呈現認知負荷改善","例如提醒更聚焦、資訊更集中、決策更快。"],
+   ["加入使用者回饋","引用第一線人員對工作改變的真實評價。"]
+  ]}
+ ]},
+{
+ id:"delivery", title:"現場表現", score:"10 分", color:"var(--amber)", soft:"var(--amber-soft)",
+ desc:"最後 10 分，往往決定前面 90 分是否真正被評審接收到。",
+ items:[
+  {title:"報告內容系統分明、前後連貫", actions:[
+   ["固定故事主線","全程維持「問題→原因→解法→成果→未來」。"],
+   ["每頁只講一件事","不要同時放三個重點。"],
+   ["頁首先說結論","評審先知道答案，再看證據。"],
+   ["段落之間有橋接句","例如「因此」「接下來」「真正的關鍵是」。"],
+   ["最後 30 秒總結四句","問題、方法、成果、價值各一句。"]
+  ]},
+  {title:"文字圖表編撰流暢清晰", actions:[
+   ["一頁一句 Headline","評審三秒內知道本頁重點。"],
+   ["圖大於文字","能畫流程圖就不要寫段落。"],
+   ["一圖只回答一個問題","避免一張圖塞所有資訊。"],
+   ["重要數字放大","改善率、時間、成本直接放最大。"],
+   ["所有圖表一致","字型、顏色、箭頭與圖示保持一致。"]
+  ]},
+  {title:"發表人儀態與口齒清晰", actions:[
+   ["開場先停兩秒","建立節奏，不急著說話。"],
+   ["眼神輪流看評審","不要一直看螢幕。"],
+   ["每分鐘約 130 至 150 字","保持穩定速度。"],
+   ["重要句降低語速","真正想得分的地方要慢。"],
+   ["手勢只強調重點","不要持續揮手或來回走動。"]
+  ]},
+  {title:"時間掌控", actions:[
+   ["預留 15% 時間","例如 10 分鐘報告，8 分 30 秒完成。"],
+   ["每頁設定秒數","事先規劃每頁講多久。"],
+   ["重要頁花最多時間","配分高的地方多講。"],
+   ["準備快速版","超時立即跳過次要內容。"],
+   ["最後一定留下 QA","不要在結論前被主持人打斷。"]
+  ]}
+ ]}
+];
+
+const app=document.getElementById("app");
+
+sections.forEach(sec=>{
+  const section=document.createElement("section");
+  section.className="section";
+  section.id=sec.id;
+
+  section.innerHTML=`
+  <div class="section-head">
+    <div>
+      <h2>${sec.title}</h2>
+      <p>${sec.desc}</p>
+    </div>
+    <div class="badge" style="background:${sec.soft};color:${sec.color}">
+      ${sec.score}
+    </div>
+  </div>
+  `;
+
+  const cards=document.createElement("div");
+  cards.className="cards";
+
+  sec.items.forEach((item,itemIndex)=>{
+      const card=document.createElement("div");
+      card.className="card";
+
+      let html=`
+      <div class="card-top">
+          <div class="kicker">評分項目</div>
+          <h3>${item.title}</h3>
+      </div>
+      <div class="actions">
+      `;
+
+      item.actions.forEach((a,index)=>{
+          const id=`${sec.id}-${itemIndex}-${index}`;
+          html+=`
+          <label class="action">
+             <input type="checkbox" class="check" id="${id}">
+             <div>
+               <strong>${a[0]}</strong>
+               <span>${a[1]}</span>
+             </div>
+          </label>
+          `;
+      });
+
+      html+="</div>";
+      card.innerHTML=html;
+      cards.appendChild(card);
+  });
+
+  section.appendChild(cards);
+  app.appendChild(section);
+});
+
+const checks=[...document.querySelectorAll(".check")];
+
+function updateProgress(){
+   const done=checks.filter(c=>c.checked).length;
+   const total=checks.length;
+   const pct=Math.round(done/total*100);
+
+   document.getElementById("progressBar").style.width=pct+"%";
+   document.getElementById("progressText").textContent=`${done} / ${total}`;
+
+   localStorage.setItem(
+      "presentationChecklist",
+      JSON.stringify(checks.map(c=>c.checked))
+   );
+}
+
+const saved=localStorage.getItem("presentationChecklist");
+
+if(saved){
+   try{
+      JSON.parse(saved).forEach((v,i)=>{
+         if(checks[i]) checks[i].checked=v;
+      });
+   }catch(e){
+      console.warn("無法讀取先前進度。");
+   }
+}
+
+checks.forEach(c=>{
+    c.addEventListener("change",updateProgress);
+});
+
+updateProgress();
+
+document.getElementById("resetBtn").onclick=()=>{
+    if(confirm("確定清除所有勾選？")){
+        checks.forEach(c=>c.checked=false);
+        updateProgress();
+    }
+};
+</script>
+</body>
+</html>

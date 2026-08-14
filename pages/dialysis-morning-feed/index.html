@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dialysis Morning Feed｜血液透析晨間風險清單 Mockup</title>
+  <style>
+    :root {
+      --bg: #17171c;
+      --panel: #202027;
+      --panel-2: #262631;
+      --panel-3: #2f303b;
+      --text: #f4f4f7;
+      --muted: #a4a4af;
+      --soft: #747481;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.14);
+      --red: #ff5f68;
+      --red-bg: rgba(255,95,104,0.13);
+      --orange: #ffad4d;
+      --orange-bg: rgba(255,173,77,0.13);
+      --yellow: #f4d35e;
+      --yellow-bg: rgba(244,211,94,0.14);
+      --gray: #9ea3ad;
+      --gray-bg: rgba(158,163,173,0.13);
+      --green: #64d187;
+      --blue: #4aa3ff;
+      --blue-bg: rgba(74,163,255,0.12);
+      --shadow: 0 18px 50px rgba(0,0,0,0.36);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% -10%, rgba(74,163,255,0.16), transparent 32%),
+        radial-gradient(circle at 85% 8%, rgba(255,173,77,0.10), transparent 28%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 248px minmax(560px, 820px) 300px;
+      gap: 24px;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 28px 28px 48px;
+    }
+
+    .brand {
+      position: sticky;
+      top: 28px;
+      align-self: start;
+      min-height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .brand-top {
+      display: grid;
+      gap: 22px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, rgba(74,163,255,0.9), rgba(100,209,135,0.9));
+      box-shadow: 0 12px 30px rgba(74,163,255,0.16);
+      font-weight: 800;
+      color: white;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 13px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.18s ease;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+      border-color: var(--line);
+    }
+
+    .nav .label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 99px;
+      background: var(--soft);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.04);
+    }
+
+    .dot.red { background: var(--red); }
+    .dot.orange { background: var(--orange); }
+    .dot.yellow { background: var(--yellow); }
+    .dot.gray { background: var(--gray); }
+    .dot.blue { background: var(--blue); }
+
+    .count {
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .shift-box {
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius-lg);
+    }
+
+    .shift-box .title {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .shift-box .now {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .shift-box .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .brand-bottom {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.55;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .topbar {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-end;
+    }
+
+    .headline h2 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: -0.045em;
+      line-height: 1.08;
+    }
+
+    .headline p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .status-pill {
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 13px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(100,209,135,0.65);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(100,209,135,0.55); }
+      70% { box-shadow: 0 0 0 8px rgba(100,209,135,0); }
+      100% { box-shadow: 0 0 0 0 rgba(100,209,135,0); }
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .summary-card {
+      padding: 15px 15px 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.045);
+      border-radius: var(--radius-lg);
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      margin-bottom: 7px;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .summary-card.red { background: var(--red-bg); border-color: rgba(255,95,104,0.18); }
+    .summary-card.orange { background: var(--orange-bg); border-color: rgba(255,173,77,0.18); }
+    .summary-card.yellow { background: var(--yellow-bg); border-color: rgba(244,211,94,0.18); }
+    .summary-card.gray { background: var(--gray-bg); border-color: rgba(158,163,173,0.18); }
+
+    .segment-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .segment-row button {
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: 0.16s ease;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .segment-row button:hover,
+    .segment-row button.active {
+      color: var(--text);
+      background: rgba(74,163,255,0.13);
+      border-color: rgba(74,163,255,0.25);
+    }
+
+    .feed {
+      display: grid;
+      gap: 14px;
+    }
+
+    .feed-day {
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 6px 0 2px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(32,32,39,0.88);
+      border-radius: var(--radius-xl);
+      padding: 19px 19px 16px;
+      box-shadow: var(--shadow);
+      transition: opacity .18s ease, transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      opacity: 0.92;
+      background: var(--soft);
+    }
+
+    .card[data-level="red"]::before { background: var(--red); }
+    .card[data-level="orange"]::before { background: var(--orange); }
+    .card[data-level="yellow"]::before { background: var(--yellow); }
+    .card[data-level="gray"]::before { background: var(--gray); }
+
+    .card:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      background: rgba(38,38,47,0.93);
+    }
+
+    .card.done {
+      opacity: 0.42;
+      box-shadow: none;
+    }
+
+    .card.done .done-label { display: inline-flex; }
+
+    .card.hidden { display: none; }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .source {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(100,209,135,0.16);
+      color: var(--green);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .meta {
+      color: var(--soft);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: flex-end;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    .tag.red { color: var(--red); background: var(--red-bg); border-color: rgba(255,95,104,0.18); }
+    .tag.orange { color: var(--orange); background: var(--orange-bg); border-color: rgba(255,173,77,0.18); }
+    .tag.yellow { color: var(--yellow); background: var(--yellow-bg); border-color: rgba(244,211,94,0.18); }
+    .tag.gray { color: var(--gray); background: var(--gray-bg); border-color: rgba(158,163,173,0.18); }
+    .tag.blue { color: var(--blue); background: var(--blue-bg); border-color: rgba(74,163,255,0.18); }
+
+    .done-label {
+      display: none;
+      color: var(--green);
+      background: rgba(100,209,135,0.12);
+      border-color: rgba(100,209,135,0.22);
+    }
+
+    .patient-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 9px;
+      margin-bottom: 7px;
+    }
+
+    .patient-line h3 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+
+    .patient-line span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .alert-title {
+      font-size: 18px;
+      line-height: 1.45;
+      letter-spacing: -0.012em;
+      margin: 0 0 12px;
+    }
+
+    .alert-title strong {
+      font-weight: 900;
+    }
+
+    .signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 15px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .signals li {
+      color: #d6d6dd;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .action-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: end;
+      border-top: 1px solid var(--line);
+      padding-top: 14px;
+    }
+
+    .action-title {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .actions li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+      background: rgba(74,163,255,0.10);
+      border: 1px solid rgba(74,163,255,0.20);
+      border-radius: 11px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .actions li::before {
+      content: "→";
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .card-buttons button {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 9px 11px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.045);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 850;
+      transition: 0.15s ease;
+    }
+
+    .card-buttons button.primary {
+      color: white;
+      background: rgba(74,163,255,0.18);
+      border-color: rgba(74,163,255,0.28);
+    }
+
+    .card-buttons button:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .details {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      color: #dadade;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .details.open { display: block; }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mini {
+      padding: 11px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+    }
+
+    .mini b {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    aside.right {
+      position: sticky;
+      top: 28px;
+      align-self: start;
+      display: grid;
+      gap: 14px;
+    }
+
+    .side-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.045);
+      border-radius: var(--radius-xl);
+      padding: 17px;
+    }
+
+    .side-card h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+
+    .side-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .decision-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .decision-list li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 9px;
+      align-items: center;
+      padding: 11px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.035);
+      border-radius: 13px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .decision-list strong {
+      color: var(--text);
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .score {
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .mini-timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .timeline-row time {
+      color: var(--soft);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .safe-note {
+      color: var(--soft);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 1180px) {
+      .app {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+      aside.right {
+        grid-column: 2;
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .app {
+        display: block;
+        padding: 18px 14px 36px;
+      }
+      .brand {
+        position: static;
+        min-height: auto;
+        margin-bottom: 22px;
+      }
+      .brand-bottom,
+      .shift-box { display: none; }
+      .nav {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 3px;
+      }
+      .nav button {
+        width: auto;
+        flex: 0 0 auto;
+      }
+      .headline {
+        display: grid;
+        align-items: start;
+      }
+      .headline h2 { font-size: 29px; }
+      .summary { grid-template-columns: repeat(2, 1fr); }
+      .action-box { grid-template-columns: 1fr; }
+      .card-buttons { justify-content: flex-start; }
+      .details-grid { grid-template-columns: 1fr; }
+      aside.right {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin-top: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="brand" aria-label="側邊導覽">
+      <div class="brand-top">
+        <div class="logo" aria-label="產品名稱">
+          <div class="logo-mark">D</div>
+          <div>
+            <h1>Dialysis Agent</h1>
+            <span>Morning Risk Feed</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="風險分類">
+          <button class="active" data-filter="all">
+            <span class="label"><span class="dot blue"></span>全部提醒</span>
+            <span class="count">7</span>
+          </button>
+          <button data-filter="red">
+            <span class="label"><span class="dot red"></span>立即處理</span>
+            <span class="count">2</span>
+          </button>
+          <button data-filter="orange">
+            <span class="label"><span class="dot orange"></span>今日決策</span>
+            <span class="count">3</span>
+          </button>
+          <button data-filter="yellow">
+            <span class="label"><span class="dot yellow"></span>稍後觀察</span>
+            <span class="count">1</span>
+          </button>
+          <button data-filter="gray">
+            <span class="label"><span class="dot gray"></span>資料缺漏</span>
+            <span class="count">1</span>
+          </button>
+        </nav>
+
+        <section class="shift-box" aria-label="班別摘要">
+          <div class="title"><span>今日班表</span><span>LIVE</span></div>
+          <div class="now">07:15</div>
+          <div class="hint">門診透析 63 人，住院透析 14 人。建議先處理 2 位紅色風險患者。</div>
+        </section>
+      </div>
+
+      <div class="brand-bottom">
+        Prototype only｜模擬資料。<br />定位：一分鐘掃描，不取代醫師判斷。
+      </div>
+    </aside>
+
+    <main>
+      <section class="topbar" aria-label="頁首摘要">
+        <div class="headline">
+          <div>
+            <h2>血液透析晨間風險清單</h2>
+            <p>上班前快速掃描：誰要先看、誰要先 call、誰可以 routine。</p>
+          </div>
+          <div class="status-pill"><span class="pulse"></span> 07:15 已同步 HIS / 透析機紀錄</div>
+        </div>
+
+        <div class="summary" aria-label="風險數量摘要">
+          <div class="summary-card red"><strong>2</strong><span>立即處理</span></div>
+          <div class="summary-card orange"><strong>3</strong><span>今日決策</span></div>
+          <div class="summary-card yellow"><strong>1</strong><span>稍後觀察</span></div>
+          <div class="summary-card gray"><strong>1</strong><span>資料缺漏</span></div>
+        </div>
+      </section>
+
+      <div class="segment-row" aria-label="病人來源篩選">
+        <button class="active" data-cohort="all">全部</button>
+        <button data-cohort="outpatient">門診透析</button>
+        <button data-cohort="inpatient">住院透析</button>
+        <button data-cohort="workflow">流程衝突</button>
+        <button data-cohort="nurse">護理升級</button>
+      </div>
+
+      <section class="feed" id="feed" aria-label="風險提醒卡片">
+        <div class="feed-day">Today · 一分鐘掃描模式</div>
+
+        <article class="card" data-level="red" data-cohort="outpatient nurse">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">A</div>
+              <div>
+                <strong>Dialysis Risk Agent</strong>
+                <div class="meta">07:12 · 門診 A 區 · 護理紀錄觸發</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag red">Red</span>
+              <span class="tag blue">門診</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>王○○</h3>
+            <span>A 區 12 床｜一三五 AM｜AVF</span>
+          </div>
+          <p class="alert-title"><strong>高血鉀風險</strong>：K 6.4，且今日透析前需先排除心電圖變化。</p>
+
+          <ul class="signals">
+            <li>K 5.6 → 6.4</li>
+            <li>近 3 次 IDWG 持續上升</li>
+            <li>前次透析中低血壓</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>透析前先評估</li>
+                <li>確認 EKG</li>
+                <li>重設 UF goal / 透析液 K</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">先處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>此卡片由「高血鉀 + IDWG 上升 + 透析耐受性下降」共同觸發。<br />
+            <div class="details-grid">
+              <div class="mini"><b>趨勢</b>K 上升，IDWG 三次連續增加</div>
+              <div class="mini"><b>護理注意</b>胸悶、肌無力、access thrill</div>
+              <div class="mini"><b>資料品質</b>昨晚飲食與藥物未確認</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="red" data-cohort="inpatient">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">I</div>
+              <div>
+                <strong>Inpatient Dialysis Agent</strong>
+                <div class="meta">07:08 · ICU · Vital / ABG 觸發</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag red">Red</span>
+              <span class="tag blue">住院</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>陳○○</h3>
+            <span>ICU 08 床｜AKI on CKD｜Temporary catheter</span>
+          </div>
+          <p class="alert-title"><strong>血流動力不穩合併容量急症</strong>：升壓劑使用中，氧氣需求上升。</p>
+
+          <ul class="signals">
+            <li>NE 0.08 mcg/kg/min</li>
+            <li>HFNC 40L / FiO₂ 55%</li>
+            <li>HCO₃ 14，K 5.9</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>先決定 HD vs SLED/CRRT</li>
+                <li>與 ICU 確認 UF 目標</li>
+                <li>考慮 heparin-free</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">先處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>此病人不是單純排 HD，而是 modality 決策問題；若強行常規 HD，低血壓與無法達成 UF 的風險高。<br />
+            <div class="details-grid">
+              <div class="mini"><b>急性背景</b>Sepsis，lactate 2.6</div>
+              <div class="mini"><b>今日流程</b>10:30 預計 CXR follow-up</div>
+              <div class="mini"><b>待確認</b>最新 ABG / code status</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="orange" data-cohort="outpatient nurse">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">N</div>
+              <div>
+                <strong>Nurse Escalation</strong>
+                <div class="meta">06:58 · 門診 B 區 · 護理師註記</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag orange">Orange</span>
+              <span class="tag blue">門診</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>林○○</h3>
+            <span>B 區 05 床｜二四六 AM｜PermCath</span>
+          </div>
+          <p class="alert-title"><strong>導管感染疑慮</strong>：昨日發燒，今日護理師回報 exit site 疼痛。</p>
+
+          <ul class="signals">
+            <li>Tmax 38.3°C</li>
+            <li>CRP 6.8 → 12.4</li>
+            <li>PermCath exit site pain</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>透析前檢查 exit site</li>
+                <li>考慮 blood culture</li>
+                <li>確認抗生素時點</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">今日處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>護理師主訴與發炎指標同向惡化，需排除 catheter-related bloodstream infection。<br />
+            <div class="details-grid">
+              <div class="mini"><b>近期事件</b>近 7 天無急診</div>
+              <div class="mini"><b>用藥</b>尚未有抗生素處方</div>
+              <div class="mini"><b>待確認</b>是否有 chills / rigors</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="orange" data-cohort="outpatient">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">T</div>
+              <div>
+                <strong>Temporal Pattern Agent</strong>
+                <div class="meta">06:43 · 門診 C 區 · 近三次透析趨勢</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag orange">Orange</span>
+              <span class="tag blue">門診</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>蔡○○</h3>
+            <span>C 區 02 床｜一三五 PM｜AVG</span>
+          </div>
+          <p class="alert-title"><strong>透析耐受性惡化</strong>：近三次透析皆出現低血壓或提早結束。</p>
+
+          <ul class="signals">
+            <li>IDH × 3 sessions</li>
+            <li>UF rate 13.1 mL/kg/hr</li>
+            <li>post-HD dizziness</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>今日降低 UF rate</li>
+                <li>檢討乾體重</li>
+                <li>確認降壓藥服用時間</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">今日處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>這不是單次低血壓，而是連續耐受性變差；建議今日先降低 aggressive UF。<br />
+            <div class="details-grid">
+              <div class="mini"><b>近三次 BP</b>最低 SBP 78 / 82 / 86</div>
+              <div class="mini"><b>乾體重</b>近 30 天未調整</div>
+              <div class="mini"><b>護理注意</b>抽筋、頭暈、胸悶</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="orange" data-cohort="inpatient workflow">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">W</div>
+              <div>
+                <strong>Workflow Agent</strong>
+                <div class="meta">06:39 · 住院 10A · 排程衝突</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag orange">Orange</span>
+              <span class="tag blue">住院</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>黃○○</h3>
+            <span>10A-21｜ESRD｜PermCath</span>
+          </div>
+          <p class="alert-title"><strong>今日 HD 與 CT 時間衝突</strong>：CT 排 09:30，HD 排 09:00。</p>
+
+          <ul class="signals">
+            <li>CT abdomen 09:30</li>
+            <li>HD slot 09:00</li>
+            <li>Vancomycin 需 HD 後給藥</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>協調 HD 改下午</li>
+                <li>提醒透析後抗生素</li>
+                <li>通知病房禁食狀態</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">今日處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>此類卡片不代表病人最危急，但最容易造成流程延誤與用藥錯時。<br />
+            <div class="details-grid">
+              <div class="mini"><b>負責科別</b>感染科 + 腎臟科</div>
+              <div class="mini"><b>藥物</b>Vancomycin level pending</div>
+              <div class="mini"><b>待確認</b>CT 是否需 contrast</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="yellow" data-cohort="outpatient">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">L</div>
+              <div>
+                <strong>Longitudinal Review</strong>
+                <div class="meta">06:22 · 門診 · 月報趨勢</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag yellow">Yellow</span>
+              <span class="tag blue">門診</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>吳○○</h3>
+            <span>A 區 03 床｜二四六 PM｜AVF</span>
+          </div>
+          <p class="alert-title"><strong>營養風險上升</strong>：Albumin 連續兩個月下降，但今日無急性危險訊號。</p>
+
+          <ul class="signals">
+            <li>Alb 3.8 → 3.3</li>
+            <li>dry weight -1.4 kg / 2 mo</li>
+            <li>食慾下降紀錄</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>排下週營養評估</li>
+                <li>追蹤感染/發炎</li>
+                <li>本週先觀察</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">稍後處理</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>這是慢性風險，不應擠掉紅色/橘色事件，但適合放入 follow-up queue。<br />
+            <div class="details-grid">
+              <div class="mini"><b>感染</b>無發燒紀錄</div>
+              <div class="mini"><b>透析充分性</b>Kt/V 最近穩定</div>
+              <div class="mini"><b>建議追蹤</b>3 天飲食紀錄</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-level="gray" data-cohort="inpatient">
+          <div class="card-head">
+            <div class="source">
+              <div class="avatar">?</div>
+              <div>
+                <strong>Data Quality Agent</strong>
+                <div class="meta">06:10 · 住院 12B · 資料缺漏</div>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag gray">Gray</span>
+              <span class="tag blue">住院</span>
+              <span class="tag done-label">已處理</span>
+            </div>
+          </div>
+
+          <div class="patient-line">
+            <h3>周○○</h3>
+            <span>12B-06｜AKI-D｜Temporary catheter</span>
+          </div>
+          <p class="alert-title"><strong>透析前關鍵資料缺漏</strong>：今日尚無最新 K / HCO₃，無法判斷是否可延後 HD。</p>
+
+          <ul class="signals">
+            <li>last K：昨天 5.7</li>
+            <li>尿量 900 mL/day</li>
+            <li>Cr trend 未更新</li>
+          </ul>
+
+          <div class="action-box">
+            <div>
+              <div class="action-title">建議動作</div>
+              <ul class="actions">
+                <li>先補抽 BMP</li>
+                <li>追蹤尿量</li>
+                <li>再決定 HD / hold</li>
+              </ul>
+            </div>
+            <div class="card-buttons">
+              <button class="primary">補資料</button>
+              <button class="toggle-detail">展開</button>
+              <button class="mark-done">完成</button>
+            </div>
+          </div>
+
+          <div class="details">
+            <strong>為何被標記：</strong>Gray 不是穩定，而是系統無法安全排序；需先補資料再做臨床判斷。<br />
+            <div class="details-grid">
+              <div class="mini"><b>最缺項目</b>K、HCO₃、最新體重</div>
+              <div class="mini"><b>潛在決策</b>AKI recovery 可能</div>
+              <div class="mini"><b>建議時限</b>08:00 前回補</div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <aside class="right" aria-label="右側決策欄">
+      <section class="side-card">
+        <h3>今日決策清單</h3>
+        <ul class="decision-list">
+          <li><span class="checkbox"></span><span><strong>王○○</strong>高血鉀：透析前先看</span><span class="score">Red</span></li>
+          <li><span class="checkbox"></span><span><strong>陳○○</strong>決定 HD vs SLED/CRRT</span><span class="score">Red</span></li>
+          <li><span class="checkbox"></span><span><strong>林○○</strong>PermCath 感染評估</span><span class="score">Orange</span></li>
+          <li><span class="checkbox"></span><span><strong>黃○○</strong>CT / HD 排程協調</span><span class="score">Flow</span></li>
+        </ul>
+        <div class="safe-note">右側只保留「今天真的要做的事」，避免變成第二個病歷總表。</div>
+      </section>
+
+      <section class="side-card">
+        <h3>最近 30 分鐘更新</h3>
+        <div class="mini-timeline">
+          <div class="timeline-row"><time>07:12</time><span>王○○ K 更新至 6.4，升為 Red。</span></div>
+          <div class="timeline-row"><time>07:08</time><span>ICU 陳○○ 氧氣需求上升。</span></div>
+          <div class="timeline-row"><time>06:58</time><span>護理師回報林○○ exit site pain。</span></div>
+          <div class="timeline-row"><time>06:39</time><span>黃○○ CT 與 HD 排程衝突。</span></div>
+        </div>
+      </section>
+
+      <section class="side-card">
+        <h3>設計取捨</h3>
+        <p>此 mockup 刻意不放完整 lab table。每張卡片只保留一個主要問題、三個 supporting signals、三個 action，目標是 60 秒內完成臨床排序。</p>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const navButtons = document.querySelectorAll('.nav button');
+    const cohortButtons = document.querySelectorAll('.segment-row button');
+    const cards = document.querySelectorAll('.card');
+    let activeLevel = 'all';
+    let activeCohort = 'all';
+
+    function applyFilters() {
+      cards.forEach(card => {
+        const levelMatch = activeLevel === 'all' || card.dataset.level === activeLevel;
+        const cohorts = (card.dataset.cohort || '').split(' ');
+        const cohortMatch = activeCohort === 'all' || cohorts.includes(activeCohort);
+        card.classList.toggle('hidden', !(levelMatch && cohortMatch));
+      });
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        activeLevel = button.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    cohortButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        cohortButtons.forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        activeCohort = button.dataset.cohort;
+        applyFilters();
+      });
+    });
+
+    document.querySelectorAll('.toggle-detail').forEach(button => {
+      button.addEventListener('click', () => {
+        const detail = button.closest('.card').querySelector('.details');
+        detail.classList.toggle('open');
+        button.textContent = detail.classList.contains('open') ? '收合' : '展開';
+      });
+    });
+
+    document.querySelectorAll('.mark-done').forEach(button => {
+      button.addEventListener('click', () => {
+        const card = button.closest('.card');
+        card.classList.toggle('done');
+        button.textContent = card.classList.contains('done') ? '復原' : '完成';
+      });
+    });
+  </script>
+</body>
+</html>

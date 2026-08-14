@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>臨床醫療資訊：年會雷達 × 期刊選擇</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070b18; --bg2:#0b1124; --card:#0f1730; --card-h:#13203f;
+    --ink:#e6edf7; --muted:#8a99b8; --faint:#5c6b8a;
+    --line:#1c2947; --line-glow:#1e3a6e;
+    --cyan:#22d3ee; --blue:#3b82f6; --indigo:#818cf8;
+    --must:#22d3ee; --opt:#f59e0b;
+    --t1:#34d399; --t2:#22d3ee; --t3:#a78bfa;
+    --mono:'Fira Code',ui-monospace,monospace;
+    --sans:'Fira Sans','Noto Sans TC',-apple-system,"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;
+    padding:0 0 70px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-2;
+    background:
+      radial-gradient(900px 500px at 12% -5%,rgba(34,211,238,.10),transparent 60%),
+      radial-gradient(800px 600px at 92% 0%,rgba(59,130,246,.12),transparent 55%),
+      radial-gradient(700px 700px at 50% 110%,rgba(129,140,248,.08),transparent 60%),
+      var(--bg)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;
+    background-image:linear-gradient(rgba(34,211,238,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(34,211,238,.04) 1px,transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(circle at 50% 0%,#000,transparent 80%)}
+
+  header{padding:54px 24px 40px;text-align:center;position:relative}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--cyan);margin-bottom:14px;display:inline-flex;align-items:center;gap:9px}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan),0 0 20px var(--cyan);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  header h1{font-size:2rem;font-weight:700;letter-spacing:.5px;line-height:1.3;
+    background:linear-gradient(120deg,#fff 20%,var(--cyan) 60%,var(--blue) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  header p{margin-top:14px;color:var(--muted);font-size:.98rem;max-width:760px;margin-left:auto;margin-right:auto}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+  nav{position:sticky;top:0;z-index:30;display:flex;gap:8px;padding:12px 18px;flex-wrap:wrap;justify-content:center;
+    background:rgba(7,11,24,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  nav button{font-family:var(--mono);border:1px solid var(--line);background:rgba(15,23,48,.6);
+    color:var(--muted);padding:9px 17px;border-radius:9px;cursor:pointer;font-size:.84rem;font-weight:500;
+    transition:all .2s ease}
+  nav button:hover{border-color:var(--line-glow);color:var(--ink);background:var(--card-h)}
+  nav button.active{color:var(--bg);background:linear-gradient(120deg,var(--cyan),var(--blue));
+    border-color:transparent;box-shadow:0 0 18px rgba(34,211,238,.4)}
+
+  section{display:none;animation:fade .35s ease}
+  section.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  h2{margin:36px 0 16px;font-size:1.4rem;font-weight:700;display:flex;align-items:center;gap:12px}
+  h2 .bar{width:4px;height:24px;border-radius:2px;background:linear-gradient(var(--cyan),var(--blue));
+    box-shadow:0 0 12px rgba(34,211,238,.5)}
+  h3{margin:24px 0 12px;font-size:1.1rem;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  p.lead{margin:14px 0;color:var(--muted)}
+
+  .card{background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:16px;padding:20px 22px;margin:16px 0;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(34,211,238,.5),transparent)}
+
+  /* ===== Timeline ===== */
+  .timeline{position:relative;margin:24px 0 8px}
+  .timeline::before{content:"";position:absolute;left:67px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--cyan),var(--blue) 55%,var(--indigo));border-radius:2px;
+    box-shadow:0 0 14px rgba(34,211,238,.35)}
+  .tl-row{display:grid;grid-template-columns:54px 28px 1fr;gap:10px;align-items:start;
+    min-height:46px;margin-bottom:8px}
+  .tl-mo{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--muted);
+    text-align:right;padding-top:3px;white-space:nowrap}
+  .tl-dotw{display:flex;justify-content:center;padding-top:5px;position:relative;z-index:2}
+  .tl-dot{width:13px;height:13px;border-radius:50%;background:var(--bg);border:2px solid var(--faint)}
+  .tl-row.hit .tl-mo{color:var(--cyan)}
+  .tl-row.hit .tl-dot{background:var(--cyan);border-color:var(--cyan);
+    box-shadow:0 0 10px var(--cyan),0 0 18px rgba(34,211,238,.5)}
+  .tl-row.empty{min-height:30px;opacity:.5}
+  .tl-events{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:2px}
+  .tl-card{background:linear-gradient(150deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:11px;padding:9px 13px;min-width:200px;transition:all .22s}
+  .tl-card:hover{border-color:var(--line-glow);transform:translateX(3px);
+    box-shadow:0 8px 24px -10px rgba(34,211,238,.35)}
+  .tl-card.must{border-left:3px solid var(--cyan)}
+  .tl-card.opt{border-left:3px solid var(--opt)}
+  .tl-card .nm{font-weight:600;font-size:.92rem}
+  .tl-card .nm a{color:var(--ink);text-decoration:none}
+  .tl-card .nm a:hover{color:var(--cyan)}
+  .tl-card .meta{font-family:var(--mono);font-size:.74rem;color:var(--indigo);margin-top:3px;
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tl-empty-label{font-family:var(--mono);font-size:.74rem;color:var(--faint);padding-top:4px}
+
+  .tbl-wrap{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:16px 0;background:var(--card)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th,td{padding:13px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  th{background:rgba(34,211,238,.05);font-family:var(--mono);font-weight:600;color:var(--cyan);
+    font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tbody tr{transition:background .2s}
+  tbody tr:hover td{background:var(--card-h)}
+  .conf-name{font-weight:600;color:var(--ink)}
+  .conf-name a{color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(34,211,238,.4)}
+  td strong{color:#fff;font-weight:600}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:7px;font-family:var(--mono);
+    font-size:.72rem;font-weight:600;white-space:nowrap;border:1px solid transparent}
+  .tag.must{color:var(--cyan);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
+  .tag.opt{color:var(--opt);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.35)}
+  .tag.t1{color:var(--t1);background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35)}
+  .tag.t2{color:var(--t2);background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.35)}
+  .tag.t3{color:var(--t3);background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.35)}
+
+  ul.clean{margin:10px 0;list-style:none}
+  ul.clean li{padding:7px 0 7px 24px;position:relative;color:var(--ink)}
+  ul.clean li:before{content:"▹";position:absolute;left:0;color:var(--cyan);font-weight:700;
+    text-shadow:0 0 8px rgba(34,211,238,.5)}
+  ul.clean li strong{color:#fff}
+
+  .rhythm{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:18px 0}
+  .rhythm .m{background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:14px;padding:18px;transition:all .25s}
+  .rhythm .m:hover{border-color:var(--line-glow);transform:translateY(-3px);
+    box-shadow:0 10px 30px -10px rgba(34,211,238,.3)}
+  .rhythm .m .mo{font-family:var(--mono);font-weight:600;color:var(--cyan);font-size:1.05rem;
+    margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .rhythm .m .mo:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan)}
+  .rhythm .m .ev{font-weight:600;color:var(--ink);margin-bottom:6px}
+  .rhythm .m small{color:var(--muted)}
+
+  /* ===== Journal cards ===== */
+  .jgrid{display:grid;gap:14px;margin:14px 0}
+  .j{background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px;transition:all .22s;position:relative;overflow:hidden}
+  .j:hover{border-color:var(--line-glow);box-shadow:0 8px 26px -12px rgba(34,211,238,.3)}
+  .j-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .j-name{font-weight:700;color:#fff;font-size:1.02rem}
+  .j-name .sub{display:block;font-weight:400;font-size:.8rem;color:var(--muted);margin-top:2px}
+  .oa{font-family:var(--mono);font-size:.64rem;font-weight:600;padding:2px 7px;border-radius:6px;
+    margin-left:8px;white-space:nowrap;letter-spacing:.03em}
+  .oa.full{color:var(--t1);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.35)}
+  .oa.hy{color:var(--opt);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3)}
+  .if{font-family:var(--mono);font-size:.74rem;text-align:right;white-space:nowrap;
+    border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:rgba(34,211,238,.04)}
+  .if .v{color:var(--cyan);font-weight:600;font-size:.92rem}
+  .if .lbl{color:var(--faint);font-size:.66rem;display:block;letter-spacing:.04em}
+  .j-row{margin-top:11px;font-size:.9rem;line-height:1.65}
+  .j-row .lab{display:inline-block;font-family:var(--mono);font-size:.7rem;font-weight:600;
+    letter-spacing:.04em;padding:2px 8px;border-radius:6px;margin-right:8px;vertical-align:1px}
+  .lab.ed{color:var(--indigo);background:rgba(129,140,248,.12);border:1px solid rgba(129,140,248,.3)}
+  .lab.me{color:var(--t1);background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.3)}
+  .j-row .me-list{color:var(--ink)}
+  .j-row .me-list i{font-style:normal;color:#fff;background:rgba(52,211,153,.08);
+    border-left:2px solid var(--t1);padding:1px 8px;border-radius:3px;display:inline-block;margin:2px 4px 2px 0}
+
+  .warn{background:linear-gradient(160deg,rgba(245,158,11,.06),rgba(15,23,48,.6));
+    border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:18px 20px;margin:16px 0}
+  .warn h3{color:var(--opt);margin-top:0}
+  .warn h3:before{content:"⚠";font-family:var(--sans)}
+  .strat{background:linear-gradient(160deg,rgba(59,130,246,.07),rgba(15,23,48,.6));
+    border:1px solid rgba(59,130,246,.3);border-radius:16px;padding:18px 20px;margin:18px 0}
+  .strat h3{color:var(--blue);margin-top:0}
+  .note{background:rgba(15,23,48,.55);border:1px dashed var(--line-glow);border-radius:12px;
+    padding:12px 16px;margin:14px 0;font-size:.82rem;color:var(--muted)}
+  .note b{color:var(--cyan)}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0;font-size:.82rem;color:var(--muted);font-family:var(--mono)}
+  .legend span{display:flex;align-items:center;gap:6px}
+
+  footer{text-align:center;color:var(--faint);font-size:.78rem;margin-top:48px;padding:24px 18px 0;
+    font-family:var(--mono);border-top:1px solid var(--line);max-width:1100px;margin-left:auto;margin-right:auto}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+  @media(max-width:680px){
+    header h1{font-size:1.45rem} table{font-size:.8rem} th,td{padding:9px 8px}
+    .wrap{padding:0 12px}
+    .timeline::before{left:51px} .tl-row{grid-template-columns:40px 24px 1fr}
+    .tl-card{min-width:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker"><span class="dot"></span>Clinical Informatics Radar</div>
+  <h1>臨床醫療資訊 — 年會雷達 × 期刊選擇</h1>
+  <p>追蹤醫院數位轉型、EHR、AI-CDSS、FHIR / interoperability、臨床工作流與醫療 AI 落地，並對應投稿出口</p>
+</header>
+
+<nav>
+  <button class="active" data-tab="conf">// 年會時間軸</button>
+  <button data-tab="rhythm">// 追蹤節奏</button>
+  <button data-tab="venue">// 投稿出口</button>
+  <button data-tab="journal">// 期刊清單</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ===== 年會時間軸 ===== -->
+<section id="conf" class="active">
+  <h2><span class="bar"></span>2026 年會時間軸</h2>
+  <p class="lead">一整年排列，<span style="color:var(--cyan)">●</span> 有會議的月份。左側邊框：<span style="color:var(--cyan)">必追</span> / <span style="color:var(--opt)">選追</span>。</p>
+  <div class="legend">
+    <span><span class="tag must">必追</span> 核心固定追</span>
+    <span><span class="tag opt">選追</span> 視主題追</span>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-row empty"><div class="tl-mo">1月</div><div class="tl-dotw"><div class="tl-dot"></div></div><div class="tl-events"><span class="tl-empty-label">—</span></div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">2月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card opt"><div class="nm"><a href="https://www.laconventioncenter.com/events/detail/vive-2026" target="_blank" rel="noopener">ViVE</a></div><div class="meta"><span>2/22–25</span><span>Los Angeles</span><span class="tag opt">選追</span></div></div>
+      </div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">3月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card must"><div class="nm"><a href="https://www.himss.org/" target="_blank" rel="noopener">HIMSS Global Health</a></div><div class="meta"><span>3/9–12</span><span>Las Vegas</span><span class="tag must">必追</span></div></div>
+        <div class="tl-card must"><div class="nm"><a href="https://www.thenec.co.uk/events/digital-health-rewired/" target="_blank" rel="noopener">Digital Health Rewired</a></div><div class="meta"><span>3/24–25</span><span>Birmingham</span><span class="tag must">必追</span></div></div>
+      </div></div>
+
+    <div class="tl-row empty"><div class="tl-mo">4月</div><div class="tl-dotw"><div class="tl-dot"></div></div><div class="tl-events"><span class="tl-empty-label">—</span></div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">5月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card must"><div class="nm"><a href="https://amia.org/education-events/clinical-informatics-conference" target="_blank" rel="noopener">AMIA CIC / Amplify</a></div><div class="meta"><span>5/18–21</span><span>Denver</span><span class="tag must">必追</span></div></div>
+        <div class="tl-card must"><div class="nm"><a href="https://mie2026.efmi.org/" target="_blank" rel="noopener">MIE / EFMI</a></div><div class="meta"><span>5/25–28</span><span>Genova</span><span class="tag must">必追</span></div></div>
+      </div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">6月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card must"><div class="nm"><a href="https://www.devdays.com/" target="_blank" rel="noopener">HL7 FHIR DevDays</a></div><div class="meta"><span>6/15–18</span><span>Minneapolis</span><span class="tag must">必追</span></div></div>
+        <div class="tl-card opt"><div class="nm"><a href="https://hlth.com/" target="_blank" rel="noopener">HLTH Europe</a></div><div class="meta"><span>6/15–18</span><span>Amsterdam</span><span class="tag opt">選追</span></div></div>
+      </div></div>
+
+    <div class="tl-row empty"><div class="tl-mo">7月</div><div class="tl-dotw"><div class="tl-dot"></div></div><div class="tl-events"><span class="tl-empty-label">—</span></div></div>
+
+    <div class="tl-row empty"><div class="tl-mo">8月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events"><span class="tl-empty-label">MedInfo 隔年舉辦 → 下屆 2027/8 Dubai（2025 Taipei）</span></div></div>
+
+    <div class="tl-row empty"><div class="tl-mo">9月</div><div class="tl-dotw"><div class="tl-dot"></div></div><div class="tl-events"><span class="tl-empty-label">—</span></div></div>
+
+    <div class="tl-row empty"><div class="tl-mo">10月</div><div class="tl-dotw"><div class="tl-dot"></div></div><div class="tl-events"><span class="tl-empty-label">—</span></div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">11月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card must"><div class="nm"><a href="https://amia.org/education-events/annual-symposium" target="_blank" rel="noopener">AMIA Annual Symposium</a></div><div class="meta"><span>11/7–11</span><span>Dallas</span><span class="tag must">必追</span></div></div>
+        <div class="tl-card opt"><div class="nm"><a href="https://hlth.com/" target="_blank" rel="noopener">HLTH USA</a></div><div class="meta"><span>11/15–18</span><span>Las Vegas</span><span class="tag opt">選追</span></div></div>
+      </div></div>
+
+    <div class="tl-row hit"><div class="tl-mo">12月</div><div class="tl-dotw"><div class="tl-dot"></div></div>
+      <div class="tl-events">
+        <div class="tl-card opt"><div class="nm"><a href="https://www.gdhf.digital/" target="_blank" rel="noopener">Global Digital Health Forum</a></div><div class="meta"><span>12/2–4</span><span>Bangkok</span><span class="tag opt">選追</span></div></div>
+      </div></div>
+  </div>
+
+  <div class="strat">
+    <h3>排序追蹤重點</h3>
+    <p>對「臨床醫師＋醫療 AI 平台 PM＋醫院資料庫實作者」，最值得固定追：<strong>AMIA Annual、AMIA CIC/Amplify、HIMSS、FHIR DevDays、Digital Health Rewired</strong>。覆蓋學術方法 → 臨床資訊治理 → 醫院導入 → FHIR 工程 → NHS 真實世界部署。</p>
+    <ul class="clean">
+      <li><strong>AMIA Annual</strong> — 研究方法與學術可信度</li>
+      <li><strong>AMIA CIC/Amplify</strong> — 模型/EHR/alert/order set/workflow 如何進醫院</li>
+      <li><strong>HIMSS</strong> — 全球醫院採購、智慧醫院 maturity、資安、vendor roadmap</li>
+      <li><strong>FHIR DevDays</strong> — 接 HIS/EHR 真正會用到的資料交換技術</li>
+      <li><strong>Digital Health Rewired</strong> — NHS 怎麼談 EPR、AI productivity、clinical safety、workflow redesign</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <h3>Not-to-do</h3>
+    <p>別把所有 digital health conference 當同一種追。<strong>HIMSS／HLTH／ViVE</strong> 易變 vendor hype 與投資敘事；沒對照 AMIA、MIE、FHIR DevDays，會看到很多「AI transformation」卻無法判斷能否進臨床。反之只追 AMIA/MIE 又過度學術，忽略採購、資安、vendor integration 現實阻力。</p>
+    <p style="margin-top:10px"><strong>最佳策略：</strong>AMIA/MIE 判斷方法學可信度，HIMSS/ViVE/HLTH 判斷市場與採購方向，FHIR DevDays 判斷工程可行性，Digital Health Rewired 判斷公立醫療落地模式。</p>
+  </div>
+
+  <h2><span class="bar"></span>必追會議：沿革原由與近五年評論</h2>
+  <p class="lead">六場必追會議對應臨床醫療資訊的三條歷史血脈：<strong style="color:var(--cyan)">學術方法</strong>、<strong style="color:var(--cyan)">工程標準</strong>、<strong style="color:var(--cyan)">醫院落地</strong>。</p>
+
+  <div class="card">
+    <h3>歷史原由（按血脈分）</h3>
+    <ul class="clean">
+      <li><strong>AMIA Annual Symposium</strong>（學術，最古老）— 源自 1990 年由 SCAMC、AAMSI、ACMI 三前身組織合併成立的 AMIA，承襲 1970 年代以降的 SCAMC 系列，北美 biomedical informatics 學術總壇。</li>
+      <li><strong>AMIA CIC / Amplify</strong>（學術 → 實作）— 較晚，2013 年 ABMS 正式承認「臨床資訊學」為次專科、催生大批 board-certified CMIO 後，為實作者（而非研究者）開的場子。</li>
+      <li><strong>MIE / EFMI</strong>（歐陸學術）— 由 1976 年成立的 EFMI 主辦，歐陸最老醫資年會，與全球性 MedInfo（IMIA，隔年舉辦）共構國際學術版圖。</li>
+      <li><strong>HL7 FHIR DevDays</strong>（工程標準）— HL7 標準組織成立於 1987；FHIR 現代 API 標準由 Grahame Grieve 於 2011 年前後發起，DevDays 自 2014 年在阿姆斯特丹首辦，寫 interoperability 程式碼者真正會去的地方。</li>
+      <li><strong>HIMSS</strong>（產業落地，領頭）— 前身協會 1961 年成立，年會膨脹成全球最大健康 IT 商展（EMRAM 成熟度模型即其產物）。</li>
+      <li><strong>Digital Health Rewired</strong>（公立醫療落地，最年輕）— 2019 年由英國 Digital Health 媒體創辦，專打 NHS 公立醫療的 EPR 導入與第一線數位化。</li>
+    </ul>
+  </div>
+
+  <div class="strat">
+    <h3>近五年（2021–2026）三個轉折</h3>
+    <ul class="clean">
+      <li><strong>COVID 後遠距退潮、AI 接棒</strong> — 2021–22 仍圍繞 telehealth；2023 起 ChatGPT 引爆，generative AI / LLM、ambient documentation（環境式自動病歷）、agentic workflow 迅速主導 HIMSS、AMIA、Rewired 議程。普遍評論：<strong>demo 多、可進臨床的證據少</strong>。</li>
+      <li><strong>互通性從口號變法規硬約束</strong> — 美國 ONC/CMS 的 information blocking 規範、TEFCA、USCDI 與歐盟 EHDS 落地，抬升 FHIR DevDays 與 MIE 份量。共識：FHIR 已成事實標準，戰場轉向 SMART on FHIR、CDS Hooks 與規模化部署。</li>
+      <li><strong>醫師 burnout 與 alert fatigue 成顯學</strong> — AMIA CIC/Amplify 與 ACI 期刊近年大量聚焦 EHR 減負、order set 重設計、治理與臨床安全。</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <h3>長期批評（一致）</h3>
+    <p><strong>HIMSS 易淪為 vendor hype 與投資敘事</strong>，需以 AMIA／MIE 的方法學可信度與 FHIR DevDays 的工程可行性對照校準，才不致把「AI transformation」的行銷語言誤判為能進臨床的成熟技術。</p>
+  </div>
+
+  <div class="note">
+    <b>查證提醒：</b>上述成立年份與沿革為通識性整理，正式引用前請核對各會官網與 AMIA / EFMI / HL7 官方沿革頁。
+  </div>
+</section>
+
+<!-- ===== 節奏 ===== -->
+<section id="rhythm">
+  <h2><span class="bar"></span>建議的年度追蹤節奏</h2>
+  <div class="rhythm">
+    <div class="m"><div class="mo">2–3 月</div><div class="ev">ViVE · HIMSS · Digital Health Rewired</div><small>醫院數位轉型、AI 商業化、EHR、資安、provider/payer 採購方向</small></div>
+    <div class="m"><div class="mo">5 月</div><div class="ev">AMIA CIC/Amplify · MIE</div><small>臨床資訊實作、EHR workflow、implementation science、歐洲資料治理</small></div>
+    <div class="m"><div class="mo">6 月</div><div class="ev">FHIR DevDays · HLTH Europe</div><small>FHIR、SMART on FHIR、interoperability、startup/industry ecosystem</small></div>
+    <div class="m"><div class="mo">11 月</div><div class="ev">AMIA Annual · HLTH USA</div><small>年度學術方法總結與產業方向</small></div>
+    <div class="m"><div class="mo">12 月</div><div class="ev">GDHF</div><small>公共衛生、跨國導入、LMIC 與大規模 digital health implementation</small></div>
+  </div>
+</section>
+
+<!-- ===== 出口 ===== -->
+<section id="venue">
+  <h2><span class="bar"></span>年會 → 主要發表出口</h2>
+  <p class="lead">前面列的年會，不是每個都有「投稿後正式發表於期刊」機制。分三類：</p>
+  <div class="card">
+    <ul class="clean">
+      <li><strong>學術型（有正式 proceedings，PubMed／Scopus 索引）</strong>：AMIA Annual、MedInfo、MIE — 最值得投研究型成果</li>
+      <li><strong>臨床實作型（重 presentation／case report／implementation abstract）</strong>：AMIA CIC / Amplify</li>
+      <li><strong>產業／技術／政策型（通常無 peer-reviewed proceedings）</strong>：HIMSS、FHIR DevDays、Digital Health Rewired、HLTH、ViVE、GDHF</li>
+    </ul>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>年會</th><th>主要發表／收錄形式</th><th>主要期刊 / proceedings</th><th>投稿價值</th></tr></thead>
+    <tbody>
+      <tr><td class="conf-name">AMIA Annual Symposium</td><td>Peer-reviewed papers/abstracts；正式 proceedings archive</td><td><strong>AMIA Annual Symposium Proceedings</strong>；優秀論文延伸 <strong>JAMIA</strong> / <strong>JAMIA Open</strong></td><td>AI-CDSS、EHR data science、clinical NLP、FHIR、implementation evaluation</td></tr>
+      <tr><td class="conf-name">AMIA CIC / Amplify</td><td>presentation、case-based implementation、practice report；不一定期刊論文</td><td>延伸投 <strong>Applied Clinical Informatics</strong>、<strong>JAMIA Open</strong>、<strong>Learning Health Systems</strong></td><td>真實醫院導入、alert fatigue、workflow redesign、CMIO 實作</td></tr>
+      <tr><td class="conf-name">MedInfo / IMIA</td><td>Full papers / posters → 正式 proceedings</td><td><strong>Studies in Health Technology and Informatics</strong> (IOS Press)</td><td>國際能見度高，跨國、治理、AI、資料標準研究</td></tr>
+      <tr><td class="conf-name">MIE / Medical Informatics Europe</td><td>Peer-reviewed oral / poster；正式 proceedings</td><td><strong>Studies in Health Technology and Informatics</strong>；部分延伸 <strong>Methods of Information in Medicine</strong>、<strong>ACI</strong></td><td>AI governance、EHR、interoperability、implementation</td></tr>
+      <tr><td class="conf-name">HIMSS</td><td>Proposal / session / white paper / thought leadership；非典型期刊</td><td>HIMSS publications、white papers、case studies（非 PubMed 型）</td><td>智慧醫院、EMRAM、資安、vendor integration、數位轉型案例</td></tr>
+      <tr><td class="conf-name">HL7 FHIR DevDays</td><td>Talks、tutorials、implementation showcases；非傳統 proceedings</td><td>slides/videos/community；延伸投 <strong>JBI</strong>、<strong>JAMIA Open</strong>、<strong>ACI</strong></td><td>FHIR API、SMART on FHIR、CDS Hooks、interoperability prototype</td></tr>
+      <tr><td class="conf-name">Digital Health Rewired</td><td>NHS conference；多為 stage talks / case studies</td><td>Digital Health News / event materials（非正式學術期刊）</td><td>NHS EPR、AI productivity、clinical safety、workflow transformation 觀察與合作</td></tr>
+      <tr><td class="conf-name">HLTH / HLTH Europe</td><td>Industry / innovation / investor；非傳統學術發表</td><td>HLTH reports、industry briefings、media</td><td>商業化、產品定位、partner scouting（不適合主要學術投稿）</td></tr>
+      <tr><td class="conf-name">ViVE</td><td>Digital health executive / industry；非正式 proceedings</td><td>CHIME / ViVE content、industry reports</td><td>CIO/CMIO networking、採購與落地策略</td></tr>
+      <tr><td class="conf-name">Global Digital Health Forum</td><td>Global / digital public health presentations；部分 project reports</td><td>GDHF materials；延伸投 <strong>Digital Health</strong>、<strong>BMJ Global Health</strong>、<strong>JMIR Public Health</strong></td><td>LMIC、公共衛生、跨國 digital implementation</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ===== 期刊 ===== -->
+<section id="journal">
+  <h2><span class="bar"></span>該鎖定的期刊清單</h2>
+  <div class="legend">
+    <span><span class="tag t1">第一梯隊</span> 正式研究論文</span>
+    <span><span class="tag t2">第二梯隊</span> 醫院平台與實作</span>
+    <span><span class="tag t3">第三梯隊</span> 特定主題延伸</span>
+    <span><span class="oa full">OA</span> 完全開放取用</span>
+    <span><span class="oa hy">Hybrid</span> 訂閱制／可付費開放</span>
+  </div>
+  <div class="note">
+    <b>IF 說明：</b>所列為近年 Journal Impact Factor 約值（依 Clarivate JCR；JIF 每年浮動，新年度約於每年 6 月釋出）。
+    <b>投稿前務必到 JCR / 期刊官網核對最新數字</b>。「編輯偏愛」為依期刊 scope 與近年收稿傾向之歸納；「可投題目」為依你的 CKD／透析／心腎代謝 AI 平台模擬的選項，非保證錄取。
+    <b>OA 標註</b>：<b>OA</b>=完全開放取用（多需 APC 文章處理費）；<b>Hybrid</b>=訂閱制、可選擇付費開放；實際 APC 與政策以官網為準。
+  </div>
+
+  <h3><span class="tag t1">第一梯隊</span> 最適合正式研究論文</h3>
+  <div class="jgrid">
+    <div class="j">
+      <div class="j-head"><div class="j-name">JAMIA<span class="oa hy">Hybrid</span><span class="sub">J. of the American Medical Informatics Assoc.</span></div>
+        <div class="if"><span class="v">~4.7</span><span class="lbl">JIF ’23（’22 ~6.4）</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>方法嚴謹且可推廣的 informatics 研究、清楚的 evaluation、reproducibility、health equity、real-world impact，避免單一機構的純描述。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>FHIR-based CKD phenotype 自動萃取與跨院外部驗證</i><i>LLM-to-SQL/R 臨床資料查詢管線的正確性評估框架</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">Journal of Biomedical Informatics (JBI)<span class="oa hy">Hybrid</span></div>
+        <div class="if"><span class="v">~4.0</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>新穎方法學、algorithm/model 創新、data representation、NLP、knowledge graph，須 generalizable。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>結合知識圖譜的透析病人多重用藥交互作用偵測模型</i><i>心腎代謝風險預測的可解釋 ML 架構 + 外部驗證</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">npj Digital Medicine<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~12.4</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>高影響、real-world validation、prospective／multi-site、digital biomarker、臨床結果改善。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>穿戴式＋CGM 整合預測透析間期體液過載：多中心前瞻驗證</i><i>AI 早期預警 eGFR decline 對照護結果的影響</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">The Lancet Digital Health<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~23.8</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>明確 clinical utility／health-system impact、嚴謹設計（prospective 或 RCT-like）、政策意涵、health equity。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>CKD AI-CDSS 對腎臟科轉診時機與病程的臨床試驗</i><i>全國透析登錄資料驅動的死亡率風險模型與健康系統效益評估</i></span></div>
+    </div>
+  </div>
+
+  <h3><span class="tag t2">第二梯隊</span> 醫院平台與實作型研究</h3>
+  <div class="jgrid">
+    <div class="j">
+      <div class="j-head"><div class="j-name">Applied Clinical Informatics (ACI)<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~2.1–2.7</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>真實導入經驗、EHR workflow、CDSS/alert 設計與 alert fatigue、可操作的 lessons learned、臨床安全。AMIA/IMIA 官方 eJournal。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>透析室 AI alert 降低護理警示疲勞：導入與前後比較</i><i>CKD 追蹤 order set 重設計對 eGFR 監測遵從度的影響</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">JAMIA Open<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~2.5</span><span class="lbl">JIF ’23（近年獲 IF）</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>範圍較廣的 OA informatics、完整方法與資料描述、prototype＋初步評估，亦收 negative／replication。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>心腎代謝資料平台的資料欄位設計與資料品質評估</i><i>CKD CDSS prototype 的臨床使用者可用性研究</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">Learning Health Systems<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~2.5</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>learning health system 閉環、品質改善、RWE、資料回饋驅動的流程迭代、實作框架。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>透析平台作為持續學習照護系統的資料回饋閉環設計</i><i>以 RWE 迭代優化 CKD 追蹤路徑的 LHS 案例</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">International Journal of Medical Informatics<span class="oa hy">Hybrid</span></div>
+        <div class="if"><span class="v">~3.7–4.9</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>資訊系統導入、互通性、使用者研究、流程／組織影響，評估方法清楚。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>醫院 CKD 資料平台導入的社會技術障礙與使用者採用研究</i><i>FHIR 互通性整合腎臟科多來源資料的系統評估</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">Digital Health (SAGE)<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~2.9</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>digital intervention、patient-facing tool、remote monitoring、可行性與接受度、實作。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>腹膜透析 LINE BOT 每日脫水量紀錄的可行性與病人接受度</i><i>CKD 病人遠距監測工具的使用者參與分析</i></span></div>
+    </div>
+  </div>
+
+  <h3><span class="tag t3">第三梯隊</span> 特定主題延伸</h3>
+  <div class="jgrid">
+    <div class="j">
+      <div class="j-head"><div class="j-name">JMIR Medical Informatics<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~3.1</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>健康資訊系統、CDSS、EHR data、可行性與評估，對數位工具友善。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>CKD CDSS prototype 的開發與形成性評估</i><i>透析資料儀表板對臨床決策時間的影響</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">JMIR / JMIR Formative Research<span class="oa full">OA</span><span class="sub">J. of Medical Internet Research 系列</span></div>
+        <div class="if"><span class="v">~5.8 / ~2.0</span><span class="lbl">JIF ’23（主刊 / Formative）</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>主刊要嚴謹、較高影響的工具評估與行為／結果改變；Formative 收早期 pilot／可行性。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>脫水管理 app 的隨機可行性研究（主刊）</i><i>早期 LINE BOT／CDSS 雛形 pilot（Formative）</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">BMJ Health & Care Informatics<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">ESCI</span><span class="lbl">無穩定 JIF（OA）</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>NHS／英國脈絡、QI、實作反思、治理、臨床安全。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>CKD 追蹤 QI 專案的實作反思</i><i>臨床 AI 治理與安全框架在腎臟科的應用</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">BMC Medical Informatics and Decision Making<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~3.3</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>決策模型、資訊系統、臨床資料分析、AI/ML 應用，中等成熟度務實。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>透析病人住院風險決策模型</i><i>CKD 進展分類的 ML 與臨床決策支援</i></span></div>
+    </div>
+    <div class="j">
+      <div class="j-head"><div class="j-name">Frontiers in Digital Health<span class="oa full">OA</span></div>
+        <div class="if"><span class="v">~3.2</span><span class="lbl">JIF ’23</span></div></div>
+      <div class="j-row"><span class="lab ed">編輯偏愛</span>早期 digital health、AI workflow、human factors，速度快、包容度高。</div>
+      <div class="j-row"><span class="lab me">可投題目</span><span class="me-list"><i>透析 AI workflow 概念驗證</i><i>CDSS 介面的 human factors 研究</i></span></div>
+    </div>
+  </div>
+
+  <h2><span class="bar"></span>投稿策略分流（CKD／透析／心腎代謝 AI 平台）</h2>
+  <div class="strat">
+    <ul class="clean">
+      <li><strong>方法學強、模型評估完整</strong> → JBI、JAMIA、npj Digital Medicine（FHIR-based CKD phenotype extraction、LLM-to-SQL/R pipeline、multi-model CDSS validation）</li>
+      <li><strong>醫院實作與工作流導入</strong> → ACI、JAMIA Open、Learning Health Systems、BMJ Health & Care Informatics（透析室 AI alert 降低護理負擔、CKD 平台追蹤 eGFR decline、alert fatigue 管理）</li>
+      <li><strong>病人端與遠距照護工具</strong> → Digital Health、JMIR Medical Informatics、JMIR Formative Research（腹膜透析 LINE BOT、每日脫水量紀錄、CGM/穿戴整合）</li>
+      <li><strong>FHIR／互通性／資料標準化</strong> → 投 AMIA Annual、MIE、MedInfo，再延伸 JAMIA Open、JBI、ACI。FHIR DevDays 先驗證技術敘事與建社群，不當正式終點。</li>
+    </ul>
+  </div>
+
+  <div class="warn">
+    <h3>Not-to-do</h3>
+    <p>別把 <strong>HIMSS、HLTH、ViVE</strong> 當論文發表主場 — 價值在採購、策略、vendor ecosystem、networking、digital maturity，不是累積 PubMed-indexed output。也別把 <strong>FHIR DevDays</strong> 當期刊替代品，它更像 engineering validation 與 community feedback 場域。</p>
+    <p style="margin-top:10px"><strong>最值組合：</strong>AMIA Annual / MIE / MedInfo 作 conference paper 出口，ACI / JAMIA Open / JBI 作後續正式論文出口，HIMSS / Rewired / FHIR DevDays 作實作與策略校準場域。</p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  資料整理自《每年關鍵年會.md》與《Journal選擇.md》 · 年會日期／地點以官網公告為準 · IF 以 JCR 為準需自行核對 · 生成於 2026-06-15
+</footer>
+
+<script>
+  const btns=document.querySelectorAll('nav button');
+  const secs=document.querySelectorAll('section');
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    btns.forEach(x=>x.classList.remove('active'));
+    secs.forEach(s=>s.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+</script>
+</body>
+</html>

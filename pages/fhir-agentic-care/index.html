@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="用三種空間向臨床醫師解釋 FHIR 與 Agentic AI">
+<title>FHIR × Agentic Care｜臨床三空間</title>
+<style>
+:root{--ink:#102c32;--paper:#f4f1e9;--green:#0d6b5f;--blue:#4c8197;--gold:#df9c42;--line:#cbd4d1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,"Noto Sans TC","PingFang TC",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}.top{height:68px;padding:0 6vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #bdc8c5;position:sticky;top:0;background:#f4f1e9ed;backdrop-filter:blur(12px);z-index:20}.brand{font-size:12px;font-weight:850;letter-spacing:.15em}.brand b{display:inline-grid;place-items:center;width:33px;height:33px;border-radius:50%;color:#fff;background:var(--green);font-family:Georgia,serif;font-size:20px;margin-right:10px}.top nav{display:flex;gap:26px;font-size:13px;font-weight:700}
+.hero{min-height:430px;padding:70px 7vw 58px;display:grid;grid-template-columns:1.3fr 1fr;gap:7vw;align-items:end}.eyebrow,.section-no,.label{font-size:10px;font-weight:850;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}h1,h2,h3{font-family:Georgia,"Noto Serif TC",serif}.hero h1{font-size:clamp(43px,5.3vw,76px);line-height:1.05;letter-spacing:-.045em;margin:20px 0}.hero h1 em{color:var(--green);font-weight:400}.hero p{max-width:700px;color:#50666a;line-height:1.8}.formula{border-top:5px solid var(--ink);border-bottom:1px solid #9faeaa;padding:20px 0}.formula strong{font-family:Georgia,"Noto Serif TC",serif;font-size:24px}.formula div{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:17px}.formula span{padding:7px 9px;background:#fff;border:1px solid #cdd5d2;font-size:10px;font-weight:750}.formula i{font-style:normal;color:var(--green);font-weight:900}
+.main{padding:75px 7vw;background:#fff}.head{display:flex;align-items:end;justify-content:space-between;gap:35px;padding-bottom:25px;border-bottom:1px solid var(--line)}.head h2{font-size:clamp(30px,3.2vw,45px);margin:8px 0 0;letter-spacing:-.03em}.head>p{max-width:390px;color:#657679;line-height:1.7;font-size:14px;margin:0}.layout{display:grid;grid-template-columns:minmax(520px,1.25fr) minmax(330px,.75fr);gap:5vw;align-items:center;padding:48px 0}
+.venn{height:515px;position:relative;max-width:680px}.circle{position:absolute;width:325px;height:325px;border-radius:50%;border:1.5px solid;display:flex;flex-direction:column;align-items:center;padding-top:70px;cursor:pointer;background:transparent;transition:.25s;font:inherit;color:var(--ink)}.circle:hover,.circle.active{transform:scale(1.035);z-index:4;box-shadow:0 20px 40px #102c3222}.circle strong{font:700 26px Georgia,serif}.circle em{font-style:normal;font-weight:750;margin-top:5px}.circle small{position:absolute;top:28px;font-weight:850;letter-spacing:.16em}.data{left:0;top:0;border-color:var(--blue);background:#4c819726}.rule{right:0;top:0;border-color:var(--gold);background:#df9c4229}.app{left:50%;bottom:0;transform:translateX(-50%);border-color:var(--green);background:#0d6b5f26}.app:hover,.app.active{transform:translateX(-50%) scale(1.035)}
+.core{position:absolute;z-index:8;left:50%;top:48%;transform:translate(-50%,-50%);width:174px;height:174px;border-radius:50%;background:var(--ink);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;box-shadow:0 16px 35px #102c3244}.core small{color:#a5c9c0;font-size:8px;letter-spacing:.15em}.core b{font:700 21px/1.1 Georgia,serif;margin:8px}.core span{font-size:9px;color:#cfe0dc}
+.card{background:#f5f4ef;border-top:7px solid var(--gold);padding:28px 30px;min-height:440px;animation:appear .25s ease}.card[data-theme=data]{border-color:var(--blue)}.card[data-theme=app]{border-color:var(--green)}@keyframes appear{from{opacity:.2;transform:translateY(5px)}}.card h3{font-size:38px;margin:12px 0 0}.card h3 span{font:700 15px Inter,system-ui;margin-left:10px}.card blockquote{font:400 23px/1.45 Georgia,"Noto Serif TC",serif;border-left:3px solid;padding-left:18px;margin:27px 0 15px}.card .desc{font-size:14px;line-height:1.75;color:#55696c}.label{color:#718285;margin:24px 0 9px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chips span{font-size:11px;padding:7px 9px;background:#fff;border:1px solid #c9d1cf}.chips.dark span{color:#fff;background:var(--ink);border-color:var(--ink);font-weight:700}
+.flow{display:flex;border-block:1px solid var(--line)}.flow>div{flex:1;padding:19px 12px}.flow b,.flow span{display:block}.flow b{font-size:14px}.flow span{font-size:9px;color:#78898b;margin-top:5px;letter-spacing:.08em}.flow i{display:grid;place-items:center;font-style:normal;color:#869597}.flow .last b{color:var(--green)}
+.glossary{background:var(--ink);color:#edf4f1;padding:75px 7vw}.glossary .head{border-color:#4a6368}.glossary .head>p{color:#aebfbc}.glossary .section-no{color:#9ed1c1}.table-wrap{overflow:auto;margin-top:35px}table{width:100%;border-collapse:collapse;min-width:890px}th{text-align:left;padding:13px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#9fb3af;border-bottom:1px solid #5b7276}td{padding:17px 13px;border-bottom:1px solid #355058;font-size:13px;line-height:1.55}td:first-child{font:700 17px Georgia,serif;color:#fff}.pill{font-size:9px;font-weight:800;padding:6px 9px;border-radius:99px;white-space:nowrap}.pill.data{background:#315b6c}.pill.rule{background:#6c512c}.pill.app{background:#17695e}.takeaway{margin-top:42px;border:1px solid #587174;padding:24px;display:grid;grid-template-columns:130px 1fr;align-items:center;gap:20px}.takeaway small{color:#9ed1c1;letter-spacing:.17em}.takeaway p{margin:0;font:400 20px/1.55 Georgia,"Noto Serif TC",serif}.takeaway b{color:#9ed1c1}footer{background:#091e23;color:#91a6a3;padding:22px 7vw;display:flex;justify-content:space-between;font-size:10px;letter-spacing:.08em}
+@media(max-width:940px){.hero,.layout{grid-template-columns:1fr}.venn{margin:auto;width:100%;max-width:650px}.card{min-height:auto}.circle{width:295px;height:295px}.head{align-items:start}.flow{display:grid;grid-template-columns:1fr 24px 1fr}.flow i:nth-of-type(2){display:none}}
+@media(max-width:640px){.top{padding:0 20px}.top nav{display:none}.hero,.main,.glossary{padding-left:21px;padding-right:21px}.hero{padding-top:50px}.hero h1{font-size:42px}.head{display:block}.head>p{margin-top:14px}.venn{height:400px}.circle{width:225px;height:225px;padding-top:50px}.circle strong{font-size:19px}.circle small{top:20px}.core{width:124px;height:124px}.core b{font-size:15px}.core span{font-size:7px}.card{padding:22px 19px}.flow{grid-template-columns:1fr}.flow i{display:none}.flow>div{border-bottom:1px solid var(--line)}.takeaway{grid-template-columns:1fr}.takeaway p{font-size:17px}footer{display:block;line-height:2}}
+@media print{.top{position:static}.hero{min-height:0}.glossary{break-before:page}.circle{print-color-adjust:exact}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="#top"><b>F</b>FHIR × AGENTIC CARE</a><nav><a href="#spaces">三空間</a><a href="#terms">術語翻譯</a></nav></header>
+<main id="top">
+<section class="hero">
+ <div><div class="eyebrow">FROM INTEROPERABILITY TO CLINICAL ACTION</div><h1>讓 FHIR 資料<br>成為<em>可信任的臨床行動</em></h1><p>FHIR 負責讓資料被辨認與交換；Agent 則在規則約束下，運用資料完成臨床任務。</p></div>
+ <aside class="formula"><strong>可信任的臨床 Agent</strong><div><span>FHIR Data</span><i>＋</i><span>Clinical Rules</span><i>＋</i><span>Workflow</span><i>＋</i><span>Human Accountability</span></div></aside>
+</section>
+<section class="main" id="spaces">
+ <div class="head"><div><div class="section-no">01 / THE OPERATING MODEL</div><h2>一張圖看懂醫療 Agent 的三種空間</h2></div><p>點選圓形，查看空間內涵與對應的 Agentic 元件。</p></div>
+ <div class="layout">
+  <div class="venn" role="group" aria-label="FHIR Agentic 三空間">
+   <button class="circle data" data-key="data"><small>01</small><strong>Data Space</strong><em>資料空間</em></button>
+   <button class="circle rule active" data-key="rule"><small>02</small><strong>Rule Space</strong><em>規則空間</em></button>
+   <button class="circle app" data-key="app"><small>03</small><strong>Application Space</strong><em>應用空間</em></button>
+   <div class="core"><small>CONTROLLED BY</small><b>Agentic<br>Harness</b><span>可控 · 可驗證 · 可追溯</span></div>
+  </div>
+  <article class="card" id="detail" data-theme="rule" aria-live="polite"></article>
+ </div>
+ <div class="flow"><div><b>資料要取得到</b><span>DATA SPACE</span></div><i>→</i><div><b>規則要說得清</b><span>RULE SPACE</span></div><i>→</i><div><b>行動要放對位置</b><span>APPLICATION SPACE</span></div><i>→</i><div class="last"><b>責任仍找得到人</b><span>HUMAN ACCOUNTABILITY</span></div></div>
+</section>
+<section class="glossary" id="terms">
+ <div class="head"><div><div class="section-no">02 / CLINICAL TRANSLATION</div><h2>Agentic 術語的臨床翻譯</h2></div><p>不要從技術定義開始；先說它在臨床工作中負責什麼。</p></div>
+ <div class="table-wrap"><table><thead><tr><th>Agentic 術語</th><th>給臨床醫師的說法</th><th>醫療類比／實例</th><th>所屬空間</th></tr></thead><tbody id="rows"></tbody></table></div>
+ <aside class="takeaway"><small>TAKEAWAY</small><p><b>Skill</b> 是專業能力，<b>MCP</b> 是系統接口，<b>Harness</b> 是整套執業環境與管理制度。</p></aside>
+</section>
+</main>
+<footer><span>FHIR × Agentic Clinical Operating Model</span><span>資料是事實 · 規則是邊界 · 應用是行動</span></footer>
+<script>
+const S={
+ data:{eye:"01 · CLINICAL FACTS",title:"Data Space",zh:"資料空間",q:"我們現在知道什麼？",desc:"將分散的病歷轉成可辨認、可交換、可追溯的臨床事實。",base:["FHIR Resources","Terminology","Provenance","FHIR API"],agent:["Context","Memory","MCP","Tool"]},
+ rule:{eye:"02 · SAFE REASONING",title:"Rule Space",zh:"規則空間",q:"系統可以怎麼判斷與行動？",desc:"把指引、院內政策與風險界線變成可測試、可版本控制的規則。",base:["Clinical Guideline","CQL","Policy","Risk Tier"],agent:["Harness","Guardrail","Rubric","Loop","Escalation"]},
+ app:{eye:"03 · CLINICAL ACTION",title:"Application Space",zh:"應用空間",q:"何時、如何幫助誰完成任務？",desc:"在正確工作節點，把分析變成醫療人員能確認、延後或駁回的行動。",base:["SMART on FHIR","CDSS","Workflow","Action Card"],agent:["Agent","Skill","HITL","Action Card","Audit Trail"]}
+};
+const G=[
+["Context","本次任務需要的完整臨床情境","接班前掌握病人、病程、最新檢驗與治療目標","data"],
+["Agent","能依目標完成多步驟工作的數位協作者","像住院醫師收到任務後查資料、整理並提出下一步","app"],
+["Skill","可重複使用、輸入輸出明確的標準能力","計算 eGFR、判讀 AKI、產生出院衛教","app"],
+["Tool","Agent 可以操作的單一工具","查病歷、呼叫風險模型、建立待辦","data"],
+["MCP","讓 Agent 用一致方式連接各種系統的工具插座","標準化會診窗口；接上後才知道能查什麼、做什麼","data"],
+["Harness","約束 Agent 如何工作的整套安全執業環境","臨床路徑＋權限＋表單＋稽核＋覆核機制","rule"],
+["Loop","執行後檢查，不合格便修正或升級","醫囑後再核對腎功能、劑量、過敏與交互作用","rule"],
+["Guardrail","不可跨越的安全界線","禁忌症、權限限制、高風險醫囑不得自動簽署","rule"],
+["Rubric","判斷產出是否達到交付標準的評分尺","檢查出院摘要是否涵蓋追蹤計畫與警訊","rule"],
+["Memory","可供未來任務使用、經授權保留的資訊","病人長期偏好、既往決策與團隊工作慣例","data"],
+["Human-in-the-loop","關鍵節點必須由人確認","AI 可以草擬，醫師決定是否採用並簽署","app"],
+["Escalation","超出能力、風險或規則範圍時轉交人員","低信心、資料衝突或高風險病例轉主治醫師","rule"],
+["Action Card","可確認、延後或駁回的臨床行動卡","疑似 AKI：停藥、補檢驗、12 小時後複查","app"],
+["Audit Trail","留下系統看過、做過及誰核准的紀錄","可追蹤的醫療紀錄與品質稽核軌跡","app"]
+];
+const names={data:"資料空間",rule:"規則空間",app:"應用空間"};
+function render(k){const x=S[k],d=document.querySelector("#detail");d.dataset.theme=k;d.innerHTML='<div class="eyebrow">'+x.eye+'</div><h3>'+x.title+' <span>'+x.zh+'</span></h3><blockquote>'+x.q+'</blockquote><p class="desc">'+x.desc+'</p><div class="label">FHIR / CLINICAL FOUNDATION</div><div class="chips">'+x.base.map(v=>'<span>'+v+'</span>').join("")+'</div><div class="label">AGENTIC COMPONENTS</div><div class="chips dark">'+x.agent.map(v=>'<span>'+v+'</span>').join("")+'</div>';document.querySelectorAll(".circle").forEach(b=>b.classList.toggle("active",b.dataset.key===k))}
+document.querySelectorAll(".circle").forEach(b=>b.addEventListener("click",()=>render(b.dataset.key)));
+document.querySelector("#rows").innerHTML=G.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td><span class="pill '+r[3]+'">'+names[r[3]]+'</span></td></tr>').join("");
+render("rule");
+</script>
+</body>
+</html>

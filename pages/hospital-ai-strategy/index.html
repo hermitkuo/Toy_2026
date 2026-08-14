@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>醫院 AI 策略推動者：真正該管什麼｜2026-07-06</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #647086;
+      --line: #dfe4ee;
+      --accent: #2854c5;
+      --accent-2: #0f766e;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --soft-blue: #eaf0ff;
+      --soft-green: #e8f7f3;
+      --soft-amber: #fff4df;
+      --soft-red: #feecec;
+      --shadow: 0 20px 55px rgba(23, 32, 51, 0.09);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(40,84,197,.12), transparent 36rem),
+        radial-gradient(circle at bottom right, rgba(15,118,110,.10), transparent 34rem),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(18px);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    nav a {
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: #334155;
+      font-size: 14px;
+      transition: .18s ease;
+    }
+
+    nav a:hover {
+      background: var(--soft-blue);
+      color: var(--accent);
+      transform: translateX(2px);
+    }
+
+    main {
+      padding: 42px;
+      max-width: 1280px;
+      width: 100%;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(23,32,51,.96), rgba(40,84,197,.92));
+      color: white;
+      border-radius: 32px;
+      padding: 48px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.11);
+      right: -90px;
+      top: -90px;
+    }
+
+    .hero h2 {
+      position: relative;
+      margin: 0 0 18px;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -0.06em;
+      max-width: 920px;
+      z-index: 1;
+    }
+
+    .hero p {
+      position: relative;
+      margin: 0;
+      font-size: 20px;
+      max-width: 860px;
+      color: rgba(255,255,255,.86);
+      z-index: 1;
+    }
+
+    .quote {
+      margin-top: 26px;
+      padding: 22px 24px;
+      border-left: 5px solid rgba(255,255,255,.72);
+      background: rgba(255,255,255,.12);
+      border-radius: 18px;
+      color: rgba(255,255,255,.92);
+      max-width: 980px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section { margin-top: 34px; }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -0.04em;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 620px;
+      font-size: 15px;
+    }
+
+    .grid { display: grid; gap: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .card {
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 10px 26px rgba(23,32,51,.045);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      letter-spacing: -0.03em;
+    }
+
+    .card p, .card li { color: #334155; }
+    .card p { margin: 0; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: .04em;
+    }
+
+    .tag.blue { background: var(--soft-blue); color: var(--accent); }
+    .tag.green { background: var(--soft-green); color: var(--accent-2); }
+    .tag.amber { background: var(--soft-amber); color: var(--warn); }
+    .tag.red { background: var(--soft-red); color: var(--danger); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(23,32,51,.045);
+    }
+
+    th, td {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef3ff;
+      color: #1e3a8a;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .matrix td:first-child, .matrix th:first-child { font-weight: 800; color: #172033; }
+
+    .decision-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .decision {
+      padding: 18px;
+      background: white;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      min-height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .decision strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .decision span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .num {
+      position: absolute;
+      right: 14px;
+      bottom: 2px;
+      font-size: 58px;
+      font-weight: 900;
+      color: rgba(40,84,197,.08);
+      letter-spacing: -.08em;
+    }
+
+    .callout {
+      border-radius: 24px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, #ffffff, #eef3ff);
+      box-shadow: var(--shadow);
+    }
+
+    .callout h3 { margin: 0 0 10px; font-size: 26px; letter-spacing: -0.04em; }
+    .callout p { margin: 0; color: #334155; font-size: 17px; }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .time-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .time-card h3 { margin: 0 0 12px; font-size: 22px; }
+    .time-card ul { padding-left: 20px; margin: 0; }
+
+    .footer {
+      margin: 42px 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; }
+      nav { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+      main { padding: 24px; }
+      .grid.two, .grid.three, .grid.four, .timeline, .decision-strip { grid-template-columns: 1fr; }
+      .hero { padding: 32px; }
+      .checklist { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      aside { display: none; }
+      .layout { display: block; }
+      main { padding: 0; max-width: none; }
+      body { background: white; }
+      .hero, .card, table, .callout { box-shadow: none; }
+      section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="eyebrow">Hospital AI Strategy</div>
+        <h1>AI 策略推動者<br/>真正該管什麼</h1>
+        <p>版本日期：2026-07-06</p>
+      </div>
+      <nav>
+        <a href="#core">核心定位</a>
+        <a href="#scope">九大管理範圍</a>
+        <a href="#levels">AI 專案分級</a>
+        <a href="#coupling">高耦合決策</a>
+        <a href="#risk">責任與風險</a>
+        <a href="#platform">院級能力堆疊</a>
+        <a href="#not-to-do">Not-to-do</a>
+        <a href="#cadence">例行節奏</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <div class="eyebrow" style="color:rgba(255,255,255,.75)">Strategic Memo</div>
+        <h2>你不是要管所有 AI，<br/>你要管那些不能外包的決策。</h2>
+        <p>醫院 AI 策略推動者的核心任務，是決定 AI 放在哪裡、為什麼放、放了之後誰負責、出錯時誰承擔，以及成功後如何制度化。</p>
+        <div class="quote">
+          凡是能寫成 SOP 的，交給流程；能用採購規格解決的，交給市場；能靠單一專業判斷的，交給專家；能在低風險場域快速試錯的，交給一線。最後剩下那些跨部門、高風險、難逆轉、證據不足又不能不做的 AI 決策，才是你真正該管的。
+        </div>
+      </header>
+
+      <section id="core">
+        <div class="section-title">
+          <h2>核心定位</h2>
+          <p>AI 策略推動者不是最會寫 prompt 的人，也不是每個模型的技術審稿人，而是醫院 AI 決策結構的設計者。</p>
+        </div>
+        <div class="grid three">
+          <div class="card">
+            <span class="tag blue">What</span>
+            <h3>管題目選擇</h3>
+            <p>判斷哪些問題值得用 AI 解，哪些只需要流程改善、儀表板、規則引擎或教育訓練。</p>
+          </div>
+          <div class="card">
+            <span class="tag green">How</span>
+            <h3>管落地閉環</h3>
+            <p>確保 AI 進入真實 workflow，有臨床行動、責任歸屬、監測機制與退場條件。</p>
+          </div>
+          <div class="card">
+            <span class="tag amber">Why</span>
+            <h3>管不可逆取捨</h3>
+            <p>把關平台、資料、合約、治理、法遵、品牌定位等一旦選錯就會鎖住醫院多年的決策。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="scope">
+        <div class="section-title">
+          <h2>九大管理範圍</h2>
+          <p>真正值得你投入的，是無法被流程、市場、專家或一線完全解決的高槓桿事項。</p>
+        </div>
+        <div class="decision-strip">
+          <div class="decision"><strong>問題選擇</strong><span>AI 是否是必要解法，而非過度設計。</span><div class="num">1</div></div>
+          <div class="decision"><strong>專案分級</strong><span>L1 放生、L2 框架、L3 審查、L4 親自設計。</span><div class="num">2</div></div>
+          <div class="decision"><strong>高耦合決策</strong><span>牽動臨床、資訊、法遵、品質、營運時必須介入。</span><div class="num">3</div></div>
+          <div class="decision"><strong>不可逆決策</strong><span>平台、資料流、合約、架構與治理標準。</span><div class="num">4</div></div>
+          <div class="decision"><strong>不確定灰區</strong><span>證據不足但不能無限等待時，設計可控前進機制。</span><div class="num">5</div></div>
+        </div>
+        <div class="grid four" style="margin-top:18px">
+          <div class="card"><h3>責任邊界</h3><p>AI 說錯、漏報、過度警示或模型漂移時，誰發現、誰處理、誰承擔。</p></div>
+          <div class="card"><h3>從 demo 到日常</h3><p>把炫技展示轉成每天有人使用、有人維護、有人量測的制度。</p></div>
+          <div class="card"><h3>院級能力堆疊</h3><p>讓第 3、5、10 個 AI 專案越做越快，而不是每次重拉資料。</p></div>
+          <div class="card"><h3>Not-to-do</h3><p>主動擋掉低價值、低整合、低責任感或只是跟風的 AI 案。</p></div>
+        </div>
+      </section>
+
+      <section id="levels">
+        <div class="section-title">
+          <h2>AI 專案分級治理</h2>
+          <p>所有 AI 專案不應該用同一套審查強度。錯誤治理會讓低風險工具過度官僚，也讓高風險系統失控。</p>
+        </div>
+        <table>
+          <thead>
+            <tr><th>層級</th><th>類型</th><th>例子</th><th>治理策略</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>L1 個人工具</td><td>低風險個人生產力</td><td>改稿、摘要、翻譯、會議整理</td><td>提供規範與教育，不要過度審查。</td></tr>
+            <tr><td>L2 部門工具</td><td>局部效率改善</td><td>科內報表、班表輔助、行政摘要</td><td>管資料權限、導入品質與維護責任。</td></tr>
+            <tr><td>L3 臨床決策輔助</td><td>影響臨床判斷</td><td>AKI 預警、CKD 風險分層、住院風險</td><td>管驗證、責任、監測、退場條件。</td></tr>
+            <tr><td>L4 醫院級 AI 能力</td><td>改變工作制度</td><td>ambient AI、智慧病歷、AI command center</td><td>管策略、預算、跨部門架構、院級 KPI。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="coupling">
+        <div class="section-title">
+          <h2>高耦合決策：你真正該介入的訊號</h2>
+          <p>只要一個 AI 專案會改變誰做決策、誰承擔責任、誰被量測績效，它就不是單純資訊案。</p>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <span class="tag blue">Example</span>
+            <h3>透析病人低血壓預警</h3>
+            <p>表面上是模型；實際上牽動 HIS、透析系統、護理紀錄、檢驗資料、護理師行動、主治醫師判斷、警示疲勞、法遵分類與品質指標。</p>
+          </div>
+          <div class="card">
+            <span class="tag red">Intervene When</span>
+            <h3>三個以上部門被牽動</h3>
+            <p>臨床、資訊、資安法遵、品質、營運、採購、廠商任一組合高度互相依賴時，不能只交給專案 PM 或單一專家。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="risk">
+        <div class="section-title">
+          <h2>責任與風險矩陣</h2>
+          <p>AI 治理不是文件，而是可執行的責任架構。每個高風險 AI 上線前都必須回答以下問題。</p>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr><th>面向</th><th>臨床單位</th><th>資訊室</th><th>資安法遵</th><th>AI 團隊</th><th>院級治理</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>使用情境定義</td><td>主責</td><td>協作</td><td>協作</td><td>協作</td><td>核定</td></tr>
+            <tr><td>資料品質</td><td>協作</td><td>主責</td><td>監督</td><td>協作</td><td>追蹤</td></tr>
+            <tr><td>模型驗證</td><td>協作</td><td>協作</td><td>監督</td><td>主責</td><td>核定</td></tr>
+            <tr><td>上線決策</td><td>協作</td><td>協作</td><td>協作</td><td>協作</td><td>主責</td></tr>
+            <tr><td>臨床行動</td><td>主責</td><td>不主責</td><td>不主責</td><td>不主責</td><td>監督</td></tr>
+            <tr><td>監測退場</td><td>協作</td><td>主責</td><td>監督</td><td>主責</td><td>核定</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <h2>AI 專案上線前 10 問</h2>
+          <p>這十題比單純追問 AUC 更接近策略本質。</p>
+        </div>
+        <ul class="checklist">
+          <li>這個 AI 進入哪一個既有工作流？</li>
+          <li>使用者每天會在哪個畫面看到？</li>
+          <li>它會讓誰少做什麼，或更早做什麼？</li>
+          <li>它的輸出會改變哪個決策？</li>
+          <li>錯了誰發現？</li>
+          <li>沒人用誰負責改善？</li>
+          <li>模型變差誰會知道？</li>
+          <li>成功指標是什麼？</li>
+          <li>三個月後誰維護？</li>
+          <li>如果失敗，退場標準是什麼？</li>
+        </ul>
+      </section>
+
+      <section id="platform">
+        <div class="section-title">
+          <h2>院級 AI 能力堆疊</h2>
+          <p>策略目標不是讓醫院有很多 demo，而是建立可重複使用、可監測、可治理的 AI 生產能力。</p>
+        </div>
+        <table>
+          <thead><tr><th>層級</th><th>醫院要累積什麼</th><th>策略重點</th></tr></thead>
+          <tbody>
+            <tr><td>1. 資料層</td><td>可用、可追蹤、可稽核的資料資產</td><td>避免每個專案重新清資料。</td></tr>
+            <tr><td>2. 權限層</td><td>誰能用什麼資料、做什麼用途</td><td>把法遵內建到資料使用流程。</td></tr>
+            <tr><td>3. 模型層</td><td>預測模型、LLM、語音、影像、多模態模型</td><td>模型要可版本化、可驗證、可替換。</td></tr>
+            <tr><td>4. 整合層</td><td>HIS、EHR、App、FHIR、API</td><td>沒有整合層，就只有展示沒有臨床影響。</td></tr>
+            <tr><td>5. 工作流層</td><td>門診、病房、透析室、行政流程嵌入</td><td>AI 必須改變決策或節省負擔。</td></tr>
+            <tr><td>6. 治理層</td><td>驗證、監測、責任、法遵、退場</td><td>模型上線後才是治理開始。</td></tr>
+            <tr><td>7. 變革層</td><td>教育訓練、臨床 champion、誘因設計</td><td>人不採用，技術等於零。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="not-to-do">
+        <div class="section-title">
+          <h2>Not-to-do：不值得現在重押的方向</h2>
+          <p>AI 策略不是多做，而是少做錯。以下項目容易消耗資源卻不累積院級能力。</p>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <span class="tag red">Avoid</span>
+            <h3>展示型與孤島型 AI</h3>
+            <p>沒有 workflow 的模型競賽、全院聊天機器人、每科各自買工具、只靠廠商宣稱驗證，通常會變成展示成果而非制度成果。</p>
+          </div>
+          <div class="card">
+            <span class="tag amber">Avoid</span>
+            <h3>過早平台化與過度自研</h3>
+            <p>沒有資料治理就做多模態平台、全院自行訓練大型 LLM、一開始就追求大平台，容易形成昂貴但低採用的基礎建設。</p>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px">
+          <h3>更好的路徑</h3>
+          <p>先選 3–5 個高價值、高痛點、可驗證、可擴散的場域，打穿完整閉環。候選場域包括透析病人風險清單、CKD 門診 eGFR decline 預測、出院摘要品質審查、醫師晨會資料整理、高風險檢驗值閉環管理、醫療品質異常偵測、臨床研究去識別化與 cohort builder。</p>
+          <div class="pill-list">
+            <span class="pill">高痛點</span><span class="pill">可驗證</span><span class="pill">可擴散</span><span class="pill">責任清楚</span><span class="pill">能累積平台能力</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="cadence">
+        <div class="section-title">
+          <h2>你的例行管理節奏</h2>
+          <p>策略推動者的產出不只是專案進度，而是每週、每月、每季都能修正 AI 投資組合。</p>
+        </div>
+        <div class="timeline">
+          <div class="time-card">
+            <span class="tag blue">Weekly</span>
+            <h3>每週</h3>
+            <ul>
+              <li>檢查核心專案卡在資料、流程、責任或採用哪一層。</li>
+              <li>篩選新提案是否真能解決院級或部門級痛點。</li>
+              <li>協調 clinical champion、資訊室、資安法遵與廠商。</li>
+              <li>擋掉低價值、低整合、低責任感的 AI 案。</li>
+            </ul>
+          </div>
+          <div class="time-card">
+            <span class="tag green">Monthly</span>
+            <h3>每月</h3>
+            <ul>
+              <li>更新 AI 專案投資組合。</li>
+              <li>檢查高風險 AI 是否有監測與退場標準。</li>
+              <li>決定哪些 pilot 可以 scale。</li>
+              <li>向院級主管報告 AI 改變了哪些流程與結果。</li>
+            </ul>
+          </div>
+          <div class="time-card">
+            <span class="tag amber">Quarterly</span>
+            <h3>每季</h3>
+            <ul>
+              <li>決定下一季 AI 主戰場。</li>
+              <li>評估是否需要新平台、新合約、新治理制度。</li>
+              <li>檢查規範是否跟不上現場。</li>
+              <li>停掉不再值得投入的案子，建立下一批 champion。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="callout">
+          <h3>一句話結論</h3>
+          <p>你該管的是醫院 AI 的題目選擇、風險分級、資源配置、責任邊界、資料治理、上線標準、監測退場，以及從單點工具變成院級能力的路徑。你不該管的是每個 prompt、每個模型參數、每個 demo、每個部門小工具與每個廠商細節。</p>
+        </div>
+      </section>
+
+      <div class="footer">Hospital AI Strategy Governance Memo · 2026-07-06</div>
+    </main>
+  </div>
+</body>
+</html>

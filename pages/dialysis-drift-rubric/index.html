@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>每月透析資料漂移檢查｜Rubric Design</title>
+<style>
+:root{
+  --bg:#f4f7fb; --panel:#ffffff; --ink:#172033; --muted:#667085;
+  --line:#dbe3ef; --navy:#173b67; --blue:#2f6fed; --cyan:#0ea5a8;
+  --green:#15803d; --amber:#b7791f; --red:#b42318; --soft-blue:#eef4ff;
+  --soft-green:#edf8f0; --soft-amber:#fff8e6; --soft-red:#fff0ee;
+  --shadow:0 16px 40px rgba(30,55,90,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#edf3fa 0,#f7f9fc 420px);color:var(--ink);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6}
+.wrap{max-width:1240px;margin:auto;padding:28px 22px 64px}
+.hero{background:linear-gradient(135deg,#102a4d,#215d91 68%,#247f8a);color:white;border-radius:24px;padding:34px 36px;box-shadow:var(--shadow)}
+.kicker{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.78}
+h1{font-size:34px;line-height:1.2;margin:8px 0 12px}
+.hero p{max-width:900px;margin:0;color:#e8f0fb}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.badge{padding:6px 10px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font-size:13px;background:rgba(255,255,255,.09)}
+.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 8px 24px rgba(40,60,90,.05)}
+section{margin-top:24px}
+h2{font-size:23px;margin:0 0 14px;color:var(--navy)}
+h3{font-size:17px;margin:0 0 8px}
+.small{font-size:13px;color:var(--muted)}
+.meta{display:grid;grid-template-columns:170px 1fr;gap:8px 18px}
+.meta div:nth-child(odd){font-weight:700;color:var(--navy)}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:stretch}
+.step{position:relative;background:#fff;border:1px solid var(--line);border-radius:15px;padding:16px;min-height:126px}
+.step:not(:last-child):after{content:"→";position:absolute;right:-17px;top:42%;font-weight:800;color:#8aa0ba;z-index:2}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--soft-blue);color:var(--blue);font-weight:800;margin-bottom:8px}
+.gate{border-left:5px solid var(--blue)}
+.gate.green{border-color:var(--green)} .gate.amber{border-color:var(--amber)} .gate.red{border-color:var(--red)}
+.rule{padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid var(--line);margin-top:10px}
+.rule strong{color:var(--navy)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;overflow:hidden;border:1px solid var(--line);border-radius:14px}
+th,td{padding:12px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#eef3f9;text-align:left;color:#274564;font-size:13px}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.pill.g{background:var(--soft-green);color:var(--green)} .pill.a{background:var(--soft-amber);color:var(--amber)}
+.pill.r{background:var(--soft-red);color:var(--red)} .pill.b{background:var(--soft-blue);color:var(--blue)}
+.score{font-weight:800;font-size:20px;color:var(--navy)}
+.criteria{margin:0;padding-left:18px}.criteria li{margin:4px 0}
+.callout{background:linear-gradient(90deg,#eef4ff,#f7fbff);border:1px solid #cddcff;border-radius:16px;padding:18px}
+.warn{background:var(--soft-amber);border-color:#f2d18a}.danger{background:var(--soft-red);border-color:#f4bbb4}
+.loop{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;align-items:center;gap:8px}
+.loop .node{padding:15px;border-radius:14px;background:#f8fafc;border:1px solid var(--line);min-height:98px}
+.arrow{text-align:center;font-size:22px;color:#8194aa;font-weight:800}
+.footer{margin-top:28px;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:900px){.g2,.g3,.flow{grid-template-columns:1fr}.step:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-22px}.meta{grid-template-columns:1fr}.loop{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="kicker">Rubric Design Specification</div>
+    <h1>每月透析資料漂移檢查</h1>
+    <p>建立一套可重複執行的品質守門設計，用於判斷每月血液透析資料是否出現資料結構、分布、流程或臨床意義上的漂移。此規格只定義 Gate、Outcome Rubric、Loop 與升級條件，不執行實際評分或模型監測。</p>
+    <div class="badges">
+      <span class="badge">月頻率</span><span class="badge">HD 資料管線</span><span class="badge">資料品質＋臨床漂移</span>
+      <span class="badge">HITL</span><span class="badge">可稽核</span>
+    </div>
+  </header>
+
+  <section class="grid g2">
+    <div class="card">
+      <h2>1. 使用情境解析</h2>
+      <div class="meta">
+        <div>輸入</div><div>本月與基準期的病人、透析療程、生命徵象、機器參數、檢驗、藥物與事件資料。</div>
+        <div>執行行為</div><div>完整性檢查、schema 比對、分布漂移偵測、跨表一致性檢查、臨床合理性判讀。</div>
+        <div>產出物</div><div>每月漂移報告、異常清單、受影響欄位／族群、根因假設、處置與責任人。</div>
+        <div>使用目的</div><div>阻止錯誤資料進入 BI、研究資料集、風險模型、臨床決策支援或品質指標。</div>
+        <div>主要角色</div><div>資料工程師、BI／分析師、腎臟科醫師、護理代表、資料治理或 AI 治理負責人。</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>2. 漂移定義邊界</h2>
+      <ul class="criteria">
+        <li><b>資料漂移：</b>欄位缺失率、值域、類別比例、分布或時間結構改變。</li>
+        <li><b>流程漂移：</b>採檢、輸入、設備、班別、醫令或 ETL 流程改變。</li>
+        <li><b>族群漂移：</b>病人組成、透析齡、共病、住院比例或治療模式改變。</li>
+        <li><b>臨床漂移：</b>變化雖真實，但已足以改變既有 KPI、模型或決策閾值的適用性。</li>
+      </ul>
+      <div class="callout warn" style="margin-top:14px"><b>關鍵盲點：</b>統計顯著不等於臨床重要；反之，小樣本單位可能有重大臨床異常卻未達統計門檻。</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. 主要流程</h2>
+    <div class="flow">
+      <div class="step"><div class="num">1</div><h3>資料封存</h3><div class="small">凍結本月版本、來源批次、ETL 版本與基準期。</div></div>
+      <div class="step"><div class="num">2</div><h3>結構檢查</h3><div class="small">schema、筆數、主鍵、重複、缺失、跨表連結。</div></div>
+      <div class="step"><div class="num">3</div><h3>漂移偵測</h3><div class="small">PSI、KS、Wasserstein、比例差、時間趨勢。</div></div>
+      <div class="step"><div class="num">4</div><h3>臨床解讀</h3><div class="small">判斷真實照護改變、資料錯誤或流程改版。</div></div>
+      <div class="step"><div class="num">5</div><h3>處置關閉</h3><div class="small">修正、接受、重設基準、回補與留下稽核紀錄。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4. Flow Gates</h2>
+    <div class="grid g2">
+      <div class="card gate red">
+        <h3>Gate A｜資料可用性 Gate</h3>
+        <div class="rule"><strong>A1. 結構阻斷：</strong>任一核心表無法載入、主鍵唯一性失敗、日期欄位無法解析，立即停止後續漂移分析。</div>
+        <div class="rule"><strong>A2. 覆蓋率阻斷：</strong>本月有效透析療程數或病人數較近 6 月中位數下降超過 20%，且無已知營運原因，不得發布結果。</div>
+        <p class="small">目的：避免「拿不完整資料做精密漂移分析」的偽品質。</p>
+      </div>
+      <div class="card gate amber">
+        <h3>Gate B｜漂移可信度 Gate</h3>
+        <div class="rule"><strong>B1. 多證據規則：</strong>核心變項須同時滿足至少一項統計指標與一項實務影響指標，才標記為實質漂移。</div>
+        <div class="rule"><strong>B2. 分層重現：</strong>全體漂移若無法在至少一個臨床合理分層中重現，先列為待確認，不直接升級。</div>
+        <p class="small">建議分層：院區、班別、設備、主護、住院／門診、透析齡、糖尿病。</p>
+      </div>
+      <div class="card gate green">
+        <h3>Gate C｜臨床解讀 Gate</h3>
+        <div class="rule"><strong>C1. 臨床合理性：</strong>異常需被分類為資料錯誤、流程改變、族群改變、治療策略改變或未知。</div>
+        <div class="rule"><strong>C2. 影響界定：</strong>必須指出受影響的 KPI、研究 cohort、模型特徵或臨床工作流程；否則不得判定為高嚴重度。</div>
+      </div>
+      <div class="card gate">
+        <h3>Gate D｜發布 Gate</h3>
+        <div class="rule"><strong>D1. 責任閉環：</strong>每一項橘色／紅色異常均需有 owner、處置、期限與驗證方法。</div>
+        <div class="rule"><strong>D2. 版本可追溯：</strong>報告必須記錄資料版本、程式版本、基準期、門檻版本與核准者。</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Outcome Rubric｜最終每月漂移報告</h2>
+    <table>
+      <thead><tr><th style="width:17%">構面</th><th style="width:8%">權重</th><th>達標標準</th><th style="width:25%">失敗訊號</th></tr></thead>
+      <tbody>
+        <tr><td><b>資料完整性</b></td><td class="score">20</td><td>核心表均到齊；主鍵、筆數、缺失、重複與跨表連結皆有結果；異常有來源定位。</td><td>只呈現圖表，未交代資料是否完整。</td></tr>
+        <tr><td><b>漂移偵測品質</b></td><td class="score">20</td><td>依連續／類別／時間序列選用適當指標；有基準期、門檻與樣本量；避免單一 p 值決策。</td><td>所有欄位使用同一門檻；未控制小樣本或多重比較。</td></tr>
+        <tr><td><b>臨床重要性</b></td><td class="score">20</td><td>將漂移連結至透析照護意義，例如 IDH、K、Hb、Kt/V、UF、住院風險或治療流程。</td><td>統計漂移很多，但無法說明是否會改變臨床判斷。</td></tr>
+        <tr><td><b>根因與可行動性</b></td><td class="score">15</td><td>每項重要漂移有根因分類、證據、owner、處置與驗證方法。</td><td>只有「請確認」或「持續觀察」。</td></tr>
+        <tr><td><b>風險分級</b></td><td class="score">10</td><td>依影響範圍、嚴重度、可逆性、持續性及臨床風險分為綠／黃／橘／紅。</td><td>所有異常同等處理，導致告警疲勞。</td></tr>
+        <tr><td><b>可追溯與可重現</b></td><td class="score">10</td><td>可重現相同結果；保留 SQL／程式版本、資料批次、基準期與門檻版本。</td><td>下個月無法解釋結果差異來自資料或程式。</td></tr>
+        <tr><td><b>報告可讀性</b></td><td class="score">5</td><td>一頁摘要可回答：發生什麼、影響什麼、誰處理、何時完成。</td><td>圖表過多，重要異常被淹沒。</td></tr>
+      </tbody>
+    </table>
+    <div class="grid g3" style="margin-top:16px">
+      <div class="callout"><span class="pill g">90–100</span><h3>可發布</h3><div class="small">Gate 全數通過，僅有可接受或已處理異常。</div></div>
+      <div class="callout warn"><span class="pill a">75–89</span><h3>條件式發布</h3><div class="small">需列明限制；橘色異常須有時限與 owner。</div></div>
+      <div class="callout danger"><span class="pill r">&lt;75 或任一阻斷 Gate</span><h3>不得發布</h3><div class="small">回到資料或流程層處理，不得進入模型與正式 KPI。</div></div>
+    </div>
+  </section>
+
+  <section class="grid g2">
+    <div class="card">
+      <h2>6. 建議監測指標組</h2>
+      <table>
+        <thead><tr><th>層級</th><th>核心指標</th><th>建議門檻概念</th></tr></thead>
+        <tbody>
+          <tr><td>資料量</td><td>病人數、療程數、每人療程數、各班別占比</td><td>近 6–12 月 robust baseline；重大跌幅先阻斷</td></tr>
+          <tr><td>完整性</td><td>缺失率、重複率、無法連結率、延遲天數</td><td>核心欄位採絕對門檻＋月變化門檻</td></tr>
+          <tr><td>連續值</td><td>SBP、DBP、HR、UF、BF、VP、TMP、Kt/V、Hb、K、Alb</td><td>PSI／KS／Wasserstein＋臨床 effect size</td></tr>
+          <tr><td>類別值</td><td>班別、設備、主護、通路、用藥、住院狀態</td><td>比例差、卡方或 Jensen–Shannon divergence</td></tr>
+          <tr><td>時間結構</td><td>採檢日、透析間隔、資料延遲、月內尖峰</td><td>控制圖、EWMA、季節性基準</td></tr>
+          <tr><td>臨床結果</td><td>IDH、急診、住院、感染、死亡、通路事件</td><td>病例組成調整後再判斷漂移</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>7. 嚴重度分級</h2>
+      <table>
+        <thead><tr><th>等級</th><th>判定</th><th>動作</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill g">綠</span></td><td>小幅、短暫、無臨床或下游影響</td><td>記錄，不需人工處置</td></tr>
+          <tr><td><span class="pill a">黃</span></td><td>可疑漂移，尚未確認根因</td><td>下月複查或抽樣確認</td></tr>
+          <tr><td><span class="pill a">橘</span></td><td>確認漂移，影響 KPI、研究或模型</td><td>指定 owner，限期修正或調整基準</td></tr>
+          <tr><td><span class="pill r">紅</span></td><td>可能造成臨床風險、重大錯誤或廣泛資料污染</td><td>停止下游發布，啟動事件處理與治理升級</td></tr>
+        </tbody>
+      </table>
+      <div class="callout danger" style="margin-top:14px"><b>紅色優先條件：</b>高血鉀、低血壓、透析充分性或死亡／住院相關欄位出現不合理改變；或異常影響超過 20% 病人。</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Gate Loop、Outcome Loop 與 Escalation</h2>
+    <h3>Gate Loop｜阻斷問題修復</h3>
+    <div class="loop">
+      <div class="node"><b>偵測 Gate 失敗</b><br><span class="small">定位表、欄位、批次與影響範圍</span></div><div class="arrow">→</div>
+      <div class="node"><b>修正或回補</b><br><span class="small">重跑 ETL、修 schema、補資料或標記限制</span></div><div class="arrow">→</div>
+      <div class="node"><b>重新驗證 Gate</b><br><span class="small">通過後才能進入下一階段</span></div>
+    </div>
+    <h3 style="margin-top:22px">Outcome Loop｜月報持續改進</h3>
+    <div class="loop">
+      <div class="node"><b>回顧本月誤報／漏報</b><br><span class="small">辨識告警疲勞與未捕捉的重大事件</span></div><div class="arrow">→</div>
+      <div class="node"><b>調整門檻與分層</b><br><span class="small">保留版本與變更理由</span></div><div class="arrow">→</div>
+      <div class="node"><b>更新下月 Rubric</b><br><span class="small">不得直接覆寫歷史標準</span></div>
+    </div>
+    <h3 style="margin-top:22px">Escalation</h3>
+    <ul class="criteria">
+      <li><b>資料工程層：</b>schema、ETL、批次、主鍵、延遲或來源系統問題。</li>
+      <li><b>臨床治理層：</b>真實照護策略、病人組成或臨床結果改變。</li>
+      <li><b>AI／模型治理層：</b>重要特徵漂移、模型校準下降、輸出風險改變。</li>
+      <li><b>事件層：</b>紅色異常可能影響臨床安全時，立即暫停下游並啟動正式事件處理。</li>
+    </ul>
+  </section>
+
+  <section class="grid g2">
+    <div class="card">
+      <h2>9. 每月最小交付清單</h2>
+      <ul class="criteria">
+        <li>一頁 Executive Summary</li>
+        <li>Gate 通過／失敗總表</li>
+        <li>Top 10 漂移欄位與分層結果</li>
+        <li>臨床影響與下游資產清單</li>
+        <li>橘／紅異常 owner、期限與驗證方式</li>
+        <li>版本、基準期與門檻變更紀錄</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>10. Not-to-do</h2>
+      <ul class="criteria">
+        <li><b>不要只看 p 值：</b>大樣本會把微小差異放大成顯著。</li>
+        <li><b>不要只做全體分析：</b>班別、設備或院區漂移會被平均掉。</li>
+        <li><b>不要每月任意換基準：</b>會讓持續性漂移消失。</li>
+        <li><b>不要把所有告警交給醫師：</b>資料與流程問題應先由資料 owner 排除。</li>
+        <li><b>不要直接自動修正臨床值：</b>應保留原值、修正值與稽核軌跡。</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="footer">Specification only — 本頁定義品質守門與評估框架，不代表已對任何實際透析資料完成評分。</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Department Goal & Project Alignment Board</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a2e; --panel2:#18233d; --line:#2a3656; --text:#eef3ff; --muted:#9fb0cf;
+  --g1:#3b82f6; --g2:#8b5cf6; --g3:#f59e0b; --g4:#10b981; --risk:#ef4444; --shared:#64748b;
+  --shadow:0 14px 40px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:linear-gradient(180deg,#0b1020 0%,#0f172a 100%);color:var(--text)}
+button,input,select,textarea{font:inherit}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;padding:24px 18px;background:rgba(8,13,27,.97);border-right:1px solid var(--line)}
+.brand{font-weight:800;line-height:1.25;font-size:18px;margin-bottom:6px}.sub{color:var(--muted);font-size:12px;margin-bottom:24px}
+.nav button{width:100%;text-align:left;border:0;background:transparent;color:var(--muted);padding:11px 12px;border-radius:10px;margin-bottom:5px;cursor:pointer}.nav button:hover,.nav button.active{background:var(--panel2);color:#fff}.nav .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:9px;background:#64748b}
+.sidebar .footer{position:absolute;bottom:18px;left:18px;right:18px;color:var(--muted);font-size:11px}
+.main{padding:24px 28px 60px;min-width:0}.topbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:22px}.topbar h1{font-size:26px;margin:0}.topbar p{margin:5px 0 0;color:var(--muted);font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel);color:#fff;padding:9px 12px;border-radius:10px;cursor:pointer}.btn:hover{background:var(--panel2)}.btn.primary{background:#2563eb;border-color:#2563eb}.btn.danger{background:#7f1d1d;border-color:#991b1b}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;gap:16px}.grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:linear-gradient(180deg,rgba(24,35,61,.95),rgba(18,26,46,.95));border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 10px}.card h4{margin:0 0 6px}.muted{color:var(--muted)}
+.northstar{padding:22px;border-left:5px solid #60a5fa}.northstar .mission{font-size:21px;line-height:1.5;font-weight:700}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.chip{font-size:12px;padding:6px 9px;border-radius:999px;background:#1f2b49;border:1px solid var(--line);color:#dbeafe}
+.goal-card{position:relative;overflow:hidden}.goal-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--accent)}.goal-card .goal-head{display:flex;justify-content:space-between;gap:10px}.goal-card .count{font-size:28px;font-weight:800}.goal-card p{color:var(--muted);min-height:46px}.goal-card ul{margin:10px 0 0;padding-left:18px;color:#dbeafe;font-size:13px;line-height:1.7}
+.metric{font-size:28px;font-weight:800}.metric-label{color:var(--muted);font-size:12px}.alert{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}.alert:last-child{border-bottom:0}.alert strong{color:#fff}
+.goal-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.goal-zone{min-height:260px;border-radius:16px;padding:15px;border:1px solid var(--line);background:rgba(18,26,46,.8)}.goal-zone h3{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}.zone-g1{box-shadow:inset 0 4px 0 var(--g1)}.zone-g2{box-shadow:inset 0 4px 0 var(--g2)}.zone-g3{box-shadow:inset 0 4px 0 var(--g3)}.zone-g4{box-shadow:inset 0 4px 0 var(--g4)}
+.project-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.project{background:#10182b;border:1px solid var(--line);border-radius:12px;padding:11px;cursor:pointer;transition:.2s}.project:hover{transform:translateY(-2px);border-color:#4c5e86}.project .id{font-size:11px;color:var(--muted)}.project .title{font-weight:700;margin:3px 0 7px}.meta{display:flex;gap:6px;flex-wrap:wrap}.tag{font-size:10px;padding:4px 6px;border-radius:999px;background:#24314f;color:#dce7ff}.stage{font-size:10px;padding:4px 6px;border-radius:999px}.stage.discovery{background:#334155}.stage.design{background:#5b21b6}.stage.build{background:#854d0e}.stage.pilot{background:#9a3412}.stage.production{background:#166534}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar input,.toolbar select{background:#0f172a;border:1px solid var(--line);color:#fff;padding:9px 10px;border-radius:10px}
+.brainstorm{display:grid;grid-template-columns:repeat(6,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:10px}.lane{background:#111a2e;border:1px solid var(--line);border-radius:14px;padding:12px;min-height:420px}.lane h4{margin:0 0 4px}.lane p{font-size:11px;color:var(--muted);min-height:34px}.note{background:#1d2945;border:1px solid #33466f;border-radius:10px;padding:10px;margin-bottom:9px}.note .type{font-size:10px;text-transform:uppercase;color:#93c5fd}.note .text{font-size:13px;margin:5px 0 8px}.note .foot{font-size:10px;color:var(--muted);display:flex;justify-content:space-between}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}.table{width:100%;border-collapse:collapse;min-width:1000px}.table th,.table td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left}.table th{position:sticky;top:0;background:#15213a;color:#cdd8ef;font-size:12px}.table td{font-size:13px}.score{font-weight:800}
+.matrix{position:relative;height:520px;background:linear-gradient(90deg,transparent 49.8%,#31405f 50%,transparent 50.2%),linear-gradient(0deg,transparent 49.8%,#31405f 50%,transparent 50.2%),#111a2e;border:1px solid var(--line);border-radius:16px;overflow:hidden}.matrix .axis-x,.matrix .axis-y{position:absolute;color:var(--muted);font-size:12px}.axis-x{bottom:8px;left:50%;transform:translateX(-50%)}.axis-y{left:8px;top:50%;transform:translateY(-50%) rotate(-90deg)}.bubble{position:absolute;transform:translate(-50%,-50%);width:86px;height:54px;border-radius:12px;background:#1f2c49;border:1px solid #4b5f88;padding:7px;font-size:10px;cursor:pointer}.bubble strong{display:block;font-size:11px;color:#fff}.quad{position:absolute;font-size:12px;color:#6f82a8}.q1{top:10px;right:12px}.q2{top:10px;left:14px}.q3{bottom:28px;left:14px}.q4{bottom:28px;right:12px}
+.dependency{height:560px;position:relative;background:#10182b;border:1px solid var(--line);border-radius:16px;overflow:hidden}.node{position:absolute;width:160px;padding:12px;border-radius:12px;background:#17233d;border:1px solid #41547e;box-shadow:var(--shadow);z-index:2}.node small{display:block;color:var(--muted);margin-bottom:4px}.node strong{font-size:13px}.line{position:absolute;height:2px;background:#43557a;transform-origin:left center;z-index:1}.node.data{border-color:var(--g1)}.node.workflow{border-color:var(--g2)}.node.education{border-color:var(--g3)}.node.governance{border-color:var(--g4)}
+.timeline{display:grid;grid-template-columns:160px repeat(4,1fr);gap:8px}.timeline .head,.timeline .cell{padding:10px;border:1px solid var(--line);border-radius:10px;background:#121a2e}.timeline .head{font-weight:700}.timeline .cell{min-height:90px}.road-card{font-size:11px;padding:7px;border-radius:8px;background:#21304f;margin-bottom:6px}
+.decision{display:grid;grid-template-columns:120px 1fr 140px;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.decision:last-child{border-bottom:0}.decision .status{font-size:11px;padding:6px 8px;border-radius:999px;background:#1f3a2c;color:#b7f7c7;display:inline-block}
+.governance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.gov-item{padding:14px;border-radius:12px;background:#111a2e;border:1px solid var(--line)}.progress{height:8px;border-radius:999px;background:#273553;overflow:hidden;margin-top:8px}.progress span{display:block;height:100%;background:#38bdf8}
+.drawer{position:fixed;top:0;right:-520px;width:500px;max-width:94vw;height:100vh;background:#0c1426;border-left:1px solid var(--line);box-shadow:-20px 0 50px rgba(0,0,0,.35);z-index:20;transition:.25s;padding:22px;overflow:auto}.drawer.open{right:0}.drawer .close{float:right}.drawer h2{margin-top:8px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.field input,.field textarea,.field select{width:100%;background:#10182b;border:1px solid var(--line);color:#fff;padding:9px;border-radius:9px}.field textarea{min-height:80px}.section-title{margin:20px 0 8px;font-size:13px;color:#bfdbfe}
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;border:1px solid var(--line);padding:11px 14px;border-radius:10px;display:none;z-index:50}
+@media(max-width:1100px){.grid.cols-4,.governance-grid{grid-template-columns:repeat(2,1fr)}.app{grid-template-columns:210px 1fr}.project-list{grid-template-columns:1fr}}
+@media(max-width:760px){.app{display:block}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.sidebar .footer{display:none}.main{padding:18px}.goal-board,.grid.cols-2,.grid.cols-3,.grid.cols-4,.governance-grid{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.timeline{grid-template-columns:120px repeat(4,220px);overflow:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Department Goal & Project Alignment Board</div>
+    <div class="sub">醫療資料、AI 與智慧工作流程部門策略畫板</div>
+    <div class="nav" id="nav"></div>
+    <div class="footer">Static MVP · Local-first · JSON portable</div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div><h1 id="pageTitle">Overview</h1><p id="pageDesc">部門目標、專案組合與風險總覽</p></div>
+      <div class="actions">
+        <button class="btn" onclick="exportJSON()">匯出 JSON</button>
+        <button class="btn" onclick="exportMarkdown()">匯出 Markdown</button>
+        <button class="btn primary" onclick="openNewProject()">新增專案</button>
+      </div>
+    </div>
+
+    <section class="page active" id="overview">
+      <div class="card northstar">
+        <div class="muted">DEPARTMENT NORTH STAR</div>
+        <div class="mission">建立可交換、可運算、可治理的醫療資料與 AI 基礎，使臨床、行政與研究工作流程能安全地被智慧化並持續改善。</div>
+        <div class="chips"><span class="chip">降低重複工作</span><span class="chip">提升資料可用性</span><span class="chip">建立臨床 AI 能力</span><span class="chip">全生命週期治理</span><span class="chip">強化院內人才</span></div>
+      </div>
+      <div class="grid cols-4" style="margin-top:16px" id="goalSummary"></div>
+      <div class="grid cols-4" style="margin-top:16px">
+        <div class="card"><div class="metric" id="metricProjects">0</div><div class="metric-label">規劃中專案</div></div>
+        <div class="card"><div class="metric" id="metricNoOwner">0</div><div class="metric-label">缺少明確 Owner</div></div>
+        <div class="card"><div class="metric" id="metricNoKPI">0</div><div class="metric-label">缺少可衡量 Outcome</div></div>
+        <div class="card"><div class="metric" id="metricHighRisk">0</div><div class="metric-label">高風險 AI / Data 專案</div></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card"><h3>Portfolio Alerts</h3><div id="alerts"></div></div>
+        <div class="card"><h3>Shared Enablers</h3><p class="muted">跨專案共同依賴的基礎能力，不應被當成單一業務專案處理。</p><div class="chips"><span class="chip">FHIR / API Gateway</span><span class="chip">Terminology Service</span><span class="chip">Data Catalog</span><span class="chip">Prompt Registry</span><span class="chip">Model Registry</span><span class="chip">Evaluation Framework</span><span class="chip">Audit Log</span><span class="chip">Workflow Orchestration</span></div></div>
+      </div>
+    </section>
+
+    <section class="page" id="goals">
+      <div class="goal-board" id="goalBoard"></div>
+    </section>
+
+    <section class="page" id="brainstorm">
+      <div class="toolbar"><select id="brainGoal"><option value="all">全部目標</option><option value="G1">G1 資料整合</option><option value="G2">G2 智慧流程</option><option value="G3">G3 AI能力</option><option value="G4">G4 品質治理</option></select><button class="btn" onclick="addNote()">新增便利貼</button><button class="btn" onclick="runWorkshop()">Workshop 收斂</button></div>
+      <div class="brainstorm" id="brainstormBoard"></div>
+    </section>
+
+    <section class="page" id="portfolio">
+      <div class="toolbar"><input id="search" placeholder="搜尋專案、標籤、Owner" oninput="renderPortfolio()"><select id="goalFilter" onchange="renderPortfolio()"><option value="all">全部目標</option><option value="G1">G1</option><option value="G2">G2</option><option value="G3">G3</option><option value="G4">G4</option></select><select id="stageFilter" onchange="renderPortfolio()"><option value="all">全部階段</option><option>discovery</option><option>design</option><option>build</option><option>pilot</option><option>production</option></select></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>專案</th><th>主要目標</th><th>Owner</th><th>Stage</th><th>Impact</th><th>Effort</th><th>Risk</th><th>Quarter</th></tr></thead><tbody id="portfolioRows"></tbody></table></div>
+      <div class="card" style="margin-top:16px"><h3>Impact × Effort Matrix</h3><div class="matrix" id="matrix"><span class="quad q1">Prioritize</span><span class="quad q2">Explore</span><span class="quad q3">Quick Wins</span><span class="quad q4">Reconsider</span><span class="axis-x">Effort →</span><span class="axis-y">Strategic Impact →</span></div></div>
+    </section>
+
+    <section class="page" id="dependency">
+      <div class="card"><h3>Dependency Map</h3><p class="muted">展示資料來源、共用能力、AI 元件、工作流程與治理控制之間的關係。</p><div class="dependency" id="depMap"></div></div>
+    </section>
+
+    <section class="page" id="roadmap">
+      <div class="card"><h3>2026–2027 Roadmap</h3><p class="muted">以依賴關係和成熟度安排專案，而非依照誰先提出需求。</p><div class="timeline" id="timeline"></div></div>
+    </section>
+
+    <section class="page" id="decisions">
+      <div class="grid cols-2"><div class="card"><h3>Decision Log</h3><div id="decisionList"></div></div><div class="card"><h3>Pending Decisions</h3><div class="alert"><span>是否將 4 個資料字典專案合併為共用 Data Catalog？</span><strong>8/15</strong></div><div class="alert"><span>Agentic workflow 是否採用統一 Audit Schema？</span><strong>8/22</strong></div><div class="alert"><span>2026 Q4 Build 階段最多容納幾個專案？</span><strong>8/29</strong></div></div></div>
+    </section>
+
+    <section class="page" id="governance">
+      <div class="governance-grid" id="govGrid"></div>
+      <div class="card" style="margin-top:16px"><h3>Lifecycle Control Gates</h3><div class="timeline"><div class="head">Gate</div><div class="head">Intake</div><div class="head">Design</div><div class="head">Pilot</div><div class="head">Production</div><div class="head">Required Evidence</div><div class="cell">Problem / Owner / User</div><div class="cell">Data / Workflow / Risk</div><div class="cell">Evaluation / HITL / Safety</div><div class="cell">Monitoring / Audit / Rollback</div></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="drawer" id="drawer"><button class="btn close" onclick="closeDrawer()">關閉</button><div id="drawerBody"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const goals={
+ G1:{name:'醫療資料整合、交換與可運算化',short:'資料整合與交換',color:'var(--g1)',desc:'讓資料可以被找到、理解、交換、組合與安全重用。',kpis:['FHIR / 標準碼覆蓋率','資料申請到取得時間','可重用資料產品數']},
+ G2:{name:'智慧工作流程與人機協作自動化',short:'智慧工作流程',color:'var(--g2)',desc:'以 HITL、Action Cards 與 Agentic Workflow 改善臨床及行政流程。',kpis:['節省工時','建議採納率','自動化與錯誤攔截率']},
+ G3:{name:'醫院 AI 素養、人才與實作能力建設',short:'AI能力建設',color:'var(--g3)',desc:'從 AI Literacy 到 Builder、Leader，形成可持續的院內能力。',kpis:['培訓覆蓋率','種子人才數','完成實作專案數']},
+ G4:{name:'資料與 AI 全生命週期品質與治理',short:'品質與治理',color:'var(--g4)',desc:'把資料品質、模型風險、監測、稽核和退場機制嵌入流程。',kpis:['納管比例','監測覆蓋率','事件處理時間']}
+};
+const sampleTitles=[
+['FHIR核心資料交換服務','G1'],['院內資料字典與 Metadata Catalog','G1'],['CKD 晨間風險清單','G2'],['住院病歷摘要 Agent','G2'],['AI臨床種子教師培訓','G3'],['AI專案風險分級制度','G4'],['透析每月資料漂移監測','G4'],['TW Core 對應與驗證','G1'],['Agentic Workflow Audit Log','G4'],['共同決策 Action Card','G2'],['臨床資料產品 API','G1'],['Prompt 與 Rubric Registry','G4'],['AI Builder 實作營','G3'],['研究資料申請自動化','G2'],['Terminology Service','G1'],['模型上線與退場流程','G4'],['臨床教育內容產製 Agent','G3'],['門診藥物缺口提醒','G2'],['資料品質規則引擎','G4'],['FHIR Bulk Export','G1'],['AI Use Case 社群','G3'],['住院跨系統資料整合','G1'],['臨床流程數位孿生','G2'],['AI Incident Response Playbook','G4'],['主管 AI 決策課程','G3'],['FHIR/SMART 開發沙盒','G1'],['研究文獻雷達 Agent','G2'],['Clinical AI Evaluation Bench','G4'],['HITL Design Pattern Library','G2'],['院內 AI 能力成熟度盤點','G3']
+];
+let projects=sampleTitles.map((x,i)=>({project_id:`Project${String(i+1).padStart(2,'0')}`,title:x[0],summary:'待團隊補充問題、使用者與預期 Outcome。',goals:[x[1]],owner:i%7===0?'':['臨床資訊組','AI中心','腎臟科','資訊室','教學部'][i%5],stage:['discovery','design','build','pilot','production'][i%5],priority:i%4===0?'high':'medium',impact:5-(i%5),effort:1+(i%5),risk_level:i%6===0?'high':i%3===0?'medium':'low',quarter:['2026-Q3','2026-Q4','2027-Q1','2027-Q2'][i%4],metrics:i%6===0?[]:['time_saved','adoption_rate'],tags:[goals[x[1]].short],dependencies:i>3?[`Project${String((i%10)+1).padStart(2,'0')}`]:[]}));
+const pages=[['overview','Overview','部門目標、專案組合與風險總覽'],['goals','Department Goals','四大目標與專案對齊'],['brainstorm','Brainstorm Board','問題、使用者、成果、想法與風險'],['portfolio','Project Portfolio','專案排序、矩陣與資源取捨'],['dependency','Dependency Map','資料、平台、流程與治理依賴'],['roadmap','Roadmap','季度節奏與基礎能力建設'],['decisions','Decisions','決策紀錄與待決議事項'],['governance','Governance','品質、風險與全生命週期控制']];
+const notes=[
+{lane:'Problems',type:'Problem',text:'同一份醫療資料在不同系統有不同定義。',author:'K',votes:8},
+{lane:'Users',type:'User',text:'臨床醫師需要在 1 分鐘內理解風險排序。',author:'Team',votes:6},
+{lane:'Desired Outcomes',type:'Outcome',text:'專案申請到可用資料的中位時間下降 50%。',author:'PM',votes:10},
+{lane:'Ideas',type:'Idea',text:'建立共用 Action Card Schema。',author:'AI Team',votes:7},
+{lane:'Evidence',type:'Evidence',text:'多個專案重複建置資料清理與權限流程。',author:'Data Team',votes:5},
+{lane:'Concerns',type:'Risk',text:'專案數量高於團隊可同時交付容量。',author:'Manager',votes:9}
+];
+function init(){renderNav();renderAll();}
+function renderNav(){document.getElementById('nav').innerHTML=pages.map((p,i)=>`<button class="${i===0?'active':''}" onclick="showPage('${p[0]}',this)"><span class="dot"></span>${p[1]}</button>`).join('')}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');let p=pages.find(x=>x[0]===id);pageTitle.textContent=p[1];pageDesc.textContent=p[2];}
+function renderAll(){renderOverview();renderGoals();renderBrainstorm();renderPortfolio();renderDependency();renderRoadmap();renderDecisions();renderGovernance();}
+function renderOverview(){goalSummary.innerHTML=Object.entries(goals).map(([id,g])=>{let n=projects.filter(p=>p.goals.includes(id)).length;return `<div class="card goal-card" style="--accent:${g.color}"><div class="goal-head"><div><div class="muted">${id}</div><h3>${g.short}</h3></div><div class="count">${n}</div></div><p>${g.desc}</p><ul>${g.kpis.map(k=>`<li>${k}</li>`).join('')}</ul></div>`}).join('');metricProjects.textContent=projects.length;metricNoOwner.textContent=projects.filter(p=>!p.owner).length;metricNoKPI.textContent=projects.filter(p=>!p.metrics.length).length;metricHighRisk.textContent=projects.filter(p=>p.risk_level==='high').length;alerts.innerHTML=[['缺少 Owner',projects.filter(p=>!p.owner).length],['缺少 Outcome Metric',projects.filter(p=>!p.metrics.length).length],['Potential Duplicate / Shared Component',5],['High-risk AI / Data Project',projects.filter(p=>p.risk_level==='high').length]].map(x=>`<div class="alert"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
+function projectCard(p){return `<div class="project" onclick="openProject('${p.project_id}')"><div class="id">${p.project_id}</div><div class="title">${p.title}</div><div class="meta"><span class="stage ${p.stage}">${p.stage}</span><span class="tag">Impact ${p.impact}</span><span class="tag">${p.owner||'No Owner'}</span></div></div>`}
+function renderGoals(){goalBoard.innerHTML=Object.entries(goals).map(([id,g])=>`<div class="goal-zone zone-${id.toLowerCase()}"><h3>${id}｜${g.short}<span class="tag">${projects.filter(p=>p.goals.includes(id)).length} projects</span></h3><p class="muted">${g.desc}</p><div class="project-list">${projects.filter(p=>p.goals.includes(id)).slice(0,10).map(projectCard).join('')}</div></div>`).join('')}
+function renderBrainstorm(){const lanes=[['Problems','現在最重要的問題是什麼？'],['Users','誰受到影響？'],['Desired Outcomes','希望造成什麼改變？'],['Ideas','有哪些可能解法？'],['Evidence','有什麼證據支持？'],['Concerns','風險、阻礙或反對意見？']];brainstormBoard.innerHTML=lanes.map(l=>`<div class="lane"><h4>${l[0]}</h4><p>${l[1]}</p>${notes.filter(n=>n.lane===l[0]).map(n=>`<div class="note"><div class="type">${n.type}</div><div class="text">${n.text}</div><div class="foot"><span>${n.author}</span><span>▲ ${n.votes}</span></div></div>`).join('')}</div>`).join('')}
+function addNote(){let text=prompt('輸入新的 brainstorm 內容');if(!text)return;notes.push({lane:'Ideas',type:'Idea',text,author:'You',votes:0});renderBrainstorm();toastMsg('已新增到 Ideas');}
+function runWorkshop(){toastMsg('已產生收斂結果：5 個優先項目、3 個共享能力、4 個待決策');}
+function renderPortfolio(){let q=(search?.value||'').toLowerCase(),gf=goalFilter?.value||'all',sf=stageFilter?.value||'all';let arr=projects.filter(p=>(!q||JSON.stringify(p).toLowerCase().includes(q))&&(gf==='all'||p.goals.includes(gf))&&(sf==='all'||p.stage===sf));portfolioRows.innerHTML=arr.map(p=>`<tr onclick="openProject('${p.project_id}')" style="cursor:pointer"><td>${p.project_id}</td><td><strong>${p.title}</strong><div class="muted">${p.summary}</div></td><td>${p.goals.join(', ')}</td><td>${p.owner||'<span style="color:#fca5a5">No Owner</span>'}</td><td><span class="stage ${p.stage}">${p.stage}</span></td><td class="score">${p.impact}</td><td class="score">${p.effort}</td><td>${p.risk_level}</td><td>${p.quarter}</td></tr>`).join('');matrix.querySelectorAll('.bubble').forEach(x=>x.remove());arr.slice(0,18).forEach(p=>{let b=document.createElement('div');b.className='bubble';b.style.left=`${10+p.effort*16}%`;b.style.top=`${90-p.impact*16}%`;b.innerHTML=`<strong>${p.project_id}</strong>${p.title}`;b.onclick=()=>openProject(p.project_id);matrix.appendChild(b)})}
+function openProject(id){let p=projects.find(x=>x.project_id===id);drawerBody.innerHTML=`<div class="muted">PROJECT DETAIL</div><h2>${p.project_id}｜${p.title}</h2><p class="muted">${p.summary}</p><div class="form-grid"><div class="field"><label>Owner</label><input value="${p.owner}"></div><div class="field"><label>Stage</label><select><option>${p.stage}</option><option>discovery</option><option>design</option><option>build</option><option>pilot</option><option>production</option></select></div><div class="field"><label>Primary Goal</label><input value="${p.goals[0]}"></div><div class="field"><label>Quarter</label><input value="${p.quarter}"></div></div><div class="section-title">價值假設</div><div class="field"><textarea>For [target user], when [clinical or operational situation], the project will [change action or decision], resulting in [measurable outcome].</textarea></div><div class="section-title">Workflow</div><div class="chips"><span class="chip">Trigger</span><span class="chip">Context</span><span class="chip">AI / Rule</span><span class="chip">Human Review</span><span class="chip">Action</span><span class="chip">Feedback</span><span class="chip">Audit</span></div><div class="section-title">Governance</div><div class="form-grid"><div class="field"><label>Risk</label><input value="${p.risk_level}"></div><div class="field"><label>Metrics</label><input value="${p.metrics.join(', ')}"></div><div class="field"><label>Dependencies</label><input value="${p.dependencies.join(', ')}"></div><div class="field"><label>Stop Condition</label><input placeholder="定義停止或升級條件"></div></div><div style="margin-top:18px"><button class="btn primary" onclick="toastMsg('已儲存本地草稿')">儲存</button></div>`;drawer.classList.add('open')}
+function openNewProject(){let next=`Project${String(projects.length+1).padStart(2,'0')}`;projects.push({project_id:next,title:'未命名專案',summary:'待補充',goals:['G1'],owner:'',stage:'discovery',priority:'medium',impact:3,effort:3,risk_level:'medium',quarter:'2027-Q1',metrics:[],tags:[],dependencies:[]});renderAll();openProject(next)}
+function closeDrawer(){drawer.classList.remove('open')}
+function renderDependency(){depMap.innerHTML='';const nodes=[['EHR / LIS / PACS','Data Source','data',40,60],['FHIR / API Gateway','Shared Enabler','data',300,60],['Data Catalog','Shared Enabler','data',560,60],['Clinical Data Product','Reusable Asset','data',300,220],['Model / Rule / Prompt','AI Component','workflow',560,220],['Agentic Workflow','Human + AI','workflow',300,390],['Clinical UI / Action Card','Delivery','workflow',560,390],['Evaluation & Audit','Governance','governance',820,220],['AI Education','Capability','education',820,390]];nodes.forEach((n,i)=>{let d=document.createElement('div');d.className=`node ${n[2]}`;d.style.left=n[3]+'px';d.style.top=n[4]+'px';d.innerHTML=`<small>${n[1]}</small><strong>${n[0]}</strong>`;depMap.appendChild(d)});[[180,95,300,95],[460,95,560,95],[380,120,380,220],[460,255,560,255],[380,290,380,390],[460,425,560,425],[720,255,820,255],[720,425,820,425]].forEach(l=>drawLine(...l));}
+function drawLine(x1,y1,x2,y2){let len=Math.hypot(x2-x1,y2-y1),ang=Math.atan2(y2-y1,x2-x1)*180/Math.PI;let d=document.createElement('div');d.className='line';d.style.left=x1+'px';d.style.top=y1+'px';d.style.width=len+'px';d.style.transform=`rotate(${ang}deg)`;depMap.appendChild(d)}
+function renderRoadmap(){timeline.innerHTML=['Workstream','2026 Q3','2026 Q4','2027 Q1','2027 Q2'].map(x=>`<div class="head">${x}</div>`).join('');['Data Foundation','Workflow Pilots','AI Capability','Governance'].forEach((w,ri)=>{timeline.innerHTML+=`<div class="head">${w}</div>`;for(let q=0;q<4;q++){let items=projects.filter((p,i)=>i%4===q&&['G1','G2','G3','G4'][ri]===p.goals[0]).slice(0,3);timeline.innerHTML+=`<div class="cell">${items.map(p=>`<div class="road-card" onclick="openProject('${p.project_id}')">${p.project_id}<br>${p.title}</div>`).join('')}</div>`}})}
+function renderDecisions(){decisionList.innerHTML=[['2026-08-04','四大部門目標採用 Outcome 導向命名','Approved'],['2026-08-04','建立 Shared Enablers 橫向能力層','Approved'],['2026-08-04','第一版採 static + JSON，不先做多人協作','Approved']].map(d=>`<div class="decision"><div>${d[0]}</div><div>${d[1]}</div><div><span class="status">${d[2]}</span></div></div>`).join('')}
+function renderGovernance(){const items=[['AI Inventory',78],['Owner Assigned',76],['Outcome Metrics',70],['Risk Tiering',82],['Data Validation',64],['HITL Design',58],['Monitoring Plan',52],['Audit Readiness',49]];govGrid.innerHTML=items.map(x=>`<div class="gov-item"><strong>${x[0]}</strong><div class="muted">${x[1]}% complete</div><div class="progress"><span style="width:${x[1]}%"></span></div></div>`).join('')}
+function exportJSON(){let blob=new Blob([JSON.stringify({goals,projects,notes},null,2)],{type:'application/json'});downloadBlob(blob,'department_goal_project_board.json')}
+function exportMarkdown(){let md=`# Department Goal & Project Alignment Board\n\n## North Star\n建立可交換、可運算、可治理的醫療資料與 AI 基礎。\n\n`+Object.entries(goals).map(([id,g])=>`## ${id} ${g.name}\n${g.desc}\n\n`+projects.filter(p=>p.goals.includes(id)).map(p=>`- ${p.project_id} ${p.title}｜${p.stage}｜${p.owner||'No Owner'}`).join('\n')).join('\n\n');downloadBlob(new Blob([md],{type:'text/markdown'}),'department_goal_project_board.md')}
+function downloadBlob(blob,name){let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);toastMsg(`已匯出 ${name}`)}
+function toastMsg(t){toast.textContent=t;toast.style.display='block';setTimeout(()=>toast.style.display='none',1800)}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>現代網頁 UI 名詞解剖圖｜跨職能對照</title>
+<meta name="description" content="以一個網頁畫面由上而下的解剖圖，串起 100 個現代網頁 UI 名詞：每一格顯示該區塊有哪些名詞、可驗收的檢查要點，以及新手最常犯的失誤。供 PM、工程師與設計師對齊用語。">
+<style>
+  :root{color-scheme:light dark}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;padding:0}
+  img{max-width:100%}
+</style>
+<style>
+  :root{
+    --bg:#F3F6F7; --surface:#FFFFFF; --surface-2:#FAFCFC; --surface-3:#EEF3F5;
+    --ink:#15202A; --ink-2:#33454F; --muted:#5B6B77; --rule:#DCE4E8; --rule-2:#C6D3D9;
+    --ev-strong:#0E7C6B; --ev-limited:#A9640B; --ev-hyp:#B41E48; --ev-none:#6B7C8A;
+    --ev-strong-bg:#E4F1EE; --ev-limited-bg:#F7ECDD; --ev-hyp-bg:#F8E6EB; --ev-none-bg:#EBEFF2;
+    --shadow:0 1px 2px rgba(21,32,42,.06), 0 8px 24px rgba(21,32,42,.05);
+    /* tooltip：相對頁面倒色（淺色頁 → 深色霧面玻璃卡） */
+    --tip-bg:rgba(20,29,37,.97); --tip-ink:#F2F7FA; --tip-ink-2:#C8D6DF; --tip-muted:#93A7B4;
+    --tip-rule:rgba(255,255,255,.13); --tip-head:rgba(255,255,255,.07); --tip-edge:rgba(255,255,255,.22);
+    --tip-glare:rgba(255,255,255,.16); --tip-accent:#FF89A8; --tip-accent-bg:rgba(255,137,168,.18);
+    --tip-warn:#FFB25E; --tip-warn-bg:rgba(255,178,94,.13);
+    --tip-ok:#5FE0C6; --tip-ok-bg:rgba(95,224,198,.12);
+    --tip-shadow:0 2px 8px rgba(10,16,21,.24), 0 28px 64px rgba(10,16,21,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+      --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+      --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+      --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+      --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+      --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+      --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+      --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+      --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+      --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+    --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+    --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+    --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+    --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+    --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+    --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+    --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+    --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang TC","Hiragino Sans TC","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1080px; margin:0 auto; padding:56px 28px 96px; display:flex; flex-direction:column; gap:56px}
+
+  .masthead{display:flex; flex-direction:column; gap:14px; border-bottom:1px solid var(--rule); padding-bottom:28px}
+  .eyebrow{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  h1{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:clamp(28px,4.4vw,42px); line-height:1.25; margin:0; font-weight:600; text-wrap:balance; letter-spacing:.01em;
+  }
+  h1 .en{display:block; font-size:.5em; font-style:italic; color:var(--muted); font-weight:400; margin-top:10px; letter-spacing:.02em}
+  .thesis{margin:0; max-width:62ch; color:var(--ink-2); font-size:17px}
+  .thesis b{color:var(--ink); font-weight:600}
+
+  section{display:flex; flex-direction:column; gap:20px}
+  .sec-head{display:flex; flex-direction:column; gap:6px}
+  .sec-label{font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:700}
+  h2{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:24px; margin:0; font-weight:600; letter-spacing:.01em;
+  }
+  .sec-note{margin:0; color:var(--muted); font-size:14.5px; max-width:66ch}
+
+  .legend{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:2px;
+    background:var(--rule); border:1px solid var(--rule); border-radius:12px; overflow:hidden;
+  }
+  .lg{background:var(--surface); padding:14px 16px; display:flex; flex-direction:column; gap:7px}
+  .lg-top{display:flex; align-items:center; gap:10px}
+  .lg-name{font-size:14px; font-weight:700; letter-spacing:.01em}
+  .lg-desc{font-size:12.5px; color:var(--muted); line-height:1.55}
+  .lg svg{flex:none; display:block}
+
+  figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+  .figwrap{overflow-x:auto; padding:22px 20px 8px}
+  .figwrap svg{display:block; min-width:900px; width:100%; height:auto}
+  figcaption{
+    padding:16px 22px 20px; border-top:1px solid var(--rule); background:var(--surface-2);
+    font-size:13.5px; color:var(--muted); line-height:1.7;
+  }
+  figcaption b{color:var(--ink-2); font-weight:600}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+  .tnote{margin:0; padding:14px 20px 18px; font-size:13px; color:var(--muted); line-height:1.7; border-top:1px solid var(--rule); background:var(--surface-2)}
+  th,td{padding:12px 16px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{
+    font-size:12px; letter-spacing:.06em; color:var(--muted); font-weight:700;
+    background:var(--surface-3); border-bottom:1px solid var(--rule-2); white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.k{font-weight:600; white-space:nowrap}
+  td small{color:var(--muted); font-size:12.5px}
+
+  .reads{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px}
+  .read{
+    background:var(--surface); border:1px solid var(--rule); border-radius:12px; padding:18px 18px 20px;
+    display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow); border-top:3px solid var(--stripe,var(--ev-hyp));
+  }
+  .read-tag{font-size:11.5px; font-weight:700; letter-spacing:.06em; color:var(--stripe,var(--ev-hyp))}
+  .read-obs{font-size:14.5px; font-weight:700; line-height:1.6}
+  .read-int{font-size:13.5px; color:var(--ink-2); line-height:1.75; margin:0}
+  .read-int b{color:var(--ink)}
+
+  .limits{background:var(--surface-3); border:1px solid var(--rule); border-radius:12px; padding:20px 22px}
+  .limits ul{margin:0; padding-left:1.15em; display:flex; flex-direction:column; gap:9px}
+  .limits li{font-size:14px; color:var(--ink-2); line-height:1.7}
+  .limits li b{color:var(--ink); font-weight:600}
+
+  footer{border-top:1px solid var(--rule); padding-top:20px; font-size:12.5px; color:var(--muted); line-height:1.7}
+
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--ev-strong); outline-offset:3px; border-radius:4px}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex; gap:4px; border-bottom:1px solid var(--rule); margin-top:-24px; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    appearance:none; background:none; border:none; cursor:pointer; white-space:nowrap;
+    font-family:inherit; font-size:14.5px; font-weight:600; color:var(--muted);
+    padding:11px 16px 12px; border-bottom:2px solid transparent; margin-bottom:-1px;
+    letter-spacing:.01em; border-radius:6px 6px 0 0;
+  }
+  .tab:hover{color:var(--ink-2); background:var(--surface-3)}
+  .tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--ev-hyp)}
+  .panel{display:flex; flex-direction:column; gap:56px}
+  .panel[hidden]{display:none}
+
+  /* ---------- hotspots ---------- */
+  .hot{cursor:pointer}
+  .hot .hit{fill:transparent; stroke:transparent; stroke-width:10}
+  .hot .halo{fill:none; stroke:var(--ev-hyp); stroke-width:2; opacity:0; stroke-linejoin:round}
+  @media (prefers-reduced-motion:no-preference){
+    .hot .halo{transition:opacity .12s ease, stroke-width .12s ease}
+  }
+  .hot:hover .halo, .hot:focus-visible .halo, .hot.on .halo{opacity:1; stroke-width:4}
+  .hot:focus{outline:none}
+  .mark{font-size:9.5px; font-weight:700; letter-spacing:.04em; fill:var(--ev-hyp); pointer-events:none}
+  .mark.q{fill:var(--ev-limited)}
+  .mark.n{fill:var(--ev-none)}
+
+  /* ---------- tooltip：倒色霧面玻璃 ---------- */
+  .tip{
+    position:fixed; z-index:60; max-width:min(460px,calc(100vw - 28px)); pointer-events:none;
+    color:var(--tip-ink); overflow:hidden;
+    background:linear-gradient(180deg, var(--tip-glare) 0%, rgba(255,255,255,0) 38%), var(--tip-bg);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    backdrop-filter:blur(20px) saturate(160%);
+    border:1.5px solid var(--tip-edge); border-radius:14px;
+    box-shadow:var(--tip-shadow), inset 0 1px 0 var(--tip-glare);
+    opacity:0; visibility:hidden; transform:translateY(4px) scale(.985);
+    transition:opacity .12s ease, transform .12s ease;
+  }
+  .tip.show{opacity:1; visibility:visible; transform:translateY(0) scale(1)}
+  .tip-head{
+    padding:12px 16px 11px; border-bottom:1px solid var(--tip-rule); background:var(--tip-head);
+    font-size:13px; font-weight:700; color:var(--tip-ink); line-height:1.5;
+  }
+  .tip-body{max-height:min(64vh,540px); overflow:hidden}
+  .blk{padding:11px 16px 13px; border-bottom:1px solid var(--tip-rule)}
+  .blk:last-child{border-bottom:none}
+  .blk-h{
+    font-size:10.5px; font-weight:700; letter-spacing:.12em; margin-bottom:7px;
+    display:inline-block; padding:2px 8px; border-radius:999px;
+  }
+  .b-warn .blk-h{color:var(--tip-warn); background:var(--tip-warn-bg)}
+  .b-ddx  .blk-h{color:var(--tip-accent); background:var(--tip-accent-bg)}
+  .b-cut  .blk-h{color:var(--tip-ok); background:var(--tip-ok-bg)}
+  .b-book .blk-h{color:var(--tip-muted); background:var(--tip-head)}
+  .blk p{margin:0; font-size:13px; line-height:1.72; color:var(--tip-ink-2)}
+  .blk ul{margin:0; padding-left:1.05em; display:flex; flex-direction:column; gap:4px}
+  .blk li{font-size:12.8px; line-height:1.6; color:var(--tip-ink-2)}
+  .blk li b{color:var(--tip-ink); font-weight:600}
+  .bk{font-size:12.5px; line-height:1.6; color:var(--tip-ink-2); margin:0 0 6px}
+  .bk:last-child{margin-bottom:0}
+  .bk .t{color:var(--tip-ink); font-weight:600}
+  .bk .s{color:var(--tip-muted); font-size:11.5px; display:block}
+
+  .hint{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px;
+    padding:7px 15px; font-size:13px; color:var(--ink-2);
+  }
+  .hint b{color:var(--ev-hyp)}
+
+  /* ---------- 書目清單 ---------- */
+  .reflist{border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow); overflow:hidden}
+  .refrow{display:grid; grid-template-columns:42px 1fr; gap:14px; padding:14px 18px; border-bottom:1px solid var(--rule)}
+  .refrow:last-child{border-bottom:none}
+  .refrow.lit{background:var(--ev-hyp-bg)}
+  .refrow .n{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700;
+    color:var(--ev-hyp); background:var(--ev-hyp-bg); border-radius:5px; height:21px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .refrow .zh{font-size:14.5px; font-weight:600; line-height:1.6; margin:0}
+  .refrow .en{font-size:12.5px; color:var(--ink-2); line-height:1.55; margin:3px 0 0}
+  .refrow .meta{font-size:12px; color:var(--muted); margin:5px 0 0; line-height:1.6}
+  .refrow .where{
+    display:inline-block; margin:6px 6px 0 0; font-size:11.5px; color:var(--muted);
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px; padding:2px 9px;
+  }
+  .refrow .kind{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:1px 8px;
+    border-radius:999px; margin-left:8px; vertical-align:2px;
+    background:var(--ev-strong-bg); color:var(--ev-strong);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">UI VOCABULARY · CROSS-FUNCTIONAL</div>
+    <h1>現代網頁 UI 名詞解剖圖
+      <span class="en">Anatomy of a Modern Web UI — a shared vocabulary for PMs, engineers, and designers</span>
+    </h1>
+    <p class="thesis">跨職能會議上最貴的誤會，多半不是意見不同，而是<b>同一個詞指的不是同一塊東西</b>。「彈窗」可能是 Modal、Drawer 或 Popover；「改一下 header」可能是指容器高度、導覽項目或品牌區。這頁把一個網頁畫面由上而下拆成 23 格，滑過任一格就看得到<b>該區塊有哪些名詞、可以驗收的檢查要點、以及新手最常犯的失誤</b>。第二分頁收完整的 100 個名詞總表。</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="頁面分頁">
+    <button class="tab" id="t-flow" role="tab" aria-selected="true" aria-controls="p-flow">畫面解剖圖</button>
+    <button class="tab" id="t-ref" role="tab" aria-selected="false" aria-controls="p-ref" tabindex="-1">易犯失誤 · 100 名詞總表 · 依據</button>
+  </nav>
+
+  <!-- ================= 分頁一：流程圖 ================= -->
+  <div class="panel" id="p-flow" role="tabpanel" aria-labelledby="t-flow">
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">畫 面 解 剖 圖</div>
+      <h2>一個網頁由上而下有哪些東西，各自叫什麼</h2>
+      <p class="sec-note">顏色代表元件性質，線型再做一次相同區分（實線＝流程、虛線＝決策分流、點線＝旁支提示），不依賴辨色即可讀。</p>
+    </div>
+
+    <!-- 圖例：四色語義固定，勿改配色，只改描述文字 -->
+    <div class="legend">
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-strong)" stroke-width="2.5"/></svg>
+          <span class="lg-name" style="color:var(--ev-strong)">流程步驟</span>
+        </div>
+        <div class="lg-desc">使用者由上而下必經的畫面區塊：Header → 首屏 → 內容 → 表單 → 頁尾。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4"/></svg>
+          <span class="lg-name" style="color:var(--ev-limited)">決策點</span>
+        </div>
+        <div class="lg-desc">要先回答才知道該用哪個元件的岔路，判準寫在節點副標，不靠品味。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-hyp)" stroke-width="3" stroke-dasharray="11 5"/></svg>
+          <span class="lg-name" style="color:var(--ev-hyp)">關鍵難點</span>
+        </div>
+        <div class="lg-desc">跨職能最常返工的兩件事：三種狀態沒設計、確認對話框濫用。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/></svg>
+          <span class="lg-name" style="color:var(--ev-none)">旁支・修飾因子</span>
+        </div>
+        <div class="lg-desc">不在主軸上、但會影響整頁的元件群：側欄、浮動層、覆蓋層家族。</div>
+      </div>
+    </div>
+
+    <div class="hint">滑鼠移上任一方塊 → 顯示該格的 <b>易犯失誤｜相關名詞｜檢查要點</b>；行動裝置請點選。</div>
+
+    <figure>
+      <div class="figwrap" id="flowfig">
+        <svg viewBox="0 0 1000 1726" role="img" aria-label="現代網頁 UI 畫面解剖圖。中央主軸由上而下依序為 Header／App Bar、Hero 首屏、內容主體容器決策點（分為卡片網格、資料表格、清單流三型）、資料操作列、輸入元件決策點（分為選項少且互斥、選項多需搜尋、立即生效三型）、欄位四件套、送出後的回饋、Footer 頁尾，最後匯流至設計系統基礎。左側旁支為 Sidebar 側邊導覽、頁內導覽、空與載入與錯誤三種狀態、Undo 優於確認對話框；右側旁支為 Sticky 浮動層、Alert Banner 全站公告、資訊密度與文字截斷、覆蓋層家族。共 23 個可互動節點。">
+          <defs>
+            <marker id="m-s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-strong)"/>
+            </marker>
+            <marker id="m-q" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-limited)"/>
+            </marker>
+            <marker id="m-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-hyp)"/>
+            </marker>
+            <marker id="m-n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-none)"/>
+            </marker>
+          </defs>
+
+          <g font-size="11.5" font-weight="700" fill="var(--muted)" letter-spacing="1.6">
+            <text x="40" y="36">旁 支 ・ 全 域 元 件</text>
+            <text x="700" y="36">旁 支 ・ 覆 蓋 層</text>
+          </g>
+          <line x1="40" y1="48" x2="960" y2="48" stroke="var(--rule)" stroke-width="1"/>
+
+          <!-- ==================== 圖形主體 ====================
+               照 references/svg-layout.md 的格線與元件寫法填入。
+               每個可互動元件都是一個 g.hot（含 tabindex、role、data-k、aria-label），
+               內含五層：rect.hl / rect.halo / 文字 / text.mark / rect.hit（hit 必須在最後）。
+               每個 data-k 都必須在下方 DATA 有對應的鍵。          -->
+          <!-- ===== Band A：全域外框 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="a_header" aria-label="Header 與 App Bar 頁首列。品牌、主導覽與全域動作。含 Navbar、Logo、漢堡選單、Mega Menu、Skip Link 等名詞。">
+            <rect class="hl" x="330" y="66" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="62" width="348" height="72" rx="11"/>
+            <text x="500" y="94" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">① Header／App Bar</text>
+            <text x="500" y="115" text-anchor="middle" font-size="11.5" fill="var(--muted)">品牌・主導覽・全域動作</text>
+            <text class="mark" x="660" y="81" text-anchor="end">失誤 · B2</text>
+            <rect class="hit" x="330" y="66" width="340" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="a_sidenav" aria-label="Sidebar 側邊導覽。工具型產品的常駐側欄，含 Navigation Rail、Tree View、Accordion。">
+            <rect class="hl" x="20" y="66" width="280" height="64" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="16" y="62" width="288" height="72" rx="11"/>
+            <text x="160" y="94" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">Sidebar／側邊導覽</text>
+            <text x="160" y="115" text-anchor="middle" font-size="11.5" fill="var(--muted)">常駐側欄・階層不超過兩層</text>
+            <text class="mark n" x="290" y="81" text-anchor="end">失誤 · B8</text>
+            <rect class="hit" x="20" y="66" width="280" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="a_sticky" aria-label="Sticky 浮動層。吸頂列、FAB 浮動動作按鈕、回頂端、固定操作列，共同風險是遮住內容。">
+            <rect class="hl" x="700" y="66" width="280" height="64" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="696" y="62" width="288" height="72" rx="11"/>
+            <text x="840" y="94" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">Sticky／浮動層</text>
+            <text x="840" y="115" text-anchor="middle" font-size="11.5" fill="var(--muted)">吸頂列・FAB・回頂端</text>
+            <text class="mark n" x="970" y="81" text-anchor="end">失誤 · B3</text>
+            <rect class="hit" x="700" y="66" width="280" height="64"/>
+          </g>
+          <line x1="326" y1="98" x2="306" y2="98" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="674" y1="98" x2="694" y2="98" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="500" y1="134" x2="500" y2="172" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== Band B：首屏 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="b_hero" aria-label="Hero 首屏。價值主張與主要 CTA，Above the Fold 不是固定像素高度。">
+            <rect class="hl" x="330" y="176" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="172" width="348" height="72" rx="11"/>
+            <text x="500" y="204" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">② Hero／首屏</text>
+            <text x="500" y="225" text-anchor="middle" font-size="11.5" fill="var(--muted)">價值主張 + 主要 CTA，非固定高度</text>
+            <text class="mark" x="660" y="191" text-anchor="end">失誤 · B4</text>
+            <rect class="hit" x="330" y="176" width="340" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="b_nav2" aria-label="頁內導覽。麵包屑、Tabs 分頁標籤、Stepper 步驟導引、章節錨點目錄。Tabs 與 Stepper 最常被混用。">
+            <rect class="hl" x="20" y="176" width="280" height="64" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="16" y="172" width="288" height="72" rx="11"/>
+            <text x="160" y="204" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">頁內導覽</text>
+            <text x="160" y="225" text-anchor="middle" font-size="11.5" fill="var(--muted)">麵包屑・Tabs・Stepper</text>
+            <text class="mark n" x="290" y="191" text-anchor="end">失誤 · B5</text>
+            <rect class="hit" x="20" y="176" width="280" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="b_banner" aria-label="Alert Banner 全站公告。持續性、影響整頁的狀態，與一次性的 Toast 分工不同。">
+            <rect class="hl" x="700" y="176" width="280" height="64" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="696" y="172" width="288" height="72" rx="11"/>
+            <text x="840" y="204" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">Alert Banner／公告</text>
+            <text x="840" y="225" text-anchor="middle" font-size="11.5" fill="var(--muted)">持續性狀態，非一次性結果</text>
+            <text class="mark n" x="970" y="191" text-anchor="end">失誤 · B1</text>
+            <rect class="hit" x="700" y="176" width="280" height="64"/>
+          </g>
+          <line x1="326" y1="208" x2="306" y2="208" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="674" y1="208" x2="694" y2="208" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="500" y1="244" x2="500" y2="282" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== Band C：內容容器決策點 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="c_decide" aria-label="決策點：內容主體要用什麼容器。判準是資料欄位是否同構、使用者是否需要橫向比較數值。">
+            <rect class="hl" x="330" y="286" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="282" width="348" height="88" rx="11"/>
+            <text x="500" y="322" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">③ 內容主體用什麼容器？</text>
+            <text x="500" y="344" text-anchor="middle" font-size="11.5" fill="var(--muted)">判準：是否同構・是否需橫向比較</text>
+            <text class="mark q" x="660" y="301" text-anchor="end">決策 · B4</text>
+            <rect class="hit" x="330" y="286" width="340" height="80"/>
+          </g>
+          <g fill="none" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4">
+            <path d="M500 370 V392"/>
+            <path d="M185 392 H825"/>
+            <path d="M185 392 V414" marker-end="url(#m-q)"/>
+            <path d="M520 392 V414" marker-end="url(#m-q)"/>
+            <path d="M825 392 V414" marker-end="url(#m-q)"/>
+          </g>
+
+          <!-- ===== Band D：三型內容容器 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="d_card" aria-label="卡片網格。商品、文章、專案清單，視覺辨識重於數值比較。含 Card、Thumbnail、Masonry、Bento Grid、Aspect Ratio Box。">
+            <rect class="hl" x="40" y="418" width="290" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="36" y="414" width="298" height="188" rx="11"/>
+            <text x="185" y="448" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">④a 卡片網格</text>
+            <text x="56" y="478" font-size="12" fill="var(--ink-2)">· 商品／文章／專案清單</text>
+            <text x="56" y="500" font-size="12" fill="var(--ink-2)">· 視覺辨識重於數值比較</text>
+            <text x="56" y="522" font-size="12" fill="var(--ink-2)">· 變體：Bento、Masonry</text>
+            <text x="56" y="544" font-size="12" fill="var(--ink-2)">· 圖片需先鎖定寬高比</text>
+            <text x="56" y="574" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：一張卡放太多重點</text>
+            <text class="mark n" x="320" y="433" text-anchor="end">失誤 · B11</text>
+            <rect class="hit" x="40" y="418" width="290" height="180"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="d_table" aria-label="資料表格。需要橫向比較數值時使用，可排序可批次操作，行動版降級方式必須在設計階段決定。">
+            <rect class="hl" x="380" y="418" width="280" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="376" y="414" width="288" height="188" rx="11"/>
+            <text x="520" y="448" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">④b 資料表格</text>
+            <text x="396" y="478" font-size="12" fill="var(--ink-2)">· 需要橫向比較數值</text>
+            <text x="396" y="500" font-size="12" fill="var(--ink-2)">· 可排序・可批次操作</text>
+            <text x="396" y="522" font-size="12" fill="var(--ink-2)">· 搭配篩選列與分頁器</text>
+            <text x="396" y="544" font-size="12" fill="var(--ink-2)">· KPI 卡是它的濃縮版</text>
+            <text x="396" y="574" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：手機怎麼辦沒先想</text>
+            <text class="mark n" x="650" y="433" text-anchor="end">失誤 · B4</text>
+            <rect class="hit" x="380" y="418" width="280" height="180"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="d_list" aria-label="清單流。同構項目、量大、以掃視效率優先。含 List Item、Avatar、Infinite Scroll、Load More、Skeleton Screen。">
+            <rect class="hl" x="690" y="418" width="270" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="686" y="414" width="278" height="188" rx="11"/>
+            <text x="825" y="448" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">④c 清單流</text>
+            <text x="706" y="478" font-size="12" fill="var(--ink-2)">· 同構項目、量大</text>
+            <text x="706" y="500" font-size="12" fill="var(--ink-2)">· 訊息、通知、設定</text>
+            <text x="706" y="522" font-size="12" fill="var(--ink-2)">· 掃視效率優先</text>
+            <text x="706" y="544" font-size="12" fill="var(--ink-2)">· 載入更多 vs 無限捲動</text>
+            <text x="706" y="574" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：返回沒記住位置</text>
+            <text class="mark n" x="950" y="433" text-anchor="end">失誤 · B3</text>
+            <rect class="hit" x="690" y="418" width="270" height="180"/>
+          </g>
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2">
+            <path d="M185 602 V632"/>
+            <path d="M520 602 V632"/>
+            <path d="M825 602 V632"/>
+            <path d="M185 632 H825"/>
+            <path d="M500 632 V660" stroke-width="2.5" marker-end="url(#m-s)"/>
+          </g>
+
+          <!-- ===== Band E：資料操作列 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="e_dataops" aria-label="資料操作列。搜尋、篩選、排序、分頁，這些元件都是有狀態的，條件是否保留與是否可分享必須先決定。">
+            <rect class="hl" x="330" y="664" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="660" width="348" height="72" rx="11"/>
+            <text x="500" y="692" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑤ 資料操作列</text>
+            <text x="500" y="713" text-anchor="middle" font-size="11.5" fill="var(--muted)">搜尋・篩選・排序・分頁（有狀態）</text>
+            <text class="mark" x="660" y="679" text-anchor="end">失誤 · B6</text>
+            <rect class="hit" x="330" y="664" width="340" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="e_empty" aria-label="空狀態、載入中、錯誤三種狀態。設計稿只畫有資料且正常的那一張，是跨職能最常見的返工來源。">
+            <rect class="hl" x="20" y="664" width="280" height="64" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.8"/>
+            <rect class="halo" x="16" y="660" width="288" height="72" rx="11"/>
+            <text x="160" y="692" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">空・載入・錯誤</text>
+            <text x="160" y="713" text-anchor="middle" font-size="11.5" fill="var(--muted)">設計稿最常漏掉的三張圖</text>
+            <text class="mark" x="290" y="679" text-anchor="end">難點 · B6</text>
+            <rect class="hit" x="20" y="664" width="280" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="e_density" aria-label="資訊密度與文字截斷。這個欄位最長會有多長，是設計交付時最常漏問的一句。含 Truncation、Tooltip、Whitespace、Divider。">
+            <rect class="hl" x="700" y="664" width="280" height="64" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="696" y="660" width="288" height="72" rx="11"/>
+            <text x="840" y="692" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">密度與文字截斷</text>
+            <text x="840" y="713" text-anchor="middle" font-size="11.5" fill="var(--muted)">最長會有多長？先定義</text>
+            <text class="mark n" x="970" y="679" text-anchor="end">失誤 · B4</text>
+            <rect class="hit" x="700" y="664" width="280" height="64"/>
+          </g>
+          <line x1="326" y1="696" x2="306" y2="696" stroke="var(--ev-hyp)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-h)"/>
+          <line x1="674" y1="696" x2="694" y2="696" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="500" y1="732" x2="500" y2="770" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== Band F：輸入元件決策點 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="f_decide" aria-label="決策點：輸入元件怎麼選。依序問三題，選項幾個、是否互斥、改了要不要按儲存才生效。">
+            <rect class="hl" x="330" y="774" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="770" width="348" height="88" rx="11"/>
+            <text x="500" y="810" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑥ 輸入元件怎麼選？</text>
+            <text x="500" y="832" text-anchor="middle" font-size="11.5" fill="var(--muted)">問三題：幾個・是否互斥・是否立即生效</text>
+            <text class="mark q" x="660" y="789" text-anchor="end">決策 · B7</text>
+            <rect class="hit" x="330" y="774" width="340" height="80"/>
+          </g>
+          <g fill="none" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4">
+            <path d="M500 858 V880"/>
+            <path d="M185 880 H825"/>
+            <path d="M185 880 V902" marker-end="url(#m-q)"/>
+            <path d="M520 880 V902" marker-end="url(#m-q)"/>
+            <path d="M825 880 V902" marker-end="url(#m-q)"/>
+          </g>
+
+          <!-- ===== Band G：三型輸入元件 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="g_choice" aria-label="選項少且互斥：Radio Button 與 Segmented Control。標籤文字必須可點擊，可不答的題目要給不指定選項。">
+            <rect class="hl" x="40" y="906" width="290" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="36" y="902" width="298" height="188" rx="11"/>
+            <text x="185" y="936" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑦a 少且互斥</text>
+            <text x="56" y="966" font-size="12" fill="var(--ink-2)">· 六個選項以內</text>
+            <text x="56" y="988" font-size="12" fill="var(--ink-2)">· Radio／Segmented</text>
+            <text x="56" y="1010" font-size="12" fill="var(--ink-2)">· 標籤文字要可點擊</text>
+            <text x="56" y="1032" font-size="12" fill="var(--ink-2)">· 複選則改用 Checkbox</text>
+            <text x="56" y="1062" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：選了就取消不掉</text>
+            <text class="mark n" x="320" y="921" text-anchor="end">失誤 · B7</text>
+            <rect class="hit" x="40" y="906" width="290" height="180"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="g_many" aria-label="選項多或需搜尋：Select 與 Combobox。超過十五個選項必須可搜尋，日期欄位一定要允許直接鍵入。">
+            <rect class="hl" x="380" y="906" width="280" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="376" y="902" width="288" height="188" rx="11"/>
+            <text x="520" y="936" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑦b 多或需搜尋</text>
+            <text x="396" y="966" font-size="12" fill="var(--ink-2)">· 六個以上用 Select</text>
+            <text x="396" y="988" font-size="12" fill="var(--ink-2)">· 十五個以上要可搜尋</text>
+            <text x="396" y="1010" font-size="12" fill="var(--ink-2)">· Combobox／日期選擇</text>
+            <text x="396" y="1032" font-size="12" fill="var(--ink-2)">· 少覆蓋原生元件</text>
+            <text x="396" y="1062" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：自訂的手機更難用</text>
+            <text class="mark n" x="650" y="921" text-anchor="end">失誤 · B10</text>
+            <rect class="hit" x="380" y="906" width="280" height="180"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="g_instant" aria-label="立即生效的開關：Toggle Switch 與 Slider。需要按儲存才生效的表單不要用 Toggle，文案要用肯定句。">
+            <rect class="hl" x="690" y="906" width="270" height="180" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="686" y="902" width="278" height="188" rx="11"/>
+            <text x="825" y="936" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑦c 立即生效</text>
+            <text x="706" y="966" font-size="12" fill="var(--ink-2)">· Toggle Switch</text>
+            <text x="706" y="988" font-size="12" fill="var(--ink-2)">· Slider 連續數值</text>
+            <text x="706" y="1010" font-size="12" fill="var(--ink-2)">· 切了就算數</text>
+            <text x="706" y="1032" font-size="12" fill="var(--ink-2)">· 需儲存者勿用</text>
+            <text x="706" y="1062" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：文案用了否定句</text>
+            <text class="mark n" x="950" y="921" text-anchor="end">失誤 · B2</text>
+            <rect class="hit" x="690" y="906" width="270" height="180"/>
+          </g>
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2">
+            <path d="M185 1090 V1120"/>
+            <path d="M520 1090 V1120"/>
+            <path d="M825 1090 V1120"/>
+            <path d="M185 1120 H825"/>
+            <path d="M500 1120 V1160" stroke-width="2.5" marker-end="url(#m-s)"/>
+          </g>
+
+          <!-- ===== Band H：欄位四件套（通欄） ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="h_field" aria-label="每個欄位的四件套：Label 標籤、Placeholder 預留提示、Helper Text 輔助說明、Error Message 錯誤訊息。用 placeholder 當標籤是表單設計最普遍的錯誤。">
+            <rect class="hl" x="40" y="1164" width="920" height="104" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="36" y="1160" width="928" height="112" rx="11"/>
+            <text x="500" y="1198" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑧ 每個欄位的四件套：Label／Placeholder／Helper／Error</text>
+            <text x="56" y="1228" font-size="12" fill="var(--ink-2)">· Label 常駐說明要填什麼 　· Placeholder 只給格式範例 　· Helper 在出錯前先講規則 　· Error 要說怎麼修正</text>
+            <text x="56" y="1252" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：用 placeholder 當標籤，使用者填到一半題目就消失了</text>
+            <text class="mark" x="950" y="1179" text-anchor="end">失誤 · B7</text>
+            <rect class="hit" x="40" y="1164" width="920" height="104"/>
+          </g>
+          <line x1="500" y1="1272" x2="500" y2="1302" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== Band J：回饋・Undo・覆蓋層 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="i_feedback" aria-label="送出後的回饋。Inline Validation 即時驗證、Toast 提示、成功狀態與後續動作。驗證時機必須統一。">
+            <rect class="hl" x="330" y="1306" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="1302" width="348" height="72" rx="11"/>
+            <text x="500" y="1334" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑨ 送出後的回饋</text>
+            <text x="500" y="1355" text-anchor="middle" font-size="11.5" fill="var(--muted)">Inline Validation・Toast・下一步</text>
+            <text class="mark" x="660" y="1321" text-anchor="end">失誤 · B7</text>
+            <rect class="hit" x="330" y="1306" width="340" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="i_undo" aria-label="Undo 復原幾乎永遠優於你確定嗎確認對話框。可逆的動作直接做並配一個 Undo，只有不可逆且影響他人的動作才值得攔下來。">
+            <rect class="hl" x="20" y="1306" width="280" height="64" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.8"/>
+            <rect class="halo" x="16" y="1302" width="288" height="72" rx="11"/>
+            <text x="160" y="1334" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">Undo 優於確認框</text>
+            <text x="160" y="1355" text-anchor="middle" font-size="11.5" fill="var(--muted)">可逆就直接做，配 Undo</text>
+            <text class="mark" x="290" y="1321" text-anchor="end">難點 · B6</text>
+            <rect class="hit" x="20" y="1306" width="280" height="64"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="j_overlay" aria-label="覆蓋層家族。Modal 對話框、Scrim 遮罩、Drawer 抽屜、Bottom Sheet、Popover、Lightbox、Command Palette。選型只看要不要打斷使用者、內容是否需要脈絡。">
+            <rect class="hl" x="700" y="1306" width="280" height="190" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="696" y="1302" width="288" height="198" rx="11"/>
+            <text x="840" y="1336" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--ink)">覆蓋層家族</text>
+            <text x="716" y="1366" font-size="12" fill="var(--ink-2)">· Modal 打斷且鎖焦點</text>
+            <text x="716" y="1388" font-size="12" fill="var(--ink-2)">· Drawer 保留脈絡</text>
+            <text x="716" y="1410" font-size="12" fill="var(--ink-2)">· Bottom Sheet 手機用</text>
+            <text x="716" y="1432" font-size="12" fill="var(--ink-2)">· Popover 錨定觸發點</text>
+            <text x="716" y="1454" font-size="12" fill="var(--ink-2)">· Command Palette</text>
+            <text x="716" y="1480" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">失誤：只說「彈窗」</text>
+            <text class="mark n" x="970" y="1321" text-anchor="end">失誤 · B9</text>
+            <rect class="hit" x="700" y="1306" width="280" height="190"/>
+          </g>
+          <line x1="326" y1="1338" x2="306" y2="1338" stroke="var(--ev-hyp)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-h)"/>
+          <line x1="674" y1="1338" x2="694" y2="1338" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="500" y1="1374" x2="500" y2="1408" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== Band K：Footer ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="k_footer" aria-label="Footer 頁尾。法務、聯絡資訊、次要連結的收納區。重要資訊只放頁尾等於沒有放。">
+            <rect class="hl" x="330" y="1412" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="1408" width="348" height="72" rx="11"/>
+            <text x="500" y="1440" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">⑩ Footer／頁尾</text>
+            <text x="500" y="1461" text-anchor="middle" font-size="11.5" fill="var(--muted)">法務・聯絡・次要連結的收納區</text>
+            <text class="mark" x="660" y="1427" text-anchor="end">失誤 · B5</text>
+            <rect class="hit" x="330" y="1412" width="340" height="64"/>
+          </g>
+
+          <!-- ===== 匯流至設計系統基礎 ===== -->
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2">
+            <path d="M500 1480 V1524"/>
+            <path d="M840 1500 V1524"/>
+            <path d="M160 1374 V1524"/>
+            <path d="M160 1524 H840"/>
+            <path d="M500 1524 V1552" stroke-width="2.5" marker-end="url(#m-s)"/>
+          </g>
+          <g class="hot" tabindex="0" role="button" data-k="z_system" aria-label="貫穿全圖的設計系統基礎。Design Token 設計變數、Type Scale 字級階層、Spacing Scale 間距尺度、Semantic Color 語意色、Contrast Ratio 對比度、Elevation 陰影層級、Focus Ring 焦點環、Breakpoint 響應式斷點、Dark Mode 深色模式。">
+            <rect class="hl" x="40" y="1556" width="920" height="110" rx="10" fill="var(--ev-strong-bg)" stroke="var(--ev-strong)" stroke-width="2"/>
+            <rect class="halo" x="36" y="1552" width="928" height="118" rx="12"/>
+            <text x="500" y="1592" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">貫穿全圖：設計系統基礎（Design System Foundations）</text>
+            <text x="56" y="1622" font-size="12" fill="var(--ink-2)">· Token 命名寫用途不寫外觀 　· 文字對比至少 4.5:1 　· 觸控目標 44×44 pt 　· 絕不移除 focus ring</text>
+            <text x="56" y="1648" font-size="12" fill="var(--ink-2)">· 斷點依內容決定不綁機型 　· 深色模式不是把顏色反相 　· 每個元件都要有 hover／focus／disabled 三態</text>
+            <text class="mark" x="950" y="1571" text-anchor="end">收斂 · B1</text>
+            <rect class="hit" x="40" y="1556" width="920" height="110"/>
+          </g>
+
+          <!-- ================== /圖形主體 ==================== -->
+
+          <text x="40" y="1710" font-size="11" fill="var(--muted)">中央實線＝畫面由上而下的主軸；虛線＝需先回答判準的決策點；點線＝旁支元件。所有數值判準以所屬團隊的設計系統與無障礙規範為準。</text>
+        </svg>
+      </div>
+      <figcaption><b>怎麼讀這張圖。</b>中央那一欄是使用者實際會遇到的順序：進站看到 Header，往下是首屏，再往下是內容、表單、送出、頁尾。左右兩欄是不在這條動線上、但會影響整頁的東西——左邊是全域導覽與最常被漏掉的狀態設計，右邊是浮動與覆蓋層。<b>兩個虛線框是決策點</b>：③ 決定內容用什麼容器、⑥ 決定用哪種輸入元件；這兩題答錯，下游的元件全都要重做，所以判準直接寫在框裡而不是留給討論。最底下的通欄方塊是收斂點——上面每一格的差異，最後都會回到同一套 token 與同一組可存取性判準。<b>滑過任一格</b>可看到該區塊的完整名詞清單與可驗收的檢查要點；鍵盤使用者可用 Tab 逐格聚焦，Esc 關閉。</figcaption>
+    </figure>
+  </section>
+
+  </div><!-- /p-flow -->
+
+  <!-- ================= 分頁二：難點・鑑別・書目 ================= -->
+  <div class="panel" id="p-ref" role="tabpanel" aria-labelledby="t-ref" hidden>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">關 鍵 難 點</div>
+      <h2>十個一句話就能記住的失誤</h2>
+      <p class="sec-note">把圖上每一格的「關鍵難點」抽出來獨立成卡，適合在設計交付前、或 spec review 前掃一遍。每張卡的標題就是可以直接拿去講的那句話。</p>
+    </div>
+    <div class="reads">
+      <article class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">狀 態 設 計</div>
+        <div class="read-obs">設計稿只畫「有資料且正常」的那一張，就是在請工程師自己發明另外三張</div>
+        <p class="read-int">每個會載入資料的區塊都要交付四張圖：<b>載入中、空的、出錯、內容過長</b>。缺哪一張，實作時就會出現一個沒人審過的畫面。空狀態還要再分「還沒建立過」與「篩選後無結果」——前者要給建立入口，後者要給放寬條件的建議，兩者的文案完全不同。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">表 單</div>
+        <div class="read-obs">用 placeholder 當標籤，等於在使用者填到一半時把題目收走</div>
+        <p class="read-int">Placeholder 只要一開始輸入就會消失。長表單填到第七格回頭檢查，會發現自己完全不記得每格要什麼。<b>Label 必須常駐</b>，而且要與欄位綁定（點標籤能聚焦欄位）。若真的沒有空間，用 Floating Label，不要直接省掉。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-strong)">
+        <div class="read-tag">動 作 設 計</div>
+        <div class="read-obs">Undo 幾乎永遠優於「你確定嗎？」</div>
+        <p class="read-int">確認對話框會被訓練成無腦點掉，真正的誤刪照樣發生，代價是每一次正常操作都多一步。<b>可逆的動作直接做，配一個停留 5–10 秒的 Undo</b>；只有真正不可逆、且影響他人的動作才值得攔下來，而且該要求輸入名稱確認，不是按「確定」。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">元 件 選 型</div>
+        <div class="read-obs">講「彈窗」而不指名，工程師就會做出另一個</div>
+        <p class="read-int">Modal 打斷流程且鎖定焦點、Drawer 與 Bottom Sheet 保留脈絡、Popover 錨定在觸發元素旁、Toast 完全不打斷。<b>選型只看兩件事：要不要打斷使用者、內容是否需要原本的脈絡。</b>需求文件寫「彈窗」，等於把這個決定丟給實作者猜。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">內 容 長 度</div>
+        <div class="read-obs">沒定義最大字數，中文長名稱就會撐爆你的卡片</div>
+        <p class="read-int">「這個欄位最長會有多長？」是交付時最常漏問的一句。<b>每個文字欄位都要標最大字數與截斷方式</b>，並決定截斷後能不能看到全文。設計稿裡的假資料通常剛好，正式資料通常不是。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">可 存 取 性</div>
+        <div class="read-obs">outline:none 是一行程式碼，代價是整個鍵盤族群</div>
+        <p class="read-int">移除焦點環之後，只用鍵盤操作的人完全不知道游標在哪。<b>不喜歡預設樣式就換一個，不要拿掉。</b>同一組人也依賴另外三件事：Tab 順序與視覺順序一致、Modal 開啟時焦點鎖在裡面、關閉後焦點回到觸發它的按鈕。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">色 彩</div>
+        <div class="read-obs">只用顏色傳達意義，對紅綠色覺辨識障礙者等於沒有標示</div>
+        <p class="read-int">紅綠色覺辨識障礙在男性約占 8%。狀態標籤、漲跌數字、必填標記、錯誤欄位——<b>顏色之外一定要有第二個編碼</b>：圖示、文字、線型或位置。這也是為什麼這張圖的四種語義同時用了顏色與線型。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-strong)">
+        <div class="read-tag">設 計 系 統</div>
+        <div class="read-obs">13px、17px 這種隨手數值，三個月後會變成幾百個一次性樣式</div>
+        <p class="read-int">間距、字級、圓角、陰影都應該來自 token，而不是逐案調整。<b>Token 命名要寫用途（color-danger）而非外觀（red-500）</b>，否則改品牌色時你會發現「red-500」被拿去當成功色用了。設計檔與程式碼必須共用同一份定義，不能各維護一套。</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">導 覽</div>
+        <div class="read-obs">Tabs 做成流程、Stepper 做成分頁，是同一個錯誤的兩個方向</div>
+        <p class="read-int">Tabs 是<b>平行且可任意切換</b>的內容視圖，Stepper 是<b>有先後順序</b>的流程。把結帳做成 Tabs，使用者會跳過必填步驟；把平行內容做成 Stepper，使用者被迫走完才能看第三項。分不清時問一句：跳著看會不會出事？</p>
+      </article>
+      <article class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">行 動 裝 置</div>
+        <div class="read-obs">hover 才看得到的資訊，在手機上等於不存在</div>
+        <p class="read-int">Tooltip、hover 展開的 Mega Menu、滑過才出現的操作按鈕，在觸控裝置上都沒有對應行為。<b>必要資訊永遠不能只靠 hover 揭露。</b>同理，觸控目標小於 44×44 pt 在桌機上點得到、在手機上點不到，設計稿的滑鼠游標會騙人。</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">名 詞 總 表</div>
+      <h2>100 個名詞・完整對照</h2>
+      <p class="sec-note">圖上 23 格是骨架，這張表是完整清單。組別代碼對應同目錄《網頁 UI.md》的 A–H 八組：A 導覽｜B 版面｜C 按鈕｜D 表單｜E 回饋｜F 覆蓋層｜G 資料展示｜H 系統基礎。「最常踩的一件事」每項只留最致命的那個，完整的三項失誤請查 md 檔。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>組</th><th>名詞</th><th>常見位置</th><th>最常踩的一件事</th></tr></thead>
+        <tbody>
+        <tr><td>A</td><td class="k">Header／App Bar<br><small>頁首列</small></td><td>畫面最上緣，橫跨全寬</td><td>塞太多東西導致高度膨脹，行動版沒有縮減策略</td></tr>
+        <tr><td>A</td><td class="k">Navbar<br><small>主導覽列</small></td><td>Header 內，水平排列</td><td>沒有標示目前所在頁（active state）</td></tr>
+        <tr><td>A</td><td class="k">Logo／Wordmark<br><small>品牌標記</small></td><td>Header 左上角</td><td>忘了讓它可點擊回首頁</td></tr>
+        <tr><td>A</td><td class="k">Hamburger Menu<br><small>漢堡選單</small></td><td>手機版 header 角落</td><td>桌機版也硬用，把主導覽藏起來降低發現率</td></tr>
+        <tr><td>A</td><td class="k">Sidebar／Side Nav<br><small>側邊導覽</small></td><td>畫面左側，多見於後台</td><td>階層做到三層以上，使用者記不住位置</td></tr>
+        <tr><td>A</td><td class="k">Mega Menu<br><small>大型下拉選單</small></td><td>頂部導覽展開的大面板</td><td>用 hover 觸發導致誤觸，行動裝置無替代方案</td></tr>
+        <tr><td>A</td><td class="k">Dropdown Menu<br><small>下拉選單</small></td><td>按鈕或導覽項下方</td><td>與表單用的 Select 混用命名</td></tr>
+        <tr><td>A</td><td class="k">Breadcrumb<br><small>麵包屑</small></td><td>內容區上方、標題之前</td><td>用在扁平網站變成純裝飾</td></tr>
+        <tr><td>A</td><td class="k">Tabs<br><small>分頁標籤</small></td><td>內容區上緣，橫向並列</td><td>拿來做有順序的流程（該用 Stepper）</td></tr>
+        <tr><td>A</td><td class="k">Bottom Navigation<br><small>底部導覽列</small></td><td>手機畫面最下緣</td><td>項目超過 5 個，或只放圖示不加文字</td></tr>
+        <tr><td>A</td><td class="k">Footer<br><small>頁尾</small></td><td>頁面最底部</td><td>重要資訊（退換貨、客服）只放在這裡</td></tr>
+        <tr><td>A</td><td class="k">Sticky Header<br><small>吸頂列</small></td><td>捲動時固定於視窗頂端</td><td>擋住錨點跳轉的目標標題</td></tr>
+        <tr><td>A</td><td class="k">Skip Link<br><small>跳至主內容</small></td><td>DOM 最前端，聚焦才現形</td><td>完全不做，鍵盤使用者每頁都要 Tab 過導覽</td></tr>
+        <tr><td>A</td><td class="k">Pagination<br><small>分頁器</small></td><td>清單或表格下方</td><td>跳頁後沒有捲回清單頂端</td></tr>
+        <tr><td>A</td><td class="k">Stepper／Wizard<br><small>步驟導引</small></td><td>多步驟流程頁面上方</td><td>不允許回上一步修改，或沒保存中途資料</td></tr>
+        <tr><td>A</td><td class="k">Back to Top<br><small>回頂端</small></td><td>右下角浮動</td><td>一開始就顯示，且遮住行動版主要 CTA</td></tr>
+        <tr><td>B</td><td class="k">Hero Section<br><small>首圖區</small></td><td>首頁或著陸頁最上方</td><td>同時放三個以上同權重按鈕</td></tr>
+        <tr><td>B</td><td class="k">Above the Fold<br><small>首屏</small></td><td>不需捲動即可見的區域</td><td>當成固定高度，硬把所有資訊擠進去</td></tr>
+        <tr><td>B</td><td class="k">Grid System<br><small>網格系統</small></td><td>貫穿整個版面的隱形骨架</td><td>元素隨手擺放不落欄，每頁自訂欄數</td></tr>
+        <tr><td>B</td><td class="k">Gutter<br><small>欄間距</small></td><td>網格欄與欄之間的空白</td><td>用不成系統的隨機數值</td></tr>
+        <tr><td>B</td><td class="k">Container／Max-width<br><small>內容容器</small></td><td>包住內容的最外層限寬區塊</td><td>內容 100% 撐滿，一行超過 100 字難讀</td></tr>
+        <tr><td>B</td><td class="k">Whitespace<br><small>留白・負空間</small></td><td>元素四周與區塊之間</td><td>區塊內外間距相同，導致視覺分組失效</td></tr>
+        <tr><td>B</td><td class="k">Card<br><small>卡片</small></td><td>清單、儀表板、商品列表</td><td>卡內資訊太雜，沒有明確主從</td></tr>
+        <tr><td>B</td><td class="k">Divider<br><small>分隔線</small></td><td>清單項目間、區塊之間</td><td>到處加線讓版面碎裂，已有留白仍疊加</td></tr>
+        <tr><td>B</td><td class="k">Accordion／Disclosure<br><small>摺疊面板</small></td><td>FAQ、設定頁、篩選側欄</td><td>把核心內容也摺起來，降低發現率</td></tr>
+        <tr><td>B</td><td class="k">Masonry Layout<br><small>瀑布流</small></td><td>圖片牆、作品集</td><td>用在需要橫向比較的清單</td></tr>
+        <tr><td>B</td><td class="k">Bento Grid<br><small>便當格版面</small></td><td>產品官網功能區、儀表板</td><td>格子大小隨機，沒有主次邏輯</td></tr>
+        <tr><td>B</td><td class="k">Sticky Action Bar<br><small>固定操作列</small></td><td>畫面底部或表單下緣</td><td>遮住最後一列內容而沒加底部留白</td></tr>
+        <tr><td>B</td><td class="k">Section Anchor／TOC<br><small>章節錨點目錄</small></td><td>長文側邊浮動</td><td>跳轉後標題被吸頂列擋住</td></tr>
+        <tr><td>B</td><td class="k">Aspect Ratio Box<br><small>比例容器</small></td><td>圖片、影片、縮圖外層</td><td>不設比例，載入時版面跳動（CLS）</td></tr>
+        <tr><td>C</td><td class="k">Primary Button<br><small>主要按鈕</small></td><td>表單底部、卡片內、Hero 區</td><td>一個畫面出現多顆主要按鈕</td></tr>
+        <tr><td>C</td><td class="k">Secondary／Ghost Button<br><small>次要・幽靈按鈕</small></td><td>主要按鈕旁</td><td>把「取消」做得比「確認」顯眼</td></tr>
+        <tr><td>C</td><td class="k">Text Button<br><small>文字按鈕</small></td><td>對話框角落、卡片底部</td><td>與內文連結長得一樣，分不清可點與否</td></tr>
+        <tr><td>C</td><td class="k">Icon Button<br><small>圖示按鈕</small></td><td>工具列、卡片右上、表格列尾</td><td>沒有 aria-label 與 tooltip，語意只靠猜</td></tr>
+        <tr><td>C</td><td class="k">FAB<br><small>浮動動作按鈕</small></td><td>行動版右下角浮動</td><td>一個畫面放多顆，或遮住清單最後一筆</td></tr>
+        <tr><td>C</td><td class="k">CTA<br><small>行動呼籲</small></td><td>Hero、區塊結尾、頁尾</td><td>一頁塞太多 CTA，互相稀釋</td></tr>
+        <tr><td>C</td><td class="k">Segmented Control<br><small>分段控制器</small></td><td>內容區上方、篩選列</td><td>選項超過 5 個，或選中狀態對比不足</td></tr>
+        <tr><td>C</td><td class="k">Button Group<br><small>按鈕群組</small></td><td>工具列、編輯器</td><td>群組內混入不同性質的動作</td></tr>
+        <tr><td>C</td><td class="k">Toggle Button<br><small>狀態切換鈕</small></td><td>工具列（粗體／斜體）</td><td>選中與未選中的對比太弱</td></tr>
+        <tr><td>D</td><td class="k">Text Field／Input<br><small>單行輸入框</small></td><td>表單各處</td><td>未指定合適的行動裝置鍵盤類型</td></tr>
+        <tr><td>D</td><td class="k">Label<br><small>欄位標籤</small></td><td>輸入框上方或左側</td><td>用 placeholder 取代 label</td></tr>
+        <tr><td>D</td><td class="k">Placeholder<br><small>預留提示文字</small></td><td>輸入框內的灰字</td><td>當成 label 使用，輸入後提示就消失</td></tr>
+        <tr><td>D</td><td class="k">Helper Text<br><small>輔助說明</small></td><td>輸入框下方小字</td><td>只在出錯後才出現，變成事後諸葛</td></tr>
+        <tr><td>D</td><td class="k">Error Message<br><small>錯誤訊息</small></td><td>對應欄位下方</td><td>寫「格式錯誤」卻不說正確格式是什麼</td></tr>
+        <tr><td>D</td><td class="k">Floating Label<br><small>浮動標籤</small></td><td>輸入框內，聚焦時上浮</td><td>浮起後字太小難讀，與 helper text 擠在一起</td></tr>
+        <tr><td>D</td><td class="k">Textarea<br><small>多行輸入框</small></td><td>留言、備註、描述欄位</td><td>預設高度太矮，需一直捲動</td></tr>
+        <tr><td>D</td><td class="k">Select<br><small>下拉選擇器</small></td><td>表單中固定選項欄位</td><td>選項超過 15 項仍不加搜尋</td></tr>
+        <tr><td>D</td><td class="k">Combobox／Autocomplete<br><small>可搜尋下拉</small></td><td>搜尋欄、大型選單</td><td>建議清單無法用鍵盤上下鍵操作</td></tr>
+        <tr><td>D</td><td class="k">Checkbox<br><small>複選框</small></td><td>表單、篩選器、清單多選</td><td>標籤文字不可點擊；缺少半選狀態</td></tr>
+        <tr><td>D</td><td class="k">Radio Button<br><small>單選鈕</small></td><td>互斥選項組</td><td>沒有預設值也沒有「不指定」，選了取消不掉</td></tr>
+        <tr><td>D</td><td class="k">Toggle Switch<br><small>開關</small></td><td>設定頁</td><td>用在需要按「儲存」才生效的表單</td></tr>
+        <tr><td>D</td><td class="k">Slider<br><small>滑桿</small></td><td>價格區間、音量、亮度</td><td>需要精確數值時只給滑桿而無輸入框</td></tr>
+        <tr><td>D</td><td class="k">Date Picker<br><small>日期選擇器</small></td><td>預約、篩選、表單</td><td>不允許直接鍵入日期</td></tr>
+        <tr><td>D</td><td class="k">File Upload／Dropzone<br><small>檔案上傳區</small></td><td>表單、編輯器</td><td>不寫格式與大小限制，失敗後要求整份重填</td></tr>
+        <tr><td>D</td><td class="k">Search Bar<br><small>搜尋列</small></td><td>Header、清單上方</td><td>送出後不保留關鍵字於輸入框</td></tr>
+        <tr><td>D</td><td class="k">Tag／Chip Input<br><small>標籤輸入</small></td><td>收件人、關鍵字、篩選條件</td><td>沒說明用什麼鍵確認（Enter 或逗號）</td></tr>
+        <tr><td>D</td><td class="k">Password Field<br><small>密碼欄位</small></td><td>登入與註冊</td><td>禁止貼上，妨礙密碼管理工具</td></tr>
+        <tr><td>D</td><td class="k">Fieldset／Form Group<br><small>欄位群組</small></td><td>長表單中</td><td>分組邏輯依資料表結構而非使用者心智</td></tr>
+        <tr><td>D</td><td class="k">Inline Edit<br><small>就地編輯</small></td><td>表格儲存格、個人資料</td><td>看不出哪裡可編輯，也沒有取消與復原</td></tr>
+        <tr><td>D</td><td class="k">CAPTCHA<br><small>人機驗證</small></td><td>表單送出前</td><td>驗證失敗後清空整份表單</td></tr>
+        <tr><td>E</td><td class="k">Toast／Snackbar<br><small>浮動提示</small></td><td>畫面底部或右上角</td><td>用來傳達必須處理的錯誤，使用者一定錯過</td></tr>
+        <tr><td>E</td><td class="k">Alert Banner<br><small>橫幅提示</small></td><td>頁面頂端或內容區上方</td><td>長期常駐造成「橫幅盲」，且不可關閉</td></tr>
+        <tr><td>E</td><td class="k">Inline Validation<br><small>即時驗證</small></td><td>欄位旁，輸入當下觸發</td><td>還沒打完就報錯，造成填寫焦慮</td></tr>
+        <tr><td>E</td><td class="k">Spinner／Loader<br><small>載入指示器</small></td><td>按鈕內、區塊中央</td><td>短於 300 ms 也顯示，造成畫面閃爍</td></tr>
+        <tr><td>E</td><td class="k">Progress Bar<br><small>進度條</small></td><td>上傳、多步驟流程</td><td>不確定時長卻用了確定型進度條</td></tr>
+        <tr><td>E</td><td class="k">Skeleton Screen<br><small>骨架屏</small></td><td>內容載入中的位置</td><td>骨架形狀與實際內容差距大，載入後跳版</td></tr>
+        <tr><td>E</td><td class="k">Empty State<br><small>空狀態</small></td><td>清單、搜尋結果、儀表板</td><td>只放一句「沒有資料」，沒有下一步入口</td></tr>
+        <tr><td>E</td><td class="k">Error Page<br><small>錯誤頁 404／500</small></td><td>整頁替換</td><td>只顯示錯誤代碼，沒有回到正軌的出口</td></tr>
+        <tr><td>E</td><td class="k">Success State<br><small>成功狀態</small></td><td>流程結束頁、對話框</td><td>成功後把使用者留在死路，沒有後續動作</td></tr>
+        <tr><td>E</td><td class="k">Badge／Notification Dot<br><small>徽章・紅點</small></td><td>圖示右上角</td><td>數字無上限（顯示 1284），紅點沒有清除規則</td></tr>
+        <tr><td>E</td><td class="k">Tooltip<br><small>工具提示</small></td><td>hover 或 focus 於元素旁</td><td>放置必要資訊，觸控裝置根本觸發不了</td></tr>
+        <tr><td>E</td><td class="k">Status Chip／Pill<br><small>狀態標籤</small></td><td>表格列、卡片角落</td><td>只靠顏色區分，色覺辨識障礙者不可辨</td></tr>
+        <tr><td>E</td><td class="k">Optimistic UI<br><small>樂觀更新</small></td><td>按讚、加入清單等輕量動作</td><td>失敗時沒有回滾與說明</td></tr>
+        <tr><td>E</td><td class="k">Undo<br><small>復原動作</small></td><td>Toast 內或工具列</td><td>只給 3 秒，或已可復原卻仍彈確認框</td></tr>
+        <tr><td>F</td><td class="k">Modal／Dialog<br><small>強制對話框</small></td><td>畫面正中，覆蓋主內容</td><td>焦點沒有鎖在對話框內，且 Esc 無法關閉</td></tr>
+        <tr><td>F</td><td class="k">Scrim／Backdrop<br><small>遮罩層</small></td><td>覆蓋層與主內容之間</td><td>太透明分不出層級，或太黑讓人失去脈絡</td></tr>
+        <tr><td>F</td><td class="k">Drawer／Off-canvas<br><small>抽屜面板</small></td><td>從左右側滑入</td><td>關閉後篩選條件遺失</td></tr>
+        <tr><td>F</td><td class="k">Bottom Sheet<br><small>底部彈出面板</small></td><td>手機畫面下方上滑</td><td>高度沒有段位，也沒有可拖曳的把手提示</td></tr>
+        <tr><td>F</td><td class="k">Popover<br><small>浮出小面板</small></td><td>錨定在觸發元素旁</td><td>沒處理視窗邊界，內容被裁切</td></tr>
+        <tr><td>F</td><td class="k">Context Menu<br><small>情境選單</small></td><td>右鍵或長按位置</td><td>覆蓋原生右鍵卻不提供等效功能</td></tr>
+        <tr><td>F</td><td class="k">Lightbox<br><small>燈箱</small></td><td>全螢幕圖片檢視</td><td>沒有關閉按鈕，也不支援手勢縮放</td></tr>
+        <tr><td>F</td><td class="k">Command Palette<br><small>指令面板（⌘K）</small></td><td>快捷鍵喚起的置中搜尋框</td><td>沒有任何入口提示，只有知道的人才知道</td></tr>
+        <tr><td>F</td><td class="k">Coach Mark／Product Tour<br><small>新手導引</small></td><td>首次使用的聚光燈提示</td><td>一次連跳八步且無法跳過</td></tr>
+        <tr><td>G</td><td class="k">Data Table<br><small>資料表格</small></td><td>後台、報表頁</td><td>數字不靠右對齊，行動版沒有降級方案</td></tr>
+        <tr><td>G</td><td class="k">List View／List Item<br><small>清單與列項</small></td><td>訊息、通知、設定</td><td>列高太小難點擊，主要資訊沒放在視覺起點</td></tr>
+        <tr><td>G</td><td class="k">Avatar<br><small>頭像</small></td><td>留言、成員清單、header</td><td>沒有無圖時的文字縮寫替代</td></tr>
+        <tr><td>G</td><td class="k">Thumbnail<br><small>縮圖</small></td><td>商品列表、文章卡片</td><td>比例不統一，置中裁切切掉主體</td></tr>
+        <tr><td>G</td><td class="k">Carousel<br><small>輪播</small></td><td>首頁 Hero、相關商品</td><td>自動輪播無法暫停，第一張以外幾乎沒人看</td></tr>
+        <tr><td>G</td><td class="k">Tree View<br><small>樹狀檢視</small></td><td>檔案總管、分類管理</td><td>縮排不足看不出層級，展開狀態不保存</td></tr>
+        <tr><td>G</td><td class="k">KPI Card／Stat Tile<br><small>指標卡</small></td><td>儀表板頂部</td><td>只有數字沒有比較基準與時間範圍</td></tr>
+        <tr><td>G</td><td class="k">Filter Bar／Facets<br><small>篩選列</small></td><td>清單上方或左側</td><td>已套用的條件不顯示也無法一鍵清除</td></tr>
+        <tr><td>G</td><td class="k">Infinite Scroll／Load More<br><small>無限捲動・載入更多</small></td><td>長清單底部</td><td>頁尾永遠碰不到，返回後失去原本位置</td></tr>
+        <tr><td>H</td><td class="k">Design Token<br><small>設計變數</small></td><td>設計系統底層，貫穿所有元件</td><td>命名綁死外觀（blue-500）而非用途（color-danger）</td></tr>
+        <tr><td>H</td><td class="k">Type Scale<br><small>字級階層</small></td><td>全站文字系統</td><td>字級種類過多，且行高沒跟著一起調</td></tr>
+        <tr><td>H</td><td class="k">Spacing Scale／8pt Grid<br><small>間距尺度</small></td><td>所有元件的內外間距</td><td>用 13px、17px 這類隨手數值</td></tr>
+        <tr><td>H</td><td class="k">Semantic Color<br><small>語意色</small></td><td>狀態、提示、按鈕</td><td>顏色是唯一的區別手段</td></tr>
+        <tr><td>H</td><td class="k">Contrast Ratio<br><small>對比度（WCAG）</small></td><td>文字與背景、圖示與背景</td><td>用淺灰字追求「高級感」，一般文字低於 4.5:1</td></tr>
+        <tr><td>H</td><td class="k">Elevation／Shadow<br><small>層級與陰影</small></td><td>卡片、彈窗、浮動元素</td><td>每個元件自訂陰影，深色模式仍沿用亮色陰影</td></tr>
+        <tr><td>H</td><td class="k">Focus Ring<br><small>鍵盤焦點環</small></td><td>任何可聚焦元素</td><td>為了美觀直接 outline:none 且無替代</td></tr>
+        <tr><td>H</td><td class="k">Responsive Breakpoint<br><small>響應式斷點</small></td><td>全站版面規則</td><td>依特定機型寬度而非內容決定斷點</td></tr>
+        </tbody>
+      </table>
+      <p class="tnote">共 100 項。這張表刻意只留一句最致命的失誤，是為了能在會議上快速掃過；每個名詞的完整四欄（名稱／常見位置／主要用途／新手易犯失誤）在同目錄的《網頁 UI.md》。表中的數值判準（44×44 pt、4.5:1、15 個選項、300 ms）是業界常見的參考值，各團隊的設計系統可能另有規定，以所屬團隊的規範為準。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">書 目 依 據</div>
+      <h2>規範、設計系統與參考書</h2>
+      <p class="sec-note">流程圖上標「書 Bn」的節點對應下列條目。灰色標籤列出該書在圖中支撐哪一格。</p>
+    </div>
+    <div class="reflist" id="booklist"></div>
+  </section>
+
+  </div><!-- /p-ref -->
+
+  <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+
+  <footer>單一 HTML 檔，無外部資源，可離線開啟；深淺色隨系統。互動：滑鼠移上、點選鎖定、Tab 逐格聚焦、Esc 關閉。<br>
+  本頁的名詞定義與失誤清單整理自《網頁 UI.md》，書目版次與線上文件章節請自行核對；WCAG、Material Design、Apple HIG 等規範會隨版本更新，數值判準以你所屬團隊的設計系統與無障礙規範為準。所有具體數字（觸控目標、對比度、選項門檻、延遲毫秒）皆為業界常見參考值，不是各家一致的硬性標準。</footer>
+
+</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 書目 ---------------- */
+  var BOOKS = {
+    B1:{t:"Web Content Accessibility Guidelines (WCAG) 2.2", s:"W3C Recommendation (2023)｜對比・焦點・目標尺寸", m:"W3C 無障礙規範。本頁所有對比度、焦點環、觸控目標的判準以此為源頭。", kind:"指引"},
+    B2:{t:"Material Design 3", s:"Google 設計系統線上文件｜Foundations／Components", m:"導覽、覆蓋層、開關類元件的行為定義寫得最完整，跨職能討論時的共同語言。", kind:"線上資源"},
+    B3:{t:"Apple Human Interface Guidelines", s:"Apple Developer 線上文件｜Layout／Components", m:"觸控目標 44×44 pt 的來源；行動裝置元件（Bottom Sheet、清單）的判準參考。", kind:"線上資源"},
+    B4:{t:"Refactoring UI", s:"Adam Wathan & Steve Schoger (2018)", m:"版面、留白、層級、卡片設計的實務規則，全書都是可直接照做的判準。", kind:"教科書"},
+    B5:{t:"Don't Make Me Think, Revisited", s:"Steve Krug (2014, 3rd ed.)", m:"導覽、首屏、頁尾的可用性基本盤；「不要讓我思考」是本頁多數失誤的共同解釋。", kind:"教科書"},
+    B6:{t:"10 Usability Heuristics for User Interface Design", s:"Jakob Nielsen (1994)；NN/g 2020 修訂", m:"系統狀態可見性、使用者控制與自由（Undo）、錯誤預防三條，對應本頁的狀態與動作設計。", kind:"回顧"},
+    B7:{t:"Forms that Work: Designing Web Forms for Usability", s:"Caroline Jarrett & Gerry Gaffney (2008)", m:"表單章節的主要依據：標籤、說明、驗證時機、欄位分組的取捨。", kind:"教科書"},
+    B8:{t:"Design Systems", s:"Alla Kholmatova (2017, Smashing Magazine)", m:"Token、命名、一致性如何在組織中維持；解釋為什麼隨手數值三個月後會失控。", kind:"教科書"},
+    B9:{t:"Inclusive Components", s:"Heydon Pickering (2019)", m:"逐個元件講可存取的實作方式，覆蓋層與自訂表單元件特別實用。", kind:"教科書"},
+    B10:{t:"WAI-ARIA Authoring Practices Guide (APG)", s:"W3C 線上文件｜Dialog・Combobox・Tabs 等 pattern", m:"鍵盤操作與 ARIA 角色的標準答案；自訂元件前應先查對應 pattern。", kind:"指引"},
+    B11:{t:"Cumulative Layout Shift (CLS)", s:"web.dev 線上文件｜Core Web Vitals", m:"版面位移的量化指標，說明為什麼圖片與骨架屏必須先鎖定尺寸。", kind:"線上資源"},
+  };
+
+  /* ---------------- 各節點之鑑別診斷／難點／書目 ---------------- */
+  var DATA = {
+    a_header:{seg:"① Header／App Bar・頁首列",
+      warn:"<b>Header</b> 是最上方那條容器，<b>Navbar</b> 是裡面的導覽項目群。說「改 header」請指明改哪一個。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Header／App Bar</b>：最上方橫跨全寬的容器","<b>Navbar</b>：header 內的主導覽項目群","<b>Logo／Wordmark</b>：品牌標記，須可點回首頁","<b>Skip Link</b>：聚焦才現形的「跳至主內容」"]},
+        {label:"檢查要點", items:["頂層導覽 6–7 項為上限，超過要分層","目前所在頁必須有 active 樣式","Logo 一定要連回首頁"]}
+      ],
+      books:["B2"]},
+
+    a_sidenav:{seg:"Sidebar／側邊導覽",
+      warn:"階層做到第三層，使用者就記不住自己在哪。收合成只剩圖示又沒 tooltip，等於把功能藏起來。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Sidebar／Side Nav</b>：常駐的側邊導覽欄","<b>Navigation Rail</b>：只剩圖示的窄側欄","<b>Tree View</b>：可展開收合的階層清單","<b>Drawer</b>：滑入後會關掉，與 Sidebar 不同"]},
+        {label:"檢查要點", items:["導覽階層不超過兩層","收合狀態要記住，下次進來維持一樣","只剩圖示時，每個項目都要有 tooltip"]}
+      ],
+      books:["B8"]},
+
+    a_sticky:{seg:"Sticky／浮動層（吸頂・FAB・回頂端）",
+      warn:"共同風險是<b>遮住內容</b>：吸頂列擋住錨點目標、FAB 壓在清單最後一筆上。驗收請捲到最底。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Sticky Header</b>：捲動時固定在視窗頂端","<b>FAB</b>：右下角浮動的單一主動作鈕","<b>Back to Top</b>：長頁面回到頂端","<b>Sticky Action Bar</b>：底部固定的操作列"]},
+        {label:"檢查要點", items:["錨點跳轉要扣掉吸頂高度（scroll-margin-top）","頁面底部保留與固定列等高的留白","FAB 一個畫面只能有一顆"]}
+      ],
+      books:["B3"]},
+
+    b_hero:{seg:"② Hero／首屏（Above the Fold）",
+      warn:"「首屏」不是固定像素高度，而是<b>各裝置各自不同的可視範圍</b>；準確說法是「主要 CTA 之前」。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Hero Section</b>：首頁最上方的大面積區塊","<b>Above the Fold</b>：不需捲動的可視範圍","<b>CTA</b>：行動呼籲，轉換流程的入口","<b>Value Proposition</b>：一句話價值主張"]},
+        {label:"檢查要點", items:["同權重的按鈕最多 2 顆","標題寫使用者得到什麼，不寫公司口號","大圖需預設寬高比，避免載入時版面位移"]}
+      ],
+      books:["B4"]},
+
+    b_nav2:{seg:"頁內導覽（麵包屑・分頁・步驟）",
+      warn:"<b>Tabs 與 Stepper 最常被混用。</b>分不清時問一句：跳著看會不會出事？會出事的是 Stepper。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Breadcrumb</b>：顯示階層位置的麵包屑","<b>Tabs</b>：平行內容的分頁標籤","<b>Stepper／Wizard</b>：有順序的步驟導引","<b>Pagination</b>：分頁器"]},
+        {label:"檢查要點", items:["Tabs 切換後捲動位置不可跳動","麵包屑的當前頁不做成連結","Stepper 要能回上一步且保留已填內容"]}
+      ],
+      books:["B5"]},
+
+    b_banner:{seg:"Alert Banner／全站公告",
+      warn:"<b>Banner 是持續性的整頁狀態，Toast 是一閃即逝的結果。</b>必須處理的錯誤丟到 Toast 一定被錯過。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Alert Banner</b>：頁面頂端的持續性提示","<b>Toast／Snackbar</b>：短暫浮出的操作結果","<b>Status Chip</b>：標示單筆項目的狀態","<b>Badge</b>：未讀數量提示"]},
+        {label:"檢查要點", items:["顏色語意固定：紅＝危險、琥珀＝警告、藍＝資訊","顏色之外一定要有圖示或文字","徽章數字上限顯示 99+"]}
+      ],
+      books:["B1"]},
+
+    c_decide:{seg:"決策：內容主體要用什麼容器？",
+      warn:"判準只有兩個：<b>欄位是否同構</b>、<b>是否需要橫向比較數值</b>。別因為「表格很舊」硬改卡片。",
+      blocks:[
+        {label:"檢查要點", items:["需要比較數值 → 資料表格","以視覺辨識為主 → 卡片網格","同構、量大、只需掃視 → 清單流","三者都要先設計空、載入、錯誤三種狀態"]}
+      ],
+      books:["B4","B6"]},
+
+    d_card:{seg:"④a 卡片網格（Card Grid）",
+      warn:"卡片是「容器」不是「內容」。<b>一張卡最多一個重點</b>；硬拉等高的大片空白代表該改清單。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Card</b>：可掃視、可點擊的獨立內容單元","<b>Thumbnail</b>：內容的視覺預覽縮圖","<b>Masonry</b>：不等高的瀑布流排列","<b>Bento Grid</b>：大小不一、以面積表達權重"]},
+        {label:"檢查要點", items:["整張卡可點時必須有 hover 與 focus 樣式","縮圖比例全站統一，裁切不可切掉主體","圖片先佔位再載入，避免版面位移"]}
+      ],
+      books:["B11"]},
+
+    d_table:{seg:"④b 資料表格（Data Table）",
+      warn:"難點不在畫，在<b>行動裝置怎麼辦</b>：凍結首欄、轉卡片、或只留關鍵三欄，設計階段就要決定。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Data Table</b>：可排序、可批次操作的表格","<b>Filter Bar／Facets</b>：多維度條件篩選列","<b>Pagination</b>：分頁器","<b>KPI Card</b>：單一指標的濃縮版"]},
+        {label:"檢查要點", items:["數字靠右對齊並對齊小數點","已套用的篩選要顯示且可一鍵清除","篩選後要顯示結果筆數"]}
+      ],
+      books:["B4"]},
+
+    d_list:{seg:"④c 清單流（List View）",
+      warn:"最容易出錯的是<b>載入更多的方式</b>：無限捲動讓頁尾碰不到，返回後又常失去原本位置。",
+      blocks:[
+        {label:"相關名詞", items:["<b>List Item</b>：同構項目的單列","<b>Avatar</b>：人或帳號的識別頭像","<b>Infinite Scroll</b>：捲到底自動載入","<b>Load More</b>：手動載入更多的按鈕"]},
+        {label:"檢查要點", items:["列高（觸控目標）至少 44×44 pt","返回清單必須回到原本的捲動位置","有頁尾內容的頁面不要用無限捲動"]}
+      ],
+      books:["B3"]},
+
+    e_dataops:{seg:"⑤ 資料操作列（搜尋・篩選・排序）",
+      warn:"這些元件都是<b>有狀態的</b>：離開再回來條件保不保留？網址帶不帶得走？不先答就會走回頭路。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Search Bar</b>：關鍵字直達目標","<b>Combobox／Autocomplete</b>：邊打邊篩","<b>Filter Bar／Facets</b>：多維度篩選","<b>Sort Control</b>：排序切換"]},
+        {label:"檢查要點", items:["篩選條件反映在網址上（可分享、可回上一頁）","搜尋送出後輸入框保留關鍵字","無結果時提供放寬條件的具體建議"]}
+      ],
+      books:["B6"]},
+
+    e_empty:{seg:"空・載入・錯誤：最常漏掉的三種狀態",
+      warn:"<b>每個會載入資料的區塊都要交付四張圖</b>：載入中、空的、出錯、內容過長。缺哪張就會被自行發明。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Skeleton Screen</b>：預示版面的骨架佔位","<b>Spinner／Loader</b>：不確定時長的載入指示","<b>Empty State</b>：沒有資料時的說明與入口","<b>Error Page</b>：404／500 的出口"]},
+        {label:"檢查要點", items:["「還沒建立過」與「篩選後無結果」分開設計","空狀態一定要給下一步動作","載入低於約 300 ms 不顯示 spinner，避免閃爍"]}
+      ],
+      books:["B6"]},
+
+    e_density:{seg:"資訊密度與文字截斷",
+      warn:"「這欄最長會有多長？」是交付時最常漏問的一句。<b>沒有截斷規則</b>，長名稱就會撐爆卡片。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Truncation／Ellipsis</b>：截斷加刪節號","<b>Tooltip</b>：hover 顯示完整內容","<b>Whitespace</b>：以留白建立視覺分組","<b>Divider</b>：最輕的分隔手段"]},
+        {label:"檢查要點", items:["每個文字欄位都標最大字數與截斷方式","截斷後要能取得全文（tooltip 或展開）","內文行寬控制在 45–75 字元之間"]}
+      ],
+      books:["B4"]},
+
+    f_decide:{seg:"決策：輸入元件怎麼選？",
+      warn:"選錯輸入元件是<b>可以用規則避免</b>的錯誤，不必靠品味。依序問三題就只剩一個合理答案。",
+      blocks:[
+        {label:"檢查要點", items:["互斥且 6 個以內 → Radio 或 Segmented Control","互斥且超過 6 個 → Select；超過 15 個要能搜尋","可複選 → Checkbox；連續數值 → Slider 加數字框","立即生效 → Toggle；需按儲存 → 不要用 Toggle"]}
+      ],
+      books:["B7","B2"]},
+
+    g_choice:{seg:"⑦a 選項少且互斥：Radio／Segmented",
+      warn:"Radio 的隱形成本是<b>「不選」也必須是一個選項</b>：選了就取消不掉，可不答就要給「不指定」。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Radio Button</b>：互斥擇一，所有選項可見","<b>Segmented Control</b>：2–5 個視圖切換","<b>Checkbox</b>：可獨立開關的複選","<b>Button Group</b>：同類動作的視覺群組"]},
+        {label:"檢查要點", items:["標籤文字必須可點擊（label 與欄位綁定）","可不答的題目要有「不指定」選項","全選需要半選（indeterminate）狀態"]}
+      ],
+      books:["B7"]},
+
+    g_many:{seg:"⑦b 選項多或需搜尋：Select／Combobox",
+      warn:"<b>沒有明確理由就不要覆蓋原生 select。</b>超過 15 個選項而不給搜尋，使用者會直接放棄。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Select</b>：有限選項的原生下拉","<b>Combobox／Autocomplete</b>：可搜尋的下拉","<b>Tag／Chip Input</b>：輸入轉成可刪除的標記","<b>Date Picker</b>：日曆式日期選擇"]},
+        {label:"檢查要點", items:["超過 15 個選項必須可搜尋","建議清單要能用上下鍵操作、Enter 選取","日期欄位一定要允許直接鍵入"]}
+      ],
+      books:["B10"]},
+
+    g_instant:{seg:"⑦c 立即生效的開關：Toggle／Slider",
+      warn:"Toggle 的語意是<b>「切了就算數」</b>。放進需要按儲存的表單，使用者會誤以為已經生效。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Toggle Switch</b>：立即生效的二元開關","<b>Slider</b>：連續範圍取值","<b>Toggle Button</b>：工具列的狀態切換鈕","<b>Optimistic UI</b>：先顯示成功再等後端"]},
+        {label:"檢查要點", items:["需要按儲存的表單不要用 Toggle","開關文案用肯定句，不用否定句","Slider 需要精確值時並排數字輸入框"]}
+      ],
+      books:["B2"]},
+
+    h_field:{seg:"⑧ 欄位四件套：Label／Placeholder／Helper／Error",
+      warn:"用 placeholder 當標籤，<b>一開始輸入題目就消失了</b>。四件套各有時機，不可互相取代。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Label</b>：常駐標籤，說明這格要填什麼","<b>Placeholder</b>：格式範例，僅供參考","<b>Helper Text</b>：事前的規則說明，預防出錯","<b>Error Message</b>：出錯後說明怎麼修正"]},
+        {label:"檢查要點", items:["Label 一律常駐，不用 placeholder 取代","錯誤訊息要說「正確格式是什麼」","必填標示不能只靠顏色"]}
+      ],
+      books:["B7"]},
+
+    i_feedback:{seg:"⑨ 送出後的回饋（Toast／Inline Validation）",
+      warn:"<b>不要在使用者還沒打完就報錯</b>（離開欄位再驗），也不要等送出才一次列十個錯誤。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Inline Validation</b>：欄位旁的即時驗證","<b>Toast／Snackbar</b>：非阻斷式的結果提示","<b>Success State</b>：完成確認與後續動作","<b>Progress Bar</b>：多步驟或上傳進度"]},
+        {label:"檢查要點", items:["驗證時機統一：離開欄位時觸發","成功頁要給可追蹤的編號或下一步入口","送出失敗要能一鍵捲到第一個出錯欄位"]}
+      ],
+      books:["B7"]},
+
+    i_undo:{seg:"Undo 幾乎永遠優於「你確定嗎？」",
+      warn:"確認框會被訓練成無腦點掉，誤刪照樣發生。<b>可逆的直接做配 Undo</b>，不可逆才值得攔。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Undo</b>：復原動作，通常掛在 Toast 上","<b>Optimistic UI</b>：先呈現結果再等後端確認","<b>Modal／Dialog</b>：強制中斷的確認","<b>Context Menu</b>：針對物件的動作集合"]},
+        {label:"檢查要點", items:["可逆動作不要加確認對話框","不可逆動作要求輸入名稱，不是按「確定」","確認鈕文案寫具體動作（「刪除專案」）"]}
+      ],
+      books:["B6"]},
+
+    j_overlay:{seg:"覆蓋層家族（Modal・Drawer・Popover…）",
+      warn:"<b>選型只看兩件事：要不要打斷使用者、是否需要原本的脈絡。</b>只寫「彈窗」等於丟給實作者猜。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Modal／Dialog</b>：中斷流程的強制決策","<b>Drawer</b>：左右滑入，保留脈絡","<b>Bottom Sheet</b>：手機下方上滑的面板","<b>Popover</b>：錨定觸發元素的小面板"]},
+        {label:"檢查要點", items:["Modal 必須鎖住焦點，Esc 可關閉","關閉後焦點要回到觸發它的按鈕","長表單不要塞進 Modal，改用整頁或 Drawer"]}
+      ],
+      books:["B9"]},
+
+    k_footer:{seg:"⑩ Footer／頁尾",
+      warn:"真正的問題是<b>重要資訊只放在這裡</b>：退換貨與客服只在頁尾，行動裝置幾乎不會捲到。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Footer</b>：法務、聯絡、次要連結的收納區","<b>Sitemap</b>：網站地圖式的分組連結","<b>Back to Top</b>：長頁面回頂端"]},
+        {label:"檢查要點", items:["行動版分組要可摺疊","重要資訊必須在主要流程中另有入口","連結分組要有標題，不要一整片連結牆"]}
+      ],
+      books:["B5"]},
+
+    z_system:{seg:"貫穿全圖：設計系統基礎（Token・對比・焦點）",
+      warn:"每格的差異最後都收斂到<b>數值是否來自同一套 token</b>。命名寫用途（color-danger）不寫外觀。",
+      blocks:[
+        {label:"相關名詞", items:["<b>Design Token</b>：具名的設計變數，單一來源","<b>Type Scale</b>：有限的字級階層","<b>Spacing Scale</b>：固定倍數的間距","<b>Semantic Color</b>：承載意義的語意色"]},
+        {label:"檢查要點", items:["文字對比至少 4.5:1、大字與圖示 3:1","觸控目標建議 44×44 pt，且不能只靠 hover","絕不移除 focus ring；不喜歡預設就換一個"]}
+      ],
+      books:["B1"]},
+  };
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  /* 允許條目內少量 <b> 標記 */
+  function rich(s){ return esc(s).replace(/&lt;b&gt;/g,"<b>").replace(/&lt;\/b&gt;/g,"</b>"); }
+
+  /* ---------------- 分頁 ---------------- */
+  var tabs = [].slice.call(document.querySelectorAll(".tab"));
+  function select(tab){
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) p.hidden = !on;
+    });
+    hide();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ select(t); });
+    t.addEventListener("keydown", function(e){
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus(); select(n);
+    });
+  });
+
+  /* ---------------- Tooltip ---------------- */
+  var tip = document.getElementById("tip"), pinned = null, hovered = null;
+
+  function render(k){
+    var d = DATA[k];
+    if (!d) return false;
+    var h = '<div class="tip-head">' + esc(d.seg) + "</div><div class=\"tip-body\">";
+    if (d.warn){
+      h += '<div class="blk b-warn"><div class="blk-h">關鍵難點</div><p>' + rich(d.warn) + "</p></div>";
+    }
+    (d.blocks || []).forEach(function(b){
+      var cls = /切點|指徵|順序|要點|回頭查/.test(b.label) ? "b-cut" : "b-ddx";
+      h += '<div class="blk ' + cls + '"><div class="blk-h">' + esc(b.label) + '</div><ul>';
+      b.items.forEach(function(it){ h += "<li>" + rich(it) + "</li>"; });
+      h += "</ul></div>";
+    });
+    if (d.books && d.books.length){
+      h += '<div class="blk b-book"><div class="blk-h">書目依據</div>';
+      d.books.forEach(function(id){
+        var b = BOOKS[id];
+        if (!b) return;
+        h += '<p class="bk"><span class="t">' + esc(b.t) + '</span><span class="s">' + esc(b.s) + "</span></p>";
+      });
+      h += "</div>";
+    }
+    tip.innerHTML = h + "</div>";
+    return true;
+  }
+
+  function place(x, y){
+    var m = 12, w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = x + 18, top = y + 18;
+    if (left + w + m > window.innerWidth) left = Math.max(m, x - w - 18);
+    if (top + h + m > window.innerHeight) top = Math.max(m, y - h - 18);
+    if (top < m) top = m;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function show(g, x, y){
+    var k = g.getAttribute("data-k");
+    if (!render(k)) return;
+    tip.classList.add("show");
+    tip.setAttribute("aria-hidden", "false");
+    place(x, y);
+    markBooks((DATA[k] || {}).books);
+  }
+  function hide(){
+    tip.classList.remove("show");
+    tip.setAttribute("aria-hidden", "true");
+    if (pinned){ pinned.classList.remove("on"); pinned = null; }
+    hovered = null;
+    markBooks(null);
+  }
+  function markBooks(list){
+    var set = {};
+    (list || []).forEach(function(id){ set[id] = 1; });
+    [].forEach.call(document.querySelectorAll(".refrow"), function(r){
+      r.classList.toggle("lit", !!set[r.getAttribute("data-n")]);
+    });
+  }
+
+  var fig = document.getElementById("flowfig");
+  if (fig){
+    fig.addEventListener("pointermove", function(e){
+      if (pinned) return;
+      var g = e.target.closest(".hot");
+      if (!g){ if (hovered){ hovered = null; hide(); } return; }
+      if (g !== hovered){ hovered = g; show(g, e.clientX, e.clientY); }
+      else place(e.clientX, e.clientY);
+    });
+    fig.addEventListener("pointerleave", function(){ hovered = null; if (!pinned) hide(); });
+    fig.addEventListener("click", function(e){
+      var g = e.target.closest(".hot");
+      if (!g){ hide(); return; }
+      if (pinned === g){ hide(); return; }
+      if (pinned) pinned.classList.remove("on");
+      g.classList.add("on");
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+      pinned = g;
+    });
+    fig.addEventListener("focusin", function(e){
+      var g = e.target.closest(".hot");
+      if (!g) return;
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+    });
+    fig.addEventListener("focusout", function(){ if (!pinned) hide(); });
+  }
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function(){ if (!pinned) hide(); }, true);
+
+  /* ---------------- 書目清單（由圖上標註自動彙整「支撐哪一格」） ---------------- */
+  var where = {};
+  Object.keys(DATA).forEach(function(k){
+    (DATA[k].books || []).forEach(function(id){
+      (where[id] = where[id] || []).push(DATA[k].seg);
+    });
+  });
+  var list = document.getElementById("booklist");
+  if (list){
+    var out = "";
+    Object.keys(BOOKS).forEach(function(id){
+      var b = BOOKS[id];
+      var segs = (where[id] || []).map(function(s){ return '<span class="where">' + esc(s) + "</span>"; }).join("");
+      out += '<div class="refrow" data-n="' + id + '"><div class="n">' + id + "</div><div>" +
+             '<p class="zh">' + esc(b.t) + '<span class="kind">' + esc(b.kind) + "</span></p>" +
+             '<p class="en">' + esc(b.s) + "</p>" +
+             '<p class="meta">' + esc(b.m) + "</p>" +
+             (segs ? "<div>" + segs + "</div>" : "") +
+             "</div></div>";
+    });
+    list.innerHTML = out;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>醫療資料去識別化流程｜台灣醫院 AI／研究資料治理版｜2026-07-05</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --paper: #ffffff;
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #dce3ee;
+      --blue: #244c7f;
+      --blue2: #e8f0fb;
+      --red: #9b2c2c;
+      --red2: #fff0f0;
+      --green: #1f6f50;
+      --green2: #eaf7f0;
+      --amber: #936000;
+      --amber2: #fff7df;
+      --gray: #eef2f6;
+      --shadow: 0 18px 50px rgba(23, 32, 51, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #eaf1fb 0, #f6f8fb 38%, #f7f7f4 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.65;
+    }
+
+    header {
+      padding: 64px 24px 34px;
+      background: linear-gradient(135deg, #14213d 0%, #244c7f 56%, #456a96 100%);
+      color: #fff;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .kicker {
+      display: inline-block;
+      padding: 6px 12px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      letter-spacing: .06em;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      max-width: 980px;
+    }
+
+    .subtitle {
+      max-width: 900px;
+      margin-top: 20px;
+      font-size: 19px;
+      color: rgba(255,255,255,.84);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.2);
+      font-size: 14px;
+    }
+
+    main { padding: 34px 24px 80px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    nav {
+      position: sticky;
+      top: 18px;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    nav .nav-title {
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    nav a:hover { background: var(--blue2); color: var(--blue); }
+
+    section, .card {
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 28px rgba(23, 32, 51, 0.055);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: #16223a;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 21px;
+      color: var(--blue);
+    }
+
+    p { margin: 0 0 14px; }
+    strong { color: #101828; }
+
+    .executive {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .statement {
+      background: #0f1d33;
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .statement h2 { color: #fff; margin-bottom: 14px; }
+    .statement p { font-size: 20px; color: rgba(255,255,255,.88); }
+
+    .warning {
+      background: var(--red2);
+      border-color: #f1b8b8;
+    }
+
+    .warning h2, .warning h3 { color: var(--red); }
+
+    .success {
+      background: var(--green2);
+      border-color: #bfe5d0;
+    }
+
+    .success h2, .success h3 { color: var(--green); }
+
+    .amber {
+      background: var(--amber2);
+      border-color: #f3d88a;
+    }
+
+    .amber h2, .amber h3 { color: var(--amber); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 6px;
+      overflow: hidden;
+      border-radius: 14px;
+      font-size: 15px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 12px 13px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3fa;
+      color: #173258;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    td { background: #fff; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .step {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      min-height: 168px;
+      position: relative;
+    }
+
+    .step-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .step h3 { margin: 0 0 8px; color: #182844; font-size: 18px; }
+    .step p { color: var(--muted); font-size: 14px; margin: 0; }
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .module {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .module b { display: block; color: var(--blue); margin-bottom: 6px; }
+    .module span { color: var(--muted); font-size: 14px; }
+
+    .callout {
+      border-left: 5px solid var(--blue);
+      background: var(--blue2);
+      padding: 16px 18px;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    .code {
+      background: #111827;
+      color: #d1d5db;
+      border-radius: 14px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 14px 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .notdo {
+      display: grid;
+      gap: 12px;
+    }
+
+    .notdo-item {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 12px;
+      border: 1px solid #f1b8b8;
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .notdo-item b { color: var(--red); }
+    .notdo-item span { color: var(--muted); }
+
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 34px;
+    }
+
+    @media (max-width: 960px) {
+      .grid, .executive, .two-col { grid-template-columns: 1fr; }
+      nav { position: static; }
+      .flow { grid-template-columns: 1fr; }
+      .modules { grid-template-columns: 1fr; }
+      .notdo-item { grid-template-columns: 1fr; }
+      section, .card { padding: 22px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      nav { display: none; }
+      .grid { display: block; }
+      section, .card { break-inside: avoid; box-shadow: none; }
+      header { background: #14213d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="kicker">Clinical AI Governance · Taiwan · De-identification Pipeline</div>
+      <h1>醫療資料去識別化流程：台灣醫院 AI／研究資料治理版</h1>
+      <p class="subtitle">從「移除姓名」升級為「目的分流、風險量化、金鑰分離、退出權、稽核日誌、週期重評」的可稽核證據鏈。</p>
+      <div class="meta">
+        <span class="pill">製作日期：2026-07-05</span>
+        <span class="pill">適用：院內研究、AI 模型訓練、跨院驗證、Nephro Copilot</span>
+        <span class="pill">定位：技術治理框架，非法律意見</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap grid">
+    <nav>
+      <div class="nav-title">文件導覽</div>
+      <a href="#summary">核心結論</a>
+      <a href="#purpose">目的內 vs 目的外</a>
+      <a href="#hipaa-tw">HIPAA vs 台灣個資法</a>
+      <a href="#sources">資料來源分流</a>
+      <a href="#pipeline">六階段資料管道</a>
+      <a href="#governance">階段 6 治理層</a>
+      <a href="#standards">驗證與標準</a>
+      <a href="#nephro">Nephro Copilot 對應</a>
+      <a href="#notdo">Not-to-do</a>
+      <a href="#decision">最終判斷</a>
+    </nav>
+
+    <div>
+      <div class="executive" id="summary">
+        <div class="statement">
+          <h2>一句話結論</h2>
+          <p>醫療資料去識別化不是「AES 加密＋移除姓名」。台灣醫院真正需要的是一套能被 IRB、法遵、主管機關與訴訟檢驗的證據鏈。</p>
+        </div>
+        <div class="card warning">
+          <h2>最大盲點</h2>
+          <p><strong>假名化不等於匿名化。</strong>若同一權責者同時掌握分析資料與還原對照表，技術上仍可識別；這不是充分去識別化。</p>
+        </div>
+      </div>
+
+      <section id="purpose">
+        <h2>1. 起點：先判斷「目的內」還是「目的外利用」</h2>
+        <p>這是整條流程是否啟動的第一個分歧。臨床照護本身需要識別病人；研究、模型訓練、跨院合作則通常進入目的外利用，必須建立去識別化與治理證據。</p>
+        <table>
+          <thead><tr><th>使用場景</th><th>法源定位</th><th>去識別化策略</th></tr></thead>
+          <tbody>
+            <tr><td>醫師調閱病人 eGFR、透析紀錄、用藥歷程做即時決策</td><td>原始蒐集目的內利用</td><td>不去識別。用 RBAC、最小權限、break-glass、稽核日誌控管。</td></tr>
+            <tr><td>用歷史透析資料訓練 IDH、住院、死亡、CKD progression 模型</td><td>特定目的外利用</td><td>去識別化或取得同意／IRB 核准；需能自證「無從識別特定當事人」。</td></tr>
+            <tr><td>跨院合作、對外驗證、公開資料集、產學合作</td><td>目的外利用＋第三方傳輸</td><td>最高強度治理：DUA、退出權、稽核、禁止再識別，必要時使用合成資料或差分隱私。</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>設計原則：</strong>照護端不要為了形式合規硬做去識別化；訓練端、研究端、對外端則不能只靠加密與遮蔽姓名。</div>
+      </section>
+
+      <section id="hipaa-tw">
+        <h2>2. HIPAA 與台灣個資法的本質差異</h2>
+        <table>
+          <thead><tr><th>面向</th><th>HIPAA</th><th>台灣個資法／醫療資料治理</th></tr></thead>
+          <tbody>
+            <tr><td>去識別化標準</td><td>Safe Harbor 移除 18 類識別碼，或 Expert Determination。</td><td>原則式：「無從識別特定當事人」；實務上需自建風險證據。</td></tr>
+            <tr><td>可操作性</td><td>checklist 明確。</td><td>需要工程、統計、法遵共同定義風險門檻。</td></tr>
+            <tr><td>中間態</td><td>Limited Data Set＋DUA。</td><td>無完全等價制度；多以 IRB、DUA、資料安全措施補強。</td></tr>
+            <tr><td>健康資料二次利用</td><td>研究授權、IRB waiver、de-identification。</td><td>受個資法、人體研究法、醫療法、憲判 13、健保資料專法共同影響。</td></tr>
+          </tbody>
+        </table>
+        <p>台灣端的工程缺口是：不能只拿 HIPAA Safe Harbor 當清單打勾，而要能提出「欄位分級、手法選擇、風險量化、過程驗證、稽核追蹤」的本地化證據。</p>
+      </section>
+
+      <section id="sources">
+        <h2>3. 法源分流：三種資料來源，不要混在同一套治理邏輯</h2>
+        <table>
+          <thead><tr><th>資料來源</th><th>主要法源／治理框架</th><th>治理重點</th></tr></thead>
+          <tbody>
+            <tr><td>院內自有病歷、檢驗、透析、門診資料</td><td>個資法、人體研究法、醫療法、IRB</td><td>目的外利用判斷、去識別化、IRB、資料使用協議、稽核。</td></tr>
+            <tr><td>健保資料庫</td><td>全民健康保險資料管理條例</td><td>申請審查、退出權、指定安全作業環境、結果不得含可識別個人資料、成果回報、銷毀義務。</td></tr>
+            <tr><td>生物檢體、基因體、多組學資料</td><td>人體生物資料庫管理條例、IRB、同意書</td><td>同意、退出、檢體與資料分離、基因資料再識別風險、長期保存治理。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="pipeline">
+        <h2>4. 六階段去識別化資料管道</h2>
+        <div class="flow">
+          <div class="step"><div class="step-num">0</div><h3>盤點分級</h3><p>標記直接識別碼、準識別碼、敏感屬性、中性欄位，產出資料字典與欄位風險表。</p></div>
+          <div class="step"><div class="step-num">1</div><h3>直接識別碼處理</h3><p>移除或假名化病歷號、身分證、姓名、聯絡方式；使用 HMAC token 與金鑰分離。</p></div>
+          <div class="step"><div class="step-num">2</div><h3>準識別碼一般化</h3><p>年齡分層、日期偏移、地理上捲、罕見組合併，降低外部連結攻擊。</p></div>
+          <div class="step"><div class="step-num">3</div><h3>敏感與稀有值處理</h3><p>罕病、極端值、特殊病程做 top/bottom coding、ICD 併類或 outlier suppression。</p></div>
+          <div class="step"><div class="step-num">4</div><h3>風險量化</h3><p>計算 k-anonymity、l-diversity、t-closeness、全域與局部重識別風險。</p></div>
+          <div class="step"><div class="step-num">5</div><h3>擾動／合成資料</h3><p>對外釋出或跨院合作時使用差分隱私、合成資料或統計結果輸出限制。</p></div>
+        </div>
+        <div class="callout"><strong>階段 6 是橫切層：</strong>治理、驗證、退出權、稽核與週期重評必須覆蓋前述所有階段。</div>
+      </section>
+
+      <section id="risk">
+        <h2>5. 風險量化：不要只說「已去識別」</h2>
+        <p>建議在 R 端使用 <strong>sdcMicro</strong>，Python pipeline 則可整合 ARX 或自建 k-anonymity 檢查。核心不是套件，而是留下可重跑、可稽核、可比較版本差異的風險報告。</p>
+        <div class="two-col">
+          <div>
+            <h3>R：sdcMicro 概念範例</h3>
+            <pre class="code">library(sdcMicro)
+
+sdc <- createSdcObj(
+  dat = dialysis_df,
+  keyVars = c("age_band", "sex", "county", "hd_start_year"),
+  sensibleVar = "primary_diagnosis"
+)
+
+kAnon(sdc)
+sdc <- localSuppression(sdc, k = 5,
+                        importance = c(1,1,2,2))
+sdc@risk$global$risk</pre>
+          </div>
+          <div>
+            <h3>Python：快速 k-anon 稽核</h3>
+            <pre class="code">qi = ["age_band", "sex", "county", "hd_start_year"]
+group_sizes = df.groupby(qi).size()
+violations = group_sizes[group_sizes < 5]
+risk_pct = df.set_index(qi).index.isin(
+    violations.index
+).mean()
+print(f"低於 k=5 的高風險紀錄佔比: {risk_pct:.2%}")</pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="governance">
+        <h2>6. 階段 6：治理層才是最容易被查核的部分</h2>
+        <p>階段 6 不應被寫成「完成去識別化」的勾選欄位，而應拆成七個各自留下證據鏈的控制點。</p>
+        <div class="modules">
+          <div class="module"><b>6.1 金鑰託管分離</b><span>vault／analytics 權限分離、HSM/KMS、雙人授權。</span></div>
+          <div class="module"><b>6.2 無從識別自證報告</b><span>欄位分級、技術手法、k/l/t 值、抑制率、外部連結測試。</span></div>
+          <div class="module"><b>6.3 過程驗證系統</b><span>SOP、版本控管、執行紀錄、異常處理。</span></div>
+          <div class="module"><b>6.4 資料使用協議 DUA</b><span>禁止再識別、轉授權、超目的利用、違約處理。</span></div>
+          <div class="module"><b>6.5 退出權註記</b><span>opt-out flag、釋出快照、排除筆數、時點雜湊。</span></div>
+          <div class="module"><b>6.6 稽核日誌</b><span>append-only log、hash chain、WORM 封存。</span></div>
+          <div class="module"><b>6.7 週期性重評</b><span>季度重評、motivated intruder test、重評觸發條件。</span></div>
+        </div>
+        <h3>金鑰分離資料庫概念</h3>
+        <pre class="code">-- Vault DB：僅資安／法遵可存取，分析人員無權限
+CREATE TABLE vault.patient_crosswalk (
+    pseudo_id     CHAR(64) PRIMARY KEY,
+    mrn_encrypted BYTEA NOT NULL,
+    opt_out_flag  BOOLEAN DEFAULT FALSE,
+    created_at    TIMESTAMPTZ DEFAULT now()
+);
+
+-- Analytics DB：研究人員可存取，但無直接識別碼
+CREATE TABLE analytics.dialysis_cohort (
+    pseudo_id     CHAR(64),
+    age_band      VARCHAR(10),
+    ckd_stage     VARCHAR(4),
+    hd_start_year INT,
+    kt_v          NUMERIC,
+    idh_events    INT
+);</pre>
+      </section>
+
+      <section id="standards">
+        <h2>7. 台灣可採用的驗證與標準框架</h2>
+        <table>
+          <thead><tr><th>標準／框架</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>CNS 29100／29100-2</td><td>隱私與去識別化過程管理系統基礎。</td></tr>
+            <tr><td>PIDIPMS</td><td>把去識別化做成可驗證的管理系統，而非一次性資料清洗。</td></tr>
+            <tr><td>ISO/IEC 20889</td><td>對照 generalization、suppression、perturbation 等技術與攻擊風險。</td></tr>
+            <tr><td>ISO 25237</td><td>健康資訊假名化與身分保護原則。</td></tr>
+            <tr><td>sdcMicro／ARX</td><td>實作 k-anonymity、l-diversity、t-closeness、風險量化。</td></tr>
+          </tbody>
+        </table>
+        <div class="callout"><strong>保守假設：</strong>通過過程驗證不代表資料必然脫離個資法適用；仍須視去識別化後是否已達無從直接或間接識別特定個人。</div>
+      </section>
+
+      <section id="nephro" class="success">
+        <h2>8. 對 Nephro Copilot 的落地架構</h2>
+        <table>
+          <thead><tr><th>系統層</th><th>資料性質</th><th>建議治理方式</th></tr></thead>
+          <tbody>
+            <tr><td>閘門一：確定性規則／臨床即時決策</td><td>目的內照護資料</td><td>不去識別；用 RBAC、break-glass、最小權限、操作稽核。</td></tr>
+            <tr><td>閘門二：LightGBM／tabular ML 訓練</td><td>歷史資料、目的外利用</td><td>完整六階段流程；model card 記錄資料版本、k 值、抑制率、欄位處理規則。</td></tr>
+            <tr><td>閘門三：LLM 自然語言層</td><td>可能重述病人細節或從 context 重建個資</td><td>輸出端 PHI filter、prompt log 去識別化、禁止 pseudo_id 回填、RAG context 最小化。</td></tr>
+            <tr><td>對外驗證／投稿資料</td><td>第三方或跨院使用</td><td>優先使用統計結果、合成資料或高強度去識別資料；搭配 DUA 與輸出審查。</td></tr>
+            <tr><td>健保資料研究</td><td>法定特殊資料來源</td><td>依健保資料專法申請、審查、指定環境、退出權、成果不得可識別、銷毀義務處理。</td></tr>
+          </tbody>
+        </table>
+        <h3>最高槓桿做法</h3>
+        <p>把階段 6 做成 <strong>governance.SKILL.md</strong>，讓每個新研究專案啟動時，自動產出欄位分級表、去識別化參數表、風險報告、opt-out 過濾紀錄、DUA 範本、稽核 log schema、model card 資料治理段落、IRB／法遵送審附件包。</p>
+      </section>
+
+      <section id="notdo" class="warning">
+        <h2>9. Not-to-do：高風險或不值得投入的方向</h2>
+        <div class="notdo">
+          <div class="notdo-item"><b>只移除姓名、身分證、病歷號</b><span>準識別碼仍可與外部資料連結，例如年齡、地區、罕病、日期、特殊治療事件。</span></div>
+          <div class="notdo-item"><b>把 AES 加密當成去識別化</b><span>加密是存取控制，不是去識別化；若同一權責者可解密，仍可識別。</span></div>
+          <div class="notdo-item"><b>將假名化資料直接視為匿名資料</b><span>假名化仍可能透過對照資訊還原，需分權與稽核。</span></div>
+          <div class="notdo-item"><b>保留所有精確日期與地理資訊</b><span>對 longitudinal model 有幫助，但重識別風險高；應改用日期偏移、相對時間、區域上捲。</span></div>
+          <div class="notdo-item"><b>把一次性資料清洗當成合規完成</b><span>外部資料環境會變，需週期性重評。</span></div>
+          <div class="notdo-item"><b>在 LLM prompt 或 log 中保留原始 PHI</b><span>會形成第二份未治理資料庫，且更難追蹤與刪除。</span></div>
+          <div class="notdo-item"><b>對臨床照護即時資料硬做去識別化</b><span>會破壞臨床可用性；照護場景應用權限與稽核，不是去識別化。</span></div>
+        </div>
+      </section>
+
+      <section id="decision" class="amber">
+        <h2>10. 最終判斷</h2>
+        <p>對台灣醫療 AI 專案而言，去識別化的核心不是「資料有沒有看起來匿名」，而是能否對每一批目的外資料完整回答四個問題：</p>
+        <table>
+          <thead><tr><th>問題</th><th>應有證據</th></tr></thead>
+          <tbody>
+            <tr><td>為什麼這批資料可以被使用？</td><td>目的分流、IRB、法源依據、DUA。</td></tr>
+            <tr><td>哪些欄位可能識別病人，如何處理？</td><td>欄位分級表、去識別化轉換規則。</td></tr>
+            <tr><td>處理後的重新識別風險是多少，如何證明？</td><td>k/l/t 報告、抑制率、motivated intruder test。</td></tr>
+            <tr><td>若被查核，能否提出完整證據鏈？</td><td>金鑰分離、退出權、稽核日誌、重評紀錄。</td></tr>
+          </tbody>
+        </table>
+        <p><strong>落地結論：</strong>照護端不去識別但嚴格授權；訓練端完整去識別並量化風險；對外驗證端優先輸出統計結果、合成資料或高保護去識別資料；健保資料另走專法流程。</p>
+      </section>
+
+      <div class="footer">
+        本頁為技術治理與專案設計整理，非法律意見。實際送審前，仍應由院內法遵、IRB、資安與熟悉個資法／醫療資料法制的法律顧問共同確認。<br />
+        File: medical_data_deidentification_taiwan_20260705.html
+      </div>
+    </div>
+  </main>
+</body>
+</html>

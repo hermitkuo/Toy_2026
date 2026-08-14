@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>還你 10 小時</title>
+<style>
+:root{
+  --night:#0B1013;
+  --dawn:#F2EDE4;
+  --pulse:#E8622D;
+  --calm:#3FA79A;
+  --dim:#7C8A91;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--night);color:var(--dawn);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  overflow-x:hidden;
+}
+.serif{font-family:"Noto Serif TC","Songti TC",serif}
+
+/* full-bleed panels */
+.panel{
+  min-height:100svh;display:grid;place-items:center;
+  padding:8vh 6vw;position:relative;text-align:center;
+}
+.big{
+  font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;
+  font-size:clamp(44px,11vw,140px);line-height:.98;letter-spacing:-.03em;
+}
+.small{font-size:clamp(15px,2.2vw,20px);color:var(--dim);letter-spacing:.14em;margin-top:28px}
+
+/* reveal */
+.up{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s ease}
+.up.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.up{opacity:1;transform:none;transition:none}}
+
+/* ---- PANEL 1: the clock bleeding out ---- */
+#p1{background:radial-gradient(120% 90% at 50% 40%,#161D21 0%,var(--night) 70%)}
+#p1 svg{width:min(70vw,340px);height:auto;display:block;margin:0 auto 42px}
+.tick{stroke:var(--dim);stroke-width:2;opacity:.35}
+.hand{stroke:var(--pulse);stroke-width:5;stroke-linecap:round;transform-origin:100px 100px;
+  animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.drip{fill:var(--pulse);opacity:0;animation:drip 4s ease-in infinite}
+.drip:nth-of-type(2){animation-delay:1.3s}
+.drip:nth-of-type(3){animation-delay:2.6s}
+@keyframes drip{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(70px)}}
+@media (prefers-reduced-motion:reduce){.hand,.drip{animation:none}.drip{opacity:.7}}
+
+/* ---- PANEL 2: paper stack ---- */
+#p2{background:var(--night)}
+.stack{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin-bottom:46px;height:170px}
+.sheet{width:46px;background:var(--dawn);opacity:.16;border-radius:2px 2px 0 0}
+.sheet:nth-child(1){height:52%}.sheet:nth-child(2){height:70%}.sheet:nth-child(3){height:86%}
+.sheet:nth-child(4){height:100%;opacity:.9}
+.sheet:nth-child(5){height:74%}.sheet:nth-child(6){height:58%}.sheet:nth-child(7){height:44%}
+.count{color:var(--pulse)}
+
+/* ---- PANEL 3: the turn ---- */
+#p3{background:var(--dawn);color:var(--night)}
+#p3 .small{color:#5C6970}
+.form{
+  width:min(90vw,420px);border:2px solid var(--night);background:#fff;
+  padding:22px 24px;margin:0 auto 42px;text-align:left;
+  box-shadow:10px 10px 0 rgba(11,16,19,.12);
+}
+.fr{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px dotted #B6ADA0;font-size:14px}
+.fr b{font-weight:600;color:#5C6970}
+.fr span{font-family:ui-monospace,Menlo,monospace;font-weight:700;opacity:0}
+.in .fr:nth-child(1) span{animation:ink .4s ease .2s forwards}
+.in .fr:nth-child(2) span{animation:ink .4s ease .55s forwards}
+.in .fr:nth-child(3) span{animation:ink .4s ease .9s forwards}
+.in .fr:nth-child(4) span{animation:ink .4s ease 1.25s forwards}
+@keyframes ink{to{opacity:1}}
+.stamp{
+  display:inline-block;margin-top:18px;border:3px solid var(--calm);color:var(--calm);
+  padding:7px 16px;font-weight:900;letter-spacing:.2em;font-size:13px;
+  transform:rotate(-7deg) scale(1.6);opacity:0;
+}
+.in .stamp{animation:seal .5s cubic-bezier(.2,1.4,.4,1) 1.7s forwards}
+@keyframes seal{to{opacity:1;transform:rotate(-7deg) scale(1)}}
+@media (prefers-reduced-motion:reduce){.fr span,.stamp{opacity:1;animation:none}.stamp{transform:rotate(-7deg)}}
+
+/* ---- PANEL 4: payoff ---- */
+#p4{background:var(--night)}
+.hours{color:var(--calm)}
+.line{width:64px;height:3px;background:var(--pulse);margin:38px auto 0}
+
+/* ---- PANEL 5: sign-off ---- */
+#p5{background:var(--night);min-height:auto;padding:14vh 6vw}
+.kicker{font-size:clamp(19px,3.6vw,34px);line-height:1.6;font-weight:700;max-width:20ch;margin:0 auto}
+.where{margin-top:44px;font-size:13px;color:var(--dim);letter-spacing:.22em}
+</style>
+</head>
+<body>
+
+<section class="panel" id="p1">
+  <div>
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="76" fill="none" class="tick"/>
+      <line x1="100" y1="34" x2="100" y2="46" class="tick"/>
+      <line x1="166" y1="100" x2="154" y2="100" class="tick"/>
+      <line x1="100" y1="166" x2="100" y2="154" class="tick"/>
+      <line x1="34" y1="100" x2="46" y2="100" class="tick"/>
+      <line x1="100" y1="100" x2="100" y2="52" class="hand"/>
+      <circle cx="100" cy="100" r="6" fill="var(--pulse)"/>
+      <circle class="drip" cx="100" cy="182" r="5"/>
+      <circle class="drip" cx="100" cy="182" r="4"/>
+      <circle class="drip" cx="100" cy="182" r="6"/>
+    </svg>
+    <h1 class="big up">20 分鐘</h1>
+    <p class="small up">一份重大傷病申請表<br>吃掉的主治醫師時間</p>
+  </div>
+</section>
+
+<section class="panel" id="p2">
+  <div>
+    <div class="stack up" aria-hidden="true">
+      <i class="sheet"></i><i class="sheet"></i><i class="sheet"></i>
+      <i class="sheet"></i><i class="sheet"></i><i class="sheet"></i><i class="sheet"></i>
+    </div>
+    <h2 class="big up">一個月<br><span class="count">30 份</span></h2>
+    <p class="small up">列印、掃描、登錄、再傳一次</p>
+  </div>
+</section>
+
+<section class="panel" id="p3">
+  <div>
+    <div class="form up" role="img" aria-label="申請表欄位自動帶入並完成驗證">
+      <div class="fr"><b>首次透析日期</b><span>2025-11-04</span></div>
+      <div class="fr"><b>透析原因</b><span>DKD / ESRD</span></div>
+      <div class="fr"><b>eGFR</b><span>6.2</span></div>
+      <div class="fr"><b>超音波報告</b><span>已附</span></div>
+      <div style="text-align:center"><span class="stamp">已驗證</span></div>
+    </div>
+    <h2 class="big up">現在，<br>它自己填好了</h2>
+    <p class="small up">你只需要看一眼，然後點確認</p>
+  </div>
+</section>
+
+<section class="panel" id="p4">
+  <div>
+    <h2 class="big up">每月<br><span class="hours">10 小時</span><br>還給你</h2>
+    <div class="line up"></div>
+    <p class="small up">拿去看病人，不是拿去打字</p>
+  </div>
+</section>
+
+<section class="panel" id="p5">
+  <div>
+    <p class="kicker up serif">透析重大傷病申請，<br>從此不再是紙本的事。</p>
+    <p class="where up">花蓮 ｜ 玉里 ｜ 關山 ・ 已上線</p>
+  </div>
+</section>
+
+<script>
+const io=new IntersectionObserver(e=>e.forEach(x=>{
+  if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}
+}),{threshold:.35});
+document.querySelectorAll('.up').forEach((el,i)=>{el.style.transitionDelay=(i%3)*120+'ms';io.observe(el)});
+</script>
+</body>
+</html>

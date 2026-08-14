@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 專利轉臨床試驗｜學習與執行路線圖</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;--surface:#ffffff;--ink:#142033;--muted:#617087;
+      --line:#dce5ef;--navy:#17324d;--teal:#1d7f78;--blue:#2f69bf;
+      --amber:#c78b22;--rose:#b84a62;--green:#388a5a;--shadow:0 12px 34px rgba(20,32,51,.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC",Arial,sans-serif;line-height:1.65}
+    .wrap{max-width:1240px;margin:auto;padding:28px}
+    .hero{background:linear-gradient(135deg,#10273f 0%,#174b62 60%,#1d7f78 100%);color:white;border-radius:24px;padding:42px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:340px;height:340px;border-radius:50%;background:rgba(255,255,255,.07);right:-90px;top:-120px}
+    .eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:13px;opacity:.8}
+    h1{font-size:42px;line-height:1.18;margin:12px 0 14px;max-width:880px}
+    .hero p{max-width:900px;font-size:18px;margin:0;color:#e7f1f5}
+    .route{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:28px}
+    .route div{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:14px;border-radius:14px;text-align:center;font-weight:700;font-size:14px}
+    section{margin-top:28px}
+    .section-title{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+    h2{margin:0;font-size:28px;color:var(--navy)}
+    .sub{color:var(--muted);font-size:14px}
+    .grid{display:grid;gap:16px}
+    .g3{grid-template-columns:repeat(3,1fr)}
+    .g2{grid-template-columns:repeat(2,1fr)}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 8px;font-size:19px;color:var(--navy)}
+    .card p{margin:0;color:var(--muted)}
+    .tag{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;margin-bottom:10px}
+    .t1{background:#e8f0fb;color:var(--blue)}.t2{background:#e6f5f2;color:var(--teal)}.t3{background:#fff4df;color:var(--amber)}
+    .t4{background:#fbe8ec;color:var(--rose)}.t5{background:#e9f5ed;color:var(--green)}
+    .callout{background:#fff;border-left:6px solid var(--teal);padding:18px 22px;border-radius:14px;box-shadow:var(--shadow);font-size:18px;font-weight:700;color:var(--navy)}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+    th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:#17324d;color:#fff;font-size:14px}
+    td{font-size:14px} tr:last-child td{border-bottom:none}
+    .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .week{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;position:relative;box-shadow:var(--shadow)}
+    .week b{display:block;color:var(--blue);font-size:13px;margin-bottom:4px}
+    .week strong{display:block;color:var(--navy);margin-bottom:6px}
+    .week span{color:var(--muted);font-size:13px}
+    .matrix{display:grid;grid-template-columns:1.15fr .9fr .9fr .9fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+    .matrix > div{background:white;padding:15px;font-size:14px}
+    .matrix .head{background:var(--navy);color:#fff;font-weight:700}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#edf3fa;color:var(--blue);font-size:12px;font-weight:700}
+    .danger{border-left-color:var(--rose)}
+    .footer{margin:34px 0 12px;color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:900px){h1{font-size:32px}.route,.g3,.g2,.timeline{grid-template-columns:1fr}.matrix{grid-template-columns:1fr}.matrix .head{display:none}.wrap{padding:16px}.hero{padding:28px}}
+    @media print{body{background:#fff}.wrap{max-width:none}.card,.hero,table,.week,.callout,.matrix{box-shadow:none}.hero{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Patent → Clinical Evidence</div>
+    <h1>AI 專利轉臨床試驗：學習與執行路線圖</h1>
+    <p>目標不是再做一個模型，而是把專利轉成可被驗證、可進入臨床、可形成法規證據的 AI 醫療產品。</p>
+    <div class="route">
+      <div>專利 Claim</div><div>Intended Use</div><div>臨床產品</div><div>外部驗證</div><div>前瞻試驗</div><div>法規／導入</div>
+    </div>
+  </header>
+
+  <section>
+    <div class="callout">核心原則：先定義產品與臨床決策，再選試驗設計；不要從 RCT 或 AUROC 開始。</div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>一、六個學習模組</h2><div class="sub">依優先順序排列</div></div>
+    <div class="grid g3">
+      <div class="card"><span class="tag t1">01｜最高優先</span><h3>專利轉產品</h3><p>Patent claim、Intended Use、目標族群、使用者、場域、輸入輸出、臨床決策、MVCP。</p></div>
+      <div class="card"><span class="tag t2">02｜證據架構</span><h3>SaMD 臨床評估</h3><p>Clinical association、technical validation、clinical validation、total product lifecycle。</p></div>
+      <div class="card"><span class="tag t3">03｜研究準則</span><h3>AI 試驗報告規範</h3><p>TRIPOD-AI、PROBAST-AI、STARD-AI、DECIDE-AI、SPIRIT-AI、CONSORT-AI。</p></div>
+      <div class="card"><span class="tag t4">04｜試驗設計</span><h3>前瞻性臨床研究</h3><p>External validation、silent trial、human factors、observational、RCT、cluster、stepped-wedge。</p></div>
+      <div class="card"><span class="tag t5">05｜安全治理</span><h3>風險與版本控制</h3><p>FMEA、hazard analysis、模型鎖版、fallback、drift、algorithmic adverse events。</p></div>
+      <div class="card"><span class="tag t1">06｜轉譯落地</span><h3>法規與部署文件</h3><p>Design history、dataset lineage、V&V、risk file、human factors、clinical evaluation report。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>二、專利轉臨床試驗十步驟</h2><div class="sub">每一步都有可交付文件</div></div>
+    <table>
+      <thead><tr><th style="width:8%">Step</th><th style="width:24%">關鍵工作</th><th>核心問題</th><th style="width:26%">主要產出</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>拆解 Patent Claim</td><td>哪些是演算法、資料處理、系統架構、臨床用途與 UI？</td><td>Patent-to-Product Matrix</td></tr>
+        <tr><td>2</td><td>選 Lead Indication</td><td>哪個適應症最容易建立可信證據，又能證明專利價值？</td><td>Indication Priority Score</td></tr>
+        <tr><td>3</td><td>定義 Intended Use</td><td>誰、對誰、何時、輸入什麼、輸出什麼、支援哪個決策？</td><td>Clinical Product Definition Card</td></tr>
+        <tr><td>4</td><td>畫 Clinical Workflow</td><td>AI 在何處觸發、誰接收、如何採取行動、失敗時怎麼辦？</td><td>AI Clinical Workflow</td></tr>
+        <tr><td>5</td><td>建立 Evidence Gap</td><td>目前缺的是外部驗證、即時資料流、人因還是臨床效益？</td><td>Evidence Gap Map</td></tr>
+        <tr><td>6</td><td>鎖定 Clinical-grade Model</td><td>模型、threshold、preprocessing、缺值與 OOD 是否已固定？</td><td>Model Lock Specification</td></tr>
+        <tr><td>7</td><td>建立 Endpoint Ladder</td><td>Technical、human、workflow、patient outcome 各自測什麼？</td><td>Outcome Framework</td></tr>
+        <tr><td>8</td><td>設計 Safety Case</td><td>False negative、false positive、automation bias、downtime 如何處理？</td><td>Hazard Log＋FMEA</td></tr>
+        <tr><td>9</td><td>撰寫 Protocol／SAP</td><td>設計、estimand、cluster、drift、override、missing data 如何分析？</td><td>SPIRIT-AI Protocol＋SAP</td></tr>
+        <tr><td>10</td><td>建 Trial-to-Regulatory Dossier</td><td>哪些證據可直接進入法規、稽核、醫院導入與支付評估？</td><td>Trial Readiness Package</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>三、試驗設計選擇地圖</h2><div class="sub">依產品成熟度選擇，不要一次跳到 RCT</div></div>
+    <div class="matrix">
+      <div class="head">產品階段</div><div class="head">最適方法</div><div class="head">主要回答</div><div class="head">升級條件</div>
+      <div><b>模型剛完成</b><br><span class="pill">Offline</span></div><div>Retrospective external validation</div><div>能否跨時間、跨院泛化？</div><div>校準穩定、族群表現可接受</div>
+      <div><b>準備接臨床資料流</b><br><span class="pill">Silent</span></div><div>Silent prospective trial</div><div>即時資料流、延遲、缺值與 drift 是否可控？</div><div>系統穩定、無重大資料錯置</div>
+      <div><b>準備給人使用</b><br><span class="pill">Human factors</span></div><div>Usability／simulation study</div><div>使用者是否理解、是否出現 automation bias？</div><div>可正確解讀並完成任務</div>
+      <div><b>開始臨床運作</b><br><span class="pill">Prospective</span></div><div>Prospective observational study</div><div>採用率、override、time-to-action 與工作負擔？</div><div>採用可行、安全可控</div>
+      <div><b>驗證臨床效果</b><br><span class="pill">Impact</span></div><div>Individual／cluster RCT</div><div>AI 是否改善決策、流程或患者 outcome？</div><div>形成法規與部署證據</div>
+      <div><b>全面導入</b><br><span class="pill">Scale</span></div><div>Stepped-wedge／implementation study</div><div>如何跨單位擴散、監測 drift 與 ROI？</div><div>正式納入治理與持續監測</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>四、十個關鍵方法</h2><div class="sub">真正決定試驗品質的能力</div></div>
+    <div class="grid g2">
+      <div class="card"><h3>1. Intended Use Decomposition</h3><p>Population × User × Setting × Input × Output × Decision × Action × Benefit。</p></div>
+      <div class="card"><h3>2. Estimand Framework</h3><p>明確定義 strategy、population、outcome、intercurrent events、summary measure。</p></div>
+      <div class="card"><h3>3. Decision Curve Analysis</h3><p>判斷不同 threshold 下是否有 net benefit，而不是只看 AUROC。</p></div>
+      <div class="card"><h3>4. Calibration Analysis</h3><p>評估 calibration-in-the-large、slope、subgroup 與 temporal calibration。</p></div>
+      <div class="card"><h3>5. AI Trial Sample Size</h3><p>依診斷、prediction validation、cluster、superiority 或 non-inferiority 分別估算。</p></div>
+      <div class="card"><h3>6. External Validation</h3><p>優先 temporal、geographic、cross-institution；random split 不能代替外部驗證。</p></div>
+      <div class="card"><h3>7. Human–AI Interaction</h3><p>比較 AI alone、clinician alone、clinician + AI，並分析 error concordance。</p></div>
+      <div class="card"><h3>8. Implementation Fidelity</h3><p>測量 exposure、adoption、correct use、override、downtime 與 workaround。</p></div>
+      <div class="card"><h3>9. Subgroup／Fairness</h3><p>預先定義年齡、性別、疾病嚴重度、院區、資料來源等交互作用。</p></div>
+      <div class="card"><h3>10. Post-deployment Monitoring</h3><p>追蹤 data、concept、calibration、outcome、usage 與 safety drift。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>五、12 週實作學習計畫</h2><div class="sub">每週完成一份可用文件</div></div>
+    <div class="timeline">
+      <div class="week"><b>Week 1</b><strong>拆解專利</strong><span>Patent-to-Product Matrix</span></div>
+      <div class="week"><b>Week 2</b><strong>選 Lead Indication</strong><span>Indication Priority Score</span></div>
+      <div class="week"><b>Week 3</b><strong>Intended Use</strong><span>Product Definition Card</span></div>
+      <div class="week"><b>Week 4</b><strong>SaMD 評估</strong><span>Evidence Gap Map</span></div>
+      <div class="week"><b>Week 5</b><strong>Clinical Workflow</strong><span>AI Workflow Diagram</span></div>
+      <div class="week"><b>Week 6</b><strong>風險與 FMEA</strong><span>Hazard Log</span></div>
+      <div class="week"><b>Week 7</b><strong>External Validation</strong><span>Validation Protocol</span></div>
+      <div class="week"><b>Week 8</b><strong>Silent Trial</strong><span>Silent Trial Protocol</span></div>
+      <div class="week"><b>Week 9</b><strong>Human Factors</strong><span>Usability Study Plan</span></div>
+      <div class="week"><b>Week 10</b><strong>選 Trial Design</strong><span>Design Decision Memo</span></div>
+      <div class="week"><b>Week 11</b><strong>SPIRIT-AI</strong><span>Protocol v0.1</span></div>
+      <div class="week"><b>Week 12</b><strong>SAP＋法規文件</strong><span>Trial Readiness Package</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>六、最小閱讀資料包</h2><div class="sub">依閱讀順序</div></div>
+    <table>
+      <thead><tr><th>#</th><th>資料</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>IMDRF SaMD Clinical Evaluation</td><td>建立臨床關聯、技術驗證與臨床驗證三層證據架構。</td></tr>
+        <tr><td>2</td><td>FDA AI-enabled Medical Devices／GMLP</td><td>理解全生命週期、資料代表性、風險與模型變更治理。</td></tr>
+        <tr><td>3</td><td>SPIRIT-AI</td><td>直接用於撰寫 AI 試驗 protocol。</td></tr>
+        <tr><td>4</td><td>CONSORT-AI</td><td>反向確認最終試驗需要報告哪些內容。</td></tr>
+        <tr><td>5</td><td>DECIDE-AI</td><td>設計早期臨床導入與 human–AI interaction 評估。</td></tr>
+        <tr><td>6</td><td>TRIPOD-AI／PROBAST-AI／STARD-AI</td><td>回溯性模型、偏差風險與診斷研究報告。</td></tr>
+        <tr><td>7</td><td>ISO 14155／14971／IEC 62304／62366-1</td><td>臨床試驗、風險管理、軟體生命週期與 usability engineering。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="callout danger">Not-to-do：不要直接跳大型 RCT、不要以 AUROC 當唯一成果、不要在試驗中任意改版、不要把「專利用途」直接視為「臨床 Intended Use」。</div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>七、現在應先完成的最小套件</h2><div class="sub">Patent-to-Clinical-Trial Translation Pack</div></div>
+    <div class="grid g2">
+      <div class="card"><h3>產品與臨床定義</h3><p>專利摘要、核心 claims、Lead indication、Intended Use、使用者、族群與 workflow。</p></div>
+      <div class="card"><h3>技術與證據狀態</h3><p>模型版本、輸入輸出、threshold、外部驗證、資料品質與目前證據缺口。</p></div>
+      <div class="card"><h3>試驗策略</h3><p>Comparator、endpoint ladder、trial design、estimand、sample size 與 safety monitoring。</p></div>
+      <div class="card"><h3>法規與部署</h3><p>Risk file、V&V、human factors、drift plan、trial-to-regulatory dossier。</p></div>
+    </div>
+  </section>
+
+  <div class="footer">AI 專利轉臨床試驗｜單頁決策與學習地圖｜2026</div>
+</div>
+</body>
+</html>

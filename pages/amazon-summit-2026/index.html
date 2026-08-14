@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon Summit 2026 — Day 1 選課筆記</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1a1d21; --muted:#5b6470;
+    --line:#e4e7ec; --accent:#ff9900; --accent-ink:#8a5200;
+    --pri:#0a7d34; --pri-bg:#e5f5eb; --alt:#6b7280; --alt-bg:#eef0f3;
+    --intro:#0b6bcb; --intro-bg:#e8f1fc; --want:#7a3fc0; --want-bg:#f1e9fb;
+    --q:#b4530a; --q-bg:#fbeee0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1216; --card:#181c22; --ink:#e7eaee; --muted:#9aa4b0;
+      --line:#2a2f37; --accent:#ff9900; --accent-ink:#ffb84d;
+      --pri:#4ade80; --pri-bg:#123122; --alt:#9aa4b0; --alt-bg:#232830;
+      --intro:#6db3f2; --intro-bg:#12283d; --want:#c79bf0; --want-bg:#271833;
+      --q:#f0a35e; --q-bg:#332312;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1216; --card:#181c22; --ink:#e7eaee; --muted:#9aa4b0;
+    --line:#2a2f37; --pri:#4ade80; --pri-bg:#123122; --alt:#9aa4b0; --alt-bg:#232830;
+    --intro:#6db3f2; --intro-bg:#12283d; --want:#c79bf0; --want-bg:#271833;
+    --q:#f0a35e; --q-bg:#332312; --accent-ink:#ffb84d;
+  }
+  :root[data-theme="light"]{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1a1d21; --muted:#5b6470;
+    --line:#e4e7ec; --pri:#0a7d34; --pri-bg:#e5f5eb; --alt:#6b7280; --alt-bg:#eef0f3;
+    --intro:#0b6bcb; --intro-bg:#e8f1fc; --want:#7a3fc0; --want-bg:#f1e9fb;
+    --q:#b4530a; --q-bg:#fbeee0; --accent-ink:#8a5200;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:32px 20px 80px;}
+  header.top{margin-bottom:28px;}
+  .kicker{color:var(--accent-ink); font-weight:700; letter-spacing:.04em; font-size:13px; text-transform:uppercase;}
+  h1{font-size:28px; margin:6px 0 4px; letter-spacing:-.01em;}
+  .sub{color:var(--muted); font-size:15px;}
+  .lead{
+    background:var(--card); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:12px; padding:14px 18px; margin:18px 0 8px; color:var(--muted); font-size:14.5px;
+  }
+  .lead b{color:var(--ink);}
+  .section-label{
+    margin:38px 0 10px; font-size:13px; font-weight:800; letter-spacing:.08em;
+    color:var(--muted); text-transform:uppercase; border-bottom:1px solid var(--line); padding-bottom:6px;
+  }
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:20px 22px; margin:16px 0; box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+  .card.keynote{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset;}
+  .meta{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px;}
+  .badge{font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap;}
+  .b-time{background:var(--accent); color:#1a1200;}
+  .b-room{background:var(--alt-bg); color:var(--ink); border:1px solid var(--line);}
+  .b-pri{background:var(--pri-bg); color:var(--pri);}
+  .b-alt{background:var(--alt-bg); color:var(--alt);}
+  .b-code{background:transparent; color:var(--muted); border:1px dashed var(--line); font-weight:600;}
+  h2.title{font-size:19px; margin:2px 0 6px; letter-spacing:-.01em;}
+  .oneliner{color:var(--muted); font-size:14px; margin:0 0 14px;}
+  .block{border-radius:10px; padding:12px 14px; margin:10px 0;}
+  .block h3{margin:0 0 6px; font-size:14px; font-weight:800; display:flex; align-items:center; gap:6px;}
+  .block p{margin:0; font-size:14px;}
+  .block ul,.block ol{margin:4px 0 0; padding-left:20px;}
+  .block li{margin:4px 0; font-size:14px;}
+  .block li b,.block li strong{color:var(--ink);}
+  .intro{background:var(--intro-bg);} .intro h3{color:var(--intro);}
+  .want{background:var(--want-bg);} .want h3{color:var(--want);}
+  .q{background:var(--q-bg);} .q h3{color:var(--q);}
+  .theme-toggle{
+    position:fixed; top:14px; right:14px; z-index:10;
+    background:var(--card); border:1px solid var(--line); color:var(--ink);
+    border-radius:999px; padding:7px 12px; font-size:13px; cursor:pointer;
+  }
+  footer{margin-top:40px; color:var(--muted); font-size:13px; text-align:center;}
+  a{color:var(--intro);}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="(function(){var r=document.documentElement;var d=r.getAttribute('data-theme');var n=d==='dark'?'light':(d==='light'?'dark':(matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark'));r.setAttribute('data-theme',n);})()">◐ 主題</button>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">AWS Summit Taipei 2026 · Day 1 · 7/15 (三)</div>
+  <h1>Day 1 選課筆記</h1>
+  <div class="sub">Kiro 有哪些最新進展？我該關注哪些課程？</div>
+  <div class="lead">篩選視角：<b>醫學研究者</b>，重用 AI 做論文 / R / 資料分析 / 工作流自動化。主軸鎖 <b>agentic AI + 工作流 + MCP/Skills</b>。每堂含官方介紹、我想聽的細節綱要、現場該提的 5 問。</div>
+</header>
+
+<!-- KEYNOTE -->
+<div class="card keynote">
+  <div class="meta">
+    <span class="badge b-time">10:00–11:00</span>
+    <span class="badge b-room">3F 大會堂</span>
+    <span class="badge b-code">KEY001</span>
+  </div>
+  <h2 class="title">Keynote 主題演講</h2>
+  <p class="oneliner">代理式 AI 全景 + OpenAI Codex + 客戶案例。定調全天，每人該去。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>AI 代理（AI Agent）的時代已經來臨。AWS 將揭示如何讓代理式 AI（Agentic AI）真正落地，從建構、部署到大規模擴展，為開發者移除障礙。將分享業界先驅的真實故事，瞭解領先企業如何運用 AI 與代理式架構實現突破性成果，並見證全新開發者工具與流程如何加速創新。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>完整技術堆疊</b>：build → deploy → scale 每一層對應哪些 AWS 服務（Bedrock AgentCore、Strands Agents SDK、Amazon Q、Kiro），彼此如何組裝。</li>
+      <li><b>Codex × AWS 整合細節</b>：OpenAI Codex 在 AWS 上跑在哪、資料流向、與 Bedrock 上 Claude 的分工，何時選哪個。</li>
+      <li><b>客戶案例硬數據</b>：導入前後的開發週期、人力、錯誤率、成本具體變化（要數字，不要形容詞）。</li>
+      <li><b>新工具清單 + 時程</b>：這場宣布的新開發者工具/功能，哪些 GA、哪些預覽、何時可用。</li>
+      <li><b>參考架構藍圖</b>：一張可照抄的 agentic reference architecture（含 memory、tool、guardrail、observability 各元件）。</li>
+      <li><b>落地失敗模式</b>：領先企業踩過哪些坑、為何 PoC 卡住上不了 production。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>代理式 AI 從 PoC 到正式環境，AWS 認為最大障礙是什麼？如何量化「落地成功」？</li>
+      <li>OpenAI Codex 與 AWS 自家 agent 工具（Kiro/Q）定位差異？我該學哪個？</li>
+      <li>分享的客戶案例中，有無醫療/研究/高合規性領域？他們如何處理資料隱私？</li>
+      <li>「大規模擴展」的成本曲線長怎樣？中小團隊或個人研究者划算嗎？</li>
+      <li>未來 12 個月開發者工作流會被 agent 改變到什麼程度？哪些技能不會過時？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- AIML01 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">11:30–12:15</span>
+    <span class="badge b-room">3F 大會堂</span>
+    <span class="badge b-pri">首選</span>
+    <span class="badge b-code">AIML01</span>
+  </div>
+  <h2 class="title">亞馬遜將 Quick 部署至數千名使用者的歷程</h2>
+  <p class="oneliner">企業導入 AI 的數據整合/協作摩擦實戰。最貼近你「把 AI 推進日常研究流程」。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>分享亞馬遜內部跨多個事業部，將 Quick 導入數千名員工的歷程中，所面對的數據整合困境、架構設計取捨，以及跨部門協作摩擦。提供實戰心得，協助建立可落地的企業 AI 推行框架。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>資料連接器覆蓋面</b>：Quick 能接哪些來源（S3、RDS/Aurora、Redshift、SaaS、檔案），異質資料如何統一。</li>
+      <li><b>權限與治理模型</b>：數千人規模下的 row-level security、資料分級、誰能查什麼，怎麼設。</li>
+      <li><b>架構取捨的決策點</b>：集中式資料湖 vs 分散、自建 pipeline vs 託管，各在什麼情境選。</li>
+      <li><b>資料品質前處理</b>：髒資料、缺值、格式不一如何在導入前清（對映我研究資料的痛點）。</li>
+      <li><b>採用曲線 + 推行策略</b>：從 0 到數千人用了多久、training/change management 怎麼做、採用率數字。</li>
+      <li><b>失敗案例根因</b>：哪些部門/場景導入失敗，為什麼，怎麼補救。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>數據整合最卡的環節是格式、權限、還是資料品質？研究資料（異質、缺值多）適用嗎？</li>
+      <li>「跨部門協作摩擦」具體長怎樣？如何說服不信 AI 的同事採用？</li>
+      <li>導入的成功指標是什麼（採用率、時間節省、錯誤率）？怎麼衡量？</li>
+      <li>哪些工作被 Quick 取代成效最好、哪些反而失敗？失敗模式為何？</li>
+      <li>這套「企業 AI 推行框架」縮小到單一實驗室/研究團隊還成立嗎？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- MOD01 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">11:30–12:15</span>
+    <span class="badge b-room">Room 201DEF</span>
+    <span class="badge b-code">MOD01</span>
+  </div>
+  <h2 class="title">AI 驅動開發生命週期 (AI-DLC)：以 AI 重新想像軟體工程</h2>
+  <p class="oneliner">偏軟體工程全生命週期。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>探索 AI-DLC 如何將 AI 作為軟體開發全生命週期中的核心協作者，透過 AI 驅動流程、持續上下文與人機協作模式，串聯 Inception、Construction 與 Operations 三大階段，加速開發效率、提升品質，並打造更佳的開發者體驗。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>三階段拆解</b>：Inception / Construction / Operations 各自的 AI 工具、輸入、交付物（artifact）清單。</li>
+      <li><b>「持續上下文」怎麼做</b>：context store 的技術實作，跨階段如何傳遞，和我用的 memory/CLAUDE.md 差在哪。</li>
+      <li><b>人機協作 workflow</b>：誰產 spec、誰 review、誰驗證，哪個決策點人類必須介入。</li>
+      <li><b>與傳統 SDLC/Agile 對照</b>：一張差異表，AI-DLC 到底改變了什麼。</li>
+      <li><b>度量指標</b>：用什麼衡量成效（DORA metrics？返工率？），有無前後對比數字。</li>
+      <li><b>非典型專案適用性</b>：能否套到「資料分析腳本 + 論文管線」這類非傳統軟體。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>「持續上下文（continuous context）」技術上怎麼維持？跟我用的 memory/CLAUDE.md 概念差在哪？</li>
+      <li>Inception / Construction / Operations 三階段，AI 介入最深的是哪一階段？</li>
+      <li>人機協作模式中，人類保留哪些決策權？何時該否決 AI？</li>
+      <li>這套流程能否套用到「資料分析腳本 + 論文管線」這類非傳統軟體專案？</li>
+      <li>品質提升有數據佐證嗎？bug 率、返工率降多少？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- T&C001 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">13:30–14:15</span>
+    <span class="badge b-room">Room 102</span>
+    <span class="badge b-pri">首選</span>
+    <span class="badge b-code">T&amp;C001</span>
+  </div>
+  <h2 class="title">Amazon Quick 實戰：用 AI 代理重塑你的工作流程</h2>
+  <p class="oneliner">MCP + Skills 核心架構 + 多工作流串接。直接對應你用 Claude/skill 家族的工作方式。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>以 Amazon Quick 為實例，快速掌握 MCP（Model Context Protocol）與 Skills 的核心架構，瞭解如何串接多重工作流並精準定位 Agent 的角色。從零開始上手基本概念，再到中等複雜度的流程實作，親身體驗 AI 如何為日常工作加速。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>MCP 架構拆解</b>：server / client 角色、tool schema 長怎樣、工具如何註冊與被 agent 發現。</li>
+      <li><b>Skills 定義與觸發</b>：Quick 的 skill 怎麼寫、觸發條件、與 Claude Code skill 家族的異同與能否互通。</li>
+      <li><b>多工作流 orchestration</b>：一個實際 demo 的串接流程，狀態如何在步驟間傳、失敗如何重試。</li>
+      <li><b>Agent 角色定位法</b>：多 agent 分工的設計原則（誰查、誰算、誰彙整）。</li>
+      <li><b>實作步驟 + 踩雷點</b>：從零到中複雜度的具體操作，最常見的設定錯誤。</li>
+      <li><b>接外部程式</b>：能否呼叫我的 R/tidyverse 腳本，怎麼包成 tool。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>Quick 的 MCP/Skills 與 Claude Code 的 MCP/skill 家族相容嗎？能互通還是各自封閉？</li>
+      <li>「精準定位 Agent 角色」的方法論是什麼？多 agent 分工怎麼切？</li>
+      <li>串接多重工作流時，狀態/上下文如何在步驟間傳遞？失敗怎麼重試？</li>
+      <li>我現有的 R/tidyverse 分析流程能包進 Quick 工作流嗎？如何呼叫外部程式？</li>
+      <li>從基礎到中等複雜度，實務上最容易踩雷的地方在哪？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- LT-001 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">13:30–13:55</span>
+    <span class="badge b-room">2F Developer Community Zone</span>
+    <span class="badge b-alt">備選 · 撞 T&amp;C001</span>
+    <span class="badge b-code">LT-001</span>
+  </div>
+  <h2 class="title">製造業 ERP 上的本體論與 Amazon Bedrock 代理式 AI</h2>
+  <p class="oneliner">非技術人員自然語言查資料、Claude 落地正式環境。真實案例，25 分鐘短。時段撞 T&C001，二選一或跑場。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>分享製造業公司如何運用代理式編程工具搭配 Amazon Bedrock 上的 Claude 模型，從四個製造廠區的 ERP 匯出資料，快速完成第一個可用版本，並已在正式環境上線。探討非技術人員如何透過自然語言查詢料號資料、選擇 Amazon Bedrock 的原因、代理式編程互動風格，以及如何讓每位員工都能使用。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>ontology 建構法</b>：本體論怎麼從 ERP schema 抽出、料號/屬性/關係如何建模（對映我建臨床 codelist/schema）。</li>
+      <li><b>NL → 查詢的 pipeline</b>：自然語言查詢是走 NL2SQL、RAG、還是 tool use？完整資料流。</li>
+      <li><b>選 Bedrock Claude 的理由</b>：成本、合規、延遲、準確率的實測比較數據。</li>
+      <li><b>PoC → production 架構</b>：從匯出資料到上線的部署圖、花多久、最耗時的環節。</li>
+      <li><b>準確率驗證 + 幻覺防護</b>：怎麼確認查詢結果正確、錯了怎麼攔。</li>
+      <li><b>可移植性</b>：這套「自然語言查結構化資料」搬到醫院資料庫（nephDB）的可行性與改動點。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>「本體論（ontology）」在此扮演什麼角色？跟我建臨床資料 schema/codelist 的做法可類比嗎？</li>
+      <li>為何選 Bedrock 上的 Claude 而非直接用 API？成本、合規、還是整合考量？</li>
+      <li>非技術人員自然語言查資料，準確率如何驗證？幻覺怎麼防？</li>
+      <li>從匯出資料到正式上線花多久？最耗時的是資料清理還是 agent 調校？</li>
+      <li>這套「自然語言查結構化資料」能否移植到醫院資料庫（如 nephDB）？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- KIRO05 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">14:30–15:00</span>
+    <span class="badge b-room">Room 201ABC</span>
+    <span class="badge b-code">KIRO05</span>
+  </div>
+  <h2 class="title">從憑感覺寫程式到規格驅動：別讓 AI 靠直覺寫程式</h2>
+  <p class="oneliner">讓 AI「有章法」交付，不憑感覺。對你寫分析腳本/論文管線有直接方法論價值。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>以獨立遊戲開發為例，展示 Kiro IDE 如何透過 Steering、Spec、Hooks、Powers 四大機制，讓 AI Agent 從「隨機生成」進化為「有章法的工程交付」。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>四機制各自的檔案與作用</b>：Steering（引導）/ Spec（規格）/ Hooks（觸發）/ Powers（能力）分別是什麼檔、放哪、怎麼寫。</li>
+      <li><b>Spec 撰寫實例</b>：從一句需求 → 可執行 spec 的完整範例，spec 顆粒度多細才夠。</li>
+      <li><b>Hooks 自動化</b>：pre/post 觸發的實例，能否做到「完成前自動驗證/測試」。</li>
+      <li><b>Powers vs Skill</b>：Powers 與 Claude Code 的 skill 概念差在哪、能不能複用。</li>
+      <li><b>可重現性前後對比</b>：同一任務用 vibe coding vs spec-driven，輸出穩定度差多少（要 demo）。</li>
+      <li><b>非遊戲場景適用</b>：套到「資料分析 + 統計 + 論文」管線的可行性與範例。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>Steering / Spec / Hooks / Powers 四機制各解決什麼問題？彼此關係？</li>
+      <li>Spec-Driven 相比直接下 prompt，在可重現性上具體改善多少？</li>
+      <li>Hooks 能做到「每次完成前自動驗證」嗎？跟我要的自動化行為對得上？</li>
+      <li>寫 spec 的前期成本值得嗎？什麼規模的任務才划算？</li>
+      <li>這套機制對「資料分析 + 統計 + 論文」這類非遊戲、非傳統軟體任務適用嗎？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- KIRO03 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">15:15–16:00</span>
+    <span class="badge b-room">Room 201ABC</span>
+    <span class="badge b-code">KIRO03</span>
+  </div>
+  <h2 class="title">Kiro 實戰：透過多角色自主工作流程實現開發者自助服務</h2>
+  <p class="oneliner">AI-DLC 多代理協作，延續 KIRO05。或輕鬆選 T&C003 Skill Builder 遊戲式學習。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>Kiro 的 AI-DLC 以智慧化自動工作流程，重新定義現代開發模式，讓快速迭代與跨職能協作成為常態。這套新世代開發生命週期整合了各司其職的 AI 代理人，應用場景橫跨敏捷產品創新、營運效率提升與高度個人化的使用者體驗。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>多角色分工設計</b>：planner / coder / reviewer / tester 各 agent 的職責、prompt、交接方式。</li>
+      <li><b>orchestration 引擎</b>：誰調度、狀態怎麼管、任務如何切分與合併。</li>
+      <li><b>human-in-the-loop 檢查點</b>：自主流程在哪些節點停下等人確認，怎麼煞車/回退。</li>
+      <li><b>並行衝突處理</b>：多 agent 同時改檔/改狀態時的鎖定或協調機制。</li>
+      <li><b>vs Claude Code</b>：跟 subagent / workflow 相比，Kiro 的獨到設計與限制。</li>
+      <li><b>單人研究者適用性</b>：一人團隊用「多角色自助服務」是否過重，最小配置為何。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>「各司其職的 AI 代理人」如何切角色？誰負責 orchestration、誰負責驗證？</li>
+      <li>自主工作流跑錯時，人類在哪個檢查點介入？如何煞車？</li>
+      <li>多 agent 並行時如何避免衝突（改到同檔案、狀態不一致）？</li>
+      <li>「開發者自助服務」對只有一人的研究者有意義嗎，還是專為大團隊？</li>
+      <li>跟 Claude Code 的 subagent/workflow 相比，Kiro 的獨到之處是什麼？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- T&C003 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">15:15–16:00</span>
+    <span class="badge b-room">Room 102</span>
+    <span class="badge b-alt">備選</span>
+    <span class="badge b-code">T&amp;C003</span>
+  </div>
+  <h2 class="title">AWS Skill Builder：從沙箱實驗到遊戲式學習</h2>
+  <p class="oneliner">輕鬆場，與 KIRO03 撞時段。想放鬆兼掃 AWS 學習資源可選。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>完整介紹 AWS Skill Builder 的學習生態系，從官方課程、講師授課到沙箱實驗環境，再到卡牌收集、密室逃脫與 RPG 闖關等遊戲式學習模式，以及企業模擬情境的互動實作。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>沙箱規格</b>：免費額度、可用哪些 AWS 服務、時限、能否練 AI/ML 實作。</li>
+      <li><b>AI/ML 學習路徑地圖</b>：從入門到認證（AIF-C01 等）的課程順序與時數。</li>
+      <li><b>遊戲式模組實測</b>：密室逃脫/RPG 到底教什麼、對成人專業學習的留存效果。</li>
+      <li><b>企業模擬情境</b>：個人能否使用、內容是否貼近真實工作。</li>
+      <li><b>落地落差</b>：學完到能實作差多少，該搭配什麼真實專案補足。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>沙箱實驗環境免費嗎？額度多少？適合自學 AI/ML 路徑？</li>
+      <li>遊戲式學習對成人專業學習留存率真有提升，還是噱頭？</li>
+      <li>有無 AI/ML 或資料分析專屬的學習路徑與認證對應？</li>
+      <li>企業模擬情境能否個人使用？內容貼近真實工作嗎？</li>
+      <li>學完到能實作的落差多大？需要搭配哪些真實專案？</li>
+    </ol>
+  </div>
+</div>
+
+<div class="section-label">可選加碼</div>
+
+<!-- LT-002 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">13:55–14:20</span>
+    <span class="badge b-room">2F Developer Community Zone</span>
+    <span class="badge b-alt">備選</span>
+    <span class="badge b-code">LT-002</span>
+  </div>
+  <h2 class="title">使用 AWS Security Agent 前你必需知道的 3 件事</h2>
+  <p class="oneliner">自動滲透測試 + AI 不確定性風險。若關心 AI 安全，20 分鐘划算。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>介紹 AWS Security Agent 作為自動化、資安面向的 AI Agent，其強大的自動滲透測試功能可輕鬆找出網站安全漏洞。同時探討 AI Agent 的不確定性帶來的風險，以及在設定測試時應注意的步驟，讓滲透測試更完美、更安全。將介紹用戶在設定 Security Agent 時經常忽略的安全隱患及對應的防護策略。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>自動滲透測試原理</b>：Security Agent 怎麼掃、掃哪些漏洞類型（OWASP Top 10？）、輸出長怎樣。</li>
+      <li><b>必知 3 件事具體內容</b>：講者點名的三個最常被忽略隱患，各自的成因與修法。</li>
+      <li><b>授權邊界設定</b>：如何界定掃描範圍、避免誤掃到不該碰的系統。</li>
+      <li><b>AI 不確定性的實例</b>：漏報/誤報的真實案例與比例，如何降風險。</li>
+      <li><b>自架服務適用性</b>：能否用它檢測我自架的研究資料 API/服務。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>自動滲透測試的授權邊界如何界定？誤掃到不該掃的系統怎麼辦？</li>
+      <li>「AI 不確定性風險」具體指什麼？會漏報還是誤報居多？</li>
+      <li>講者說的「經常被忽略的安全隱患」前三名是什麼？</li>
+      <li>這工具能否用於檢測我自架的研究資料服務/API？</li>
+      <li>AI agent 自動化資安 vs 傳統人工滲透測試，責任歸屬怎麼算？</li>
+    </ol>
+  </div>
+</div>
+
+<!-- T&C002 -->
+<div class="card">
+  <div class="meta">
+    <span class="badge b-time">14:30–15:15</span>
+    <span class="badge b-room">Room 102</span>
+    <span class="badge b-alt">備選</span>
+    <span class="badge b-code">T&amp;C002</span>
+  </div>
+  <h2 class="title">AWS Certified AI Practitioner (AIF-C01) 認證備考課程</h2>
+  <p class="oneliner">若想拿 AWS AI 認證才去，否則跳過。</p>
+
+  <div class="block intro"><h3>📋 課程介紹</h3>
+    <p>系統性地帶領學員掌握 AIF-C01 考試範圍，包含各領域配分比重、核心概念重點，以及高頻考點解析，協助學員以最有效率的方式通過認證考試。</p>
+  </div>
+
+  <div class="block want"><h3>🎯 我想聽的課程綱要</h3>
+    <ul>
+      <li><b>四大 domain 配分</b>：各領域佔比、範圍、哪塊 CP 值最高該優先讀。</li>
+      <li><b>高頻考點清單</b>：最常出的概念與題型（Bedrock、prompt engineering、responsible AI 等）。</li>
+      <li><b>考試形式</b>：偏概念還是實作、有無情境題、題數/時間/及格分。</li>
+      <li><b>備考時程</b>：非工程背景研究者從零到考過大概要多久、每日投入。</li>
+      <li><b>免費資源</b>：官方模擬題、Skill Builder 對應課程、practice exam 在哪拿。</li>
+    </ul>
+  </div>
+
+  <div class="block q"><h3>❓ 我該提出的 5 個關鍵問題</h3>
+    <ol>
+      <li>AIF-C01 對非工程背景的研究者，備考需多久？先備知識為何？</li>
+      <li>各領域配分比重如何？哪塊 CP 值最高？</li>
+      <li>這張證照對學術/研究職涯有實質幫助，還是偏業界求職？</li>
+      <li>考試內容偏概念還是實作？有動手題嗎？</li>
+      <li>有無官方免費備考資源與模擬題可搭配？</li>
+    </ol>
+  </div>
+</div>
+
+<footer>
+  一句話路線：<b>KEY001 → AIML01 → T&amp;C001（或 LT-001）→ KIRO05 → KIRO03</b><br>
+  AWS Summit Taipei 2026 · Day 1 選課筆記 · 醫學研究者視角
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>不規則縱向 EHR 的建模路線選擇｜腎臟科臨床 AI 方法學</title>
+<meta name="description" content="把腎臟科的不規則縱向 EHR 研究壓成三個決策問題與四條並列路線：landmark tabular ML、原生不規則時間序列、病人軌跡表徵、事件序列 EHR 基礎模型；含方法學陷阱與共用評估面板。">
+<style>
+  :root{color-scheme:light dark}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;padding:0}
+  img{max-width:100%}
+</style>
+<style>
+  :root{
+    --bg:#F3F6F7; --surface:#FFFFFF; --surface-2:#FAFCFC; --surface-3:#EEF3F5;
+    --ink:#15202A; --ink-2:#33454F; --muted:#5B6B77; --rule:#DCE4E8; --rule-2:#C6D3D9;
+    --ev-strong:#0E7C6B; --ev-limited:#A9640B; --ev-hyp:#B41E48; --ev-none:#6B7C8A;
+    --ev-strong-bg:#E4F1EE; --ev-limited-bg:#F7ECDD; --ev-hyp-bg:#F8E6EB; --ev-none-bg:#EBEFF2;
+    --shadow:0 1px 2px rgba(21,32,42,.06), 0 8px 24px rgba(21,32,42,.05);
+    /* tooltip：相對頁面倒色（淺色頁 → 深色霧面玻璃卡） */
+    --tip-bg:rgba(20,29,37,.97); --tip-ink:#F2F7FA; --tip-ink-2:#C8D6DF; --tip-muted:#93A7B4;
+    --tip-rule:rgba(255,255,255,.13); --tip-head:rgba(255,255,255,.07); --tip-edge:rgba(255,255,255,.22);
+    --tip-glare:rgba(255,255,255,.16); --tip-accent:#FF89A8; --tip-accent-bg:rgba(255,137,168,.18);
+    --tip-warn:#FFB25E; --tip-warn-bg:rgba(255,178,94,.13);
+    --tip-ok:#5FE0C6; --tip-ok-bg:rgba(95,224,198,.12);
+    --tip-shadow:0 2px 8px rgba(10,16,21,.24), 0 28px 64px rgba(10,16,21,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+      --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+      --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+      --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+      --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+      --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+      --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+      --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+      --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+      --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+    --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+    --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+    --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+    --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+    --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+    --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+    --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+    --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang TC","Hiragino Sans TC","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1080px; margin:0 auto; padding:56px 28px 96px; display:flex; flex-direction:column; gap:56px}
+
+  .masthead{display:flex; flex-direction:column; gap:14px; border-bottom:1px solid var(--rule); padding-bottom:28px}
+  .eyebrow{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  h1{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:clamp(28px,4.4vw,42px); line-height:1.25; margin:0; font-weight:600; text-wrap:balance; letter-spacing:.01em;
+  }
+  h1 .en{display:block; font-size:.5em; font-style:italic; color:var(--muted); font-weight:400; margin-top:10px; letter-spacing:.02em}
+  .thesis{margin:0; max-width:62ch; color:var(--ink-2); font-size:17px}
+  .thesis b{color:var(--ink); font-weight:600}
+
+  section{display:flex; flex-direction:column; gap:20px}
+  .sec-head{display:flex; flex-direction:column; gap:6px}
+  .sec-label{font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:700}
+  h2{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:24px; margin:0; font-weight:600; letter-spacing:.01em;
+  }
+  .sec-note{margin:0; color:var(--muted); font-size:14.5px; max-width:66ch}
+
+  .legend{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:2px;
+    background:var(--rule); border:1px solid var(--rule); border-radius:12px; overflow:hidden;
+  }
+  .lg{background:var(--surface); padding:14px 16px; display:flex; flex-direction:column; gap:7px}
+  .lg-top{display:flex; align-items:center; gap:10px}
+  .lg-name{font-size:14px; font-weight:700; letter-spacing:.01em}
+  .lg-desc{font-size:12.5px; color:var(--muted); line-height:1.55}
+  .lg svg{flex:none; display:block}
+
+  figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+  .figwrap{overflow-x:auto; padding:22px 20px 8px}
+  .figwrap svg{display:block; min-width:900px; width:100%; height:auto}
+  figcaption{
+    padding:16px 22px 20px; border-top:1px solid var(--rule); background:var(--surface-2);
+    font-size:13.5px; color:var(--muted); line-height:1.7;
+  }
+  figcaption b{color:var(--ink-2); font-weight:600}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+  .tnote{margin:0; padding:14px 20px 18px; font-size:13px; color:var(--muted); line-height:1.7; border-top:1px solid var(--rule); background:var(--surface-2)}
+  th,td{padding:12px 16px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{
+    font-size:12px; letter-spacing:.06em; color:var(--muted); font-weight:700;
+    background:var(--surface-3); border-bottom:1px solid var(--rule-2); white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.k{font-weight:600; white-space:nowrap}
+  td small{color:var(--muted); font-size:12.5px}
+
+  .reads{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px}
+  .read{
+    background:var(--surface); border:1px solid var(--rule); border-radius:12px; padding:18px 18px 20px;
+    display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow); border-top:3px solid var(--stripe,var(--ev-hyp));
+  }
+  .read-tag{font-size:11.5px; font-weight:700; letter-spacing:.06em; color:var(--stripe,var(--ev-hyp))}
+  .read-obs{font-size:14.5px; font-weight:700; line-height:1.6}
+  .read-int{font-size:13.5px; color:var(--ink-2); line-height:1.75; margin:0}
+  .read-int b{color:var(--ink)}
+
+  .limits{background:var(--surface-3); border:1px solid var(--rule); border-radius:12px; padding:20px 22px}
+  .limits ul{margin:0; padding-left:1.15em; display:flex; flex-direction:column; gap:9px}
+  .limits li{font-size:14px; color:var(--ink-2); line-height:1.7}
+  .limits li b{color:var(--ink); font-weight:600}
+
+  footer{border-top:1px solid var(--rule); padding-top:20px; font-size:12.5px; color:var(--muted); line-height:1.7}
+
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--ev-strong); outline-offset:3px; border-radius:4px}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex; gap:4px; border-bottom:1px solid var(--rule); margin-top:-24px; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    appearance:none; background:none; border:none; cursor:pointer; white-space:nowrap;
+    font-family:inherit; font-size:14.5px; font-weight:600; color:var(--muted);
+    padding:11px 16px 12px; border-bottom:2px solid transparent; margin-bottom:-1px;
+    letter-spacing:.01em; border-radius:6px 6px 0 0;
+  }
+  .tab:hover{color:var(--ink-2); background:var(--surface-3)}
+  .tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--ev-hyp)}
+  .panel{display:flex; flex-direction:column; gap:56px}
+  .panel[hidden]{display:none}
+
+  /* ---------- hotspots ---------- */
+  .hot{cursor:pointer}
+  .hot .hit{fill:transparent; stroke:transparent; stroke-width:10}
+  .hot .halo{fill:none; stroke:var(--ev-hyp); stroke-width:2; opacity:0; stroke-linejoin:round}
+  @media (prefers-reduced-motion:no-preference){
+    .hot .halo{transition:opacity .12s ease, stroke-width .12s ease}
+  }
+  .hot:hover .halo, .hot:focus-visible .halo, .hot.on .halo{opacity:1; stroke-width:4}
+  .hot:focus{outline:none}
+  .mark{font-size:9.5px; font-weight:700; letter-spacing:.04em; fill:var(--ev-hyp); pointer-events:none}
+  .mark.q{fill:var(--ev-limited)}
+  .mark.n{fill:var(--ev-none)}
+
+  /* ---------- tooltip：倒色霧面玻璃 ---------- */
+  .tip{
+    position:fixed; z-index:60; max-width:min(460px,calc(100vw - 28px)); pointer-events:none;
+    color:var(--tip-ink); overflow:hidden;
+    background:linear-gradient(180deg, var(--tip-glare) 0%, rgba(255,255,255,0) 38%), var(--tip-bg);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    backdrop-filter:blur(20px) saturate(160%);
+    border:1.5px solid var(--tip-edge); border-radius:14px;
+    box-shadow:var(--tip-shadow), inset 0 1px 0 var(--tip-glare);
+    opacity:0; visibility:hidden; transform:translateY(4px) scale(.985);
+    transition:opacity .12s ease, transform .12s ease;
+  }
+  .tip.show{opacity:1; visibility:visible; transform:translateY(0) scale(1)}
+  .tip-head{
+    padding:12px 16px 11px; border-bottom:1px solid var(--tip-rule); background:var(--tip-head);
+    font-size:13px; font-weight:700; color:var(--tip-ink); line-height:1.5;
+  }
+  .tip-body{max-height:min(64vh,540px); overflow:hidden}
+  .blk{padding:11px 16px 13px; border-bottom:1px solid var(--tip-rule)}
+  .blk:last-child{border-bottom:none}
+  .blk-h{
+    font-size:10.5px; font-weight:700; letter-spacing:.12em; margin-bottom:7px;
+    display:inline-block; padding:2px 8px; border-radius:999px;
+  }
+  .b-warn .blk-h{color:var(--tip-warn); background:var(--tip-warn-bg)}
+  .b-ddx  .blk-h{color:var(--tip-accent); background:var(--tip-accent-bg)}
+  .b-cut  .blk-h{color:var(--tip-ok); background:var(--tip-ok-bg)}
+  .b-book .blk-h{color:var(--tip-muted); background:var(--tip-head)}
+  .blk p{margin:0; font-size:13px; line-height:1.72; color:var(--tip-ink-2)}
+  .blk ul{margin:0; padding-left:1.05em; display:flex; flex-direction:column; gap:4px}
+  .blk li{font-size:12.8px; line-height:1.6; color:var(--tip-ink-2)}
+  .blk li b{color:var(--tip-ink); font-weight:600}
+  .bk{font-size:12.5px; line-height:1.6; color:var(--tip-ink-2); margin:0 0 6px}
+  .bk:last-child{margin-bottom:0}
+  .bk .t{color:var(--tip-ink); font-weight:600}
+  .bk .s{color:var(--tip-muted); font-size:11.5px; display:block}
+
+  .hint{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px;
+    padding:7px 15px; font-size:13px; color:var(--ink-2);
+  }
+  .hint b{color:var(--ev-hyp)}
+
+  /* ---------- 書目清單 ---------- */
+  .reflist{border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow); overflow:hidden}
+  .refrow{display:grid; grid-template-columns:42px 1fr; gap:14px; padding:14px 18px; border-bottom:1px solid var(--rule)}
+  .refrow:last-child{border-bottom:none}
+  .refrow.lit{background:var(--ev-hyp-bg)}
+  .refrow .n{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700;
+    color:var(--ev-hyp); background:var(--ev-hyp-bg); border-radius:5px; height:21px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .refrow .zh{font-size:14.5px; font-weight:600; line-height:1.6; margin:0}
+  .refrow .en{font-size:12.5px; color:var(--ink-2); line-height:1.55; margin:3px 0 0}
+  .refrow .meta{font-size:12px; color:var(--muted); margin:5px 0 0; line-height:1.6}
+  .refrow .where{
+    display:inline-block; margin:6px 6px 0 0; font-size:11.5px; color:var(--muted);
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px; padding:2px 9px;
+  }
+  .refrow .kind{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:1px 8px;
+    border-radius:999px; margin-left:8px; vertical-align:2px;
+    background:var(--ev-strong-bg); color:var(--ev-strong);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">NEPHROLOGY · CLINICAL AI METHODS · 2026</div>
+    <h1>不規則縱向 EHR：先決定 estimand，再決定表示法
+      <span class="en">Irregular longitudinal EHR in nephrology — choosing a representation before choosing a model</span>
+    </h1>
+    <p class="thesis">腎臟科的 lab、用藥、診斷與住院從來不是等距的，而<b>檢查時機本身就是臨床訊號</b>。這頁把「該用哪個模型」換成一個更可辯護的問法：你要估計的對象是什麼、資料規模帶得動什麼、原始的 clinical time 要保留到什麼程度。三個決策往下走，收斂成四條並列路線與一組共用的評估面板；沿路標出六個會讓分數漂亮但研究沒有價值的陷阱。</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="頁面分頁">
+    <button class="tab" id="t-flow" role="tab" aria-selected="true" aria-controls="p-flow">決策流程圖</button>
+    <button class="tab" id="t-ref" role="tab" aria-selected="false" aria-controls="p-ref" tabindex="-1">難點・路線對照・書目</button>
+  </nav>
+
+  <!-- ================= 分頁一：流程圖 ================= -->
+  <div class="panel" id="p-flow" role="tabpanel" aria-labelledby="t-flow">
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">決 策 流 程</div>
+      <h2>從 estimand 到表示法：四條路線與它們的共用地板</h2>
+      <p class="sec-note">顏色代表元件性質，線型再做一次相同區分（實線＝流程、虛線＝決策分流、點線＝旁支提示），不依賴辨色即可讀。</p>
+    </div>
+
+    <!-- 圖例：四色語義固定，勿改配色，只改描述文字 -->
+    <div class="legend">
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-strong)" stroke-width="2.5"/></svg>
+          <span class="lg-name" style="color:var(--ev-strong)">流程步驟</span>
+        </div>
+        <div class="lg-desc">主流程：從資料樣貌一路走到評估面板與切分規則。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4"/></svg>
+          <span class="lg-name" style="color:var(--ev-limited)">決策點</span>
+        </div>
+        <div class="lg-desc">三個必須先回答的研究決策；虛線代表往下分流成四條路線。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-hyp)" stroke-width="3" stroke-dasharray="11 5"/></svg>
+          <span class="lg-name" style="color:var(--ev-hyp)">關鍵難點</span>
+        </div>
+        <div class="lg-desc">方法學陷阱：踩到就會產生「分數漂亮但沒有部署價值」的結果。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/></svg>
+          <span class="lg-name" style="color:var(--ev-none)">旁支・修飾因子</span>
+        </div>
+        <div class="lg-desc">點線＝側欄的陷阱指向它所影響的那一個決策。</div>
+      </div>
+    </div>
+
+    <div class="hint">滑鼠移上任一方塊 → 顯示該格的 <b>鑑別診斷｜關鍵難點｜書目依據</b>；行動裝置請點選。</div>
+
+    <figure>
+      <div class="figwrap" id="flowfig">
+        <svg viewBox="0 0 1000 1698" role="img" aria-label="腎臟科不規則縱向 EHR 的建模路線決策流程圖。起點是資料的真實樣貌，往下依序回答三個決策：estimand 是什麼、資料規模與事件數多少、clinical time 保留多少。兩側標出四個方法學陷阱：把 survival 壓成二元、小樣本硬訓 Transformer、以為新模型免特徵工程、先做月格點重新取樣。三個決策之後先建立共同地板 clinical baseline，再分流成四型並列路線：型一 landmark tabular ML、型二原生不規則時間序列預測、型三病人軌跡表徵、型四事件序列 EHR 基礎模型。四型匯流到共用評估面板與切分規則，最後收斂到研究問題升級。">
+          <defs>
+            <marker id="m-s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-strong)"/>
+            </marker>
+            <marker id="m-q" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-limited)"/>
+            </marker>
+            <marker id="m-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-hyp)"/>
+            </marker>
+            <marker id="m-n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-none)"/>
+            </marker>
+          </defs>
+
+          <g font-size="11.5" font-weight="700" fill="var(--muted)" letter-spacing="1.6">
+            <text x="40" y="36">左 側 ・ 方 法 學 陷 阱</text>
+            <text x="700" y="36">右 側 ・ 方 法 學 陷 阱</text>
+          </g>
+          <line x1="40" y1="48" x2="960" y2="48" stroke="var(--rule)" stroke-width="1"/>
+
+          <!-- ==================== 圖形主體 ====================
+               照 references/svg-layout.md 的格線與元件寫法填入。
+               每個可互動元件都是一個 g.hot（含 tabindex、role、data-k、aria-label），
+               內含五層：rect.hl / rect.halo / 文字 / text.mark / rect.hit（hit 必須在最後）。
+               每個 data-k 都必須在下方 DATA 有對應的鍵。          -->
+          <!-- ===== 起點 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="start" aria-label="起點：不規則縱向 EHR 的真實樣貌。lab、藥物、診斷、住院各自不同步，時間間隔本身帶有臨床訊息。">
+            <rect class="hl"   x="330" y="70" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="66" width="348" height="72" rx="11"/>
+            <text x="500" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">手上的資料：不規則縱向 EHR</text>
+            <text x="500" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">lab／藥／診斷／住院各自不同步，Δt 本身帶訊息</text>
+            <text class="mark" x="660" y="85" text-anchor="end">難點 · 書 B1</text>
+            <rect class="hit" x="330" y="70" width="340" height="64"/>
+          </g>
+          <line x1="500" y1="138" x2="500" y2="168" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== 決策一 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="q1" aria-label="決策一：你要估計的對象是什麼？一個標籤、一條數值軌跡，還是事件發生時間。">
+            <rect class="hl"   x="330" y="172" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="168" width="348" height="88" rx="11"/>
+            <text x="500" y="202" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">決策一：你要估計的是什麼？</text>
+            <text x="500" y="224" text-anchor="middle" font-size="11.5" fill="var(--muted)">一個標籤、一條數值軌跡，還是事件發生時間？</text>
+            <text x="500" y="242" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">estimand 決定 representation，不是反過來</text>
+            <text class="mark q" x="660" y="187" text-anchor="end">決策 · 書 B3</text>
+            <rect class="hit" x="330" y="172" width="340" height="80"/>
+          </g>
+          <line x1="500" y1="256" x2="500" y2="286" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#m-q)"/>
+
+          <!-- ===== 決策二 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="q2" aria-label="決策二：可用的資料規模與事件數有多少？決定哪一級的架構是可行的。">
+            <rect class="hl"   x="330" y="290" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="286" width="348" height="88" rx="11"/>
+            <text x="500" y="320" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">決策二：資料規模與事件數？</text>
+            <text x="500" y="342" text-anchor="middle" font-size="11.5" fill="var(--muted)">幾千位病人的 cohort，還是全院十年的事件流？</text>
+            <text x="500" y="360" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">小樣本硬訓 Transformer，通常打不贏 CatBoost</text>
+            <text class="mark q" x="660" y="305" text-anchor="end">決策 · 書 B7</text>
+            <rect class="hit" x="330" y="290" width="340" height="80"/>
+          </g>
+          <line x1="500" y1="374" x2="500" y2="404" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#m-q)"/>
+
+          <!-- ===== 決策三 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="q3" aria-label="決策三：原始的臨床時間要保留到什麼程度？從月格點表格到完整事件序列共四層。">
+            <rect class="hl"   x="330" y="408" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="404" width="348" height="88" rx="11"/>
+            <text x="500" y="438" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">決策三：clinical time 保留多少？</text>
+            <text x="500" y="460" text-anchor="middle" font-size="11.5" fill="var(--muted)">保留原始 timestamp，還是壓成一列表格？</text>
+            <text x="500" y="478" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">這是方法學問題，不是前處理細節</text>
+            <text class="mark q" x="660" y="423" text-anchor="end">決策 · 書 B1</text>
+            <rect class="hit" x="330" y="408" width="340" height="80"/>
+          </g>
+          <line x1="500" y1="492" x2="500" y2="516" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== 側欄：方法學陷阱 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="R2" aria-label="陷阱：把 survival outcome 壓成一年內事件的二元標籤，會丟掉 censoring 與時間解析度。">
+            <rect class="hl"   x="700" y="164" width="280" height="110" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="696" y="160" width="288" height="118" rx="11"/>
+            <text x="716" y="198" font-size="13.5" font-weight="700" fill="var(--ink)">陷阱：把 survival 壓成二元</text>
+            <text x="716" y="222" font-size="12" fill="var(--ink-2)">· 「一年內洗腎 yes/no」</text>
+            <text x="716" y="244" font-size="12" fill="var(--ink-2)">· 丟掉 censoring 與時間</text>
+            <text x="716" y="266" font-size="12" fill="var(--ink-2)">· 改用 time-to-event 模型</text>
+            <text class="mark" x="970" y="180" text-anchor="end">難點 · 書 B9</text>
+            <rect class="hit" x="700" y="164" width="280" height="110"/>
+          </g>
+          <line x1="696" y1="219" x2="676" y2="219" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+
+          <g class="hot" tabindex="0" role="button" data-k="R1" aria-label="陷阱：樣本只有一千到一萬就直接訓練 Transformer 或 Mamba，架構漂亮但成績不動。">
+            <rect class="hl"   x="700" y="288" width="280" height="110" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="696" y="284" width="288" height="118" rx="11"/>
+            <text x="716" y="322" font-size="13.5" font-weight="700" fill="var(--ink)">陷阱：小樣本硬訓 Transformer</text>
+            <text x="716" y="346" font-size="12" fill="var(--ink-2)">· N 1,000–10,000 太少</text>
+            <text x="716" y="368" font-size="12" fill="var(--ink-2)">· 架構漂亮，AUROC 不動</text>
+            <text x="716" y="390" font-size="12" fill="var(--ink-2)">· 改 fine-tune 既有權重</text>
+            <text class="mark" x="970" y="304" text-anchor="end">難點 · 書 B8</text>
+            <rect class="hit" x="700" y="288" width="280" height="110"/>
+          </g>
+          <line x1="696" y1="343" x2="676" y2="343" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+
+          <g class="hot" tabindex="0" role="button" data-k="L0" aria-label="陷阱：以為換了新模型就不必做臨床特徵工程；CatBoost 加時間特徵仍是最難打敗的地板。">
+            <rect class="hl"   x="20" y="288" width="280" height="110" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="16" y="284" width="288" height="118" rx="11"/>
+            <text x="36" y="322" font-size="13.5" font-weight="700" fill="var(--ink)">陷阱：新模型不免特徵工程</text>
+            <text x="36" y="346" font-size="12" fill="var(--ink-2)">· CatBoost＋臨床時間特徵</text>
+            <text x="36" y="368" font-size="12" fill="var(--ink-2)">· 是最難打敗的地板</text>
+            <text x="36" y="390" font-size="12" fill="var(--ink-2)">· 先打贏它再談 FM</text>
+            <text class="mark" x="290" y="304" text-anchor="end">難點 · 書 B7</text>
+            <rect class="hit" x="20" y="288" width="280" height="110"/>
+          </g>
+          <line x1="304" y1="343" x2="324" y2="343" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+
+          <g class="hot" tabindex="0" role="button" data-k="L1" aria-label="陷阱：進模型前先把資料重新取樣成月格點再補值，會抹掉檢查時機所攜帶的臨床訊號。">
+            <rect class="hl"   x="20" y="410" width="280" height="110" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="16" y="406" width="288" height="118" rx="11"/>
+            <text x="36" y="444" font-size="13.5" font-weight="700" fill="var(--ink)">陷阱：先 monthly resample</text>
+            <text x="36" y="468" font-size="12" fill="var(--ink-2)">· imputation 造出假軌跡</text>
+            <text x="36" y="490" font-size="12" fill="var(--ink-2)">· 抹掉檢查時機的訊號</text>
+            <text x="36" y="512" font-size="12" fill="var(--ink-2)">· 先看間隔分布再決定</text>
+            <text class="mark" x="290" y="426" text-anchor="end">難點 · 書 B1</text>
+            <rect class="hit" x="20" y="410" width="280" height="110"/>
+          </g>
+          <line x1="304" y1="465" x2="324" y2="465" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+
+          <!-- ===== 共同地板 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="base" aria-label="共同地板：不論走哪一條路線，都要先做出臨床特徵工程過的 baseline。">
+            <rect class="hl"   x="40" y="520" width="920" height="64" rx="10" fill="var(--ev-strong-bg)" stroke="var(--ev-strong)" stroke-width="2"/>
+            <rect class="halo" x="36" y="516" width="928" height="72" rx="12"/>
+            <text x="500" y="548" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">地板：不管走哪條路，先把 clinical baseline 做出來</text>
+            <text x="500" y="570" text-anchor="middle" font-size="11.5" fill="var(--muted)">LMM／Cox＋CatBoost with engineered temporal features；打不贏它，就沒有故事</text>
+            <text class="mark" x="950" y="535" text-anchor="end">難點 · 書 B7</text>
+            <rect class="hit" x="40" y="520" width="920" height="64"/>
+          </g>
+
+          <!-- ===== 分流到四型 ===== -->
+          <g fill="none" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4">
+            <path d="M500 588 V920"/>
+            <path d="M500 620 H255"/>
+            <path d="M255 620 V644" marker-end="url(#m-q)"/>
+            <path d="M500 620 H745"/>
+            <path d="M745 620 V644" marker-end="url(#m-q)"/>
+            <path d="M500 920 H255"/>
+            <path d="M255 920 V944" marker-end="url(#m-q)"/>
+            <path d="M500 920 H745"/>
+            <path d="M745 920 V944" marker-end="url(#m-q)"/>
+          </g>
+
+          <!-- ===== 型① ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="t1" aria-label="型一：Landmark tabular ML。以 index date 的一列資料預測未來窗內事件，代表方法為 TabPFN 與 CatBoost。">
+            <rect class="hl"   x="40" y="650" width="430" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="36" y="646" width="438" height="248" rx="11"/>
+            <text x="56" y="684" font-size="15" font-weight="700" fill="var(--ink)">型① Landmark tabular ML</text>
+            <text x="56" y="706" font-size="11.5" fill="var(--muted)">index date 一列資料 → 未來窗內事件</text>
+            <text x="56" y="738" font-size="12" fill="var(--ink-2)">· 最適合：HD 30 日再住院、IDH 次場預測、cfPWV</text>
+            <text x="56" y="760" font-size="12" fill="var(--ink-2)">· 小樣本 biomarker study 是 TabPFN 的 sweet spot</text>
+            <text x="56" y="782" font-size="12" fill="var(--ink-2)">· 時間資訊只能靠人工特徵：slope／Δt／variability</text>
+            <text x="56" y="804" font-size="12" fill="var(--ink-2)">· 本質是 snapshot learning，看不到兩次之間的事</text>
+            <text x="56" y="826" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">· 事件數少於 100 時，深架構學不出東西</text>
+            <text x="56" y="848" font-size="12" fill="var(--ink-2)">· 2026 定位：強 baseline，不是主架構</text>
+            <text class="mark" x="460" y="665" text-anchor="end">難點 · 書 B5</text>
+            <rect class="hit" x="40" y="650" width="430" height="240"/>
+          </g>
+
+          <!-- ===== 型② ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="t2" aria-label="型二：原生不規則時間序列預測。把數值與時間戳直接送進模型，代表方法為 FlexTSF。">
+            <rect class="hl"   x="530" y="650" width="430" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="526" y="646" width="438" height="248" rx="11"/>
+            <text x="546" y="684" font-size="15" font-weight="700" fill="var(--ink)">型② 原生不規則時間序列預測</text>
+            <text x="546" y="706" font-size="11.5" fill="var(--muted)">(value, timestamp) 直接進模型；FlexTSF</text>
+            <text x="546" y="738" font-size="12" fill="var(--ink-2)">· 最適合：eGFR(t)、K(t)、Hb(t)、drug level(t)</text>
+            <text x="546" y="760" font-size="12" fill="var(--ink-2)">· IVP Patcher 把 Δt 納入 patch，不需先 resample</text>
+            <text x="546" y="782" font-size="12" fill="var(--ink-2)">· 輸出是 +30／+90／+180／+365 天的數值</text>
+            <text x="546" y="804" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">· 對手是 PatchTST／TimesFM／Chronos，不是 TabPFN</text>
+            <text x="546" y="826" font-size="12" fill="var(--ink-2)">· signal-centric：問的是「eGFR(t) 會是多少」</text>
+            <text x="546" y="848" font-size="12" fill="var(--ink-2)">· 2026 定位：軌跡預測題目的首選</text>
+            <text class="mark" x="950" y="665" text-anchor="end">難點 · 書 B1</text>
+            <rect class="hit" x="530" y="650" width="430" height="240"/>
+          </g>
+
+          <!-- ===== 型③ ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="t3" aria-label="型三：病人軌跡表徵。學出病人的潛在狀態與未來事件，代表方法為 TrajGPT。">
+            <rect class="hl"   x="40" y="950" width="430" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="36" y="946" width="438" height="248" rx="11"/>
+            <text x="56" y="984" font-size="15" font-weight="700" fill="var(--ink)">型③ 病人軌跡表徵</text>
+            <text x="56" y="1006" font-size="11.5" fill="var(--muted)">latent state(t) + 未來事件；TrajGPT</text>
+            <text x="56" y="1038" font-size="12" fill="var(--ink-2)">· 最適合：CKD progression、phenotype、用藥啟動</text>
+            <text x="56" y="1060" font-size="12" fill="var(--ink-2)">· Selective Recurrent Attention＝資料相依的衰減</text>
+            <text x="56" y="1082" font-size="12" fill="var(--ink-2)">· 把 Transformer 當離散化 ODE，任意時點可推論</text>
+            <text x="56" y="1104" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">· patient-state-centric：問的是走向哪個狀態</text>
+            <text x="56" y="1126" font-size="12" fill="var(--ink-2)">· 醫療專用設計，比通用 forecasting model 貼題</text>
+            <text x="56" y="1148" font-size="12" fill="var(--ink-2)">· 2026 定位：疾病軌跡題目的首選</text>
+            <text class="mark" x="460" y="965" text-anchor="end">難點 · 書 B2</text>
+            <rect class="hit" x="40" y="950" width="430" height="240"/>
+          </g>
+
+          <!-- ===== 型④ ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="t4" aria-label="型四：事件序列 EHR 基礎模型。以事件型別、時間與數值三元組預訓練，代表方法為 MOTOR 與 ORA。">
+            <rect class="hl"   x="530" y="950" width="430" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="526" y="946" width="438" height="248" rx="11"/>
+            <text x="546" y="984" font-size="15" font-weight="700" fill="var(--ink)">型④ 事件序列 EHR 基礎模型</text>
+            <text x="546" y="1006" font-size="11.5" fill="var(--muted)">(event type, time, value) 預訓練；MOTOR／ORA</text>
+            <text x="546" y="1038" font-size="12" fill="var(--ink-2)">· 最適合：ESKD、住院、死亡、多 outcome 並行</text>
+            <text x="546" y="1060" font-size="12" fill="var(--ink-2)">· 原生處理 censoring，不必壓成「一年內 yes/no」</text>
+            <text x="546" y="1082" font-size="12" fill="var(--ink-2)">· ORA 同時 model WHAT／WHEN／VALUE 三件事</text>
+            <text x="546" y="1104" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">· Cr 1.2 與 Cr 7.4 在 token 層看起來一樣</text>
+            <text x="546" y="1126" font-size="12" fill="var(--ink-2)">· 需要全院級資料與 pretrain 或可 fine-tune 權重</text>
+            <text x="546" y="1148" font-size="12" fill="var(--ink-2)">· 2026 定位：最有戰略價值，門檻也最高</text>
+            <text class="mark" x="950" y="965" text-anchor="end">難點 · 書 B4</text>
+            <rect class="hit" x="530" y="950" width="430" height="240"/>
+          </g>
+
+          <!-- ===== 四型匯流 ===== -->
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2">
+            <path d="M40 770 H20 V1230"/>
+            <path d="M40 1070 H20 V1230"/>
+            <path d="M960 770 H980 V1230"/>
+            <path d="M960 1070 H980 V1230"/>
+            <path d="M20 1230 H980"/>
+            <path d="M500 1230 V1256" stroke-width="2.5" marker-end="url(#m-s)"/>
+          </g>
+
+          <!-- ===== 評估面板 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="E1" aria-label="共用評估面板：四條路線用同一批病人、同一組終點與同一套九項指標比較，不要只看 AUROC。">
+            <rect class="hl"   x="40" y="1262" width="920" height="112" rx="10" fill="var(--ev-strong-bg)" stroke="var(--ev-strong)" stroke-width="2"/>
+            <rect class="halo" x="36" y="1258" width="928" height="120" rx="12"/>
+            <text x="500" y="1296" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">共用的評估面板：四條路線比的是同一件事</text>
+            <text x="500" y="1318" text-anchor="middle" font-size="11.5" fill="var(--muted)">同一批病人、同一組 outcome、同一套指標；不要只看 AUROC</text>
+            <text x="56" y="1344" font-size="12" fill="var(--ink-2)">· Discrimination／Calibration／Forecast error／Time-dependent AUC／C-index</text>
+            <text x="56" y="1366" font-size="12" fill="var(--ink-2)">· Dynamic calibration／Missingness robustness／Temporal transportability／Subgroup stability</text>
+            <text class="mark" x="950" y="1277" text-anchor="end">難點 · 書 B7</text>
+            <rect class="hit" x="40" y="1262" width="920" height="112"/>
+          </g>
+          <line x1="500" y1="1378" x2="500" y2="1406" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== 切分規則 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="E2" aria-label="切分規則：同一位病人的不同 session 絕對不能隨機切分，否則模型會學到病人指紋。">
+            <rect class="hl"   x="40" y="1410" width="920" height="112" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.8"/>
+            <rect class="halo" x="36" y="1406" width="928" height="120" rx="11"/>
+            <text x="500" y="1444" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">切分規則：AUROC 漂亮但沒有部署價值的來源</text>
+            <text x="500" y="1466" text-anchor="middle" font-size="11.5" fill="var(--muted)">同一位病人的不同 session 絕對不能 random split</text>
+            <text x="56" y="1492" font-size="12" fill="var(--ink-2)">· Patient-level split（必要）／Temporal split（必要）／External site validation（有機會就做）</text>
+            <text x="56" y="1514" font-size="12" font-weight="700" fill="var(--ev-hyp)">· in-context 與 attention 很容易吃到 patient fingerprint，隨機切分讓分數虛高</text>
+            <text class="mark" x="950" y="1425" text-anchor="end">難點 · 書 B7</text>
+            <rect class="hit" x="40" y="1410" width="920" height="112"/>
+          </g>
+          <line x1="500" y1="1526" x2="500" y2="1554" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <!-- ===== 結尾匯流 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="final" aria-label="研究問題升級：從哪個模型比較準，改成哪一種表徵最適合哪一類臨床問題。">
+            <rect class="hl"   x="40" y="1558" width="920" height="80" rx="10" fill="var(--ev-strong-bg)" stroke="var(--ev-strong)" stroke-width="2"/>
+            <rect class="halo" x="36" y="1554" width="928" height="88" rx="12"/>
+            <text x="500" y="1592" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">研究問題升級：從「哪個模型比較準」到「哪種表徵適合哪類臨床問題」</text>
+            <text x="500" y="1614" text-anchor="middle" font-size="11.5" fill="var(--muted)">腎臟疾病中，保留原始 clinical time 是否比 patient-level 表格壓縮更能描述疾病軌跡？</text>
+            <text class="mark" x="950" y="1573" text-anchor="end">難點 · 書 B12</text>
+            <rect class="hit" x="40" y="1558" width="920" height="80"/>
+          </g>
+          <!-- ================== /圖形主體 ==================== -->
+
+          <text x="40" y="1682" font-size="11" fill="var(--muted)">路線定位為 2026 年當下的判斷；arXiv 編號與版本請自行核對，其中多篇為預印本，尚未經同儕審查。</text>
+        </svg>
+      </div>
+      <figcaption><b>讀圖方式</b>：中央由上而下是三個研究決策，兩側點線指入的方塊是會影響該決策的陷阱。三個決策之後先落到通欄的<b>共同地板</b>——不論最後走哪一條路，臨床特徵工程過的 baseline 都要先做出來。往下的 2×2 是四條<b>並列</b>路線（不是四個層級，也不是先後順序），選擇條件已寫進各型副標。四型再匯流到同一組評估面板與切分規則，因為<b>四條路線必須用同一批病人、同一組 outcome 才比較得起來</b>。滑過或點選任一方塊，可看到該格的關鍵難點、適用題目、執行要點與書目依據；鍵盤可用 Tab 逐格聚焦，Esc 關閉。</figcaption>
+    </figure>
+  </section>
+
+  </div><!-- /p-flow -->
+
+  <!-- ================= 分頁二：難點・鑑別・書目 ================= -->
+  <div class="panel" id="p-ref" role="tabpanel" aria-labelledby="t-ref" hidden>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">關 鍵 難 點</div>
+      <h2>八個會讓整篇研究失去價值的地方</h2>
+      <p class="sec-note">這些是流程圖上各節點「關鍵難點」的抽取版，寫成一句可以記住的話。開研究會或投稿前掃一遍。</p>
+    </div>
+    <div class="reads">
+      <div class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">表 示 法</div>
+        <div class="read-obs">先 resample 成月格點，等於在進模型前刪掉最值錢的變數</div>
+        <p class="read-int">醫師為什麼兩週後又驗一次 Cr，本身就是病情訊號。<b>把 Δt、距上次檢驗天數、近 90 天檢驗次數保留成特徵</b>，不要一律 interpolation 掉；真要補值，也把 missingness indicator 一起留著。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">E S T I M A N D</div>
+        <div class="read-obs">estimand 沒定義好，模型再新也是在答錯的題目</div>
+        <p class="read-int">先決定要估的是<b>標籤、數值軌跡，還是事件發生時間</b>，再挑表示法與模型。順序反過來，最後就會出現「模型很新但回答不了臨床問題」的論文。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">規 模</div>
+        <div class="read-obs">要看的是事件數，不是病人數</div>
+        <p class="read-int">outcome 少於 100 件時，深架構學不出東西。N 1,000–10,000 直接訓 Transformer／Mamba，典型結果是<b>架構漂亮但 AUROC 不動</b>；這個規模該 fine-tune 既有權重。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-strong)">
+        <div class="read-tag">B A S E L I N E</div>
+        <div class="read-obs">打不贏 CatBoost 加臨床時間特徵，就沒有故事</div>
+        <p class="read-int">slope_90d、CV_365d、days_since_last_measurement 這組特徵構成一個<b>非常難打敗的地板</b>。先把它做穩，foundation model 的增益才有參照系；審稿人第一個問題也在這裡。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">切 分</div>
+        <div class="read-obs">同一位病人不能一半在 train、一半在 test</div>
+        <p class="read-int">HD session-level 資料最容易踩到。in-context 與 attention 很容易吃到 <b>patient fingerprint</b>，隨機切分會讓分數虛高。至少要有 patient-level 與 temporal split，有機會再加外部驗證。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">S U R V I V A L</div>
+        <div class="read-obs">壓成「一年內 yes/no」，censoring 就沒了</div>
+        <p class="read-int">追蹤 11 個月失聯的病人被當成沒事件，第 2 個月與第 11 個月洗腎的人被當成一樣。ESRD、死亡、移植失敗、AVF failure 都應該走 <b>time-to-event</b>，不是二元分類。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-hyp)">
+        <div class="read-tag">表 徵</div>
+        <div class="read-obs">在 token 層看起來一樣的 Cr 1.2 與 Cr 7.4</div>
+        <p class="read-int">把 EHR 當成「醫療版語言模型」做 next-token prediction，會漏掉數值。ORA 這一類方法同時 model <b>WHAT、WHEN、VALUE</b>，也就是 marked time-to-event，才比較接近醫療資料的本體。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-strong)">
+        <div class="read-tag">貢 獻</div>
+        <div class="read-obs">AUROC 高 0.02 不是研究貢獻</div>
+        <p class="read-int">2026 年的臨床 benchmark 顯示沒有 universally dominant model。真正能形成特色的問題是：<b>醫療資料在進 ML 前，究竟該被壓成 table，還是保留 clinical time？</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">路 線 對 照</div>
+      <h2>十一個實際題目：estimand、首選路線與第二選擇</h2>
+      <p class="sec-note">「型①～④」對應流程圖下半部的四個並列方塊。第二選擇欄不是備胎，而是<b>論文裡一定要一起報告的對照組</b>——只拿新模型對上 logistic regression，2026 年已經沒有說服力。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>研究題目</th>
+            <th>estimand 型態</th>
+            <th>首選路線（第二選擇）</th>
+            <th>一句話要點</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">CKD 下個月 eGFR</td>
+            <td>數值軌跡<br><small>型②</small></td>
+            <td>FlexTSF／TrajGPT<br><small>（CatBoost 加時間特徵）</small></td>
+            <td>TabPFN 在這題只當 benchmark，不當主架構</td>
+          </tr>
+          <tr>
+            <td class="k">CKD 1–3 年 eGFR 軌跡</td>
+            <td>連續軌跡<br><small>型③／型②</small></td>
+            <td>TrajGPT／FlexTSF<br><small>（longitudinal mixed model）</small></td>
+            <td>不要一開始就切成 monthly bins</td>
+          </tr>
+          <tr>
+            <td class="k">eGFR &lt; 10 或進入透析</td>
+            <td>事件發生時間<br><small>型④</small></td>
+            <td>MOTOR 類 time-to-event<br><small>（Cox／Elastic-net Cox／RSF）</small></td>
+            <td>不建議直接二元化，會丟掉 censoring</td>
+          </tr>
+          <tr>
+            <td class="k">HD 30 日再住院</td>
+            <td>landmark 標籤<br><small>型①</small></td>
+            <td>CatBoost／TabPFN<br><small>（EHR sequence model）</small></td>
+            <td>tabular ML 仍然非常適合，但必須 patient-level split</td>
+          </tr>
+          <tr>
+            <td class="k">下一場透析的 IDH</td>
+            <td>landmark 標籤<br><small>型①</small></td>
+            <td>CatBoost／TabPFN<br><small>（temporal Transformer）</small></td>
+            <td>session-level 資料最容易踩到 patient fingerprint</td>
+          </tr>
+          <tr>
+            <td class="k">Tacrolimus 濃度</td>
+            <td>數值軌跡<br><small>型②</small></td>
+            <td>FlexTSF／continuous-time model<br><small>（TabPFN）</small></td>
+            <td>劑量—濃度本質是連續時間問題</td>
+          </tr>
+          <tr>
+            <td class="k">Vancomycin 動態給藥</td>
+            <td>數值軌跡加決策<br><small>型②</small></td>
+            <td>continuous-time／PK hybrid<br><small>（TabPFN 當 baseline）</small></td>
+            <td>與 PK 模型混合，比純 ML 好講也好審</td>
+          </tr>
+          <tr>
+            <td class="k">cfPWV × biomarker</td>
+            <td>landmark 迴歸<br><small>型①</small></td>
+            <td>TabPFN<br><small>（Elastic Net／CatBoost）</small></td>
+            <td>N 100–500 正是 sweet spot；問「增量預測資訊」而非「誰的 AUROC 高」</td>
+          </tr>
+          <tr>
+            <td class="k">電解質 phenotype 鑑別</td>
+            <td>機率型多分類<br><small>型①</small></td>
+            <td>TabPFN<br><small>（CatBoost）</small></td>
+            <td>真正的價值在 next-best-test，而非診斷準確率</td>
+          </tr>
+          <tr>
+            <td class="k">全院 CKD foundation model</td>
+            <td>病人狀態表徵<br><small>型④</small></td>
+            <td>ORA／MOTOR 類<br><small>（Mamba-EHR hybrid）</small></td>
+            <td>TabPFN 不適合；先確認能不能組出乾淨的事件流</td>
+          </tr>
+          <tr>
+            <td class="k">縱向治療效果</td>
+            <td>反事實<br><small>不在四型內</small></td>
+            <td>target trial emulation 加經典因果方法<br><small>（PFN 類方法當探索層）</small></td>
+            <td>現階段不拿 PFN 做 confirmatory causal inference</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="tnote">首選路線是依 estimand 型態與資料規模所做的判斷，不是效能排名；同一題目在不同中心的資料密度下可能有不同答案。表中所有題目都應先通過共同地板的 clinical baseline。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">書 目 依 據</div>
+      <h2>十二筆方法來源</h2>
+      <p class="sec-note">流程圖上標「書 Bn」的節點對應下列條目。灰色標籤列出該書在圖中支撐哪一格。</p>
+    </div>
+    <div class="reflist" id="booklist"></div>
+  </section>
+
+  </div><!-- /p-ref -->
+
+  <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+
+  <footer>本頁為個人研究決策用的方法學整理，非臨床指引，亦不構成任何病人層級的診療建議。書目的期刊卷期、arXiv 編號與版本請自行核對；其中多篇為 2025–2026 年預印本，尚未經同儕審查，引用前務必確認最新版本與是否已正式發表。任何涉及病人資料的分析，以所屬院所的資料治理規範與 IRB 核准範圍為準。</footer>
+
+</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 書目 ---------------- */
+  var BOOKS = {
+    B1:{t:"FlexTSF: A Universal Forecasting Model for Time Series with Variable Regularities",
+        s:"arXiv:2410.23160（另見 OpenReview LuLzcBsp5c）",
+        m:"VT-Norm／IVP Patcher／LED attention：把不等間隔、變動序列長度與缺值當成模型內部問題，而不是前處理問題。",
+        kind:"原著"},
+    B2:{t:"TrajGPT: Irregular Time-Series Representation Learning for Health Trajectory Analysis",
+        s:"arXiv:2410.02133（PubMed 41082437）",
+        m:"Selective Recurrent Attention 做資料相依的記憶衰減；把 Transformer 詮釋成離散化 ODE，可在任意 target timestamp 推論。",
+        kind:"原著"},
+    B3:{t:"MOTOR: A Time-To-Event Foundation Model For Structured Medical Records",
+        s:"arXiv:2301.03150",
+        m:"以帶時間戳的 EHR 事件序列預訓練的 time-to-event 基礎模型，原生處理 censoring；原始研究於 19 個 outcome、3 個資料庫評估。",
+        kind:"原著"},
+    B4:{t:"One Loss to Rule Them All: Marked Time-to-Event for Structured EHR Foundation Models",
+        s:"arXiv:2602.00541（ORA）",
+        m:"指出 EHR 不是純 token：同時 model 事件型別、時間與數值的 marked time-to-event 目標。",
+        kind:"原著"},
+    B5:{t:"Accurate predictions on small data with a tabular foundation model",
+        s:"Nature (2025)｜TabPFN",
+        m:"TabPFN 原始論文：小至中型表格資料、低度調參、in-context prediction。",
+        kind:"原著"},
+    B6:{t:"The Tabular Foundation Model TabPFN Outperforms Specialized Time Series Forecasting Models Based on Simple Features",
+        s:"arXiv:2501.02945（TabPFN-TS）",
+        m:"示範「先把時間序列轉成簡單 tabular 特徵、再進 TabPFN」這條路線的可行性與邊界。",
+        kind:"原著"},
+    B7:{t:"Established machine learning matches tabular foundation models in clinical predictions",
+        s:"BMC Medical Informatics and Decision Making (2026)",
+        m:"12 個臨床二元預測任務的 benchmark：TabPFN 僅在 16.7% 的任務勝過最佳傳統 ML，多數 AUROC 差距在 ±0.02，且計算成本較高。",
+        kind:"原著"},
+    B8:{t:"HyMaTE: A Hybrid Mamba and Transformer Model for EHR Representation Learning",
+        s:"arXiv:2509.24118",
+        m:"把 EHR 明確定義成不規則時間序列加靜態變數；以 SSM 處理長序列效率、attention 處理變項間互動。",
+        kind:"原著"},
+    B9:{t:"SurvivalPFN: Amortizing Survival Prediction via In-Context Learning",
+        s:"arXiv:2605.15488",
+        m:"把 tabular foundation model 延伸到 survival analysis 的嘗試；當你不想把 outcome 二元化時的參考。",
+        kind:"原著"},
+    B10:{t:"Causal Longitudinal Prior-Fitted Networks",
+        s:"arXiv:2606.05797",
+        m:"針對縱向治療反應與反事實預測；仍屬前沿，尚不足以取代 MSM、g-formula 或 TMLE。",
+        kind:"原著"},
+    B11:{t:"Enhancing Irregular Time Series Forecasting with Continuous-Time Modeling Framework",
+        s:"arXiv:2607.28035",
+        m:"continuous-time tokenization 加 residual flow matching，處理 gap-aware forecasting 並避開 Neural ODE 求解器的計算負擔。",
+        kind:"原著"},
+    B12:{t:"LLM4EHR: Aligning Clinical Time Series with Medical Event Sequences via Large Language Models",
+        s:"arXiv:2607.15447",
+        m:"把臨床時間序列編碼器與醫療事件序列表徵做時間對齊；研究前沿，列為持續追蹤而非第一篇論文的主線。",
+        kind:"原著"}
+  };
+
+  /* ---------------- 各節點之鑑別診斷／難點／書目 ---------------- */
+  var DATA = {
+    start:{seg:"起點：不規則縱向 EHR 的真實樣貌",
+      warn:"最常見的第一步錯誤是先把資料 resample 成 monthly grid 再 imputation。<b>檢查時機本身就是臨床訊號</b>——醫師為什麼兩週後又驗一次 Cr，通常代表病情在動；壓成固定格點等於在進模型前就把研究最有價值的變異刪掉。",
+      blocks:[
+        {label:"資料的五個特徵",items:[
+          "<b>不等間隔</b>：Day 1 → Day 17 → Day 23 → Day 91 → Day 94",
+          "<b>變數不同步</b>：eGFR、K、UACR、HbA1c 各有各自的抽血日",
+          "<b>長度差異大</b>：有人 50 列，有人十年 20,000 個事件",
+          "<b>缺失有意義</b>：沒驗，多半是醫師判斷不需要驗",
+          "<b>值與事件混雜</b>：診斷、用藥、住院與 lab 交錯出現"]},
+        {label:"開工前要點",items:[
+          "先畫出每個變數的<b>觀測間隔分布</b>，再決定要不要對齊",
+          "把「距上次檢驗天數」與「近 90 天檢驗次數」列為候選變數保留",
+          "確認事件時間戳的精度（日 vs 分鐘）與補登、回溯輸入的問題"]}],
+      books:["B1","B2"]},
+
+    q1:{seg:"決策一：estimand 是什麼",
+      warn:"先選模型再回頭定義 outcome，是這類研究最常見的順序錯誤。<b>把 survival outcome 壓成「一年內洗腎 yes/no」會直接丟掉 censoring 與時間解析度</b>，之後再漂亮的 AUROC 也回答不了「多久之後」。",
+      blocks:[
+        {label:"四種 estimand 與對應路線",items:[
+          "<b>Landmark 標籤</b>：index date 一列資料 → 未來窗內事件（tabular ML）",
+          "<b>數值軌跡</b>：eGFR(t)、K(t)、drug level(t)（原生不規則 TS 模型）",
+          "<b>事件發生時間</b>：P(ESKD before t)，含 censoring（time-to-event 基礎模型）",
+          "<b>病人狀態表徵</b>：latent trajectory 加多個下游任務（EHR 基礎模型）"]},
+        {label:"決策切點",items:[
+          "問題句出現「多久之後」→ 走 time-to-event，不要二元化",
+          "問題句出現「下一次數值是多少」→ 走 forecasting",
+          "問題句出現「這次門診要不要處置」→ landmark 就夠",
+          "問題句出現「這個病人正走向哪裡」→ 走軌跡表徵"]}],
+      books:["B3","B9"]},
+
+    q2:{seg:"決策二：資料規模與事件數",
+      warn:"只有 1,000–10,000 位病人就直接訓練 Transformer／Mamba，結果多半是<b>架構很漂亮但 AUROC 沒有比較好</b>。這個規模帶得動的是 tabular ML，或 fine-tune 既有 foundation model，而不是從頭 pretrain。",
+      blocks:[
+        {label:"依規模的可行選項",items:[
+          "<b>N 300–1,000</b>：TabPFN、Elastic Net，加少數 engineered features",
+          "<b>N 1,000–10,000</b>：CatBoost／XGBoost 加時間特徵，是難打敗的地板",
+          "<b>單中心多年全 lab</b>：原生不規則 TS 模型（FlexTSF／TrajGPT）開始有意義",
+          "<b>全院十年事件流</b>：EHR 基礎模型（MOTOR／ORA）與 SSM hybrid"]},
+        {label:"決策切點",items:[
+          "看的不是病人數，是<b>事件數</b>：outcome 少於 100 件時，複雜架構很難學",
+          "序列長度中位數要到上千個事件，self-attention 成本才會變成真問題",
+          "沒有能力 pretrain 時，優先找可 fine-tune 的既有權重，不要從零開始"]}],
+      books:["B7","B8","B5"]},
+
+    q3:{seg:"決策三：clinical time 保留多少",
+      warn:"「先做 monthly aggregation 再說」是最貴的一個預設值。<b>Δt 是模型訊號，不是前處理雜訊</b>：eGFR 45 → 39 發生在 14 天或 18 個月，臨床意義完全不同，壓成同一格點之後模型再也分不出來。",
+      blocks:[
+        {label:"四層 representation（同一批病人可以全做）",items:[
+          "<b>Monthly-resampled 表格</b>：最容易做，也最容易把訊號洗掉",
+          "<b>Temporal feature 表格</b>：slope、variability、days_since_last、n_measurement",
+          "<b>原始 (value, timestamp)</b>：FlexTSF 的 IVP Patcher 直接吃不等間隔",
+          "<b>完整 clinical event stream</b>：(event type, time, value) 三元組"]},
+        {label:"執行要點",items:[
+          "同一批病人、同一組 lab，四層各跑一次，本身就是一篇方法學論文",
+          "務必保留 <b>days_since_last_measurement</b> 與 <b>n_measurement_90d</b>，這兩個常常很強",
+          "不要把 missingness 全部 impute 掉；先檢查它是否與 outcome 相關"]}],
+      books:["B1","B6","B11"]},
+
+    base:{seg:"共同地板：clinically engineered baseline",
+      warn:"這一格被跳過，整個研究就失去參照系。<b>CatBoost 加上臨床時間特徵是非常難打敗的 baseline</b>；先把它做到穩，再去談 foundation model 有沒有增益——審稿人問的第一個問題也在這裡。",
+      blocks:[
+        {label:"固定要放進 baseline 的特徵",items:[
+          "eGFR_now／eGFR_previous／ΔeGFR／Δt",
+          "slope_90d、slope_365d、CV_365d、min_365d、max_365d",
+          "n_measurement_90d、days_since_last_measurement",
+          "UACR_latest、K_latest、Hb、Alb、HCO3、BP",
+          "用藥狀態：SGLT2i、RAASi、Finerenone、利尿劑"]},
+        {label:"benchmark 順序（不要跳級比較）",items:[
+          "Logistic／Linear regression → Elastic Net → Random Forest",
+          "→ XGBoost／LightGBM／CatBoost → TabPFN",
+          "→ 原生不規則模型（FlexTSF／TrajGPT）→ EHR 基礎模型（MOTOR／ORA）",
+          "只拿新模型對上 logistic regression，2026 年已經沒有說服力"]}],
+      books:["B7","B5"]},
+
+    t1:{seg:"型①：Landmark tabular ML",
+      warn:"TabPFN 最常見的誤用是把它當成主架構。它本質是 snapshot learning：即使你做了 slope 與 days_since_last，<b>模型看到的仍是一列資料，看不到兩次檢驗之間發生了什麼</b>。2026 年一個涵蓋 12 個臨床二元預測任務的 benchmark 顯示，它只在 16.7% 的任務勝過最佳傳統 ML。",
+      blocks:[
+        {label:"最適合的題目",items:[
+          "<b>HD 30 日再住院、下一場透析的 IDH</b>：session-level、特徵已工程化",
+          "<b>cfPWV × endothelial／fibrinolytic biomarker</b>：N 100–500 的 sweet spot",
+          "<b>電解質 phenotype</b>：可快速建出機率型鑑別診斷模型",
+          "單次門診的處置決策：index date 一列資料就夠"]},
+        {label:"執行要點",items:[
+          "時間資訊必須自己造：<b>slope、Δt、variability、days_since_last</b>",
+          "科學問題寫成「這組 biomarker 是否提供臨床變數之外的增量預測資訊」，不要寫成「TabPFN 比 XGBoost 高 0.03」",
+          "一定要與 CatBoost／Elastic Net 並列，不要只對上 logistic regression",
+          "小樣本正是它的設計標的，這反而讓「N 太少為什麼用 ML」變成可回答的問題"]}],
+      books:["B5","B6","B7"]},
+
+    t2:{seg:"型②：原生不規則時間序列預測",
+      warn:"選這一層的前提是 outcome 真的是<b>一條數值軌跡</b>，不是一個標籤。FlexTSF 的競爭對手是 PatchTST、TimesFM、Chronos 與其他不規則 TS 模型，不是 TabPFN；拿它去比 tabular 分類器，等於在比兩個不同的 estimand。",
+      blocks:[
+        {label:"適合的題目與輸出",items:[
+          "eGFR 在 +30／+90／+180／+365 天的數值",
+          "K、Hb、Alb、drug level 的連續變化",
+          "不同變數各自有各自的抽血日，不需要先對齊成共同格點",
+          "Tacrolimus／Vancomycin 的濃度—時間關係"]},
+        {label:"技術要點",items:[
+          "<b>IVP Patcher</b> 把時間本身放進 patch representation，而非假設等距",
+          "VT-Norm 與 LED attention 處理不同量綱、變動序列長度與缺值",
+          "eGFR 45 → 39 發生在 14 天或 18 個月，模型看得到差別",
+          "2026 年後續方法以 continuous-time tokenization 加 flow matching 想避開 Neural ODE 的求解成本"]}],
+      books:["B1","B11"]},
+
+    t3:{seg:"型③：病人軌跡表徵",
+      warn:"這一層回答的問題和型②不同：<b>不是「下次 eGFR 是多少」，而是「這個病人正走向哪一種狀態」</b>。如果研究問題其實是 disease trajectory 卻套用 forecasting 的框架來寫，reviewer 會問「所以呢」。",
+      blocks:[
+        {label:"適合的題目",items:[
+          "CKD progression 的軌跡分型與未來一年走向",
+          "phenotype classification 與用藥啟動預測",
+          "把 lab、診斷、用藥、住院、處置一起餵進去的 patient representation"]},
+        {label:"技術要點",items:[
+          "<b>Selective Recurrent Attention</b>：衰減速度取決於內容，不是固定的 exp(−λΔt)",
+          "十年前的 appendectomy 幾乎不影響今天的 AKI；昨天開始的 NSAID 極重要",
+          "把 Transformer 詮釋成離散化 ODE，因此可在任意 target timestamp 推論",
+          "醫療專用設計，比通用 forecasting 基礎模型更貼合 EHR 的結構"]}],
+      books:["B2"]},
+
+    t4:{seg:"型④：事件序列 EHR 基礎模型",
+      warn:"門檻最高的一層：需要全院級事件流與 pretrain 能力，或可 fine-tune 的公開權重。<b>但它是唯一原生處理 censoring 的路線</b>——把「一年內洗腎 yes/no」換成 P(ESKD before t)，才可能做到每天重新更新病人未來風險。",
+      blocks:[
+        {label:"這一層解決什麼",items:[
+          "MOTOR 直接用帶時間戳的事件序列預訓練 time-to-event 模型，並回報下游所需標記資料量大幅下降",
+          "ORA 指出把 EHR 當「醫療版語言模型」做 next-token prediction 的問題：<b>Cr 1.2 與 Cr 7.4 的 token 一樣</b>",
+          "改成 marked time-to-event，同時 model <b>(event type, time, value)</b>",
+          "多個 outcome 共用同一組表徵：ESKD、住院、死亡、HF"]},
+        {label:"執行要點",items:[
+          "序列長度是真問題：一位 CKD 病人十年可能不是 50 列，而是 20,000 個事件",
+          "此時 Mamba／SSM 對序列長度的 scaling 優於 self-attention，hybrid 架構值得評估",
+          "沒有 pretrain 能力時，優先找可 fine-tune 的公開權重",
+          "先確認院內資料能不能組出乾淨的事件流，再談模型"]}],
+      books:["B3","B4","B8","B12"]},
+
+    E1:{seg:"共用評估面板",
+      warn:"只報 AUROC 會讓四條路線無法互相比較——forecasting 沒有 AUROC，time-to-event 的 AUROC 也隨時間窗改變。<b>先把指標面板定死，再去跑模型</b>，否則最後只能挑對自己有利的數字報。",
+      blocks:[
+        {label:"九項固定指標",items:[
+          "Discrimination、Calibration、Forecast error",
+          "Time-dependent AUC、C-index、Dynamic calibration",
+          "Missingness robustness、Temporal transportability、Subgroup stability"]},
+        {label:"報告要點",items:[
+          "Calibration 比 discrimination 更決定臨床可用性，務必附 calibration curve",
+          "<b>Temporal transportability</b>：以較早期間訓練、較晚期間測試；指引與用藥習慣會漂移",
+          "Subgroup stability 至少看 CKD 分期、糖尿病與年齡層",
+          "四條路線用同一批病人、同一組 outcome，比較才成立"]}],
+      books:["B7","B3"]},
+
+    E2:{seg:"切分規則與資料洩漏",
+      warn:"同一位病人的不同透析 session <b>絕對不能 random split</b>。in-context 與 attention 機制很容易學到 patient fingerprint，結果 AUROC 非常漂亮，卻沒有任何部署價值。",
+      blocks:[
+        {label:"至少要做的三種切分",items:[
+          "<b>Patient-level split</b>：同一位病人只能出現在其中一邊",
+          "<b>Temporal split</b>：訓練期在前、測試期在後",
+          "<b>External site validation</b>：跨院所或跨科部，有機會就做"]},
+        {label:"其他洩漏來源",items:[
+          "用了未來才會有的檢驗當特徵（例如出院後才驗的 Cr）",
+          "以 outcome 發生時間反推的 index date",
+          "在 split 之前就做完 imputation 或標準化，統計量會跨越訓練／測試邊界"]}],
+      books:["B7","B5"]},
+
+    final:{seg:"研究問題升級",
+      warn:"研究貢獻不要押在「新模型 AUROC 高 0.02」。2026 年已有大量臨床 benchmark，結果顯示<b>沒有 universally dominant model</b>；真正能形成特色的，是回答「哪一種表徵最適合哪一類臨床問題」。",
+      blocks:[
+        {label:"可以宣稱的研究問題",items:[
+          "腎臟疾病中，保留原始 clinical time 是否比 patient-level 表格壓縮更能描述疾病軌跡？",
+          "同一批病人、同一組 lab，四種表示法在三個 task 上各自的強項在哪？",
+          "measurement timing 本身作為特徵，能提供多少額外訊息？"]},
+        {label:"往下延伸的三條線",items:[
+          "<b>HITL 決策介面</b>：機率型鑑別診斷加支持／反對證據，再加「下一個最有資訊量的檢查」",
+          "<b>Next-best-test</b>：真正的研究價值往往不在診斷準確率，而在「下一步該驗什麼最有資訊量」",
+          "<b>縱向治療效果</b>：PFN 類反事實方法仍屬前沿；主分析仍應走 target trial emulation 與經典因果方法，PFN 只當探索層"]}],
+      books:["B12","B10"]},
+
+    R2:{seg:"陷阱：把 survival 壓成二元",
+      warn:"「一年內洗腎 yes/no」會同時丟掉 censoring 與時間解析度：追蹤 11 個月就失聯的病人被當成沒事件，第 2 個月與第 11 個月洗腎的人被當成一樣。",
+      blocks:[
+        {label:"改用什麼",items:[
+          "Cox／Elastic-net Cox／RSF／XGBoost survival／DeepSurv 作為傳統對照",
+          "time-to-event 基礎模型（MOTOR 類）作為新一代路線",
+          "SurvivalPFN 這類把 tabular foundation model 延伸到 survival 的方法值得追，但仍是新方法"]}],
+      books:["B9","B3"]},
+
+    R1:{seg:"陷阱：小樣本硬訓 Transformer",
+      warn:"N 1,000–10,000 直接訓練 Transformer／Mamba，通常得到「架構很漂亮，AUROC 卻沒有比較好」。這個規模應該 fine-tune 既有權重，或老實用 CatBoost 加特徵工程。",
+      blocks:[
+        {label:"要點",items:[
+          "看<b>事件數</b>而不是病人數；outcome 少於 100 件時，複雜架構很難學",
+          "序列長度中位數要到上千個事件，SSM／hybrid 架構的效率優勢才有意義",
+          "先算好樣本量與事件數，再決定架構層級"]}],
+      books:["B8","B7"]},
+
+    L0:{seg:"陷阱：以為新模型免特徵工程",
+      warn:"不要因為模型比較新就放棄 clinical feature engineering。<b>CatBoost 加上臨床時間特徵是非常難打敗的 baseline</b>；打不贏它，整篇論文就沒有故事。",
+      blocks:[
+        {label:"必留的特徵",items:[
+          "eGFR_now、eGFR_previous、ΔeGFR、Δt",
+          "slope_90d、slope_365d、CV_365d、min_365d、max_365d",
+          "n_measurement_90d、days_since_last_measurement",
+          "UACR_latest、K_latest 與當下的用藥狀態"]}],
+      books:["B7","B5"]},
+
+    L1:{seg:"陷阱：先 monthly resample",
+      warn:"先把資料 resample 成月格點再 imputation，等於在進模型前刪掉研究最有價值的訊號。<b>醫師為什麼兩週後又驗一次 Cr，本身就是病情與行為的資訊。</b>",
+      blocks:[
+        {label:"要點",items:[
+          "先畫出每個變數的觀測間隔分布，再決定要不要對齊",
+          "保留 days_since_last_measurement 與 n_measurement_90d 作為特徵",
+          "若一定要 imputation，把 missingness indicator 一起留著",
+          "把「monthly-resampled 表格」當成四種表示法之一去比較，而不是預設起點"]}],
+      books:["B1","B6"]}
+  };
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  /* 允許條目內少量 <b> 標記 */
+  function rich(s){ return esc(s).replace(/&lt;b&gt;/g,"<b>").replace(/&lt;\/b&gt;/g,"</b>"); }
+
+  /* ---------------- 分頁 ---------------- */
+  var tabs = [].slice.call(document.querySelectorAll(".tab"));
+  function select(tab){
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) p.hidden = !on;
+    });
+    hide();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ select(t); });
+    t.addEventListener("keydown", function(e){
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus(); select(n);
+    });
+  });
+
+  /* ---------------- Tooltip ---------------- */
+  var tip = document.getElementById("tip"), pinned = null, hovered = null;
+
+  function render(k){
+    var d = DATA[k];
+    if (!d) return false;
+    var h = '<div class="tip-head">' + esc(d.seg) + "</div><div class=\"tip-body\">";
+    if (d.warn){
+      h += '<div class="blk b-warn"><div class="blk-h">關鍵難點</div><p>' + rich(d.warn) + "</p></div>";
+    }
+    (d.blocks || []).forEach(function(b){
+      var cls = /切點|指徵|順序|要點|回頭查/.test(b.label) ? "b-cut" : "b-ddx";
+      h += '<div class="blk ' + cls + '"><div class="blk-h">' + esc(b.label) + '</div><ul>';
+      b.items.forEach(function(it){ h += "<li>" + rich(it) + "</li>"; });
+      h += "</ul></div>";
+    });
+    if (d.books && d.books.length){
+      h += '<div class="blk b-book"><div class="blk-h">書目依據</div>';
+      d.books.forEach(function(id){
+        var b = BOOKS[id];
+        if (!b) return;
+        h += '<p class="bk"><span class="t">' + esc(b.t) + '</span><span class="s">' + esc(b.s) + "</span></p>";
+      });
+      h += "</div>";
+    }
+    tip.innerHTML = h + "</div>";
+    return true;
+  }
+
+  function place(x, y){
+    var m = 12, w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = x + 18, top = y + 18;
+    if (left + w + m > window.innerWidth) left = Math.max(m, x - w - 18);
+    if (top + h + m > window.innerHeight) top = Math.max(m, y - h - 18);
+    if (top < m) top = m;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function show(g, x, y){
+    var k = g.getAttribute("data-k");
+    if (!render(k)) return;
+    tip.classList.add("show");
+    tip.setAttribute("aria-hidden", "false");
+    place(x, y);
+    markBooks((DATA[k] || {}).books);
+  }
+  function hide(){
+    tip.classList.remove("show");
+    tip.setAttribute("aria-hidden", "true");
+    if (pinned){ pinned.classList.remove("on"); pinned = null; }
+    hovered = null;
+    markBooks(null);
+  }
+  function markBooks(list){
+    var set = {};
+    (list || []).forEach(function(id){ set[id] = 1; });
+    [].forEach.call(document.querySelectorAll(".refrow"), function(r){
+      r.classList.toggle("lit", !!set[r.getAttribute("data-n")]);
+    });
+  }
+
+  var fig = document.getElementById("flowfig");
+  if (fig){
+    fig.addEventListener("pointermove", function(e){
+      if (pinned) return;
+      var g = e.target.closest(".hot");
+      if (!g){ if (hovered){ hovered = null; hide(); } return; }
+      if (g !== hovered){ hovered = g; show(g, e.clientX, e.clientY); }
+      else place(e.clientX, e.clientY);
+    });
+    fig.addEventListener("pointerleave", function(){ hovered = null; if (!pinned) hide(); });
+    fig.addEventListener("click", function(e){
+      var g = e.target.closest(".hot");
+      if (!g){ hide(); return; }
+      if (pinned === g){ hide(); return; }
+      if (pinned) pinned.classList.remove("on");
+      g.classList.add("on");
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+      pinned = g;
+    });
+    fig.addEventListener("focusin", function(e){
+      var g = e.target.closest(".hot");
+      if (!g) return;
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+    });
+    fig.addEventListener("focusout", function(){ if (!pinned) hide(); });
+  }
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function(){ if (!pinned) hide(); }, true);
+
+  /* ---------------- 書目清單（由圖上標註自動彙整「支撐哪一格」） ---------------- */
+  var where = {};
+  Object.keys(DATA).forEach(function(k){
+    (DATA[k].books || []).forEach(function(id){
+      (where[id] = where[id] || []).push(DATA[k].seg);
+    });
+  });
+  var list = document.getElementById("booklist");
+  if (list){
+    var out = "";
+    Object.keys(BOOKS).forEach(function(id){
+      var b = BOOKS[id];
+      var segs = (where[id] || []).map(function(s){ return '<span class="where">' + esc(s) + "</span>"; }).join("");
+      out += '<div class="refrow" data-n="' + id + '"><div class="n">' + id + "</div><div>" +
+             '<p class="zh">' + esc(b.t) + '<span class="kind">' + esc(b.kind) + "</span></p>" +
+             '<p class="en">' + esc(b.s) + "</p>" +
+             '<p class="meta">' + esc(b.m) + "</p>" +
+             (segs ? "<div>" + segs + "</div>" : "") +
+             "</div></div>";
+    });
+    list.innerHTML = out;
+  }
+})();
+</script>
+</body>
+</html>

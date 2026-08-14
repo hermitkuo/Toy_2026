@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>低血鉀診斷流程 · 住院醫師臨床學習</title>
+<meta name="description" content="低血鉀（hypokalemia）的分層診斷流程圖，含各節點之鑑別診斷、關鍵難點與教科書依據，供住院醫師臨床學習使用。">
+<style>
+  :root{color-scheme:light dark}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;padding:0}
+  img{max-width:100%}
+</style>
+<style>
+  :root{
+    --bg:#F3F6F7; --surface:#FFFFFF; --surface-2:#FAFCFC; --surface-3:#EEF3F5;
+    --ink:#15202A; --ink-2:#33454F; --muted:#5B6B77; --rule:#DCE4E8; --rule-2:#C6D3D9;
+    --ev-strong:#0E7C6B; --ev-limited:#A9640B; --ev-hyp:#B41E48; --ev-none:#6B7C8A;
+    --ev-strong-bg:#E4F1EE; --ev-limited-bg:#F7ECDD; --ev-hyp-bg:#F8E6EB; --ev-none-bg:#EBEFF2;
+    --shadow:0 1px 2px rgba(21,32,42,.06), 0 8px 24px rgba(21,32,42,.05);
+    /* tooltip：相對頁面倒色（淺色頁 → 深色霧面玻璃卡） */
+    --tip-bg:rgba(20,29,37,.97); --tip-ink:#F2F7FA; --tip-ink-2:#C8D6DF; --tip-muted:#93A7B4;
+    --tip-rule:rgba(255,255,255,.13); --tip-head:rgba(255,255,255,.07); --tip-edge:rgba(255,255,255,.22);
+    --tip-glare:rgba(255,255,255,.16); --tip-accent:#FF89A8; --tip-accent-bg:rgba(255,137,168,.18);
+    --tip-warn:#FFB25E; --tip-warn-bg:rgba(255,178,94,.13);
+    --tip-ok:#5FE0C6; --tip-ok-bg:rgba(95,224,198,.12);
+    --tip-shadow:0 2px 8px rgba(10,16,21,.24), 0 28px 64px rgba(10,16,21,.40);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+      --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+      --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+      --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+      --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+      --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+      --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+      --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+      --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+      --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F161B; --surface:#161F26; --surface-2:#1A242C; --surface-3:#1E2A33;
+    --ink:#E7EEF2; --ink-2:#C2D0D9; --muted:#93A5B1; --rule:#26333C; --rule-2:#33434E;
+    --ev-strong:#4FD6BC; --ev-limited:#EBA645; --ev-hyp:#F57391; --ev-none:#93A5B1;
+    --ev-strong-bg:#0F2B27; --ev-limited-bg:#2E2317; --ev-hyp-bg:#2E1620; --ev-none-bg:#1D262C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    --tip-bg:rgba(247,250,251,.97); --tip-ink:#0F171D; --tip-ink-2:#33454F; --tip-muted:#5B6B77;
+    --tip-rule:rgba(15,23,29,.13); --tip-head:rgba(15,23,29,.06); --tip-edge:rgba(15,23,29,.20);
+    --tip-glare:rgba(255,255,255,.9); --tip-accent:#B41E48; --tip-accent-bg:rgba(180,30,72,.13);
+    --tip-warn:#8A5008; --tip-warn-bg:rgba(169,100,11,.12);
+    --tip-ok:#0B6355; --tip-ok-bg:rgba(14,124,107,.12);
+    --tip-shadow:0 2px 8px rgba(0,0,0,.38), 0 28px 64px rgba(0,0,0,.58);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"PingFang TC","Hiragino Sans TC","Noto Sans TC","Microsoft JhengHei",-apple-system,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1080px; margin:0 auto; padding:56px 28px 96px; display:flex; flex-direction:column; gap:56px}
+
+  .masthead{display:flex; flex-direction:column; gap:14px; border-bottom:1px solid var(--rule); padding-bottom:28px}
+  .eyebrow{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  h1{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:clamp(28px,4.4vw,42px); line-height:1.25; margin:0; font-weight:600; text-wrap:balance; letter-spacing:.01em;
+  }
+  h1 .en{display:block; font-size:.5em; font-style:italic; color:var(--muted); font-weight:400; margin-top:10px; letter-spacing:.02em}
+  .thesis{margin:0; max-width:62ch; color:var(--ink-2); font-size:17px}
+  .thesis b{color:var(--ink); font-weight:600}
+
+  section{display:flex; flex-direction:column; gap:20px}
+  .sec-head{display:flex; flex-direction:column; gap:6px}
+  .sec-label{font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:700}
+  h2{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Songti TC","Noto Serif CJK TC",serif;
+    font-size:24px; margin:0; font-weight:600; letter-spacing:.01em;
+  }
+  .sec-note{margin:0; color:var(--muted); font-size:14.5px; max-width:66ch}
+
+  .legend{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:2px;
+    background:var(--rule); border:1px solid var(--rule); border-radius:12px; overflow:hidden;
+  }
+  .lg{background:var(--surface); padding:14px 16px; display:flex; flex-direction:column; gap:7px}
+  .lg-top{display:flex; align-items:center; gap:10px}
+  .lg-name{font-size:14px; font-weight:700; letter-spacing:.01em}
+  .lg-desc{font-size:12.5px; color:var(--muted); line-height:1.55}
+  .lg svg{flex:none; display:block}
+
+  figure{margin:0; background:var(--surface); border:1px solid var(--rule); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+  .figwrap{overflow-x:auto; padding:22px 20px 8px}
+  .figwrap svg{display:block; min-width:900px; width:100%; height:auto}
+  figcaption{
+    padding:16px 22px 20px; border-top:1px solid var(--rule); background:var(--surface-2);
+    font-size:13.5px; color:var(--muted); line-height:1.7;
+  }
+  figcaption b{color:var(--ink-2); font-weight:600}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; min-width:720px; font-size:14.5px}
+  .tnote{margin:0; padding:14px 20px 18px; font-size:13px; color:var(--muted); line-height:1.7; border-top:1px solid var(--rule); background:var(--surface-2)}
+  th,td{padding:12px 16px; text-align:left; border-bottom:1px solid var(--rule); vertical-align:top}
+  thead th{
+    font-size:12px; letter-spacing:.06em; color:var(--muted); font-weight:700;
+    background:var(--surface-3); border-bottom:1px solid var(--rule-2); white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.k{font-weight:600; white-space:nowrap}
+  td small{color:var(--muted); font-size:12.5px}
+
+  .reads{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:16px}
+  .read{
+    background:var(--surface); border:1px solid var(--rule); border-radius:12px; padding:18px 18px 20px;
+    display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow); border-top:3px solid var(--stripe,var(--ev-hyp));
+  }
+  .read-tag{font-size:11.5px; font-weight:700; letter-spacing:.06em; color:var(--stripe,var(--ev-hyp))}
+  .read-obs{font-size:14.5px; font-weight:700; line-height:1.6}
+  .read-int{font-size:13.5px; color:var(--ink-2); line-height:1.75; margin:0}
+  .read-int b{color:var(--ink)}
+
+  .limits{background:var(--surface-3); border:1px solid var(--rule); border-radius:12px; padding:20px 22px}
+  .limits ul{margin:0; padding-left:1.15em; display:flex; flex-direction:column; gap:9px}
+  .limits li{font-size:14px; color:var(--ink-2); line-height:1.7}
+  .limits li b{color:var(--ink); font-weight:600}
+
+  footer{border-top:1px solid var(--rule); padding-top:20px; font-size:12.5px; color:var(--muted); line-height:1.7}
+
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--ev-strong); outline-offset:3px; border-radius:4px}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex; gap:4px; border-bottom:1px solid var(--rule); margin-top:-24px; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    appearance:none; background:none; border:none; cursor:pointer; white-space:nowrap;
+    font-family:inherit; font-size:14.5px; font-weight:600; color:var(--muted);
+    padding:11px 16px 12px; border-bottom:2px solid transparent; margin-bottom:-1px;
+    letter-spacing:.01em; border-radius:6px 6px 0 0;
+  }
+  .tab:hover{color:var(--ink-2); background:var(--surface-3)}
+  .tab[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--ev-hyp)}
+  .panel{display:flex; flex-direction:column; gap:56px}
+  .panel[hidden]{display:none}
+
+  /* ---------- hotspots ---------- */
+  .hot{cursor:pointer}
+  .hot .hit{fill:transparent; stroke:transparent; stroke-width:10}
+  .hot .halo{fill:none; stroke:var(--ev-hyp); stroke-width:2; opacity:0; stroke-linejoin:round}
+  @media (prefers-reduced-motion:no-preference){
+    .hot .halo{transition:opacity .12s ease, stroke-width .12s ease}
+  }
+  .hot:hover .halo, .hot:focus-visible .halo, .hot.on .halo{opacity:1; stroke-width:4}
+  .hot:focus{outline:none}
+  .mark{font-size:9.5px; font-weight:700; letter-spacing:.04em; fill:var(--ev-hyp); pointer-events:none}
+  .mark.q{fill:var(--ev-limited)}
+  .mark.n{fill:var(--ev-none)}
+
+  /* ---------- tooltip：倒色霧面玻璃 ---------- */
+  .tip{
+    position:fixed; z-index:60; max-width:min(460px,calc(100vw - 28px)); pointer-events:none;
+    color:var(--tip-ink); overflow:hidden;
+    background:linear-gradient(180deg, var(--tip-glare) 0%, rgba(255,255,255,0) 38%), var(--tip-bg);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    backdrop-filter:blur(20px) saturate(160%);
+    border:1.5px solid var(--tip-edge); border-radius:14px;
+    box-shadow:var(--tip-shadow), inset 0 1px 0 var(--tip-glare);
+    opacity:0; visibility:hidden; transform:translateY(4px) scale(.985);
+    transition:opacity .12s ease, transform .12s ease;
+  }
+  .tip.show{opacity:1; visibility:visible; transform:translateY(0) scale(1)}
+  .tip-head{
+    padding:12px 16px 11px; border-bottom:1px solid var(--tip-rule); background:var(--tip-head);
+    font-size:13px; font-weight:700; color:var(--tip-ink); line-height:1.5;
+  }
+  .tip-body{max-height:min(64vh,540px); overflow:hidden}
+  .blk{padding:11px 16px 13px; border-bottom:1px solid var(--tip-rule)}
+  .blk:last-child{border-bottom:none}
+  .blk-h{
+    font-size:10.5px; font-weight:700; letter-spacing:.12em; margin-bottom:7px;
+    display:inline-block; padding:2px 8px; border-radius:999px;
+  }
+  .b-warn .blk-h{color:var(--tip-warn); background:var(--tip-warn-bg)}
+  .b-ddx  .blk-h{color:var(--tip-accent); background:var(--tip-accent-bg)}
+  .b-cut  .blk-h{color:var(--tip-ok); background:var(--tip-ok-bg)}
+  .b-book .blk-h{color:var(--tip-muted); background:var(--tip-head)}
+  .blk p{margin:0; font-size:13px; line-height:1.72; color:var(--tip-ink-2)}
+  .blk ul{margin:0; padding-left:1.05em; display:flex; flex-direction:column; gap:4px}
+  .blk li{font-size:12.8px; line-height:1.6; color:var(--tip-ink-2)}
+  .blk li b{color:var(--tip-ink); font-weight:600}
+  .bk{font-size:12.5px; line-height:1.6; color:var(--tip-ink-2); margin:0 0 6px}
+  .bk:last-child{margin-bottom:0}
+  .bk .t{color:var(--tip-ink); font-weight:600}
+  .bk .s{color:var(--tip-muted); font-size:11.5px; display:block}
+
+  .hint{
+    display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px;
+    padding:7px 15px; font-size:13px; color:var(--ink-2);
+  }
+  .hint b{color:var(--ev-hyp)}
+
+  /* ---------- 書目清單 ---------- */
+  .reflist{border:1px solid var(--rule); border-radius:12px; background:var(--surface); box-shadow:var(--shadow); overflow:hidden}
+  .refrow{display:grid; grid-template-columns:42px 1fr; gap:14px; padding:14px 18px; border-bottom:1px solid var(--rule)}
+  .refrow:last-child{border-bottom:none}
+  .refrow.lit{background:var(--ev-hyp-bg)}
+  .refrow .n{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; font-weight:700;
+    color:var(--ev-hyp); background:var(--ev-hyp-bg); border-radius:5px; height:21px;
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+  }
+  .refrow .zh{font-size:14.5px; font-weight:600; line-height:1.6; margin:0}
+  .refrow .en{font-size:12.5px; color:var(--ink-2); line-height:1.55; margin:3px 0 0}
+  .refrow .meta{font-size:12px; color:var(--muted); margin:5px 0 0; line-height:1.6}
+  .refrow .where{
+    display:inline-block; margin:6px 6px 0 0; font-size:11.5px; color:var(--muted);
+    background:var(--surface-3); border:1px solid var(--rule); border-radius:999px; padding:2px 9px;
+  }
+  .refrow .kind{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:1px 8px;
+    border-radius:999px; margin-left:8px; vertical-align:2px;
+    background:var(--ev-strong-bg); color:var(--ev-strong);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">住院醫師臨床學習 · 電解質系列 01</div>
+    <h1>低血鉀的診斷流程
+      <span class="en">A Stepwise Diagnostic Approach to Hypokalemia</span>
+    </h1>
+    <p class="thesis">
+      低血鉀不是「看到低就補」。整個診斷可以壓縮成四個問題：<b>是真的低嗎</b>、<b>要不要現在處理</b>、<b>鉀是跑進細胞還是真的流失了</b>、<b>流失走腎臟還是腸胃道</b>。答對這四題，病因幾乎就落在一格裡。圖上每個節點都可以滑過去看該格的鑑別診斷、最容易踩的難點，以及教科書依據。
+    </p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="頁面分頁">
+    <button class="tab" id="t-flow" role="tab" aria-selected="true" aria-controls="p-flow">診斷流程圖</button>
+    <button class="tab" id="t-ref" role="tab" aria-selected="false" aria-controls="p-ref" tabindex="-1">難點・鑑別・書目</button>
+  </nav>
+
+  <!-- ================= 分頁一：診斷流程圖 ================= -->
+  <div class="panel" id="p-flow" role="tabpanel" aria-labelledby="t-flow">
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">流 程 圖</div>
+      <h2>四個決策點，把病因收斂到一格</h2>
+      <p class="sec-note">顏色代表元件性質，線型再做一次相同區分（實線＝流程、虛線＝決策分流、點線＝旁支提示），不依賴辨色即可讀。</p>
+    </div>
+
+    <div class="legend">
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-strong)" stroke-width="2.5"/></svg>
+          <span class="lg-name" style="color:var(--ev-strong)">流程步驟</span>
+        </div>
+        <div class="lg-desc">每位低血鉀病人都要走的必做動作，順序不可跳。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4"/></svg>
+          <span class="lg-name" style="color:var(--ev-limited)">決策點</span>
+        </div>
+        <div class="lg-desc">需要一個檢驗數值才能往下走的分流；切點標於節點內。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-hyp)" stroke-width="3" stroke-dasharray="11 5"/></svg>
+          <span class="lg-name" style="color:var(--ev-hyp)">關鍵難點</span>
+        </div>
+        <div class="lg-desc">臨床上最常誤判或漏掉的一格，滑過可看完整說明。</div>
+      </div>
+      <div class="lg">
+        <div class="lg-top">
+          <svg width="42" height="10" aria-hidden="true"><line x1="1" y1="5" x2="41" y2="5" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/></svg>
+          <span class="lg-name" style="color:var(--ev-none)">旁支・修飾因子</span>
+        </div>
+        <div class="lg-desc">不在主線上但會改變判讀或治療反應者，如低血鎂。</div>
+      </div>
+    </div>
+
+    <div class="hint">滑鼠移上任一方塊 → 顯示該格的 <b>鑑別診斷｜關鍵難點｜書目依據</b>；行動裝置請點選。</div>
+
+    <figure>
+      <div class="figwrap" id="flowfig">
+        <svg viewBox="0 0 1000 1400" role="img"
+             aria-label="低血鉀診斷流程圖。主流程依序為：確認真性低血鉀、病史用藥血鎂血氣、判斷是否為細胞內轉移、尿鉀分流；尿鉀低者為腎外流失，尿鉀高者為腎性失鉀並依酸鹼與血壓再分四型；低血鎂為跨分支修飾因子；最後匯入補鉀與再評估。旁側標示假性低血鉀、需立即處置情境、常見致病藥物與 TTKG 不再建議使用等臨床難點。">
+          <defs>
+            <marker id="m-s" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-strong)"/>
+            </marker>
+            <marker id="m-q" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-limited)"/>
+            </marker>
+            <marker id="m-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.8" markerHeight="4.8" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-hyp)"/>
+            </marker>
+            <marker id="m-n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+              <path d="M0 0 L10 5 L0 10 Z" fill="var(--ev-none)"/>
+            </marker>
+          </defs>
+
+          <g font-size="11.5" font-weight="700" fill="var(--muted)" letter-spacing="1.6">
+            <text x="40" y="36">主 流 程</text>
+            <text x="700" y="36">臨 床 難 點 與 立 即 處 置</text>
+          </g>
+          <line x1="40" y1="48" x2="960" y2="48" stroke="var(--rule)" stroke-width="1"/>
+
+          <!-- ===== 主流程箭頭 ===== -->
+          <g fill="none" stroke-width="2.5">
+            <line x1="500" y1="134" x2="500" y2="172" stroke="var(--ev-strong)" marker-end="url(#m-s)"/>
+            <line x1="500" y1="244" x2="500" y2="282" stroke="var(--ev-strong)" marker-end="url(#m-s)"/>
+            <line x1="500" y1="370" x2="500" y2="408" stroke="var(--ev-limited)" stroke-dasharray="6 4" marker-end="url(#m-q)"/>
+          </g>
+          <text x="512" y="394" font-size="11.5" font-weight="700" fill="var(--ev-limited)">否</text>
+
+          <!-- 旁支連線 -->
+          <line x1="670" y1="102" x2="694" y2="102" stroke="var(--ev-hyp)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-h)"/>
+          <line x1="670" y1="212" x2="694" y2="212" stroke="var(--ev-hyp)" stroke-width="2.5" marker-end="url(#m-h)"/>
+          <line x1="300" y1="212" x2="324" y2="212" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <line x1="330" y1="330" x2="306" y2="330" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#m-q)"/>
+          <text x="318" y="320" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ev-limited)">是</text>
+          <line x1="670" y1="456" x2="694" y2="456" stroke="var(--ev-hyp)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-h)"/>
+
+          <!-- ===== ① 確認真性低血鉀 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="s1" aria-label="步驟一 確認真性低血鉀">
+            <rect class="hl" x="330" y="70" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="66" width="348" height="72" rx="11"/>
+            <text x="500" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">① 確認真性低血鉀</text>
+            <text x="500" y="120" text-anchor="middle" font-size="11.5" fill="var(--muted)">K⁺ &lt; 3.5 mmol/L；重測並檢視採檢流程</text>
+            <text class="mark" x="660" y="85" text-anchor="end">難點 · 書 B2 B3</text>
+            <rect class="hit" x="330" y="70" width="340" height="64"/>
+          </g>
+
+          <!-- ===== ② 病史・用藥・血鎂・血氣 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="s2" aria-label="步驟二 病史用藥血鎂血氣">
+            <rect class="hl" x="330" y="180" width="340" height="64" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="326" y="176" width="348" height="72" rx="11"/>
+            <text x="500" y="208" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">② 病史・用藥・血鎂・血氣</text>
+            <text x="500" y="230" text-anchor="middle" font-size="11.5" fill="var(--muted)">與第一管血一起送，不要分兩次抽</text>
+            <text class="mark" x="660" y="195" text-anchor="end">鑑別 8 · 難點</text>
+            <rect class="hit" x="330" y="180" width="340" height="64"/>
+          </g>
+
+          <!-- ===== ③ 決策：細胞內轉移？ ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="s3" aria-label="步驟三 決策 是否為細胞內轉移">
+            <rect class="hl" x="330" y="290" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="286" width="348" height="88" rx="11"/>
+            <text x="500" y="322" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">③ 決策：鉀是「跑進細胞」嗎？</text>
+            <text x="500" y="343" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">總體鉀量正常（轉移） vs 真的缺鉀（流失）</text>
+            <text x="500" y="361" text-anchor="middle" font-size="11" fill="var(--ev-limited)">看誘因與用藥，不是看某個數值</text>
+            <text class="mark q" x="660" y="305" text-anchor="end">鑑別 9 · 難點</text>
+            <rect class="hit" x="330" y="290" width="340" height="80"/>
+          </g>
+
+          <!-- ===== ④ 決策：尿鉀 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="s4" aria-label="步驟四 決策 尿鉀">
+            <rect class="hl" x="330" y="416" width="340" height="80" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.8" stroke-dasharray="7 4"/>
+            <rect class="halo" x="326" y="412" width="348" height="88" rx="11"/>
+            <text x="500" y="448" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">④ 決策：尿鉀（補鉀前採檢）</text>
+            <text x="500" y="469" text-anchor="middle" font-size="11.5" fill="var(--ink-2)">spot urine K/Cr　或　24 小時尿鉀</text>
+            <text x="500" y="487" text-anchor="middle" font-size="11" fill="var(--ev-limited)">切點見節點說明；TTKG 不再使用</text>
+            <text class="mark q" x="660" y="431" text-anchor="end">切點 3 · 難點</text>
+            <rect class="hit" x="330" y="416" width="340" height="80"/>
+          </g>
+
+          <!-- ===== 旁：假性低血鉀 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="pseudo" aria-label="難點 假性低血鉀">
+            <rect class="hl" x="700" y="62" width="280" height="80" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="696" y="58" width="288" height="88" rx="11"/>
+            <text x="716" y="88" font-size="13.5" font-weight="700" fill="var(--ink)">先排除假性低血鉀</text>
+            <text x="716" y="109" font-size="11.5" fill="var(--ink-2)">白血球極高之檢體室溫久置</text>
+            <text x="716" y="127" font-size="11.5" fill="var(--ink-2)">→ 白血球持續攝鉀，測值偏低</text>
+            <text class="mark" x="964" y="78" text-anchor="end">難點</text>
+            <rect class="hit" x="700" y="62" width="280" height="80"/>
+          </g>
+
+          <!-- ===== 旁：立即處置 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="urgent" aria-label="需立即處置的情境">
+            <rect class="hl" x="700" y="170" width="280" height="120" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.8"/>
+            <rect class="halo" x="696" y="166" width="288" height="128" rx="11"/>
+            <text x="716" y="196" font-size="13.5" font-weight="700" fill="var(--ink)">需立即處置（與診斷並行）</text>
+            <text x="716" y="219" font-size="11.5" fill="var(--ink-2)">K &lt; 2.5、心電圖變化、肌無力或麻痺</text>
+            <text x="716" y="238" font-size="11.5" fill="var(--ink-2)">洋地黃使用中、DKA、肝硬化</text>
+            <text x="716" y="262" font-size="11.5" fill="var(--ev-hyp)">周邊 ≤ 10 mmol/hr、濃度 ≤ 40 mmol/L</text>
+            <text x="716" y="280" font-size="11.5" fill="var(--ev-hyp)">稀釋液不要用含葡萄糖溶液</text>
+            <text class="mark" x="964" y="186" text-anchor="end">指徵 6 · 難點</text>
+            <rect class="hit" x="700" y="170" width="280" height="120"/>
+          </g>
+
+          <!-- ===== 旁：常見致病藥物 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="drugs" aria-label="常見致病藥物">
+            <rect class="hl" x="20" y="170" width="280" height="108" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="16" y="166" width="288" height="116" rx="11"/>
+            <text x="36" y="196" font-size="13.5" font-weight="700" fill="var(--ink-2)">產出最高的一步：用藥史</text>
+            <text x="36" y="218" font-size="11.5" fill="var(--ink-2)">利尿劑（thiazide／loop）、瀉劑</text>
+            <text x="36" y="237" font-size="11.5" fill="var(--ink-2)">insulin、β2 致效劑、類固醇</text>
+            <text x="36" y="256" font-size="11.5" fill="var(--ink-2)">amphotericin B、cisplatin</text>
+            <text x="36" y="272" font-size="11" fill="var(--muted)">甘草／glycyrrhizin（中藥、甘草茶）</text>
+            <text class="mark" x="284" y="186" text-anchor="end">鑑別 8</text>
+            <rect class="hit" x="20" y="170" width="280" height="108"/>
+          </g>
+
+          <!-- ===== 旁：細胞內轉移 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="shift" aria-label="細胞內轉移型">
+            <rect class="hl" x="20" y="300" width="280" height="120" rx="9" fill="var(--ev-limited-bg)" stroke="var(--ev-limited)" stroke-width="1.6"/>
+            <rect class="halo" x="16" y="296" width="288" height="128" rx="11"/>
+            <text x="36" y="326" font-size="13.5" font-weight="700" fill="var(--ink)">細胞內轉移（總體鉀不缺）</text>
+            <text x="36" y="349" font-size="11.5" fill="var(--ink-2)">甲狀腺毒性週期性麻痺</text>
+            <text x="36" y="368" font-size="11.5" fill="var(--ink-2)">insulin／DKA 治療中、β2 致效劑</text>
+            <text x="36" y="387" font-size="11.5" fill="var(--ink-2)">鹼中毒、再餵食、大量兒茶酚胺</text>
+            <text x="36" y="410" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">補到能動即可，勿追到正常值</text>
+            <text class="mark q" x="284" y="316" text-anchor="end">鑑別 9 · 難點 · 書 B8</text>
+            <rect class="hit" x="20" y="300" width="280" height="120"/>
+          </g>
+
+          <!-- ===== 旁：TTKG ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="ttkg" aria-label="難點 TTKG 已不建議使用">
+            <rect class="hl" x="700" y="400" width="280" height="100" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.4" stroke-dasharray="5 4"/>
+            <rect class="halo" x="696" y="396" width="288" height="108" rx="11"/>
+            <text x="716" y="426" font-size="13.5" font-weight="700" fill="var(--ink)">TTKG 已不建議使用</text>
+            <text x="716" y="449" font-size="11.5" fill="var(--ink-2)">推導假設不成立，教科書已除役</text>
+            <text x="716" y="468" font-size="11.5" fill="var(--ink-2)">改用 spot urine K/Cr 或 24 小時尿鉀</text>
+            <text x="716" y="490" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">採檢務必在第一劑補鉀之前</text>
+            <text class="mark" x="964" y="416" text-anchor="end">難點 · 書 B6</text>
+            <rect class="hit" x="700" y="400" width="280" height="100"/>
+          </g>
+
+          <!-- ===== 尿鉀分流連線 ===== -->
+          <g fill="none" stroke="var(--ev-limited)" stroke-width="2.5" stroke-dasharray="6 4">
+            <path d="M500 496 V530"/>
+            <path d="M185 530 H670"/>
+            <path d="M185 530 V552" marker-end="url(#m-q)"/>
+            <path d="M670 530 V552" marker-end="url(#m-q)"/>
+          </g>
+
+          <!-- ===== 腎外流失 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="extra" aria-label="腎外流失">
+            <rect class="hl" x="40" y="560" width="290" height="60" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="36" y="556" width="298" height="68" rx="11"/>
+            <text x="185" y="588" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">腎外流失</text>
+            <text x="185" y="608" text-anchor="middle" font-size="11.5" fill="var(--ev-strong)">尿 K/Cr &lt; 13 mEq/g Cr</text>
+            <text class="mark" x="320" y="575" text-anchor="end">切點</text>
+            <rect class="hit" x="40" y="560" width="290" height="60"/>
+          </g>
+          <line x1="185" y1="620" x2="185" y2="646" stroke="var(--ev-strong)" stroke-width="2.5" marker-end="url(#m-s)"/>
+
+          <g class="hot" tabindex="0" role="button" data-k="gi" aria-label="腸胃道為主之腎外流失病因">
+            <rect class="hl" x="40" y="650" width="290" height="250" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="36" y="646" width="298" height="258" rx="11"/>
+            <text x="56" y="678" font-size="13" font-weight="700" fill="var(--ink-2)">消化道為主</text>
+            <text x="56" y="704" font-size="12" fill="var(--ink)">· 腹瀉（感染性、發炎性腸病）</text>
+            <text x="56" y="726" font-size="12" fill="var(--ink)">· 瀉劑、灌腸劑濫用</text>
+            <text x="56" y="748" font-size="12" fill="var(--ink)">· 絨毛狀腺瘤、VIPoma</text>
+            <text x="56" y="770" font-size="12" fill="var(--ink)">· 造口大量排出、腸道引流</text>
+            <text x="56" y="792" font-size="12" fill="var(--ink)">· 大量流汗、廣泛燒傷（少見）</text>
+            <text x="56" y="822" font-size="12.5" font-weight="700" fill="var(--ink-2)">酸鹼特徵</text>
+            <text x="56" y="844" font-size="11.5" fill="var(--muted)">正常陰離子間隙（高血氯）代謝性酸中毒</text>
+            <text x="56" y="874" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">尿鉀低＋鹼中毒 → 想隱匿性嘔吐</text>
+            <text class="mark" x="314" y="666" text-anchor="end">鑑別 7 · 難點</text>
+            <rect class="hit" x="40" y="650" width="290" height="250"/>
+          </g>
+
+          <!-- ===== 腎性流失 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="renal" aria-label="腎性失鉀">
+            <rect class="hl" x="380" y="560" width="580" height="60" rx="9" fill="var(--surface-3)" stroke="var(--ev-strong)" stroke-width="1.6"/>
+            <rect class="halo" x="376" y="556" width="588" height="68" rx="11"/>
+            <text x="670" y="588" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)">腎性失鉀</text>
+            <text x="670" y="608" text-anchor="middle" font-size="11.5" fill="var(--ev-strong)">尿 K/Cr ≥ 13 mEq/g Cr　→　再依「酸鹼狀態 ＋ 血壓 ＋ 尿氯」收斂為四型</text>
+            <text class="mark" x="950" y="575" text-anchor="end">切點 · 四型</text>
+            <rect class="hit" x="380" y="560" width="580" height="60"/>
+          </g>
+
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2.5">
+            <path d="M670 620 V640"/>
+            <path d="M520 640 H825"/>
+            <path d="M520 640 V652" marker-end="url(#m-s)"/>
+            <path d="M825 640 V652" marker-end="url(#m-s)"/>
+            <path d="M670 640 V912"/>
+            <path d="M520 912 H825"/>
+            <path d="M520 912 V922" marker-end="url(#m-s)"/>
+            <path d="M825 912 V922" marker-end="url(#m-s)"/>
+          </g>
+
+          <!-- ===== 型 ①：代謝性酸中毒 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="f1" aria-label="腎性失鉀第一型 代謝性酸中毒">
+            <rect class="hl" x="380" y="660" width="280" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="376" y="656" width="288" height="248" rx="11"/>
+            <text x="396" y="688" font-size="13.5" font-weight="700" fill="var(--ink)">① 代謝性酸中毒</text>
+            <text x="396" y="708" font-size="11" fill="var(--muted)">陰離子間隙可正常，亦可增加</text>
+            <text x="396" y="738" font-size="12" fill="var(--ink)">· 遠端腎小管酸中毒（第一型）</text>
+            <text x="396" y="760" font-size="12" fill="var(--ink)">· 近端／Fanconi（第二型）</text>
+            <text x="396" y="782" font-size="12" fill="var(--ink)">· 糖尿病酮酸血症</text>
+            <text x="396" y="804" font-size="12" fill="var(--ink)">· acetazolamide</text>
+            <text x="396" y="826" font-size="12" fill="var(--ink)">· 甲苯（吸膠）中毒</text>
+            <text x="396" y="856" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">DKA：K &lt; 3.3 先補鉀再打胰島素</text>
+            <text x="396" y="876" font-size="11.5" fill="var(--ev-hyp)">初診血鉀正常 ≠ 鉀不缺</text>
+            <text class="mark" x="644" y="676" text-anchor="end">鑑別 5 · 難點</text>
+            <rect class="hit" x="380" y="660" width="280" height="240"/>
+          </g>
+
+          <!-- ===== 型 ②：鹼中毒＋高血壓 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="f2" aria-label="腎性失鉀第二型 鹼中毒合併高血壓">
+            <rect class="hl" x="690" y="660" width="270" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="686" y="656" width="278" height="248" rx="11"/>
+            <text x="706" y="688" font-size="13.5" font-weight="700" fill="var(--ink)">② 鹼中毒 ＋ 高血壓</text>
+            <text x="706" y="708" font-size="11" fill="var(--muted)">礦皮質素效應過多</text>
+            <text x="706" y="738" font-size="11.5" fill="var(--ink)">↑腎素 ↑醛固酮：腎血管性、腎素瘤</text>
+            <text x="706" y="760" font-size="11.5" fill="var(--ink)">↓腎素 ↑醛固酮：原發性醛固酮症</text>
+            <text x="706" y="782" font-size="11.5" fill="var(--ink)">↓腎素 ↓醛固酮：Liddle、AME</text>
+            <text x="706" y="800" font-size="11.5" fill="var(--ink)">　（甘草）、Cushing、CAH</text>
+            <text x="706" y="830" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">低血鉀本身會壓抑醛固酮</text>
+            <text x="706" y="850" font-size="11.5" fill="var(--ev-hyp)">→ 先矯正 K 再驗 ARR</text>
+            <text x="706" y="876" font-size="11.5" fill="var(--ev-hyp)">MRA 需停 4–6 週</text>
+            <text class="mark" x="944" y="676" text-anchor="end">鑑別 7 · 難點</text>
+            <rect class="hit" x="690" y="660" width="270" height="240"/>
+          </g>
+
+          <!-- ===== 型 ③：鹼中毒＋血壓不高＋尿氯低 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="f3" aria-label="腎性失鉀第三型 鹼中毒血壓不高尿氯低">
+            <rect class="hl" x="380" y="930" width="280" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="376" y="926" width="288" height="248" rx="11"/>
+            <text x="396" y="958" font-size="13.5" font-weight="700" fill="var(--ink)">③ 鹼中毒 · 血壓不高</text>
+            <text x="396" y="980" font-size="12" font-weight="700" fill="var(--ev-limited)">尿氯 &lt; 20 mmol/L</text>
+            <text x="396" y="1010" font-size="12" fill="var(--ink)">· 嘔吐</text>
+            <text x="396" y="1032" font-size="12" fill="var(--ink)">· 鼻胃管引流</text>
+            <text x="396" y="1054" font-size="12" fill="var(--ink)">· 遠期（已停用）利尿劑</text>
+            <text x="396" y="1076" font-size="12" fill="var(--ink)">· 高碳酸血症矯正後</text>
+            <text x="396" y="1106" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">嘔吐時尿鉀可能反而偏高</text>
+            <text x="396" y="1126" font-size="11.5" fill="var(--ev-hyp)">（碳酸氫鹽尿被動帶出鉀）</text>
+            <text x="396" y="1148" font-size="11.5" fill="var(--ev-hyp)">→ 這格要看尿氯，不是尿鉀</text>
+            <text class="mark" x="644" y="946" text-anchor="end">鑑別 4 · 難點</text>
+            <rect class="hit" x="380" y="930" width="280" height="240"/>
+          </g>
+
+          <!-- ===== 型 ④：鹼中毒＋血壓不高＋尿氯高 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="f4" aria-label="腎性失鉀第四型 鹼中毒血壓不高尿氯高">
+            <rect class="hl" x="690" y="930" width="270" height="240" rx="9" fill="var(--surface-2)" stroke="var(--rule-2)" stroke-width="1.2"/>
+            <rect class="halo" x="686" y="926" width="278" height="248" rx="11"/>
+            <text x="706" y="958" font-size="13.5" font-weight="700" fill="var(--ink)">④ 鹼中毒 · 血壓不高</text>
+            <text x="706" y="980" font-size="12" font-weight="700" fill="var(--ev-limited)">尿氯 &gt; 20 mmol/L</text>
+            <text x="706" y="1010" font-size="12" fill="var(--ink)">· 使用中的利尿劑</text>
+            <text x="706" y="1032" font-size="12" fill="var(--ink)">· Bartter 症候群</text>
+            <text x="706" y="1054" font-size="12" fill="var(--ink)">· Gitelman 症候群</text>
+            <text x="706" y="1076" font-size="12" fill="var(--ink)">· 嚴重低血鎂</text>
+            <text x="706" y="1106" font-size="11.5" font-weight="700" fill="var(--ev-hyp)">三者生化幾乎無法區分</text>
+            <text x="706" y="1126" font-size="11.5" fill="var(--ev-hyp)">→ 驗尿液利尿劑篩檢</text>
+            <text x="706" y="1148" font-size="11.5" fill="var(--ev-hyp)">Gitelman：低血鎂 ＋ 低尿鈣</text>
+            <text class="mark" x="944" y="946" text-anchor="end">鑑別 4 · 難點</text>
+            <rect class="hit" x="690" y="930" width="270" height="240"/>
+          </g>
+
+          <!-- ===== 低血鎂：跨分支修飾因子 ===== -->
+          <line x1="185" y1="900" x2="185" y2="926" stroke="var(--ev-none)" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round" marker-end="url(#m-n)"/>
+          <g class="hot" tabindex="0" role="button" data-k="mg" aria-label="跨分支修飾因子 低血鎂">
+            <rect class="hl" x="40" y="930" width="290" height="240" rx="9" fill="var(--ev-hyp-bg)" stroke="var(--ev-hyp)" stroke-width="1.8" stroke-dasharray="6 4"/>
+            <rect class="halo" x="36" y="926" width="298" height="248" rx="11"/>
+            <text x="56" y="958" font-size="13.5" font-weight="700" fill="var(--ink)">跨分支修飾因子：低血鎂</text>
+            <text x="56" y="984" font-size="11.5" fill="var(--ink-2)">細胞內鎂原本阻斷 ROMK 通道</text>
+            <text x="56" y="1004" font-size="11.5" fill="var(--ink-2)">鎂缺乏 → 阻斷解除 → 遠端持續漏鉀</text>
+            <text x="56" y="1032" font-size="11.5" fill="var(--ink-2)">常見於：PPI 長期使用、利尿劑、腹瀉</text>
+            <text x="56" y="1052" font-size="11.5" fill="var(--ink-2)">cisplatin、鈣調磷酸酶抑制劑、酒癮</text>
+            <text x="56" y="1086" font-size="12.5" font-weight="700" fill="var(--ev-hyp)">難治型低血鉀 → 先驗血鎂</text>
+            <text x="56" y="1110" font-size="12" fill="var(--ev-hyp)">不補鎂，鉀補不起來</text>
+            <text x="56" y="1140" font-size="11" fill="var(--muted)">同時適用於型 ④ 之利尿劑與 Gitelman</text>
+            <text class="mark" x="314" y="946" text-anchor="end">難點 · 書 B9</text>
+            <rect class="hit" x="40" y="930" width="290" height="240"/>
+          </g>
+
+          <!-- ===== 匯流至補鉀 ===== -->
+          <g fill="none" stroke="var(--ev-strong)" stroke-width="2">
+            <path d="M400 900 H358 V1210"/>
+            <path d="M940 900 H976 V1210"/>
+            <path d="M520 1170 V1210"/>
+            <path d="M825 1170 V1210"/>
+            <path d="M185 1170 V1210"/>
+            <path d="M185 1210 H976"/>
+            <path d="M500 1210 V1236" stroke-width="2.5" marker-end="url(#m-s)"/>
+          </g>
+
+          <!-- ===== ⑤ 補鉀與再評估 ===== -->
+          <g class="hot" tabindex="0" role="button" data-k="fix" aria-label="步驟五 補鉀與再評估">
+            <rect class="hl" x="40" y="1240" width="920" height="112" rx="10" fill="var(--ev-strong-bg)" stroke="var(--ev-strong)" stroke-width="2"/>
+            <rect class="halo" x="36" y="1236" width="928" height="120" rx="12"/>
+            <text x="60" y="1270" font-size="15" font-weight="700" fill="var(--ink)">⑤ 補鉀、矯正病因、再評估</text>
+            <text x="60" y="1296" font-size="12" fill="var(--ink-2)">口服優先；靜脈限速（周邊 ≤ 10 mmol/hr、濃度 ≤ 40 mmol/L，稀釋液不含葡萄糖）。同步補鎂。</text>
+            <text x="60" y="1318" font-size="12" fill="var(--ink-2)">血鉀每降 0.3 mmol/L 約對應總體缺鉀 100 mmol —— 但此估算完全不適用於「細胞內轉移型」。</text>
+            <text x="60" y="1340" font-size="12" fill="var(--ink-2)">補鉀後 2–4 小時複驗；持續不上升時，回頭檢查血鎂、是否仍在使用致病藥物、以及尿鉀是否仍高。</text>
+            <text class="mark" x="944" y="1258" text-anchor="end">難點 · 書 B1 B10</text>
+            <rect class="hit" x="40" y="1240" width="920" height="112"/>
+          </g>
+
+          <text x="40" y="1384" font-size="11" fill="var(--muted)">本圖為教學用簡化流程；實際判讀須結合病史、用藥與臨床情境，切點於不同教科書間略有差異。</text>
+        </svg>
+      </div>
+      <figcaption>
+        <b>讀圖方式。</b>中央實線是主流程，兩個橘色虛線框是<b>真正需要一個數值才能往下走</b>的決策點——第三步靠病史與誘因判斷（沒有一個檢驗可以直接告訴你是不是轉移），第四步靠尿鉀。腎性失鉀不再往下畫成三層決策樹，而是直接收斂成<b>四型</b>，判讀條件寫在各型標題上：酸鹼決定第一刀，血壓決定第二刀，尿氯決定第三刀。左下角的低血鎂以虛線框標示，因為它不屬於任何一格，而是<b>會讓所有腎性分支補不起來</b>的共同修飾因子。滑過任一方塊可展開該格的鑑別診斷、關鍵難點與書目依據。
+      </figcaption>
+    </figure>
+  </section>
+
+  </div><!-- /p-flow -->
+
+  <!-- ================= 分頁二：難點・鑑別・書目 ================= -->
+  <div class="panel" id="p-ref" role="tabpanel" aria-labelledby="t-ref" hidden>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">關 鍵 難 點</div>
+      <h2>八個最常踩到的坑</h2>
+      <p class="sec-note">全部來自流程圖上標為「難點」的節點，抽出來獨立成卡片，方便值班前掃一遍。</p>
+    </div>
+    <div class="reads">
+      <div class="read">
+        <div class="read-tag">難點 01 · 確認階段</div>
+        <div class="read-obs">白血球極高的病人，低血鉀可能是假的</div>
+        <p class="read-int">急性白血病、WBC &gt; 100 × 10⁹/L 之檢體若在室溫久置，白血球會持續攝取血漿鉀。<b>測值可低到 2 以下而病人毫無症狀、心電圖乾淨</b>。處理：立即離心分離血漿送檢。反向的錯誤同樣存在——溶血或握拳採血會偽高，可能<b>掩蓋</b>真正的低血鉀。</p>
+      </div>
+      <div class="read" style="--stripe:var(--ev-limited)">
+        <div class="read-tag">難點 02 · 機轉判斷</div>
+        <div class="read-obs">轉移型補太多，會反彈成高血鉀</div>
+        <p class="read-int">細胞內轉移的病人<b>總體鉀量多半不缺</b>。照一般缺鉀劑量去補，等誘因（insulin、β2 致效劑、壓力）解除、鉀回流細胞外，就會反彈。週期性麻痺尤其危險——<b>補到 3.0–3.5 能動即可，不要追到正常值</b>。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 03 · 尿液採檢</div>
+        <div class="read-obs">補過鉀之後的尿鉀，沒有判讀價值</div>
+        <p class="read-int">尿鉀是整個流程的分水嶺，卻最常被順手的第一劑 KCl 破壞。<b>只要打過鉀，這管尿就不能用了</b>，而且短時間內補不回來。習慣做法：接到低血鉀通知時，同一時間開尿液 K/Cr、尿氯、血鎂與血氣，再開補鉀醫囑。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 04 · 尿液判讀</div>
+        <div class="read-obs">TTKG 已經退場，不要再算</div>
+        <p class="read-int">TTKG 的推導假設（皮質集尿管末端與髓質間質等滲、其後無鉀再吸收）已被證明不成立，現行教科書與回顧文章均<b>不再建議使用</b>。改用 spot urine K/Cr（&lt; 13 mEq/g Cr 為腎外）或 24 小時尿鉀。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 05 · 型 ③</div>
+        <div class="read-obs">嘔吐的病人，尿鉀反而可能是高的</div>
+        <p class="read-int">嘔吐流失的是胃酸不是鉀。真正發生的是代謝性鹼中毒 → 碳酸氫鹽尿 → <b>被動帶走鉀</b>，於是尿鉀升高，看起來像腎性失鉀。這一格<b>要看尿氯</b>（&lt; 20 mmol/L）才判得準。這是整張圖最常被誤判的位置。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 06 · 型 ④</div>
+        <div class="read-obs">利尿劑濫用與 Bartter／Gitelman 幾乎一模一樣</div>
+        <p class="read-int">三者在生化上都是低血鉀 + 代謝性鹼中毒 + 尿氯高 + 血壓不高。要靠<b>尿液利尿劑篩檢</b>拆開。若確為遺傳性：<b>Gitelman</b> 成人發病、症狀輕、低血鎂 + <b>低</b>尿鈣；<b>Bartter</b> 幼年發病、常伴生長遲滯、尿鈣正常或高。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 07 · 型 ②</div>
+        <div class="read-obs">低血鉀沒矯正就驗 ARR，會得到偽陰性</div>
+        <p class="read-int">低血鉀本身會<b>壓抑醛固酮分泌</b>，在未矯正的狀態下驗 aldosterone/renin ratio，原發性醛固酮症可能驗不出來。此外 MRA 需停 4–6 週，ACEI／ARB、β-blocker、利尿劑都會干擾。<b>先補鉀、調藥，再安排篩檢</b>。</p>
+      </div>
+      <div class="read">
+        <div class="read-tag">難點 08 · 治療階段</div>
+        <div class="read-obs">不補鎂，鉀就是補不起來</div>
+        <p class="read-int">細胞內鎂原本阻斷 ROMK 通道；鎂缺乏時阻斷解除，遠端腎小管<b>持續漏鉀</b>，此時再怎麼補鉀都會從尿裡走掉。任何「補了兩天還是低」的病人，第一件事是驗血鎂。常見於長期 PPI、利尿劑、腹瀉、cisplatin、鈣調磷酸酶抑制劑與酒癮。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">鑑 別 診 斷 總 表</div>
+      <h2>把四型攤平，對照著背</h2>
+      <p class="sec-note">同一份內容在流程圖上是逐格展開，在這裡是一次看完；查房前對照用。</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>分類</th>
+            <th>判讀條件</th>
+            <th>常見病因</th>
+            <th>一句話要點</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="k">細胞內轉移</td>
+            <td>有明確誘因<br><small>非靠單一檢驗</small></td>
+            <td>甲狀腺毒性週期性麻痺、家族性低血鉀性週期性麻痺、insulin（含 DKA 治療中）、β2 致效劑、鹼中毒、再餵食症候群、大量兒茶酚胺、B12／葉酸治療後、氯化鋇或甲苯中毒</td>
+            <td>總體鉀不缺；補到能動即可</td>
+          </tr>
+          <tr>
+            <td class="k">腎外流失</td>
+            <td>尿 K/Cr &lt; 13<br><small>mEq/g Cr</small></td>
+            <td>腹瀉、瀉劑或灌腸劑濫用、絨毛狀腺瘤、VIPoma、造口大量排出、腸道引流；大量流汗與廣泛燒傷（少見）</td>
+            <td>典型伴正常陰離子間隙代謝性酸中毒</td>
+          </tr>
+          <tr>
+            <td class="k">腎性 · 型 ①</td>
+            <td>尿 K/Cr ≥ 13<br>＋ 代謝性酸中毒</td>
+            <td>遠端腎小管酸中毒（第一型）、近端／Fanconi 症候群（第二型）、糖尿病酮酸血症、acetazolamide、甲苯中毒</td>
+            <td>DKA 若 K &lt; 3.3，先補鉀再給胰島素</td>
+          </tr>
+          <tr>
+            <td class="k">腎性 · 型 ②</td>
+            <td>代謝性鹼中毒<br>＋ 高血壓</td>
+            <td>↑腎素↑醛固酮：腎血管性高血壓、腎素分泌腫瘤、惡性高血壓｜↓腎素↑醛固酮：原發性醛固酮症｜↓腎素↓醛固酮：Liddle 症候群、表象礦皮質素過多（甘草、11β-HSD2 缺乏）、Cushing 症候群、先天性腎上腺增生</td>
+            <td>用 renin／aldosterone 三分法拆開；驗前先矯正 K</td>
+          </tr>
+          <tr>
+            <td class="k">腎性 · 型 ③</td>
+            <td>鹼中毒 ＋ 血壓不高<br>＋ 尿氯 &lt; 20 mmol/L</td>
+            <td>嘔吐、鼻胃管引流、遠期（已停用）利尿劑、高碳酸血症矯正後</td>
+            <td>尿鉀可能偏高，判讀要看尿氯</td>
+          </tr>
+          <tr>
+            <td class="k">腎性 · 型 ④</td>
+            <td>鹼中毒 ＋ 血壓不高<br>＋ 尿氯 &gt; 20 mmol/L</td>
+            <td>使用中的利尿劑、Bartter 症候群、Gitelman 症候群、嚴重低血鎂</td>
+            <td>尿液利尿劑篩檢；Gitelman 看低尿鈣</td>
+          </tr>
+          <tr>
+            <td class="k">攝取不足</td>
+            <td>—</td>
+            <td>神經性厭食、酒癮、極端飲食；單獨造成低血鉀者少見，多為合併因素</td>
+            <td>幾乎不會是唯一原因，別滿足於此</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="tnote">尿 K/Cr 亦可寫作 &lt; 1.5 mmol/mmol；24 小時尿鉀之對應切點為 &lt; 15–20 mmol/day 提示腎外流失、&gt; 25–30 mmol/day 提示腎性失鉀。各家教科書切點略有差異，臨床上以「明顯高於或低於」判讀，不要卡在邊界值。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <div class="sec-label">書 目 依 據</div>
+      <h2>這張圖是從哪些書來的</h2>
+      <p class="sec-note">流程圖上標「書 Bn」的節點對應下列條目。灰色標籤列出該書在圖中支撐哪一格。</p>
+    </div>
+    <div class="reflist" id="booklist"></div>
+  </section>
+
+  </div><!-- /p-ref -->
+
+  <div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+
+  <footer>
+    製作供住院醫師臨床學習使用。內容為教學用簡化流程，不取代教科書全文與臨床判斷；書目之版次與章節請於引用前自行核對。切點與用藥劑量以所屬院所之臨床指引為準。
+  </footer>
+
+</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- 書目 ---------------- */
+  var BOOKS = {
+    B1:{t:"Brenner & Rector's The Kidney", s:"11th ed. (2020)｜Ch. 17 Disorders of Potassium Balance", m:"Mount DB 撰", kind:"教科書"},
+    B2:{t:"Harrison's Principles of Internal Medicine", s:"21st ed. (2022)｜Ch. 51 Fluid and Electrolyte Disturbances", m:"Mount DB 撰", kind:"教科書"},
+    B3:{t:"Clinical Physiology of Acid-Base and Electrolyte Disorders", s:"5th ed. (2001)｜Ch. 27–28", m:"Rose BD, Post TW　—　機轉推導最完整的一本", kind:"教科書"},
+    B4:{t:"Comprehensive Clinical Nephrology", s:"7th ed. (2023)｜Ch. 9 Disorders of Potassium Metabolism", m:"Johnson RJ, Floege J, Tonelli M 編", kind:"教科書"},
+    B5:{t:"UpToDate", s:"Evaluation of the adult patient with hypokalemia", m:"Mount DB　—　持續更新，臨床操作面最實用", kind:"線上資源"},
+    B6:{t:"A physiologic-based approach to the evaluation of a patient with hypokalemia", s:"Am J Kidney Dis. 2010;56(6):1184-1190.", m:"Palmer BF　—　尿鉀判讀與 TTKG 退場的依據", kind:"回顧"},
+    B7:{t:"Pathophysiology and management of hypokalaemia: a clinical perspective", s:"Nat Rev Nephrol. 2011;7(2):75-84.", m:"Unwin RJ, Luft FC, Shirley DG", kind:"回顧"},
+    B8:{t:"Laboratory tests to determine the cause of hypokalemia and paralysis", s:"Arch Intern Med. 2004;164(14):1561-1566.", m:"Lin SH, et al.（台灣本土研究）　—　週期性麻痺的鑑別流程", kind:"原著"},
+    B9:{t:"Mechanism of hypokalemia in magnesium deficiency", s:"J Am Soc Nephrol. 2007;18(10):2649-2652.", m:"Huang CL, Kuo E　—　ROMK 機轉的標準引用", kind:"回顧"},
+    B10:{t:"Hypokalemia: a clinical update", s:"Endocr Connect. 2018;7(4):R135-R146.", m:"Kardalas E, et al.", kind:"回顧"}
+  };
+
+  /* ---------------- 各節點之鑑別診斷／難點／書目 ---------------- */
+  var DATA = {
+    s1:{seg:"① 確認真性低血鉀（K⁺ < 3.5 mmol/L）",
+      warn:"先確認是「真的低」。嚴重白血球增多（如急性白血病、WBC > 100 × 10⁹/L）之檢體若於室溫久置，白血球會持續攝取血漿鉀，測得值可低到 2 以下而病人毫無症狀、心電圖乾淨——此即假性低血鉀。反向的錯誤同樣存在：檢體溶血或採血時反覆握拳會使測值偽高，可能掩蓋真正的低血鉀。",
+      blocks:[{label:"嚴重度分級", items:["輕度 3.0–3.4 mmol/L：多無症狀","中度 2.5–2.9 mmol/L：肌無力、便祕、抽筋","重度 < 2.5 mmol/L：橫紋肌溶解、麻痺、心律不整","心電圖：T 波變平、U 波、ST 下降、QU 延長"]}],
+      books:["B2","B3"]},
+
+    s2:{seg:"② 病史・用藥・血鎂・血氣（同時完成）",
+      warn:"血鎂與靜脈血氣要跟第一管血一起抽。等到補鉀失敗才回頭驗鎂，通常已經浪費 24–48 小時。",
+      blocks:[{label:"致病藥物", items:["<b>利尿劑</b>：thiazide、loop（最常見）","瀉劑、灌腸劑濫用","insulin（含 DKA 治療中）","β2 致效劑：salbutamol、terbutaline","高劑量類固醇、fludrocortisone","amphotericin B、aminoglycoside、cisplatin","<b>甘草／glycyrrhizin</b>：中藥、甘草茶、甘草糖","高劑量 penicillin 類（不可再吸收陰離子）"]}],
+      books:["B1","B5"]},
+
+    s3:{seg:"③ 決策：鉀是「跑進細胞」還是真的流失？",
+      warn:"轉移型的總體鉀量多半不缺。照一般缺鉀劑量去補，等誘因解除、鉀回流細胞外，會造成反彈性高血鉀。這一題沒有單一檢驗可以回答，要靠誘因與用藥史判斷。",
+      blocks:[{label:"轉移型的誘因", items:["<b>甲狀腺毒性週期性麻痺</b>：東亞青壯年男性，務必驗 TSH／fT4","家族性低血鉀性週期性麻痺","insulin —— 含 DKA 治療過程中","β2 致效劑（氣喘急性發作大量吸入）","代謝性或呼吸性鹼中毒","再餵食症候群","大量兒茶酚胺：壓力、嗜鉻細胞瘤","B12／葉酸治療後造血旺盛","氯化鋇、甲苯中毒"]}],
+      books:["B1","B7","B8"]},
+
+    s4:{seg:"④ 決策：尿鉀（務必在補鉀前採檢）",
+      warn:"兩個常犯的錯：(1) 已經打過鉀才驗尿鉀，這管尿就沒有判讀價值了；(2) 沿用 TTKG——其推導假設（皮質集尿管末端與髓質間質等滲、其後無鉀再吸收）已被證明不成立，現行教科書與回顧文章均不再建議使用。",
+      blocks:[{label:"判讀切點", items:["Spot urine K/Cr <b>< 13 mEq/g Cr</b>（< 1.5 mmol/mmol）→ 腎外流失","Spot urine K/Cr <b>≥ 13</b> → 腎性失鉀","24 小時尿鉀 < 15–20 mmol/day → 腎外；> 25–30 → 腎性","邊界值不必硬判，以「明顯高於或低於」為準"]},
+        {label:"同時開的檢驗", items:["尿氯（型 ③／④ 的分水嶺）","血鎂","靜脈血氣或血清 HCO₃⁻","血壓（決定型 ② 的入口）"]}],
+      books:["B6","B1"]},
+
+    pseudo:{seg:"陷阱：假性低血鉀（pseudohypokalemia）",
+      warn:"白血球極高之檢體於室溫放置後，白血球持續代謝並攝取血漿鉀，測得值可顯著偏低。線索是「數值很低但病人完全沒症狀、心電圖乾淨、且檢體送檢時間偏長」。處理方式：重抽並立即離心分離血漿送檢，或以冰上運送。",
+      blocks:[{label:"何時要懷疑", items:["急性白血病、慢性淋巴性白血病，WBC > 100 × 10⁹/L","檢體從抽血到上機超過 1 小時","數值與臨床表現、心電圖完全不符"]}],
+      books:["B2","B3"]},
+
+    urgent:{seg:"需立即處置的情境（與診斷並行）",
+      warn:"補鉀速率與濃度是最常出事的地方。周邊靜脈 ≤ 10 mmol/hr、濃度 ≤ 40 mmol/L；需要更快時走中央靜脈並接連續心電圖監測。稀釋液不要用含葡萄糖溶液——葡萄糖會刺激胰島素分泌，把鉀再壓進細胞，反而讓血鉀更低。",
+      blocks:[{label:"立即處置指徵", items:["K < 2.5 mmol/L","心電圖變化：U 波、ST 下降、QU 延長","肌無力、麻痺、呼吸肌受累","橫紋肌溶解","使用洋地黃中（低血鉀顯著增加毒性）","DKA 治療中、肝硬化、心衰竭合併心律不整風險"]}],
+      books:["B2","B5"]},
+
+    drugs:{seg:"用藥史：產出最高的一步",
+      blocks:[{label:"常見致病藥物", items:["thiazide、loop 利尿劑","瀉劑、灌腸劑","insulin","β2 致效劑","高劑量類固醇、fludrocortisone","amphotericin B、aminoglycoside、cisplatin","甘草／glycyrrhizin（中藥、甘草茶、甘草糖）","高劑量 penicillin、nafcillin"]},
+        {label:"容易漏掉的", items:["病人自備的中藥、保健食品","門診已停但近期使用過的利尿劑（會落在型 ③）","長期 PPI —— 經低血鎂間接造成難治型低血鉀"]}],
+      books:["B1","B5"]},
+
+    shift:{seg:"細胞內轉移型（總體鉀量不缺）",
+      warn:"補到病人能動即可（約 K 3.0–3.5），不要追到正常值。誘因解除後鉀會從細胞回流，過度補充會造成反彈性高血鉀。甲狀腺毒性週期性麻痺在台灣與東亞青壯年男性並不罕見，發作時常伴低血磷與低血鎂，務必同時驗 TSH／fT4——治好甲狀腺才是根治。",
+      blocks:[{label:"鑑別診斷", items:["<b>甲狀腺毒性週期性麻痺</b>","家族性低血鉀性週期性麻痺","insulin／DKA 治療中","β2 致效劑","代謝性或呼吸性鹼中毒","再餵食症候群","大量兒茶酚胺（壓力、嗜鉻細胞瘤）","B12／葉酸治療後造血旺盛","氯化鋇、甲苯中毒"]}],
+      books:["B8","B7"]},
+
+    ttkg:{seg:"陷阱：TTKG 已不建議使用",
+      warn:"TTKG 假設尿液在皮質集尿管末端已與髓質間質達成滲透壓平衡、且其後不再有鉀的再吸收——兩項假設均已被證明不成立。現行教科書與回顧文章已將其除役，改用 spot urine K/Cr 或 24 小時尿鉀。另一個同等重要的操作細節：尿液採檢必須在第一劑補鉀之前完成。",
+      books:["B6","B1"]},
+
+    extra:{seg:"腎外流失（尿 K/Cr < 13 mEq/g Cr）",
+      blocks:[{label:"判讀切點", items:["Spot urine K/Cr < 13 mEq/g Cr（< 1.5 mmol/mmol）","24 小時尿鉀 < 15–20 mmol/day","代表腎臟的保鉀反應是正常的"]}],
+      books:["B6"]},
+
+    gi:{seg:"腎外流失的病因（以消化道為主）",
+      warn:"典型伴隨正常陰離子間隙（高血氯）代謝性酸中毒。若看到「尿鉀低、但卻是代謝性鹼中毒」，要想到隱匿性嘔吐——此時尿氯也會低，兩個線索一致。這是進食障礙病人常見的表現。",
+      blocks:[{label:"鑑別診斷", items:["腹瀉：感染性、發炎性腸病","瀉劑、灌腸劑濫用（常為隱匿）","絨毛狀腺瘤","VIPoma","迴腸／結腸造口大量排出、腸道引流管","大量流汗、廣泛燒傷（少見）","攝取不足：神經性厭食、酒癮（少為單一原因）"]}],
+      books:["B1","B4"]},
+
+    renal:{seg:"腎性失鉀（尿 K/Cr ≥ 13 mEq/g Cr）",
+      blocks:[{label:"三刀收斂為四型", items:["第一刀 <b>酸鹼狀態</b>：酸中毒 → 型 ①","第二刀 <b>血壓</b>：鹼中毒 ＋ 高血壓 → 型 ②","第三刀 <b>尿氯</b>：鹼中毒 ＋ 血壓不高，尿氯 < 20 → 型 ③；> 20 → 型 ④","低血鎂會疊加在任何一型之上"]}],
+      books:["B1","B6","B7"]},
+
+    f1:{seg:"型 ①：腎性失鉀 ＋ 代謝性酸中毒",
+      warn:"DKA 是這一格最危險的：初診血鉀可能正常甚至偏高（酸中毒與胰島素缺乏把鉀推到細胞外），但總體鉀已嚴重耗竭。一旦給胰島素、鉀回流細胞內，血鉀會直線下墜。規則：K < 3.3 mmol/L 時，先補鉀，再開始胰島素。",
+      blocks:[{label:"鑑別診斷", items:["遠端腎小管酸中毒（第一型）：尿 pH 無法降到 5.5 以下，常伴腎結石","近端腎小管酸中毒／Fanconi 症候群（第二型）：合併糖尿、胺基酸尿、低血磷","糖尿病酮酸血症","acetazolamide","甲苯（吸膠）中毒","（輸尿管乙狀結腸吻合等尿路改道）"]}],
+      books:["B3","B4"]},
+
+    f2:{seg:"型 ②：鹼中毒 ＋ 高血壓（礦皮質素效應過多）",
+      warn:"低血鉀本身會壓抑醛固酮分泌，未矯正就驗 aldosterone/renin ratio 可能得到偽陰性。MRA（spironolactone、eplerenone）需停 4–6 週；ACEI／ARB、β-blocker、利尿劑也都會干擾。順序是：先補鉀、調整干擾藥物，再安排篩檢。",
+      blocks:[{label:"用 renin／aldosterone 三分法拆開", items:["<b>↑腎素 ↑醛固酮</b>：腎血管性高血壓、腎素分泌腫瘤、惡性高血壓","<b>↓腎素 ↑醛固酮</b>：原發性醛固酮症（腺瘤或雙側增生）","<b>↓腎素 ↓醛固酮</b>：Liddle 症候群、表象礦皮質素過多（甘草、11β-HSD2 缺乏）、Cushing 症候群（尤其異位 ACTH）、先天性腎上腺增生"]},
+        {label:"病史要問到", items:["甘草茶、甘草糖、含甘草之中藥（表象礦皮質素過多的常見來源）","年輕發病的高血壓合併低血鉀 → 想 Liddle 與 CAH"]}],
+      books:["B1","B4"]},
+
+    f3:{seg:"型 ③：鹼中毒 ＋ 血壓不高 ＋ 尿氯 < 20 mmol/L",
+      warn:"這一格最常被誤判。嘔吐流失的是胃酸不是鉀；真正的機轉是代謝性鹼中毒導致碳酸氫鹽尿，被動帶走鉀，於是尿鉀升高、看起來像腎性失鉀。判讀必須看尿氯——嘔吐時尿氯會低（< 20 mmol/L），這才是可靠的指標。",
+      blocks:[{label:"鑑別診斷", items:["嘔吐（含隱匿性、進食障礙）","鼻胃管引流","<b>遠期</b>（已停用）利尿劑","高碳酸血症矯正後之鹼中毒"]}],
+      books:["B3","B6"]},
+
+    f4:{seg:"型 ④：鹼中毒 ＋ 血壓不高 ＋ 尿氯 > 20 mmol/L",
+      warn:"利尿劑（含濫用）與 Bartter／Gitelman 在生化上幾乎完全相同，要靠尿液利尿劑篩檢拆開。若確為遺傳性：Gitelman 成人發病、症狀輕、低血鎂合併<b>低</b>尿鈣；Bartter 幼年發病、常伴生長遲滯，尿鈣正常或偏高。",
+      blocks:[{label:"鑑別診斷", items:["使用中的利尿劑（thiazide、loop；含隱匿性濫用）","<b>Gitelman 症候群</b>：低血鎂 ＋ 低尿鈣，類 thiazide 表型","<b>Bartter 症候群</b>：尿鈣正常或高，類 loop 表型","嚴重低血鎂（可獨立造成）"]},
+        {label:"拆解順序", items:["先驗尿液利尿劑篩檢","再看尿鈣／肌酸酐比與血鎂","發病年齡與生長史是最便宜的線索"]}],
+      books:["B4","B7"]},
+
+    mg:{seg:"跨分支修飾因子：低血鎂",
+      warn:"細胞內鎂原本阻斷 ROMK 通道；鎂缺乏時阻斷解除，遠端腎小管持續漏鉀，此時補再多鉀都會從尿裡走掉。任何「補了兩天還是低」的難治型低血鉀，第一件事是驗血鎂，並且同步補鎂。注意血清鎂正常不代表體內不缺——鎂主要在細胞內。",
+      blocks:[{label:"常見原因", items:["長期使用 PPI","利尿劑（thiazide、loop）","慢性腹瀉、短腸症","cisplatin、amphotericin B","鈣調磷酸酶抑制劑（tacrolimus、cyclosporine）","酒癮、營養不良","Gitelman 症候群"]}],
+      books:["B9","B1"]},
+
+    fix:{seg:"⑤ 補鉀、矯正病因、再評估",
+      warn:"血鉀每下降 0.3 mmol/L 約對應總體缺鉀 100 mmol（K 3.0 時約缺 200–400 mmol），但這個換算<b>完全不適用於細胞內轉移型</b>。口服補充較安全且較不會過衝；靜脈途徑務必限速，稀釋液不要含葡萄糖。",
+      blocks:[{label:"執行要點", items:["口服優先；靜脈周邊 ≤ 10 mmol/hr、濃度 ≤ 40 mmol/L","更高速率需中央靜脈 ＋ 連續心電圖監測","同步補鎂，否則補鉀無效","補鉀後 2–4 小時複驗"]},
+        {label:"補不上來時回頭查", items:["血鎂是否仍低","致病藥物是否仍在使用","尿鉀是否仍高（腎臟還在漏）","是否其實是持續性的流失來源未處理（腹瀉、引流）"]}],
+      books:["B1","B10","B5"]}
+  };
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  /* 允許條目內少量 <b> 標記 */
+  function rich(s){ return esc(s).replace(/&lt;b&gt;/g,"<b>").replace(/&lt;\/b&gt;/g,"</b>"); }
+
+  /* ---------------- 分頁 ---------------- */
+  var tabs = [].slice.call(document.querySelectorAll(".tab"));
+  function select(tab){
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) p.hidden = !on;
+    });
+    hide();
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ select(t); });
+    t.addEventListener("keydown", function(e){
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var n = tabs[(i + d + tabs.length) % tabs.length];
+      n.focus(); select(n);
+    });
+  });
+
+  /* ---------------- Tooltip ---------------- */
+  var tip = document.getElementById("tip"), pinned = null, hovered = null;
+
+  function render(k){
+    var d = DATA[k];
+    if (!d) return false;
+    var h = '<div class="tip-head">' + esc(d.seg) + "</div><div class=\"tip-body\">";
+    if (d.warn){
+      h += '<div class="blk b-warn"><div class="blk-h">關鍵難點</div><p>' + rich(d.warn) + "</p></div>";
+    }
+    (d.blocks || []).forEach(function(b){
+      var cls = /切點|指徵|順序|要點|回頭查/.test(b.label) ? "b-cut" : "b-ddx";
+      h += '<div class="blk ' + cls + '"><div class="blk-h">' + esc(b.label) + '</div><ul>';
+      b.items.forEach(function(it){ h += "<li>" + rich(it) + "</li>"; });
+      h += "</ul></div>";
+    });
+    if (d.books && d.books.length){
+      h += '<div class="blk b-book"><div class="blk-h">書目依據</div>';
+      d.books.forEach(function(id){
+        var b = BOOKS[id];
+        if (!b) return;
+        h += '<p class="bk"><span class="t">' + esc(b.t) + '</span><span class="s">' + esc(b.s) + "</span></p>";
+      });
+      h += "</div>";
+    }
+    tip.innerHTML = h + "</div>";
+    return true;
+  }
+
+  function place(x, y){
+    var m = 12, w = tip.offsetWidth, h = tip.offsetHeight;
+    var left = x + 18, top = y + 18;
+    if (left + w + m > window.innerWidth) left = Math.max(m, x - w - 18);
+    if (top + h + m > window.innerHeight) top = Math.max(m, y - h - 18);
+    if (top < m) top = m;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function show(g, x, y){
+    var k = g.getAttribute("data-k");
+    if (!render(k)) return;
+    tip.classList.add("show");
+    tip.setAttribute("aria-hidden", "false");
+    place(x, y);
+    markBooks((DATA[k] || {}).books);
+  }
+  function hide(){
+    tip.classList.remove("show");
+    tip.setAttribute("aria-hidden", "true");
+    if (pinned){ pinned.classList.remove("on"); pinned = null; }
+    hovered = null;
+    markBooks(null);
+  }
+  function markBooks(list){
+    var set = {};
+    (list || []).forEach(function(id){ set[id] = 1; });
+    [].forEach.call(document.querySelectorAll(".refrow"), function(r){
+      r.classList.toggle("lit", !!set[r.getAttribute("data-n")]);
+    });
+  }
+
+  var fig = document.getElementById("flowfig");
+  if (fig){
+    fig.addEventListener("pointermove", function(e){
+      if (pinned) return;
+      var g = e.target.closest(".hot");
+      if (!g){ if (hovered){ hovered = null; hide(); } return; }
+      if (g !== hovered){ hovered = g; show(g, e.clientX, e.clientY); }
+      else place(e.clientX, e.clientY);
+    });
+    fig.addEventListener("pointerleave", function(){ hovered = null; if (!pinned) hide(); });
+    fig.addEventListener("click", function(e){
+      var g = e.target.closest(".hot");
+      if (!g){ hide(); return; }
+      if (pinned === g){ hide(); return; }
+      if (pinned) pinned.classList.remove("on");
+      g.classList.add("on");
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+      pinned = g;
+    });
+    fig.addEventListener("focusin", function(e){
+      var g = e.target.closest(".hot");
+      if (!g) return;
+      var r = g.getBoundingClientRect();
+      show(g, r.left + r.width / 2, r.bottom - 8);
+    });
+    fig.addEventListener("focusout", function(){ if (!pinned) hide(); });
+  }
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") hide(); });
+  window.addEventListener("scroll", function(){ if (!pinned) hide(); }, true);
+
+  /* ---------------- 書目清單（由圖上標註自動彙整「支撐哪一格」） ---------------- */
+  var where = {};
+  Object.keys(DATA).forEach(function(k){
+    (DATA[k].books || []).forEach(function(id){
+      (where[id] = where[id] || []).push(DATA[k].seg);
+    });
+  });
+  var list = document.getElementById("booklist");
+  if (list){
+    var out = "";
+    Object.keys(BOOKS).forEach(function(id){
+      var b = BOOKS[id];
+      var segs = (where[id] || []).map(function(s){ return '<span class="where">' + esc(s) + "</span>"; }).join("");
+      out += '<div class="refrow" data-n="' + id + '"><div class="n">' + id + "</div><div>" +
+             '<p class="zh">' + esc(b.t) + '<span class="kind">' + esc(b.kind) + "</span></p>" +
+             '<p class="en">' + esc(b.s) + "</p>" +
+             '<p class="meta">' + esc(b.m) + "</p>" +
+             (segs ? "<div>" + segs + "</div>" : "") +
+             "</div></div>";
+    });
+    list.innerHTML = out;
+  }
+})();
+</script>
+</body>
+</html>

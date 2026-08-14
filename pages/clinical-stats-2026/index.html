@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>臨床醫學研究 2026 統計新花招｜2026-07-02</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --paper: #ffffff;
+      --ink: #17202a;
+      --muted: #5e6a75;
+      --line: #d9dee7;
+      --accent: #375a7f;
+      --accent2: #10737c;
+      --soft: #eef4f8;
+      --warn: #8a4b16;
+      --danger: #8c2f39;
+      --ok: #2b6d4f;
+      --shadow: 0 14px 35px rgba(18, 32, 53, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: radial-gradient(circle at top left, #e7f0f4 0, transparent 34%), var(--bg);
+      color: var(--ink);
+      line-height: 1.72;
+    }
+
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .page {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 64px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #20364d, #12383f 65%, #1a5a62);
+      color: white;
+      border-radius: 28px;
+      padding: 42px 46px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      right: -120px;
+      top: -140px;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .eyebrow {
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      font-size: 13px;
+      opacity: .85;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      max-width: 850px;
+    }
+
+    .hero p {
+      max-width: 850px;
+      margin: 22px 0 0;
+      font-size: 19px;
+      opacity: .92;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .pill {
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.12);
+      color: white;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 13px;
+      backdrop-filter: blur(8px);
+    }
+
+    .section {
+      margin-top: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 27px;
+      letter-spacing: -0.02em;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #21384d;
+    }
+
+    .lead {
+      font-size: 19px;
+      color: #2a3745;
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      grid-column: span 4;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      background: #fff;
+    }
+
+    .card.wide { grid-column: span 6; }
+    .card.full { grid-column: span 12; }
+
+    .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--soft);
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      color: var(--accent2);
+      background: #e9f6f7;
+      border: 1px solid #cbe8eb;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+    }
+
+    .note {
+      border-left: 5px solid var(--accent2);
+      background: #eef8f8;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 20px 0 0;
+    }
+
+    .warning {
+      border-left: 5px solid var(--warn);
+      background: #fff5e9;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 20px 0 0;
+    }
+
+    .danger {
+      border-left: 5px solid var(--danger);
+      background: #fff0f2;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin: 20px 0 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      margin-top: 16px;
+      font-size: 15px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf2f6;
+      color: #243849;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .matrix td:first-child {
+      font-weight: 800;
+      color: #21384d;
+      white-space: nowrap;
+    }
+
+    .priority {
+      display: grid;
+      grid-template-columns: 120px 1fr 1.4fr;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .priority div {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .priority div:nth-child(3n+1) {
+      font-weight: 800;
+      color: white;
+      background: var(--accent);
+    }
+
+    .priority div:nth-child(3n+2) {
+      font-weight: 800;
+      background: #f4f7fa;
+    }
+
+    .priority div:nth-last-child(-n+3) { border-bottom: none; }
+
+    .flow {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .step {
+      flex: 1 1 210px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .step strong { display: block; color: var(--accent); margin-bottom: 5px; }
+
+    .quote {
+      font-size: 22px;
+      letter-spacing: -0.02em;
+      color: #20364d;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 850px) {
+      .hero { padding: 32px 24px; }
+      .section { padding: 22px; }
+      .card, .card.wide { grid-column: span 12; }
+      .priority { grid-template-columns: 1fr; }
+      .priority div:nth-child(3n+1) { border-bottom: none; }
+      .priority div:nth-child(3n+2) { border-bottom: none; }
+      table { display: block; overflow-x: auto; }
+    }
+
+    @media print {
+      body { background: white; }
+      .page { width: 100%; padding: 0; }
+      .section, .hero { box-shadow: none; break-inside: avoid; }
+      a { color: #000; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Clinical Research Statistics Briefing</div>
+      <h1>臨床醫學研究 2026：統計新花招</h1>
+      <p>重點不是換一個更炫的模型，而是把研究問題從「做出顯著 p 值」升級為「定義可被相信的臨床推論系統」。</p>
+      <div class="meta">
+        <span class="pill">製作日期：2026-07-02</span>
+        <span class="pill">適用：臨床研究、RWD、AI-CDSS、腎臟醫學</span>
+        <span class="pill">視角：研究設計 × 因果推論 × 臨床落地</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>總判斷</h2>
+      <p class="lead">2026 年臨床統計的核心趨勢，是從「分析技術」轉向「推論治理」。真正有價值的統計設計，必須同時回答三件事：我要估的是哪一種臨床效果？資料是否真的支撐這個因果問題？模型的不確定性是否能被臨床流程吸收？</p>
+      <div class="note">
+        <strong>一句話：</strong>不要只問模型準不準；要問這個估計能否支持臨床決策、是否能抗 bias、以及出了問題誰能接手。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>八個值得投資的方法</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="number">1</div>
+          <h3>Estimand-first</h3>
+          <p>先定義要估計的臨床效果，明確處理停藥、換藥、死亡、透析、失訪與救援治療等 intercurrent events。</p>
+          <span class="tag">ICH E9(R1)</span><span class="tag">SAP</span><span class="tag">Endpoint governance</span>
+        </article>
+        <article class="card">
+          <div class="number">2</div>
+          <h3>Target Trial Emulation</h3>
+          <p>把回溯性 EHR/RWD 研究先寫成理想 RCT protocol，再逐項模擬 eligibility、time zero、assignment 與 follow-up。</p>
+          <span class="tag">RWD</span><span class="tag">Causal inference</span><span class="tag">Time zero</span>
+        </article>
+        <article class="card">
+          <div class="number">3</div>
+          <h3>RWE + 外部對照</h3>
+          <p>可用於罕病、醫材、AI workflow 與倫理上不適合隨機分派的場景，但資料可比性是最大限制。</p>
+          <span class="tag">External control</span><span class="tag">Bayesian borrowing</span>
+        </article>
+        <article class="card">
+          <div class="number">4</div>
+          <h3>Bayesian adaptive / platform trial</h3>
+          <p>適合小樣本、多院、多時間點與逐步導入研究。Bayes 的價值在於透明 prior、adaptive decision 與 operating characteristics。</p>
+          <span class="tag">Adaptive design</span><span class="tag">Hierarchical model</span>
+        </article>
+        <article class="card">
+          <div class="number">5</div>
+          <h3>Causal ML</h3>
+          <p>從「誰高風險」轉向「誰會因介入受益」。重點是 CATE、HTE、DML、TMLE 與 dynamic treatment regime。</p>
+          <span class="tag">CATE</span><span class="tag">Causal forest</span><span class="tag">TMLE</span>
+        </article>
+        <article class="card">
+          <div class="number">6</div>
+          <h3>Prediction model 2.0</h3>
+          <p>AUC 不夠。現在要 calibration、decision curve、uncertainty、external validation 與 drift monitoring。</p>
+          <span class="tag">TRIPOD+AI</span><span class="tag">Net benefit</span><span class="tag">Calibration</span>
+        </article>
+        <article class="card wide">
+          <div class="number">7</div>
+          <h3>Conformal prediction</h3>
+          <p>替 ML/AI 模型提供可操作的不確定區間或 prediction set。臨床價值不是讓模型更準，而是讓模型知道何時該交給 human-in-the-loop。</p>
+          <span class="tag">Uncertainty routing</span><span class="tag">Prediction interval</span><span class="tag">Coverage</span>
+        </article>
+        <article class="card wide">
+          <div class="number">8</div>
+          <h3>Pragmatic trial / stepped-wedge / ITS</h3>
+          <p>醫療軟體、CDSS、流程提醒與多單位 rollout 的主戰場。比單純 before-after 更能對抗 secular trend 與流程熟練度偏差。</p>
+          <span class="tag">Stepped-wedge</span><span class="tag">DiD</span><span class="tag">Implementation science</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>方法 × 臨床研究情境</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>方法</th>
+            <th>最適合的問題</th>
+            <th>腎臟／醫療 AI 應用範例</th>
+            <th>審稿人會看的風險點</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Estimand-first</td>
+            <td>介入效果到底是 treatment policy、hypothetical、composite 還是 while-on-treatment？</td>
+            <td>SGLT2i/finerenone 後若進入透析、死亡、停藥，如何定義 eGFR outcome。</td>
+            <td>Intercurrent events 處理是否事後才補。</td>
+          </tr>
+          <tr>
+            <td>Target Trial Emulation</td>
+            <td>用 observational data 回答近似臨床試驗的因果問題。</td>
+            <td>ESA dose escalation vs no escalation 對 4–8 週 Hb 達標率。</td>
+            <td>Time zero alignment、immortal time bias、未來資訊污染。</td>
+          </tr>
+          <tr>
+            <td>Bayesian hierarchical</td>
+            <td>多院、多透析室、小樣本、資料稀疏但需共享資訊。</td>
+            <td>不同透析班別或不同院區 IDH 介入效果差異。</td>
+            <td>Prior 是否合理、是否做 sensitivity analysis。</td>
+          </tr>
+          <tr>
+            <td>Causal ML</td>
+            <td>找出會因介入而真正受益的病人，而非只找高風險病人。</td>
+            <td>預測哪類 HD 病人調整 ESA 後最可能 Hb 達標且不 overshoot。</td>
+            <td>Confounding assumptions、CATE 穩定性、subgroup overfitting。</td>
+          </tr>
+          <tr>
+            <td>Conformal prediction</td>
+            <td>讓 AI 輸出帶有可操作的不確定範圍。</td>
+            <td>下月 Hb 預測 9.8 g/dL，附 9.1–10.7 g/dL 區間，決定是否進入醫師審核。</td>
+            <td>Exchangeability、dataset shift、subgroup coverage。</td>
+          </tr>
+          <tr>
+            <td>Stepped-wedge / ITS / DiD</td>
+            <td>研究醫療軟體、流程改善、AI-CDSS 上線效果。</td>
+            <td>透析室 AI 風險清單分區逐步導入，評估 IDH recurrence 與 override reason。</td>
+            <td>Secular trend、醫師輪替、資料紀錄品質變化。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>研究升級路線圖</h2>
+      <div class="flow">
+        <div class="step"><strong>Step 1｜定義問題類型</strong>Prediction、causal effect、implementation、safety surveillance 不要混在一起。</div>
+        <div class="step"><strong>Step 2｜寫 estimand</strong>定義 population、treatment strategy、outcome、intercurrent events、summary measure。</div>
+        <div class="step"><strong>Step 3｜畫 target trial</strong>Eligibility、time zero、assignment、follow-up、outcome、causal contrast。</div>
+        <div class="step"><strong>Step 4｜建立 bias control</strong>DAG、confounder set、missing data、negative control、sensitivity analysis。</div>
+        <div class="step"><strong>Step 5｜選模型</strong>Regression、Bayesian、TMLE、DML、causal forest、survival、competing risk。</div>
+        <div class="step"><strong>Step 6｜驗證臨床效用</strong>Calibration、decision curve、threshold policy、drift monitoring、workflow endpoint。</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>今年優先級</h2>
+      <div class="priority">
+        <div>優先級 1</div><div>Estimand + TTE</div><div>最能提升 EHR、HIS、HD、CKD 真實世界研究可信度。</div>
+        <div>優先級 2</div><div>Calibration + decision curve + uncertainty</div><div>AI/CDSS 研究必備，讓模型輸出能連到臨床行動門檻。</div>
+        <div>優先級 3</div><div>Bayesian hierarchical / adaptive</div><div>適合小樣本、多單位、逐步導入與異質性高的臨床場景。</div>
+        <div>優先級 4</div><div>Causal ML / HTE</div><div>從風險預測升級到治療策略建議，尤其適合 ESA、CKD 藥物與透析處方研究。</div>
+        <div>優先級 5</div><div>Stepped-wedge / ITS / DiD</div><div>醫療軟體導入、流程改善與 AI alert 研究的主力設計。</div>
+        <div>優先級 6</div><div>Conformal prediction</div><div>適合建立 uncertainty routing：低不確定自動提示，高不確定交給醫師審核。</div>
+        <div>優先級 7</div><div>External controls / RWE borrowing</div><div>有價值但資料品質與方法學門檻高，不適合草率使用。</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Not-to-do：不值得投入的方向</h2>
+      <div class="grid">
+        <article class="card wide danger">
+          <h3>不要追逐每個新 ML 模型</h3>
+          <p>投稿瓶頸通常不是模型架構，而是問題定義、bias、calibration、外部驗證與 clinical utility。</p>
+        </article>
+        <article class="card wide danger">
+          <h3>不要把 subgroup analysis 當 HTE</h3>
+          <p>男女分層各跑一次 p 值，不等於 heterogeneous treatment effect。需要 CATE、causal forest 或事先定義的交互作用策略。</p>
+        </article>
+        <article class="card wide danger">
+          <h3>不要迷信 propensity score matching</h3>
+          <p>PSM 不是高級因果推論的代名詞。很多問題更適合 IPTW、overlap weighting、g-formula、TMLE 或 TTE。</p>
+        </article>
+        <article class="card wide danger">
+          <h3>不要把 prediction 當 decision</h3>
+          <p>預測高風險不代表介入有效。臨床決策需要 treatment effect、net benefit、threshold policy 或 workflow endpoint 支撐。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>臨床研究統計模板</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>模組</th>
+            <th>應寫內容</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Clinical question</strong></td><td>這是 prediction、causal effect、implementation，還是 safety surveillance？</td></tr>
+          <tr><td><strong>Estimand</strong></td><td>Population、treatment strategy、outcome、intercurrent events、summary measure。</td></tr>
+          <tr><td><strong>Target trial</strong></td><td>Eligibility、time zero、assignment、follow-up、outcome、causal contrast。</td></tr>
+          <tr><td><strong>Bias control</strong></td><td>DAG、confounder set、immortal time、selection bias、missing data。</td></tr>
+          <tr><td><strong>Model</strong></td><td>Regression、Bayesian、TMLE、DML、causal forest、survival、competing risk。</td></tr>
+          <tr><td><strong>Validation</strong></td><td>Bootstrap、temporal split、external validation、subgroup calibration。</td></tr>
+          <tr><td><strong>Clinical utility</strong></td><td>Decision curve、threshold policy、net benefit、workflow endpoint。</td></tr>
+          <tr><td><strong>Sensitivity</strong></td><td>E-value、negative control、tipping-point、unmeasured confounding analysis。</td></tr>
+          <tr><td><strong>Reporting</strong></td><td>CONSORT、STROBE、TRIPOD+AI、CONSORT-AI、SAP、code availability。</td></tr>
+        </tbody>
+      </table>
+      <div class="warning">
+        <strong>實務提醒：</strong>RWD 研究最容易被質疑 researcher degrees of freedom。至少要有 protocol、estimand table、DAG、time-zero definition、missing data plan 與 sensitivity analysis。
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="quote">2026 的臨床統計新潮流，是從「做分析」轉向「設計可被相信的推論系統」。</p>
+    </section>
+
+    <section class="section">
+      <h2>參考來源</h2>
+      <p>以下來源供延伸閱讀；本頁為討論內容整理與策略化重述。</p>
+      <table>
+        <thead>
+          <tr><th>主題</th><th>來源</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ICH E9 / E9(R1) estimand</td><td><a href="https://www.fda.gov.tw/tc/newsContent.aspx?cid=3&id=31397" target="_blank" rel="noopener">TFDA 公告：臨床試驗之統計原則與估計目標</a></td></tr>
+          <tr><td>Target Trial Emulation</td><td><a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2845271" target="_blank" rel="noopener">JAMA Network Open：Target Trial Emulation</a></td></tr>
+          <tr><td>EHR 與 Target Trial Emulation</td><td><a href="https://www.nature.com/articles/s41746-026-02563-z" target="_blank" rel="noopener">npj Digital Medicine：EHR support for TTE</a></td></tr>
+          <tr><td>Real-world evidence</td><td><a href="https://www.fda.gov/science-research/science-and-research-special-topics/real-world-evidence" target="_blank" rel="noopener">FDA：Real-World Evidence</a></td></tr>
+          <tr><td>Externally controlled trials</td><td><a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/considerations-design-and-conduct-externally-controlled-trials-drug-and-biological-products" target="_blank" rel="noopener">FDA Guidance：Externally Controlled Trials</a></td></tr>
+          <tr><td>Bayesian clinical trials</td><td><a href="https://www.fda.gov/news-events/press-announcements/fda-issues-guidance-modernizing-statistical-methods-clinical-trials" target="_blank" rel="noopener">FDA：Bayesian methodology guidance</a></td></tr>
+          <tr><td>TRIPOD+AI</td><td><a href="https://www.tripod-statement.org/" target="_blank" rel="noopener">TRIPOD Statement</a></td></tr>
+          <tr><td>Individual risk uncertainty</td><td><a href="https://www.bmj.com/content/388/bmj-2024-080749" target="_blank" rel="noopener">BMJ：Uncertainty in clinical prediction models</a></td></tr>
+          <tr><td>CDSS study design</td><td><a href="https://medinform.jmir.org/2026/1/e72809" target="_blank" rel="noopener">JMIR Medical Informatics：CDSS evidence and study design</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="footer">臨床醫學研究 2026 統計新花招｜製作日期：2026-07-02</div>
+  </main>
+</body>
+</html>

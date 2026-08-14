@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wardley Map｜202607 臨床腎臟 × 多組學 × 臨床 AI × 人機協作</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --panel: #fffaf2;
+      --ink: #25211b;
+      --muted: #6b6258;
+      --line: #d8cfc2;
+      --accent: #9a4d2f;
+      --accent-2: #315f5c;
+      --accent-3: #6b5d8c;
+      --accent-4: #7a6a28;
+      --danger: #9b2f2f;
+      --shadow: 0 18px 48px rgba(37,33,27,.10);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(154,77,47,.12), transparent 30%),
+        radial-gradient(circle at 90% 22%, rgba(49,95,92,.13), transparent 30%),
+        linear-gradient(180deg, #fbf7ef 0%, var(--bg) 62%, #efe7db 100%);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+      line-height: 1.72;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 22px 84px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 28px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+    .hero-main, .card, .map-panel {
+      background: rgba(255,250,242,.88);
+      border: 1px solid rgba(216,207,194,.92);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-main { padding: 34px 36px; }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: 1.04;
+      letter-spacing: -.06em;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(23px, 3vw, 34px);
+      line-height: 1.18;
+      letter-spacing: -.035em;
+    }
+    h3 { margin: 0 0 9px; font-size: 19px; line-height: 1.28; }
+    p { margin: 0 0 14px; }
+    .lead { color: #3b352e; font-size: 18px; max-width: 70ch; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+    .metric {
+      padding: 14px 15px;
+      border-radius: 16px;
+      background: #f4ece0;
+      border: 1px solid #e3d8c8;
+    }
+    .metric b { display: block; font-size: 21px; letter-spacing: -.02em; }
+    .metric span { display: block; color: var(--muted); font-size: 13px; }
+    .hero-side { padding: 24px; }
+    .principle {
+      padding: 15px 16px;
+      border-radius: 18px;
+      background: #fbf4ea;
+      border: 1px solid #e6dbcb;
+      margin-bottom: 12px;
+    }
+    .principle strong { color: var(--accent-2); }
+    .section { margin-top: 34px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { padding: 24px; }
+    .card.compact { padding: 20px; }
+    .small { color: var(--muted); font-size: 14px; }
+    .tagrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #efe5d7;
+      border: 1px solid #dfd2c1;
+      font-size: 13px;
+      color: #4d453c;
+    }
+    .map-panel { padding: 24px; overflow: hidden; }
+    .map-header {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f6efe5;
+      border: 1px solid #e2d7c8;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .d1 { background: var(--accent); } .d2 { background: var(--accent-2); }
+    .d3 { background: var(--accent-3); } .d4 { background: var(--accent-4); }
+    svg { width: 100%; height: auto; display: block; }
+    .axis-label { fill: #6f665b; font-size: 13px; font-weight: 650; }
+    .axis-tick { stroke: #d7cec2; stroke-width: 1; stroke-dasharray: 4 6; }
+    .node-label { font-size: 13px; fill: #28231d; font-weight: 650; }
+    .node-sub { font-size: 11px; fill: #6d645a; }
+    .edge { stroke: rgba(85,77,68,.38); stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+    .node rect { filter: drop-shadow(0 6px 8px rgba(37,33,27,.10)); }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 18px; border: 1px solid var(--line); background: var(--panel); }
+    th, td { padding: 13px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { background: #efe4d5; font-size: 13px; color: #4a4036; }
+    tr:last-child td { border-bottom: 0; }
+    td { font-size: 14px; }
+    .priority { color: var(--accent); font-weight: 750; }
+    .warning { color: var(--danger); font-weight: 700; }
+    .move {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px 0;
+      border-top: 1px solid var(--line);
+    }
+    .move:first-of-type { border-top: 0; padding-top: 0; }
+    .badge {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 34px;
+      border-radius: 999px;
+      color: #fffaf2;
+      font-size: 13px;
+      font-weight: 750;
+      background: var(--accent-2);
+      padding: 6px 10px;
+    }
+    .badge.explore { background: var(--accent); }
+    .badge.standard { background: var(--accent-3); }
+    .badge.utility { background: var(--accent-4); }
+    .quote {
+      padding: 24px 26px;
+      border-left: 6px solid var(--accent);
+      background: #fff6e9;
+      border-radius: 0 20px 20px 0;
+      font-size: 20px;
+      line-height: 1.55;
+      letter-spacing: -.02em;
+    }
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .phase {
+      position: relative;
+      padding: 18px 16px;
+      border-radius: 18px;
+      background: #fbf4e8;
+      border: 1px solid #e5d9c8;
+      min-height: 188px;
+    }
+    .phase .num { color: var(--accent); font-weight: 850; font-size: 14px; letter-spacing: .08em; }
+    ul { margin: 8px 0 0; padding-left: 1.15em; }
+    li { margin: 6px 0; }
+    .footer { margin-top: 32px; color: var(--muted); font-size: 13px; text-align: right; }
+    @media (max-width: 900px) {
+      .hero, .grid-2, .grid-3, .roadmap { grid-template-columns: 1fr; }
+      .map-header { display: block; }
+      .legend { justify-content: flex-start; margin-top: 10px; }
+      .hero-main { padding: 28px 24px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .wrap { padding-top: 34px; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .move { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Wardley Map｜Clinical AI Strategy</div>
+        <h1>臨床腎臟 × 多組學 × 心血管 AI × 人機協作的大問題地圖</h1>
+        <p class="lead">這張地圖的目的不是列技術清單，而是判斷：哪些能力應該自己押注、哪些應該標準化、哪些應該外包，哪些只是看起來新但不值得消耗團隊火力。</p>
+        <div class="meta-grid">
+          <div class="metric"><b>使用者</b><span>腎臟科醫師、透析團隊、AI 中心、臨床研究者</span></div>
+          <div class="metric"><b>核心價值</b><span>把高維訊號轉成低認知負荷、可審計的臨床行動</span></div>
+          <div class="metric"><b>主要競爭力</b><span>clinical loop design，而不是單一模型 SOTA</span></div>
+          <div class="metric"><b>策略焦點</b><span>CKM care orchestration engine</span></div>
+        </div>
+      </div>
+      <aside class="hero-main hero-side">
+        <div class="principle"><strong>Wardley Map 讀法：</strong>越上方越接近使用者價值；越右方越成熟、標準化、可採購；越左方越探索、模糊、可能形成優勢。</div>
+        <div class="principle"><strong>關鍵判斷：</strong>你真正該親手打磨的是左上與中上：臨床問題定義、視覺化決策介面、人機責任迴圈與 CKM 照護編排。</div>
+        <div class="principle"><strong>不該做：</strong>不要把資源押在右下角的雲端、ETL、通用 dashboard、通用 AutoML 或單純 prompt 技巧上；這些應該商品化或平台化。</div>
+      </aside>
+    </section>
+
+    <section class="section map-panel">
+      <div class="map-header">
+        <div>
+          <h2>一張 Wardley Map：從病人結果回推技術與組織能力</h2>
+          <p class="small">座標為策略性判斷，不是精確量化。重點是看相對位置與投資取捨。</p>
+        </div>
+        <div class="legend" aria-label="圖例">
+          <span><i class="dot d1"></i>探索／下注</span>
+          <span><i class="dot d2"></i>自製／差異化</span>
+          <span><i class="dot d3"></i>產品化／治理</span>
+          <span><i class="dot d4"></i>商品化／外包</span>
+        </div>
+      </div>
+
+      <svg viewBox="0 0 1080 720" role="img" aria-labelledby="mapTitle mapDesc">
+        <title id="mapTitle">臨床腎臟 AI Wardley Map</title>
+        <desc id="mapDesc">以使用者可見性與演化成熟度呈現臨床腎臟、基因體多組學、心血管 AI、臨床視覺化、人機協作與表格型機器學習之間的依賴關係。</desc>
+        <defs>
+          <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L7,3 z" fill="rgba(85,77,68,.48)" />
+          </marker>
+          <linearGradient id="zone" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="rgba(154,77,47,.10)"/>
+            <stop offset="35%" stop-color="rgba(49,95,92,.09)"/>
+            <stop offset="70%" stop-color="rgba(107,93,140,.08)"/>
+            <stop offset="100%" stop-color="rgba(122,106,40,.08)"/>
+          </linearGradient>
+        </defs>
+
+        <rect x="76" y="58" width="942" height="574" rx="18" fill="url(#zone)" stroke="#d8cfc2"/>
+        <line x1="310" y1="58" x2="310" y2="632" class="axis-tick"/>
+        <line x1="546" y1="58" x2="546" y2="632" class="axis-tick"/>
+        <line x1="782" y1="58" x2="782" y2="632" class="axis-tick"/>
+        <line x1="76" y1="205" x2="1018" y2="205" class="axis-tick"/>
+        <line x1="76" y1="350" x2="1018" y2="350" class="axis-tick"/>
+        <line x1="76" y1="494" x2="1018" y2="494" class="axis-tick"/>
+
+        <text x="118" y="674" class="axis-label">創生 Genesis</text>
+        <text x="352" y="674" class="axis-label">自製 Custom-built</text>
+        <text x="585" y="674" class="axis-label">產品／租用 Product</text>
+        <text x="812" y="674" class="axis-label">商品／公用 Utility</text>
+        <text x="21" y="96" class="axis-label" transform="rotate(-90, 21, 96)">使用者可見性高</text>
+        <text x="21" y="590" class="axis-label" transform="rotate(-90, 21, 590)">底層能力／不可見</text>
+
+        <!-- Edges -->
+        <path class="edge" d="M532 104 C464 118, 430 140, 398 166"/>
+        <path class="edge" d="M532 104 C520 152, 490 180, 470 218"/>
+        <path class="edge" d="M532 104 C610 160, 665 225, 700 298"/>
+        <path class="edge" d="M398 166 C360 218, 324 244, 270 290"/>
+        <path class="edge" d="M398 166 C436 225, 466 280, 482 340"/>
+        <path class="edge" d="M470 218 C540 258, 590 300, 650 356"/>
+        <path class="edge" d="M270 290 C302 332, 334 362, 390 392"/>
+        <path class="edge" d="M482 340 C562 382, 616 425, 692 462"/>
+        <path class="edge" d="M650 356 C718 418, 780 470, 850 528"/>
+        <path class="edge" d="M692 462 C758 502, 812 534, 884 562"/>
+        <path class="edge" d="M700 298 C744 352, 770 408, 820 462"/>
+
+        <!-- User -->
+        <g class="node" transform="translate(512,77)">
+          <rect x="0" y="0" width="190" height="54" rx="16" fill="#fff6ea" stroke="#9a4d2f" stroke-width="2"/>
+          <text x="16" y="23" class="node-label">病人結果與醫師決策</text>
+          <text x="16" y="41" class="node-sub">死亡／住院／負擔／安全</text>
+        </g>
+
+        <g class="node" transform="translate(326,145)">
+          <rect width="174" height="58" rx="15" fill="#f8e9df" stroke="#9a4d2f"/>
+          <text x="14" y="24" class="node-label">CKM 照護編排</text>
+          <text x="14" y="43" class="node-sub">cardio-kidney-metabolic loop</text>
+        </g>
+
+        <g class="node" transform="translate(398,206)">
+          <rect width="168" height="60" rx="15" fill="#e7f0ed" stroke="#315f5c"/>
+          <text x="14" y="24" class="node-label">Clinical Cockpit</text>
+          <text x="14" y="43" class="node-sub">低認知負荷＋責任提示</text>
+        </g>
+
+        <g class="node" transform="translate(180,265)">
+          <rect width="210" height="62" rx="15" fill="#f8e9df" stroke="#9a4d2f"/>
+          <text x="14" y="25" class="node-label">臨床問題設計</text>
+          <text x="14" y="44" class="node-sub">action window / estimand / outcome</text>
+        </g>
+
+        <g class="node" transform="translate(426,326)">
+          <rect width="188" height="62" rx="15" fill="#e7f0ed" stroke="#315f5c"/>
+          <text x="14" y="25" class="node-label">人機協作 Loop</text>
+          <text x="14" y="44" class="node-sub">human gate / validator / rollback</text>
+        </g>
+
+        <g class="node" transform="translate(176,372)">
+          <rect width="218" height="62" rx="15" fill="#f8e9df" stroke="#9a4d2f"/>
+          <text x="14" y="25" class="node-label">多組學轉譯</text>
+          <text x="14" y="44" class="node-sub">endotype / biomarker / therapy matching</text>
+        </g>
+
+        <g class="node" transform="translate(512,378)">
+          <rect width="196" height="62" rx="15" fill="#e7f0ed" stroke="#315f5c"/>
+          <text x="14" y="25" class="node-label">表格＋時間序列 ML</text>
+          <text x="14" y="44" class="node-sub">calibration / drift / leakage control</text>
+        </g>
+
+        <g class="node" transform="translate(690,278)">
+          <rect width="188" height="60" rx="15" fill="#eee8f7" stroke="#6b5d8c"/>
+          <text x="14" y="24" class="node-label">心血管 AI 模組</text>
+          <text x="14" y="43" class="node-sub">ECG / echo / HF / CKD context</text>
+        </g>
+
+        <g class="node" transform="translate(642,448)">
+          <rect width="210" height="62" rx="15" fill="#eee8f7" stroke="#6b5d8c"/>
+          <text x="14" y="25" class="node-label">模型治理與稽核</text>
+          <text x="14" y="44" class="node-sub">version / PCCP / audit trail</text>
+        </g>
+
+        <g class="node" transform="translate(760,442)">
+          <rect width="198" height="62" rx="15" fill="#eee8f7" stroke="#6b5d8c"/>
+          <text x="14" y="25" class="node-label">FHIR / LOINC / OMOP</text>
+          <text x="14" y="44" class="node-sub">語意標準與回寫結構</text>
+        </g>
+
+        <g class="node" transform="translate(806,518)">
+          <rect width="190" height="60" rx="15" fill="#f2ecd2" stroke="#7a6a28"/>
+          <text x="14" y="24" class="node-label">雲端／資料庫／ETL</text>
+          <text x="14" y="43" class="node-sub">可採購、可替換、低浪漫</text>
+        </g>
+
+        <g class="node" transform="translate(582,534)">
+          <rect width="186" height="60" rx="15" fill="#eee8f7" stroke="#6b5d8c"/>
+          <text x="14" y="24" class="node-label">Prompt／Agent 平台</text>
+          <text x="14" y="43" class="node-sub">版本化、測試、權限管理</text>
+        </g>
+      </svg>
+    </section>
+
+    <section class="section grid-2">
+      <div class="card">
+        <h2>地圖解讀：左上角才是戰略火力</h2>
+        <p>這張地圖顯示，你真正的差異化不是「會用哪個模型」，而是能把腎臟病、心血管風險、多組學訊號、臨床視覺化與人機協作合成一個可運作的臨床迴圈。</p>
+        <div class="tagrow">
+          <span class="tag">Clinical problem design</span>
+          <span class="tag">CKM orchestration</span>
+          <span class="tag">Clinical cockpit</span>
+          <span class="tag">Human-AI loop</span>
+          <span class="tag">Audit-grade governance</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>核心取捨</h2>
+        <p><strong>不要把資源花在「右下角的浪漫」。</strong>雲端、ETL、資料庫、通用 BI、通用 AutoML、通用 prompt 框架都應盡量採購、標準化、模組化。</p>
+        <p><strong>要把資源放在「左上與中上」。</strong>這裡包含臨床問題的命名、行動時間窗、責任鏈、認知負荷、回饋機制與模型何時不可相信。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <h2>六大領域在 Wardley Map 中的位置</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>領域</th>
+              <th>目前成熟度</th>
+              <th>真正大問題</th>
+              <th>策略動作</th>
+              <th>Not-to-do</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>臨床腎臟與 CKM</strong></td>
+              <td>從自製走向產品化，但臨床脈絡仍高度客製</td>
+              <td>CKD stage 是否應升級為 CKM dynamic phenotype？</td>
+              <td class="priority">自建臨床問題框架與照護編排邏輯</td>
+              <td class="warning">不要再做沒有行動窗的 progression model</td>
+            </tr>
+            <tr>
+              <td><strong>基因體與多組學</strong></td>
+              <td>偏創生與自製</td>
+              <td>多組學是重寫疾病分類，還是只製造新 marker？</td>
+              <td class="priority">探索 endotype，但要求 therapy matching 或可替代檢測路徑</td>
+              <td class="warning">不要把 omics 當高級 feature table</td>
+            </tr>
+            <tr>
+              <td><strong>心血管 AI</strong></td>
+              <td>影像與 ECG 較產品化，CKD context 仍自製</td>
+              <td>能否從單點偵測變成 longitudinal CKM care loop？</td>
+              <td class="priority">接入腎臟病與 volume context，做跨器官風險編排</td>
+              <td class="warning">不要只展示 AI 比醫師準</td>
+            </tr>
+            <tr>
+              <td><strong>臨床視覺化</strong></td>
+              <td>dashboard 商品化；clinical cockpit 仍稀缺</td>
+              <td>圖表能否降低認知負荷並釐清責任？</td>
+              <td class="priority">自製高價值介面：1 分鐘掃描、3 個行動點、清楚責任鏈</td>
+              <td class="warning">不要做炫目但不可行動的 BI</td>
+            </tr>
+            <tr>
+              <td><strong>Harness / Loop engineer</strong></td>
+              <td>早期自製，治理方法尚未成熟</td>
+              <td>醫療 agent 的核心是 autonomy，還是 controllability？</td>
+              <td class="priority">建立 bounded autonomy、human gate、validator、audit log</td>
+              <td class="warning">不要追求全自動醫療 agent</td>
+            </tr>
+            <tr>
+              <td><strong>表格型 ML 與可解釋性</strong></td>
+              <td>模型工具快速產品化；臨床語意仍自製</td>
+              <td>EHR table 能否轉成病程語意模型？</td>
+              <td class="priority">模型可採購，資料切割、leakage、calibration、actionability 必須自管</td>
+              <td class="warning">不要把 TabPFN/XGBoost 當排行榜遊戲</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section grid-3">
+      <div class="card compact">
+        <h3>左側：探索與高不確定</h3>
+        <p class="small">多組學 endotype、CKM phenotype、臨床問題重新命名、human-AI responsibility model。這些不容易採購，但可能形成長期護城河。</p>
+      </div>
+      <div class="card compact">
+        <h3>中段：自製到產品化</h3>
+        <p class="small">Clinical cockpit、表格＋時間序列模型、模型治理、prompt／agent 平台。這裡要做成可重複部署的內部產品。</p>
+      </div>
+      <div class="card compact">
+        <h3>右側：標準化與外包</h3>
+        <p class="small">FHIR、LOINC、OMOP、雲端、資料庫、ETL、基礎 BI。原則是採用標準、降低浪漫、避免團隊卡在可替代基礎設施。</p>
+      </div>
+    </section>
+
+    <section class="section grid-2">
+      <div class="card">
+        <h2>依 Wardley Map 推導的策略動作</h2>
+        <div class="move">
+          <span class="badge explore">下注</span>
+          <div><strong>Clinical AI Loop Framework</strong><br><span class="small">把臨床問題定義、模型、視覺化、human gate、回饋與稽核串成可複用框架。這是最值得自建的核心資產。</span></div>
+        </div>
+        <div class="move">
+          <span class="badge">打磨</span>
+          <div><strong>CKM Clinical Cockpit</strong><br><span class="small">不是 dashboard，而是讓腎臟科醫師在 1 分鐘內知道「今日最該處理的 3 件事」。</span></div>
+        </div>
+        <div class="move">
+          <span class="badge standard">平台化</span>
+          <div><strong>模型治理與 Prompt／Agent 發布系統</strong><br><span class="small">所有模型、prompt、agent skill 都需要版本、測試、權限、審核、rollback 與 audit trail。</span></div>
+        </div>
+        <div class="move">
+          <span class="badge utility">外包</span>
+          <div><strong>基礎資料與雲端能力</strong><br><span class="small">資料庫、ETL、雲端、通用 BI 應以標準化、可替換、低維護成本為原則。</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>反模式：看起來高級但會消耗戰力</h2>
+        <ul>
+          <li><strong>Omics marker hunting：</strong>找出一堆 marker，但沒有 endotype、治療配對或可替代檢測路徑。</li>
+          <li><strong>SOTA worship：</strong>比較 XGBoost、TabPFN、LightGBM，但沒有處理 leakage、calibration、drift 與行動時間窗。</li>
+          <li><strong>Dashboard inflation：</strong>把更多 lab、vital sign、risk score 疊到畫面上，卻沒有降低認知負荷。</li>
+          <li><strong>Full-auto agent fantasy：</strong>追求自動化醫療決策，但沒有 human gate、責任鏈、回放與 rollback。</li>
+          <li><strong>Cloud romanticism：</strong>把可採購的基礎設施做成長期研發主軸，錯失真正差異化位置。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <h2>24 個月路線圖</h2>
+        <div class="roadmap">
+          <div class="phase">
+            <div class="num">0–3 個月</div>
+            <h3>畫清楚現場 loop</h3>
+            <ul>
+              <li>選 1 個臨床 loop：HD 低血壓、血鉀、住院風險或 CKD progression</li>
+              <li>定義 action window、責任者、資料來源與 outcome</li>
+              <li>畫出目前人工流程與資料痕跡</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <div class="num">3–9 個月</div>
+            <h3>建立最小 cockpit</h3>
+            <ul>
+              <li>輸出 3 個行動優先級，不輸出 30 個異常值</li>
+              <li>每個提醒附原因、證據、可行動選項與不確定性</li>
+              <li>導入 override reason 與臨床回饋紀錄</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <div class="num">9–18 個月</div>
+            <h3>平台化與治理</h3>
+            <ul>
+              <li>模型版本、prompt 版本、資料版本、評測版本化</li>
+              <li>建立 calibration、drift、失效案例與 audit trail</li>
+              <li>把 one-off 模型改成 reusable research engine</li>
+            </ul>
+          </div>
+          <div class="phase">
+            <div class="num">18–24 個月</div>
+            <h3>跨域擴張</h3>
+            <ul>
+              <li>從單一腎臟 loop 擴展到 CKM orchestration</li>
+              <li>納入心血管 AI 與多組學 endotype 作為高價值訊號</li>
+              <li>形成可教學、可複製、可投稿的 clinical AI operating model</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="quote">
+        最核心的策略判斷：不要把自己定位成「做腎臟 AI 模型的人」。更高槓桿的位置是 <strong>Clinical Intelligence Architect</strong>：設計臨床問題、資料語意、模型治理、視覺化介面與人機迴圈，使 AI 能被真實照護系統吸收。
+      </div>
+    </section>
+
+    <footer class="footer">Created 2026-07-03｜Wardley Map framework for nephrology, multi-omics, CKM AI, visualization, human-AI loops, and tabular ML</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>上台報告評分攻略｜智慧醫療專案（可編輯簡報版）</title>
+
+<!-- === 字型：Noto Serif TC 標題 / Noto Sans TC 內文 / IBM Plex Sans 數字 === -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   VIEWPORT FITTING: MANDATORY BASE STYLES
+   每一頁精確等於一個視窗高度，永不捲動。
+   =========================================== */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-height: 100%;
+    overflow: hidden;
+    padding: var(--slide-padding);
+}
+:root {
+    --title-size: clamp(1.9rem, 5.6vw, 4.6rem);
+    --h2-size: clamp(1.5rem, 4vw, 3rem);
+    --h3-size: clamp(1.15rem, 2.9vw, 2rem);
+    --body-size: clamp(0.95rem, 1.9vw, 1.4rem);
+    --small-size: clamp(0.8rem, 1.25vw, 1.05rem);
+    --slide-padding: clamp(1rem, 3.6vw, 3.6rem);
+    --content-gap: clamp(0.5rem, 1.8vw, 1.8rem);
+    --element-gap: clamp(0.25rem, 1vw, 1rem);
+}
+.card, .container, .content-box {
+    max-width: min(90vw, 1000px);
+    max-height: min(80vh, 700px);
+}
+.feature-list, .bullet-list { gap: clamp(0.4rem, 1vh, 1rem); }
+.feature-list li, .bullet-list li { font-size: var(--body-size); line-height: 1.4; }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+img, .image-container {
+    max-width: 100%;
+    max-height: min(50vh, 400px);
+    object-fit: contain;
+}
+@media (max-height: 700px) {
+    :root {
+        --slide-padding: clamp(0.75rem, 2.8vw, 2.2rem);
+        --content-gap: clamp(0.4rem, 1.4vw, 1.1rem);
+        --title-size: clamp(1.6rem, 5vw, 3.2rem);
+        --h2-size: clamp(1.3rem, 3.4vw, 2.3rem);
+        --body-size: clamp(0.88rem, 1.65vw, 1.2rem);
+        --small-size: clamp(0.75rem, 1.15vw, 0.95rem);
+    }
+}
+@media (max-height: 600px) {
+    :root {
+        --slide-padding: clamp(0.5rem, 2.4vw, 1.6rem);
+        --content-gap: clamp(0.3rem, 1vw, 0.8rem);
+        --title-size: clamp(1.4rem, 4.4vw, 2.6rem);
+        --h2-size: clamp(1.15rem, 3vw, 1.9rem);
+        --body-size: clamp(0.82rem, 1.45vw, 1.05rem);
+        --small-size: clamp(0.7rem, 1.05vw, 0.88rem);
+    }
+    .nav-dots, .keyboard-hint, .decorative { display: none; }
+}
+@media (max-height: 500px) {
+    :root {
+        --slide-padding: clamp(0.4rem, 2vw, 1.1rem);
+        --title-size: clamp(1.2rem, 3.8vw, 2rem);
+        --h2-size: clamp(1.05rem, 2.6vw, 1.5rem);
+        --body-size: clamp(0.75rem, 1.25vw, 0.95rem);
+        --small-size: clamp(0.66rem, 1vw, 0.8rem);
+    }
+}
+@media (max-width: 600px) {
+    :root { --title-size: clamp(1.5rem, 7.4vw, 2.8rem); }
+    .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* ===========================================
+   THEME — 深夜藍簡報
+   =========================================== */
+:root{
+  --bg:#080c18;
+  --bg-2:#0d1428;
+  --ink:#eef2fb;
+  --muted:#93a1bf;
+  --faint:#5f6c8b;
+  --line:rgba(255,255,255,.12);
+  --line-soft:rgba(255,255,255,.06);
+  --ac:#6ea8ff;
+  --ac-soft:rgba(110,168,255,.14);
+  --ac-glow:rgba(110,168,255,.16);
+  --edit:#ff7a45;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  print-color-adjust:exact;
+  -webkit-print-color-adjust:exact;
+}
+button,input{font:inherit}
+h1,h2,h3,.serif{font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;letter-spacing:-.01em}
+
+/* 全站細格線紋理 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:64px 64px;
+}
+.slide{z-index:1;background:var(--bg)}
+/* 每頁依所屬面向著色的氛圍光暈 */
+.slide::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(900px 520px at 84% -10%, var(--ac-glow), transparent 68%),
+    radial-gradient(760px 460px at -12% 112%, rgba(255,255,255,.045), transparent 64%),
+    linear-gradient(180deg, rgba(255,255,255,.02), transparent 30%);
+}
+.slide-content{position:relative;z-index:1;gap:var(--content-gap)}
+
+/* === 進場動畫 === */
+.reveal{opacity:0;transform:translateY(16px)}
+.slide.active .reveal{animation:rise .6s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* === 共用元件 === */
+.tagrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:999px;
+  font-size:var(--small-size);font-weight:700;letter-spacing:.04em;
+  background:var(--ac-soft);color:var(--ac);border:1px solid var(--line)
+}
+.tag.plain{background:rgba(255,255,255,.06);color:var(--muted)}
+.bignum{
+  font-family:"IBM Plex Sans",sans-serif;font-weight:700;
+  font-size:clamp(2.5rem,9vw,7rem);line-height:.85;
+  color:transparent;-webkit-text-stroke:1.5px var(--ac);opacity:.85
+}
+.rule{height:1px;background:linear-gradient(90deg,var(--ac),transparent);border:0;margin:0}
+
+/* === 封面 === */
+.eyebrow{
+  display:inline-flex;padding:6px 12px;border-radius:999px;
+  background:var(--ac-soft);border:1px solid var(--line);
+  color:var(--ac);font-size:var(--small-size);font-weight:700;letter-spacing:.06em
+}
+.cover h1{
+  font-size:clamp(2.4rem,7vw,5.6rem);line-height:1.06;margin:clamp(.6rem,2vh,1.4rem) 0 0
+}
+.cover .lead{
+  color:var(--muted);font-size:var(--body-size);max-width:60ch;margin:0;
+  font-family:"Noto Sans TC",sans-serif
+}
+.score-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,1vw,14px)}
+.score-box{
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:14px;padding:clamp(8px,1.4vw,18px)
+}
+.score-box b{
+  display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:700;
+  font-size:clamp(1.35rem,3vw,2.4rem);line-height:1.1
+}
+.score-box span{display:block;font-size:var(--small-size);color:var(--muted);margin-top:2px}
+
+/* === 面向扉頁 === */
+.divider-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  gap:clamp(1rem,3vw,3rem);align-items:center
+}
+.divider-grid h2{font-size:clamp(2rem,5.2vw,4rem);margin:.4rem 0 .5rem;line-height:1.12}
+.divider-grid p{color:var(--muted);font-size:var(--body-size);margin:0;font-family:"Noto Sans TC",sans-serif}
+.item-index{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(4px,.9vh,10px)}
+.item-index li{
+  display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;
+  padding:clamp(6px,1vh,11px) clamp(10px,1.2vw,16px);
+  border:1px solid var(--line-soft);border-left:2px solid var(--ac);
+  border-radius:10px;background:rgba(255,255,255,.035);
+  font-size:var(--body-size);cursor:pointer;transition:.18s
+}
+.item-index li:hover{background:rgba(255,255,255,.08);transform:translateX(3px)}
+.item-index i{font-style:normal;color:var(--ac);font-weight:700;font-size:var(--small-size)}
+.item-index .st{margin-left:auto;color:var(--faint);font-size:var(--small-size)}
+
+/* === 評分項目頁 === */
+.item-grid{
+  display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.6fr);
+  gap:clamp(1rem,3vw,3.2rem);align-items:center
+}
+.item-grid h2{font-size:clamp(1.6rem,3.8vw,3rem);line-height:1.22;margin:.5rem 0 0}
+.actions{display:flex;flex-direction:column;gap:clamp(4px,.9vh,10px)}
+.action{
+  display:grid;grid-template-columns:22px 1fr auto;gap:clamp(8px,1vw,14px);
+  align-items:start;
+  padding:clamp(8px,1.2vh,14px) clamp(10px,1.3vw,18px);
+  border:1px solid var(--line-soft);border-radius:12px;
+  background:rgba(255,255,255,.04);cursor:pointer;transition:.18s
+}
+.action:hover{background:rgba(255,255,255,.08);border-color:var(--line)}
+.action:has(.check:checked){background:var(--ac-soft);border-color:rgba(110,168,255,.35)}
+.action:has(.check:checked) strong{color:var(--ac)}
+.action input.check{
+  width:17px;height:17px;margin:3px 0 0;accent-color:var(--ac);cursor:pointer
+}
+.action strong{display:block;font-size:var(--body-size);font-weight:700;line-height:1.35}
+.action .desc{
+  display:block;color:var(--muted);font-size:var(--small-size);
+  line-height:1.5;margin-top:2px;font-family:"Noto Sans TC",sans-serif
+}
+
+/* === 綱要頁 === */
+.agenda{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.4vw,18px)}
+.agenda .a-card{
+  border:1px solid var(--line);border-radius:16px;
+  background:rgba(255,255,255,.045);
+  padding:clamp(10px,1.6vw,22px);cursor:pointer;transition:.2s;
+  display:flex;flex-direction:column;gap:6px;min-height:0
+}
+.agenda .a-card:hover{transform:translateY(-4px);background:rgba(255,255,255,.09)}
+.agenda .a-num{font-family:"IBM Plex Sans";font-weight:700;color:var(--acx);font-size:var(--small-size)}
+.agenda h3{font-size:clamp(1.15rem,2.2vw,1.75rem);margin:0;line-height:1.3}
+.agenda small{color:var(--muted);font-size:var(--small-size)}
+.mini-bar{height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:auto}
+.mini-bar > i{display:block;height:100%;background:var(--acx);width:0;transition:.35s}
+
+/* === 主線 / 結語 === */
+.two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1rem,3vw,3rem);align-items:center}
+.script-box{
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:18px;padding:clamp(14px,2vw,26px)
+}
+.script-box b{display:block;color:var(--ac);margin-bottom:8px;font-size:var(--small-size);letter-spacing:.06em}
+.script-box span{font-size:var(--body-size);line-height:1.75;font-family:"Noto Sans TC",sans-serif}
+.stat-huge{
+  font-family:"IBM Plex Sans";font-weight:700;
+  font-size:clamp(3rem,13vw,10rem);line-height:.85;color:var(--ac)
+}
+.big-bar{height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.big-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),#fff);width:0;transition:.4s}
+
+/* ===========================================
+   固定介面：進度條、頁碼、控制列、目錄
+   =========================================== */
+.deck-progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:60;
+  background:rgba(255,255,255,.07)
+}
+.deck-progress > i{display:block;height:100%;background:var(--ac);width:0;transition:.3s}
+.hud{
+  position:fixed;left:clamp(12px,2.2vw,32px);bottom:clamp(12px,2.2vh,28px);z-index:60;
+  display:flex;gap:10px;align-items:baseline;color:var(--faint);
+  font-size:clamp(.72rem,.95vw,.9rem);pointer-events:none
+}
+.hud b{color:var(--ink);font-weight:600}
+.controls{
+  position:fixed;right:clamp(12px,2.2vw,32px);bottom:clamp(12px,2.2vh,28px);z-index:61;
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+  max-width:min(92vw,760px)
+}
+.cbtn{
+  border:1px solid var(--line);background:rgba(12,18,36,.75);backdrop-filter:blur(10px);
+  color:var(--ink);padding:8px 12px;border-radius:11px;cursor:pointer;
+  font-size:clamp(.72rem,.95vw,.9rem);font-weight:700;white-space:nowrap;transition:.18s
+}
+.cbtn:hover{border-color:var(--ac);color:var(--ac)}
+.cbtn.on{background:var(--edit);border-color:var(--edit);color:#fff}
+.cbtn.round{width:38px;height:38px;padding:0;display:grid;place-items:center;font-size:15px}
+.more-menu{display:none;gap:8px}
+.more-menu.show{display:flex;flex-wrap:wrap;justify-content:flex-end}
+.save-hint{
+  position:fixed;right:clamp(12px,2.2vw,32px);top:clamp(12px,2vh,24px);z-index:61;
+  font-size:var(--small-size);color:var(--ac);opacity:0;transition:.3s
+}
+.save-hint.show{opacity:1}
+
+/* 目錄總覽 */
+.overlay{
+  position:fixed;inset:0;z-index:80;background:rgba(6,9,18,.96);backdrop-filter:blur(8px);
+  padding:clamp(16px,4vw,48px);overflow:auto;display:none
+}
+.overlay.show{display:block}
+.overlay h4{margin:0 0 14px;font-size:var(--h3-size)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:10px}
+.toc button{
+  text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.04);
+  color:var(--ink);border-radius:12px;padding:12px;cursor:pointer;transition:.18s;
+  border-left:3px solid var(--tc,var(--ac))
+}
+.toc button:hover{background:rgba(255,255,255,.1)}
+.toc small{display:block;color:var(--faint);font-size:11px;margin-bottom:4px}
+.toc span{font-size:var(--small-size);font-weight:600;line-height:1.35}
+.toc button.cur{background:var(--ac-soft);border-color:var(--ac)}
+
+/* ===========================================
+   編輯模式
+   =========================================== */
+.ed{display:none!important}
+body.editing .ed{display:inline-flex!important}
+body.editing .ed.block{display:block!important}
+.edit-banner{
+  position:fixed;top:0;left:0;right:0;z-index:70;display:none;
+  background:var(--edit);color:#fff;text-align:center;padding:6px 16px;
+  font-size:var(--small-size);font-weight:700
+}
+body.editing .edit-banner{display:block}
+body.editing [contenteditable]{
+  outline:1px dashed rgba(255,122,69,.5);outline-offset:4px;border-radius:5px
+}
+body.editing [contenteditable]:focus{
+  outline:2px solid var(--edit);background:rgba(255,122,69,.12)
+}
+body.editing .action{cursor:default}
+body.editing .action input.check{pointer-events:none;opacity:.4}
+.icon-btn{
+  border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--muted);
+  width:26px;height:26px;border-radius:8px;cursor:pointer;padding:0;
+  align-items:center;justify-content:center;font-size:13px;line-height:1;flex:0 0 auto
+}
+.icon-btn:hover{border-color:var(--edit);color:var(--edit)}
+.add-row{
+  width:100%;margin-top:2px;border:1px dashed var(--line);background:transparent;
+  color:var(--faint);border-radius:11px;padding:8px;cursor:pointer;
+  font-weight:700;font-size:var(--small-size)
+}
+.add-row:hover{border-color:var(--ac);color:var(--ac)}
+.slide-tools{
+  position:absolute;top:clamp(10px,2vh,22px);right:clamp(12px,2.2vw,32px);
+  z-index:5;gap:8px
+}
+body.editing .slide-tools{display:flex!important}
+
+/* ===========================================
+   列印 / PDF：一頁一張
+   =========================================== */
+@media print{
+  html{scroll-snap-type:none}
+  .deck-progress,.hud,.controls,.overlay,.edit-banner,.save-hint,.ed,.add-row,.slide-tools{display:none!important}
+  body::before{display:none}
+  .slide{height:auto;min-height:96vh;page-break-after:always;break-after:page}
+  .reveal{opacity:1!important;transform:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="edit-banner">編輯模式：點文字直接改 ・ 可增刪動作與頁面 ・ Ctrl/⌘+S 存檔 ・ Esc 離開</div>
+<div class="deck-progress"><i id="deckBar"></i></div>
+<div class="save-hint" id="saveHint"></div>
+
+<!-- === 所有投影片由 JS 依內容資料產生 === -->
+<main id="deck"></main>
+
+<!-- === 頁碼 === -->
+<div class="hud">
+  <span><b id="slideNow">1</b> / <span id="slideTotal">1</span></span>
+  <span id="slideLabel"></span>
+</div>
+
+<!-- === 控制列 === -->
+<div class="controls">
+  <div class="more-menu" id="moreMenu">
+    <button class="cbtn" id="resetChecks">清除勾選</button>
+    <button class="cbtn" id="exportBtn">匯出 JSON</button>
+    <button class="cbtn" id="importBtn">匯入 JSON</button>
+    <button class="cbtn" id="saveHtmlBtn">另存 HTML</button>
+    <button class="cbtn" id="restoreBtn">還原預設</button>
+    <button class="cbtn" onclick="window.print()">列印 / PDF</button>
+  </div>
+  <button class="cbtn" id="editBtn">✎ 編輯</button>
+  <button class="cbtn round" id="tocBtn" title="目錄 (G)">☰</button>
+  <button class="cbtn round" id="moreBtn" title="更多">⋯</button>
+  <button class="cbtn round" id="prevBtn" title="上一頁 (←)">‹</button>
+  <button class="cbtn round" id="nextBtn" title="下一頁 (→)">›</button>
+  <input type="file" id="fileInput" accept=".json,application/json" hidden>
+</div>
+
+<!-- === 目錄總覽 === -->
+<div class="overlay" id="overlay">
+  <h4>目錄　<span style="color:var(--faint);font-size:13px;font-weight:400">點任一頁跳轉 ・ Esc 關閉</span></h4>
+  <div class="toc" id="toc"></div>
+</div>
+
+<!-- 匯出 HTML 時，編輯後的內容會被寫進這裡 -->
+<script id="bakedData" type="application/json">null</script>
+
+<script>
+/* ==========================================================
+   1. 預設內容
+   ========================================================== */
+const BUILTIN = {
+  meta:{
+    eyebrow:"上台報告作戰頁 · 智慧醫療專案",
+    title:"把評分表，轉成<br>可被看見的得分動作",
+    intro:"每一個評分項目都對應五個具體動作。不是增加內容，而是讓評審在有限時間內，明確看到重要性、設計品質、實際成效與專業表現。",
+    scores:[
+      {value:"30 分",label:"重要性與發展性"},
+      {value:"30 分",label:"智慧化設計特色"},
+      {value:"30 分",label:"整體運作與成效"},
+      {value:"10 分",label:"現場表現"}
+    ],
+    calloutTitle:"建議報告主線：問題 → 設計 → 證據 → 擴張",
+    calloutBody:"評審最容易扣分的，不是沒有做事，而是聽不出「為何現在必須做、具體改了什麼、成效是否可信、下一步能否複製」。所有頁面都應服務這四個問題。",
+    scriptTitle:"30 秒開場模板",
+    scriptBody:"「我們要解決的不是單一流程不便，而是＿＿造成的病人安全／效率／管理缺口。這套方案透過＿＿，把原本＿＿的流程改成＿＿，目前已達成＿＿，下一階段將擴展至＿＿。」",
+    footer:"瀏覽器會自動保存內容與勾選狀態；正式簡報前可逐項完成。"
+  },
+  sections:[
+  {
+   id:"importance", title:"重要性與發展性", score:"30 分", theme:0,
+   navHint:"問題、資源、目標、未來",
+   desc:"讓評審相信：這是值得現在投入、且可持續擴張的問題。",
+   items:[
+    {title:"與當前社會、醫界或院內重要議題之相關性", actions:[
+     ["用一張數據定義痛點","開場 60 秒內呈現院內量體、風險或成本，不先談功能。"],
+     ["連結外部趨勢","對應高齡化、缺工、病安、智慧醫療、資料治理或評鑑政策。"],
+     ["指出不處理的代價","說明延誤、重工、錯誤、病人風險或機會成本。"],
+     ["加入利害關係人原話","用一句臨床人員、病人或管理者的真實需求作為證據。"],
+     ["把議題濃縮成一句話","格式：誰，在什麼情境，因何問題，造成什麼後果。"]
+    ]},
+    {title:"資訊科技導入前評估完整性", actions:[
+     ["畫出資源盤點表","以軟體、硬體、經費、人力、資料、資安六欄呈現。"],
+     ["標示現況與缺口","每一資源註明已有、缺少、外購、合作或待核准。"],
+     ["交代整合邊界","說明與 HIS、EMR、FHIR、API、帳號權限及既有系統的關係。"],
+     ["呈現總持有成本","不只開發費，也列維護、授權、教育、監控及升級成本。"],
+     ["準備替代方案","對關鍵依賴列出 Plan B，例如人工備援、分階段導入或低成本版本。"]
+    ]},
+    {title:"預期目標合理性", actions:[
+     ["目標必須有基線","先說現在是多少，再說要改善到多少。"],
+     ["分開輸出與結果","輸出是上線、使用率；結果是時間、錯誤率、病安或成本改善。"],
+     ["設定時間範圍","清楚區分三個月、半年、一年的目標。"],
+     ["使用可驗證指標","避免「提升效率」，改成平均作業時間下降 30%。"],
+     ["交代目標推估依據","用試辦數據、流程觀察、文獻或同類案例支持。"]
+    ]},
+    {title:"未來發展性", actions:[
+     ["畫三階段路線圖","試辦、擴科、全院或跨院，每階段有明確門檻。"],
+     ["說明可複製單元","指出哪些模組、資料接口與流程可直接複用。"],
+     ["加入平台化視角","從單點工具升級為共用資料層、規則引擎或服務平台。"],
+     ["提出下一個高價值情境","選一個最合理擴張場景，不要一次列十個。"],
+     ["定義停止或轉向條件","若使用率、成效或維護成本未達門檻，何時縮減或調整。"]
+    ]}
+   ]},
+  {
+   id:"smart", title:"智慧化設計特色", score:"30 分", theme:1,
+   navHint:"簡化、自動化、標準、UX",
+   desc:"讓評審看見：系統不是把舊流程搬上螢幕，而是重構工作方式。",
+   items:[
+    {title:"有明顯簡化、優化之綜效", actions:[
+     ["呈現 Before / After","以同一個任務比較步驟數、時間、交接點與錯誤點。"],
+     ["刪除不必要步驟","明確說出哪些查詢、抄寫、等待或重複確認被移除。"],
+     ["量化綜效","至少提供時間、點擊、表單欄位或人力節省之一。"],
+     ["指出跨角色效益","不只對單一使用者，說明醫師、護理、行政或病人如何共同受益。"],
+     ["展示最短任務路徑","現場示範核心任務在三步內完成。"]
+    ]},
+    {title:"行動化、自動化程度", actions:[
+     ["標出自動化層級","區分提醒、建議、半自動執行、全自動執行。"],
+     ["說明觸發條件","誰、何時、因何事件啟動流程。"],
+     ["展示行動端場景","用手機、平板、推播或床邊設備示範實際使用。"],
+     ["保留人工覆核","對高風險決策清楚標示 human-in-the-loop。"],
+     ["呈現例外處理","網路中斷、資料缺漏、判斷衝突時如何安全降級。"]
+    ]},
+    {title:"系統／資料標準化與交換串接", actions:[
+     ["畫資料流向圖","從資料來源、轉換、規則、介面到回寫位置。"],
+     ["標示標準規格","明列 FHIR Resource、LOINC、SNOMED CT、ICD 或院內代碼。"],
+     ["區分標準與客製","哪些可跨系統通用，哪些是院內特殊規則。"],
+     ["展示接口契約","用簡化 API 或欄位映射範例證明可串接。"],
+     ["提出資料品質治理","說明缺值、重複、時間戳、版本與欄位定義管理。"]
+    ]},
+    {title:"合理化及時效性", actions:[
+     ["定義正確出現時點","資訊必須在決策前出現，而不是工作完成後。"],
+     ["交代更新頻率","即時、每小時、每日批次或事件觸發要說清楚。"],
+     ["避免過度警示","說明如何分級、去重與抑制低價值提醒。"],
+     ["展示延遲指標","從資料產生到使用者看到，總延遲是多少。"],
+     ["以臨床節奏驗證","確認系統符合交班、查房、門診或出院流程。"]
+    ]},
+    {title:"設計思考與使用者經驗設計", actions:[
+     ["證明你真的看過使用者","呈現訪談、影隨或流程觀察的對象與次數。"],
+     ["展示需求到設計的轉換","每一核心功能對應一個具體痛點。"],
+     ["用角色分層介面","醫療人員、病人與管理者看到不同資訊密度。"],
+     ["呈現可用性測試","至少報告任務完成率、錯誤或回饋摘要。"],
+     ["說明迭代紀錄","展示一個因使用者回饋而被刪除或重做的設計。"]
+    ]}
+   ]},
+  {
+   id:"outcome", title:"整體運作與成效", score:"30 分", theme:2,
+   navHint:"導入、維護、成果、影響",
+   desc:"讓評審相信：專案已可運作、有治理、成效可信，且確實造成改變。",
+   items:[
+    {title:"資訊科技導入過程適切性", actions:[
+     ["呈現導入階段","需求、原型、測試、試辦、上線、擴散依序清楚。"],
+     ["交代決策關卡","哪些節點由臨床、資訊、資安或管理者核准。"],
+     ["用小規模試辦降低風險","說明先在哪個單位、哪些使用者、多久驗證。"],
+     ["展示教育與變更管理","不只上課，還包括超級使用者、現場支援與回饋管道。"],
+     ["列出導入問題與修正","主動承認一至兩個問題，說明如何解決。"]
+    ]},
+    {title:"維護、管理或持續改善機制", actions:[
+     ["指定系統責任人","產品、臨床、資料、資訊與資安各有 owner。"],
+     ["建立監測儀表板","追蹤可用率、錯誤、效能、使用率與成效。"],
+     ["定義回饋閉環","問題如何收集、排序、修正、驗證與公告。"],
+     ["規劃版本與變更管理","每次修改有版本、測試、核准與回復機制。"],
+     ["設定定期檢討節奏","每月營運檢討、每季成效檢視或年度重評。"]
+    ]},
+    {title:"預期改善目標之達成程度", actions:[
+     ["用目標對照表","每項 KPI 顯示基線、目標、目前值與差距。"],
+     ["呈現趨勢而非單點","至少用前後數週或數月趨勢避免偶然。"],
+     ["區分試辦與正式成效","不要把小樣本測試包裝成全院成果。"],
+     ["交代樣本與分母","使用人次、案件數、使用者數與期間必須完整。"],
+     ["解釋未達標項目","說明阻礙、修正方案與下一個驗證時間點。"]
+    ]},
+    {title:"功能優化／改進性或創新性", actions:[
+     ["先定義普遍作法","沒有比較基準，就無法證明創新。"],
+     ["指出核心差異","聚焦一至兩個真正不同的機制。"],
+     ["避免把新技術當創新","AI、App、雲端只是手段，創新應落在工作模式改變。"],
+     ["展示難以取代的能力","例如跨系統整合、閉環執行、個人化或即時協作。"],
+     ["提出可防守性","說明資料資產、流程整合、臨床 know-how 或治理門檻。"]
+    ]},
+    {title:"整體成效之突破性", actions:[
+     ["提出一個突破指標","挑最能代表質變的數字放大呈現。"],
+     ["證明不是局部改善","說明是否跨越單位、角色或流程邊界。"],
+     ["呈現能力躍升","從被動查詢變成主動預警，或從人工彙整變成即時決策。"],
+     ["用臨床案例佐證","選一個具代表性的病人或事件，描述改變前後。"],
+     ["說明突破可持續","排除一次性投入或短期加班造成的假性成效。"]
+    ]},
+    {title:"貢獻及影響程度", actions:[
+     ["建立影響層級","個人、單位、全院、病人、社會分層呈現。"],
+     ["同時談質與量","數據之外，加入病安、體驗、治理或文化改變。"],
+     ["列出直接受益者","受益人數、使用者人數或涵蓋案件數。"],
+     ["連結醫院策略","對應品質、財務、人才、品牌或智慧醫療目標。"],
+     ["描述外溢效益","例如形成共用資料標準、培養人才或支援其他專案。"]
+    ]},
+    {title:"減輕人員工作負荷", actions:[
+     ["量化節省時間","以每人每日、每案或每月節省多少分鐘呈現。"],
+     ["拆分工作負荷類型","減少搜尋、抄寫、核對、等待、溝通或認知負荷。"],
+     ["避免轉嫁工作","證明沒有把負擔從醫師移到護理、資訊或行政。"],
+     ["呈現認知負荷改善","例如提醒更聚焦、資訊更集中、決策更快。"],
+     ["加入使用者回饋","引用第一線人員對工作改變的真實評價。"]
+    ]}
+   ]},
+  {
+   id:"delivery", title:"現場表現", score:"10 分", theme:3,
+   navHint:"結構、圖表、口語、時間",
+   desc:"最後 10 分，往往決定前面 90 分是否真正被評審接收到。",
+   items:[
+    {title:"報告內容系統分明、前後連貫", actions:[
+     ["固定故事主線","全程維持「問題→原因→解法→成果→未來」。"],
+     ["每頁只講一件事","不要同時放三個重點。"],
+     ["頁首先說結論","評審先知道答案，再看證據。"],
+     ["段落之間有橋接句","例如「因此」「接下來」「真正的關鍵是」。"],
+     ["最後 30 秒總結四句","問題、方法、成果、價值各一句。"]
+    ]},
+    {title:"文字圖表編撰流暢清晰", actions:[
+     ["一頁一句 Headline","評審三秒內知道本頁重點。"],
+     ["圖大於文字","能畫流程圖就不要寫段落。"],
+     ["一圖只回答一個問題","避免一張圖塞所有資訊。"],
+     ["重要數字放大","改善率、時間、成本直接放最大。"],
+     ["所有圖表一致","字型、顏色、箭頭與圖示保持一致。"]
+    ]},
+    {title:"發表人儀態與口齒清晰", actions:[
+     ["開場先停兩秒","建立節奏，不急著說話。"],
+     ["眼神輪流看評審","不要一直看螢幕。"],
+     ["每分鐘約 130 至 150 字","保持穩定速度。"],
+     ["重要句降低語速","真正想得分的地方要慢。"],
+     ["手勢只強調重點","不要持續揮手或來回走動。"]
+    ]},
+    {title:"時間掌控", actions:[
+     ["預留 15% 時間","例如 10 分鐘報告，8 分 30 秒完成。"],
+     ["每頁設定秒數","事先規劃每頁講多久。"],
+     ["重要頁花最多時間","配分高的地方多講。"],
+     ["準備快速版","超時立即跳過次要內容。"],
+     ["最後一定留下 QA","不要在結論前被主持人打斷。"]
+    ]}
+   ]}
+  ]
+};
+
+/* 四組面向配色（深色版），編輯模式可循環切換 */
+const THEMES=[
+  {ac:"#6ea8ff", soft:"rgba(110,168,255,.14)", glow:"rgba(110,168,255,.17)"},
+  {ac:"#41dcae", soft:"rgba(65,220,174,.13)",  glow:"rgba(65,220,174,.15)"},
+  {ac:"#b494ff", soft:"rgba(180,148,255,.14)", glow:"rgba(180,148,255,.16)"},
+  {ac:"#ffb457", soft:"rgba(255,180,87,.13)",  glow:"rgba(255,180,87,.15)"}
+];
+const themeOf=s=>THEMES[(s.theme||0)%THEMES.length];
+const themeVars=t=>`--ac:${t.ac};--ac-soft:${t.soft};--ac-glow:${t.glow}`;
+
+/* ==========================================================
+   2. 儲存層：內容 (data) 與勾選狀態 (state) 分開存
+   ========================================================== */
+const KEY_DATA="nhqa.checklist.v2.data";
+const KEY_STATE="nhqa.checklist.v2.state";
+
+let uidSeq=0;
+const newUid=()=>"a"+(uidSeq++).toString(36)+"-"+Math.floor(performance.now()*1000).toString(36);
+
+/* 動作統一正規化成帶 uid 的物件，勾選狀態才能穩定對應 */
+function normalize(raw){
+  const d=JSON.parse(JSON.stringify(raw));
+  d.sections.forEach(sec=>{
+    sec.items.forEach(item=>{
+      item.actions=item.actions.map(a=>Array.isArray(a)
+        ? {uid:newUid(), name:a[0], desc:a[1]}
+        : {uid:a.uid||newUid(), name:a.name, desc:a.desc});
+    });
+  });
+  return d;
+}
+function getDefault(){
+  try{
+    const baked=JSON.parse(document.getElementById("bakedData").textContent);
+    if(baked && baked.sections) return baked;
+  }catch(e){}
+  return BUILTIN;
+}
+
+let data, state;
+(function load(){
+  const stored=localStorage.getItem(KEY_DATA);
+  let raw=null;
+  if(stored){ try{ raw=JSON.parse(stored); }catch(e){ console.warn("內容讀取失敗，改用預設。"); } }
+  data=normalize(raw && raw.sections ? raw : getDefault());
+  try{ state=JSON.parse(localStorage.getItem(KEY_STATE))||{}; }catch(e){ state={}; }
+})();
+
+let hintTimer=null;
+function flashHint(msg){
+  const el=document.getElementById("saveHint");
+  el.textContent=msg; el.classList.add("show");
+  clearTimeout(hintTimer);
+  hintTimer=setTimeout(()=>el.classList.remove("show"),1500);
+}
+function saveData(quiet){
+  localStorage.setItem(KEY_DATA, JSON.stringify(data));
+  if(!quiet) flashHint("已存檔 ✓");
+}
+function saveState(){ localStorage.setItem(KEY_STATE, JSON.stringify(state)); }
+
+/* ==========================================================
+   3. 產生投影片
+   投影片順序：封面 → 綱要 → (面向扉頁 → 各評分項目頁)×4 → 主線 → 結語
+   ========================================================== */
+const deck=document.getElementById("deck");
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+
+function coverSlide(){
+  const m=data.meta;
+  return `
+  <section class="slide cover" data-type="cover" data-label="封面">
+    <div class="slide-content">
+      <div class="eyebrow reveal" style="--d:.05s" data-f="eyebrow" data-single>${esc(m.eyebrow)}</div>
+      <h1 class="reveal" style="--d:.13s" data-f="title">${m.title}</h1>
+      <hr class="rule reveal" style="--d:.2s;width:min(46vw,420px)">
+      <p class="lead reveal" style="--d:.26s" data-f="intro">${esc(m.intro)}</p>
+      <div class="score-strip reveal" style="--d:.34s">
+        ${m.scores.map((s,i)=>`
+          <div class="score-box" data-score="${i}">
+            <b data-f="sv" data-single>${esc(s.value)}</b>
+            <span data-f="sl" data-single>${esc(s.label)}</span>
+          </div>`).join("")}
+      </div>
+      <div class="reveal" style="--d:.42s;display:flex;gap:14px;align-items:center">
+        <div class="big-bar" style="flex:1"><i class="js-bigbar"></i></div>
+        <span style="color:var(--muted);font-size:var(--small-size);white-space:nowrap">
+          準備完成度 <b class="js-done" style="color:var(--ac)">0</b> / <span class="js-total">0</span>
+        </span>
+      </div>
+      <div class="reveal" style="--d:.5s;color:var(--faint);font-size:var(--small-size)">
+        ← → 或空白鍵翻頁 ・ G 目錄 ・ E 編輯
+      </div>
+    </div>
+  </section>`;
+}
+
+function agendaSlide(){
+  return `
+  <section class="slide" data-type="agenda" data-label="綱要">
+    <div class="slide-content">
+      <div class="tagrow reveal" style="--d:.05s"><span class="tag">AGENDA</span></div>
+      <h2 class="reveal" style="--d:.1s;font-size:var(--h2-size);margin:.2rem 0 0">四個評分面向，一條報告主線</h2>
+      <div class="agenda reveal" style="--d:.18s">
+        ${data.sections.map((s,i)=>{
+          const t=themeOf(s);
+          return `
+          <div class="a-card js-jump" data-si="${i}" style="--acx:${t.ac};border-color:${t.soft}">
+            <span class="a-num">${pad(i+1)}</span>
+            <h3>${esc(s.title)}</h3>
+            <small>${esc(s.navHint||"")}</small>
+            <div style="font-family:'IBM Plex Sans';font-weight:700;color:${t.ac};font-size:var(--body-size)">${esc(s.score)}</div>
+            <div class="mini-bar"><i class="js-secbar" data-si="${i}"></i></div>
+            <small class="js-secnum" data-si="${i}"></small>
+          </div>`;
+        }).join("")}
+      </div>
+      <button class="cbtn ed block add-section" style="--d:.3s;align-self:flex-start">＋ 新增評分面向</button>
+    </div>
+  </section>`;
+}
+
+function sectionSlide(sec,si){
+  const t=themeOf(sec);
+  return `
+  <section class="slide" data-type="section" data-si="${si}" style="${themeVars(t)}"
+           data-label="${esc(sec.title)}">
+    <div class="slide-tools ed">
+      <button class="icon-btn cycle-theme" title="換色">◐</button>
+      <button class="icon-btn del-section" title="刪除整個面向">✕</button>
+    </div>
+    <div class="slide-content">
+      <div class="divider-grid">
+        <div>
+          <div class="bignum reveal" style="--d:.05s">${pad(si+1)}</div>
+          <div class="tagrow reveal" style="--d:.12s;margin-top:14px">
+            <span class="tag" data-f="secScore" data-single>${esc(sec.score)}</span>
+            <span class="tag plain" data-f="secHint" data-single>${esc(sec.navHint||"")}</span>
+          </div>
+          <h2 class="reveal" style="--d:.18s" data-f="secTitle" data-single>${esc(sec.title)}</h2>
+          <p class="reveal" style="--d:.24s" data-f="secDesc">${esc(sec.desc)}</p>
+        </div>
+        <ul class="item-index reveal" style="--d:.3s">
+          ${sec.items.map((it,ii)=>`
+            <li class="js-jump-item" data-si="${si}" data-ii="${ii}">
+              <i>${pad(ii+1)}</i><span>${esc(it.title)}</span>
+              <span class="st js-itemstat" data-si="${si}" data-ii="${ii}"></span>
+            </li>`).join("")}
+        </ul>
+      </div>
+      <button class="cbtn ed block add-item" data-si="${si}" style="align-self:flex-start">＋ 新增評分項目</button>
+    </div>
+  </section>`;
+}
+
+function actionHTML(a,idx){
+  return `
+  <div class="action reveal" data-uid="${a.uid}" style="--d:${(.22+idx*.05).toFixed(2)}s">
+    <input type="checkbox" class="check" ${state[a.uid]?"checked":""}>
+    <div>
+      <strong data-f="aName" data-single>${esc(a.name)}</strong>
+      <span class="desc" data-f="aDesc">${esc(a.desc)}</span>
+    </div>
+    <button class="icon-btn ed del-action" title="刪除此動作">✕</button>
+  </div>`;
+}
+
+function itemSlide(sec,si,item,ii){
+  const t=themeOf(sec);
+  return `
+  <section class="slide" data-type="item" data-si="${si}" data-ii="${ii}" style="${themeVars(t)}"
+           data-label="${esc(sec.title)}">
+    <div class="slide-tools ed">
+      <button class="icon-btn add-item" data-si="${si}" title="新增評分項目">＋</button>
+      <button class="icon-btn del-item" title="刪除這一頁">✕</button>
+    </div>
+    <div class="slide-content">
+      <div class="item-grid">
+        <div>
+          <div class="tagrow reveal" style="--d:.04s">
+            <span class="tag">${pad(si+1)} ${esc(sec.title)}</span>
+          </div>
+          <div class="bignum reveal" style="--d:.1s;margin-top:10px">${pad(ii+1)}</div>
+          <h2 class="reveal" style="--d:.16s" data-f="itemTitle">${esc(item.title)}</h2>
+          <hr class="rule reveal" style="--d:.2s;margin-top:14px">
+          <div class="reveal" style="--d:.24s;color:var(--faint);font-size:var(--small-size);margin-top:10px">
+            <span class="js-itemstat" data-si="${si}" data-ii="${ii}"></span> 已完成
+          </div>
+        </div>
+        <div class="actions">
+          ${item.actions.map(actionHTML).join("")}
+          <button class="add-row ed block add-action">＋ 新增動作</button>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function calloutSlide(){
+  const m=data.meta;
+  return `
+  <section class="slide" data-type="callout" data-label="報告主線">
+    <div class="slide-content">
+      <div class="two-col">
+        <div>
+          <div class="tagrow reveal" style="--d:.04s"><span class="tag">STORYLINE</span></div>
+          <h2 class="reveal" style="--d:.1s;font-size:clamp(1.7rem,4.2vw,3.2rem);margin:.5rem 0 .8rem"
+              data-f="calloutTitle">${esc(m.calloutTitle)}</h2>
+          <p class="lead reveal" style="--d:.18s" data-f="calloutBody">${esc(m.calloutBody)}</p>
+        </div>
+        <div class="script-box reveal" style="--d:.26s">
+          <b data-f="scriptTitle" data-single>${esc(m.scriptTitle)}</b>
+          <span data-f="scriptBody">${esc(m.scriptBody)}</span>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+function closingSlide(){
+  return `
+  <section class="slide" data-type="closing" data-label="結語">
+    <div class="slide-content" style="align-items:center;text-align:center">
+      <div class="tagrow reveal" style="--d:.04s;justify-content:center"><span class="tag">CHECKLIST</span></div>
+      <div class="stat-huge reveal js-pct" style="--d:.1s">0%</div>
+      <div class="reveal" style="--d:.18s;width:min(70vw,620px)">
+        <div class="big-bar"><i class="js-bigbar"></i></div>
+      </div>
+      <p class="lead reveal" style="--d:.24s;text-align:center">
+        已完成 <b class="js-done" style="color:var(--ac)">0</b> / <span class="js-total">0</span> 個得分動作，
+        還有 <b class="js-left" style="color:var(--ink)">0</b> 項可以在上台前補起來。
+      </p>
+      <p class="reveal" style="--d:.3s;color:var(--faint);font-size:var(--small-size)"
+         data-f="footer">${esc(data.meta.footer)}</p>
+    </div>
+  </section>`;
+}
+
+let slides=[];
+function render(keepIndex){
+  const idx = keepIndex==null ? current : keepIndex;
+  let html = coverSlide() + agendaSlide();
+  data.sections.forEach((sec,si)=>{
+    html += sectionSlide(sec,si);
+    sec.items.forEach((it,ii)=>{ html += itemSlide(sec,si,it,ii); });
+  });
+  html += calloutSlide() + closingSlide();
+  deck.innerHTML = html;
+
+  slides=[...deck.querySelectorAll(".slide")];
+  document.getElementById("slideTotal").textContent=slides.length;
+  slides.forEach(s=>observer.observe(s));
+  applyEditable();
+  buildToc();
+  updateProgress();
+  goTo(Math.min(idx, slides.length-1), true);
+}
+
+/* ==========================================================
+   4. 翻頁
+   ========================================================== */
+let current=0;
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>.55){
+      e.target.classList.add("active");
+      const i=slides.indexOf(e.target);
+      if(i>=0) setCurrent(i);
+    }
+  });
+},{threshold:[.55]});
+
+function setCurrent(i){
+  current=i;
+  document.getElementById("slideNow").textContent=i+1;
+  document.getElementById("slideLabel").textContent=slides[i]?.dataset.label||"";
+  document.getElementById("deckBar").style.width=((i+1)/slides.length*100)+"%";
+  document.querySelectorAll("#toc button").forEach((b,bi)=>b.classList.toggle("cur",bi===i));
+}
+function goTo(i,instant){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  if(!slides[i]) return;
+  if(instant){
+    const prev=document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior="auto";
+    slides[i].scrollIntoView({block:"start"});
+    document.documentElement.style.scrollBehavior=prev||"";
+  }else{
+    slides[i].scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  slides[i].classList.add("active");
+  setCurrent(i);
+}
+const next=()=>goTo(current+1);
+const prev=()=>goTo(current-1);
+document.getElementById("nextBtn").onclick=next;
+document.getElementById("prevBtn").onclick=prev;
+
+/* 目錄 */
+function buildToc(){
+  document.getElementById("toc").innerHTML=slides.map((s,i)=>{
+    const type=s.dataset.type;
+    const si=s.dataset.si;
+    const t=si!=null && data.sections[si] ? themeOf(data.sections[si]).ac : "#6ea8ff";
+    let label=s.dataset.label;
+    if(type==="item") label=data.sections[si].items[s.dataset.ii].title;
+    if(type==="section") label="▸ "+label;
+    return `<button data-i="${i}" style="--tc:${t}">
+      <small>${pad(i+1)} ・ ${type==="item"?"評分項目":type==="section"?"面向扉頁":s.dataset.label}</small>
+      <span>${esc(label)}</span></button>`;
+  }).join("");
+}
+const overlay=document.getElementById("overlay");
+document.getElementById("tocBtn").onclick=()=>overlay.classList.toggle("show");
+overlay.addEventListener("click",e=>{
+  const b=e.target.closest("button[data-i]");
+  if(b){ overlay.classList.remove("show"); goTo(+b.dataset.i); }
+  else if(e.target===overlay) overlay.classList.remove("show");
+});
+
+/* 綱要 / 扉頁上的跳轉 */
+deck.addEventListener("click",e=>{
+  if(editing) return;
+  const jump=e.target.closest(".js-jump");
+  if(jump){
+    const i=slides.findIndex(s=>s.dataset.type==="section" && s.dataset.si===jump.dataset.si);
+    if(i>=0) goTo(i); return;
+  }
+  const ji=e.target.closest(".js-jump-item");
+  if(ji){
+    const i=slides.findIndex(s=>s.dataset.type==="item" && s.dataset.si===ji.dataset.si && s.dataset.ii===ji.dataset.ii);
+    if(i>=0) goTo(i);
+  }
+});
+
+/* ==========================================================
+   5. 勾選與進度
+   ========================================================== */
+deck.addEventListener("click",e=>{
+  if(editing) return;
+  const row=e.target.closest(".action");
+  if(!row) return;
+  const box=row.querySelector(".check");
+  if(e.target!==box) box.checked=!box.checked;
+  state[row.dataset.uid]=box.checked;
+  saveState(); updateProgress();
+});
+
+function updateProgress(){
+  let done=0,total=0;
+  data.sections.forEach((sec,si)=>{
+    let sd=0,stt=0;
+    sec.items.forEach((it,ii)=>{
+      const d=it.actions.filter(a=>state[a.uid]).length;
+      sd+=d; stt+=it.actions.length;
+      document.querySelectorAll(`.js-itemstat[data-si="${si}"][data-ii="${ii}"]`)
+        .forEach(el=>el.textContent=`${d}/${it.actions.length}`);
+    });
+    done+=sd; total+=stt;
+    const bar=document.querySelector(`.js-secbar[data-si="${si}"]`);
+    if(bar) bar.style.width=(stt?sd/stt*100:0)+"%";
+    const num=document.querySelector(`.js-secnum[data-si="${si}"]`);
+    if(num) num.textContent=`${sd} / ${stt} 完成`;
+  });
+  const pct=total?Math.round(done/total*100):0;
+  document.querySelectorAll(".js-done").forEach(el=>el.textContent=done);
+  document.querySelectorAll(".js-total").forEach(el=>el.textContent=total);
+  document.querySelectorAll(".js-left").forEach(el=>el.textContent=total-done);
+  document.querySelectorAll(".js-pct").forEach(el=>el.textContent=pct+"%");
+  document.querySelectorAll(".js-bigbar").forEach(el=>el.style.width=pct+"%");
+}
+
+/* ==========================================================
+   6. 編輯模式
+   ========================================================== */
+let editing=false;
+function applyEditable(){
+  deck.querySelectorAll("[data-f]").forEach(el=>{
+    el.setAttribute("contenteditable", editing?"true":"false");
+  });
+}
+function setEditing(on){
+  editing=on;
+  document.body.classList.toggle("editing",on);
+  const b=document.getElementById("editBtn");
+  b.textContent = on ? "✓ 完成" : "✎ 編輯";
+  b.classList.toggle("on",on);
+  applyEditable();
+  if(!on){ harvest(); saveData(); }
+}
+
+/* 依索引把 DOM 文字收回 data */
+function harvest(){
+  const q=(sel,root=deck)=>root.querySelector(sel);
+  const txt=el=>el?el.textContent.trim():"";
+  const m=data.meta;
+  const cover=q('.slide[data-type="cover"]');
+  if(cover){
+    m.eyebrow=txt(cover.querySelector('[data-f="eyebrow"]'));
+    m.title=cover.querySelector('[data-f="title"]').innerHTML.trim();
+    m.intro=txt(cover.querySelector('[data-f="intro"]'));
+    m.scores=[...cover.querySelectorAll(".score-box")].map(b=>({
+      value:txt(b.querySelector('[data-f="sv"]')),
+      label:txt(b.querySelector('[data-f="sl"]'))
+    }));
+  }
+  const co=q('.slide[data-type="callout"]');
+  if(co){
+    m.calloutTitle=txt(co.querySelector('[data-f="calloutTitle"]'));
+    m.calloutBody=txt(co.querySelector('[data-f="calloutBody"]'));
+    m.scriptTitle=txt(co.querySelector('[data-f="scriptTitle"]'));
+    m.scriptBody=txt(co.querySelector('[data-f="scriptBody"]'));
+  }
+  const cl=q('.slide[data-type="closing"] [data-f="footer"]');
+  if(cl) m.footer=txt(cl);
+
+  data.sections.forEach((sec,si)=>{
+    const ss=q(`.slide[data-type="section"][data-si="${si}"]`);
+    if(ss){
+      sec.title=txt(ss.querySelector('[data-f="secTitle"]'));
+      sec.desc=txt(ss.querySelector('[data-f="secDesc"]'));
+      sec.score=txt(ss.querySelector('[data-f="secScore"]'));
+      sec.navHint=txt(ss.querySelector('[data-f="secHint"]'));
+    }
+    sec.items.forEach((it,ii)=>{
+      const is=q(`.slide[data-type="item"][data-si="${si}"][data-ii="${ii}"]`);
+      if(!is) return;
+      it.title=txt(is.querySelector('[data-f="itemTitle"]'));
+      it.actions=[...is.querySelectorAll(".action")].map(a=>({
+        uid:a.dataset.uid,
+        name:txt(a.querySelector('[data-f="aName"]')),
+        desc:txt(a.querySelector('[data-f="aDesc"]'))
+      }));
+    });
+  });
+}
+
+/* 打字自動存檔（不重繪，避免游標跳動） */
+let typeTimer=null;
+document.addEventListener("input",e=>{
+  if(!editing || !e.target.isContentEditable) return;
+  clearTimeout(typeTimer);
+  typeTimer=setTimeout(()=>{ harvest(); saveData(true); flashHint("自動存檔 ✓"); },700);
+});
+/* 貼上轉純文字 */
+document.addEventListener("paste",e=>{
+  if(!e.target.isContentEditable) return;
+  e.preventDefault();
+  const t=(e.clipboardData||window.clipboardData).getData("text/plain");
+  document.execCommand("insertText",false,t);
+});
+
+/* 增刪結構 */
+deck.addEventListener("click",e=>{
+  if(!editing) return;
+  const slide=e.target.closest(".slide");
+
+  if(e.target.closest(".del-action")){
+    const row=e.target.closest(".action");
+    delete state[row.dataset.uid];
+    row.remove(); harvest(); saveData(); saveState(); updateProgress(); return;
+  }
+  if(e.target.closest(".add-action")){
+    const btn=e.target.closest(".add-action");
+    const a={uid:newUid(), name:"新的動作", desc:"寫下這個動作的具體作法。"};
+    btn.insertAdjacentHTML("beforebegin", actionHTML(a, btn.parentElement.querySelectorAll(".action").length));
+    const el=btn.parentElement.querySelector(`.action[data-uid="${a.uid}"]`);
+    el.classList.add("active"); el.style.opacity=1; el.style.transform="none";
+    applyEditable();
+    el.querySelector('[data-f="aName"]').focus();
+    document.execCommand("selectAll",false,null);
+    harvest(); saveData(); updateProgress(); return;
+  }
+  if(e.target.closest(".del-item")){
+    if(!confirm("刪除這一頁評分項目？")) return;
+    harvest();
+    const si=+slide.dataset.si, ii=+slide.dataset.ii;
+    data.sections[si].items[ii].actions.forEach(a=>delete state[a.uid]);
+    data.sections[si].items.splice(ii,1);
+    saveData(); saveState(); render(Math.max(0,current-1)); return;
+  }
+  if(e.target.closest(".add-item")){
+    harvest();
+    const si=+e.target.closest(".add-item").dataset.si;
+    data.sections[si].items.push({
+      title:"新的評分項目",
+      actions:[{uid:newUid(),name:"新的動作",desc:"寫下這個動作的具體作法。"}]
+    });
+    saveData();
+    render(current);
+    const i=slides.findIndex(s=>s.dataset.type==="item" && +s.dataset.si===si
+      && +s.dataset.ii===data.sections[si].items.length-1);
+    if(i>=0) goTo(i); return;
+  }
+  if(e.target.closest(".del-section")){
+    if(!confirm("刪除整個評分面向與其所有頁面？")) return;
+    harvest();
+    const si=+slide.dataset.si;
+    data.sections[si].items.forEach(it=>it.actions.forEach(a=>delete state[a.uid]));
+    data.sections.splice(si,1);
+    saveData(); saveState(); render(1); return;
+  }
+  if(e.target.closest(".cycle-theme")){
+    harvest();
+    const si=+slide.dataset.si;
+    data.sections[si].theme=((data.sections[si].theme||0)+1)%THEMES.length;
+    saveData(); render(current); return;
+  }
+  if(e.target.closest(".add-section")){
+    harvest();
+    data.sections.push({
+      id:"sec-"+Date.now().toString(36),
+      title:"新的評分面向", score:"00 分", theme:data.sections.length%THEMES.length,
+      navHint:"自訂重點", desc:"寫下這個面向要讓評審相信什麼。",
+      items:[{title:"新的評分項目",actions:[{uid:newUid(),name:"新的動作",desc:"寫下這個動作的具體作法。"}]}]
+    });
+    saveData(); render(current);
+    const i=slides.findIndex(s=>s.dataset.type==="section" && +s.dataset.si===data.sections.length-1);
+    if(i>=0) goTo(i); return;
+  }
+});
+
+/* ==========================================================
+   7. 工具列與快捷鍵
+   ========================================================== */
+document.getElementById("editBtn").onclick=()=>setEditing(!editing);
+document.getElementById("moreBtn").onclick=()=>document.getElementById("moreMenu").classList.toggle("show");
+
+document.getElementById("resetChecks").onclick=()=>{
+  if(!confirm("確定清除所有勾選？（內容不會被刪除）")) return;
+  state={}; saveState();
+  deck.querySelectorAll(".check").forEach(c=>c.checked=false);
+  updateProgress(); flashHint("已清除");
+};
+document.getElementById("exportBtn").onclick=()=>{
+  harvest();
+  download("報告評分攻略.json", JSON.stringify(data,null,2), "application/json");
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("fileInput").click();
+document.getElementById("fileInput").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const parsed=JSON.parse(r.result);
+      if(!parsed.sections) throw new Error("格式不符");
+      data=normalize(parsed); saveData(); render(0); flashHint("已匯入 ✓");
+    }catch(err){ alert("匯入失敗："+err.message); }
+    e.target.value="";
+  };
+  r.readAsText(f);
+};
+/* 另存 HTML：把目前內容烘進副本，對方打開就是編輯後的版本 */
+document.getElementById("saveHtmlBtn").onclick=()=>{
+  harvest();
+  const clone=document.documentElement.cloneNode(true);
+  clone.querySelector("#deck").innerHTML="";
+  clone.querySelector("#overlay").classList.remove("show");
+  clone.querySelector("body").classList.remove("editing");
+  clone.querySelector("#bakedData").textContent=JSON.stringify(data).replace(/</g,"\\u003c");
+  download("報告評分攻略_簡報副本.html","<!DOCTYPE html>\n"+clone.outerHTML,"text/html");
+};
+document.getElementById("restoreBtn").onclick=()=>{
+  if(!confirm("還原成預設內容？目前所有編輯將被清除。")) return;
+  localStorage.removeItem(KEY_DATA);
+  data=normalize(getDefault());
+  render(0); flashHint("已還原");
+};
+function download(name,content,type){
+  const url=URL.createObjectURL(new Blob([content],{type}));
+  const a=document.createElement("a");
+  a.href=url; a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+document.addEventListener("keydown",e=>{
+  if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==="s"){
+    e.preventDefault(); harvest(); saveData(); return;
+  }
+  if(e.target.isContentEditable){
+    if(e.key==="Escape"){ e.target.blur(); setEditing(false); }
+    if(e.key==="Enter" && e.target.hasAttribute("data-single")){ e.preventDefault(); e.target.blur(); }
+    return;
+  }
+  switch(e.key){
+    case "ArrowRight": case "ArrowDown": case "PageDown": case " ":
+      e.preventDefault(); next(); break;
+    case "ArrowLeft": case "ArrowUp": case "PageUp":
+      e.preventDefault(); prev(); break;
+    case "Home": e.preventDefault(); goTo(0); break;
+    case "End": e.preventDefault(); goTo(slides.length-1); break;
+    case "Escape":
+      if(overlay.classList.contains("show")) overlay.classList.remove("show");
+      else if(editing) setEditing(false);
+      break;
+    case "g": case "G": overlay.classList.toggle("show"); break;
+    case "e": case "E": if(!e.metaKey&&!e.ctrlKey) setEditing(!editing); break;
+  }
+});
+
+render(0);
+</script>
+</body>
+</html>

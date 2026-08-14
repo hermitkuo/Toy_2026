@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NHQA 智慧醫療參賽類別熱區圖｜2021–2025</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#111832; --panel2:#16203f; --text:#eef3ff; --muted:#aeb8d4;
+    --line:rgba(255,255,255,.10); --accent:#75d3ff; --hot:#ffcc66; --hot2:#ff7a59;
+    --cold:#1e2a52;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;background:radial-gradient(circle at 20% 0%,#213063 0,#0b1020 34%,#070a14 100%);color:var(--text);}
+  .wrap{max-width:1280px;margin:0 auto;padding:36px 24px 56px;}
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;align-items:stretch;margin-bottom:22px;}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.28);backdrop-filter: blur(8px);}
+  .title{padding:28px 30px;}
+  h1{font-size:34px;line-height:1.18;margin:0 0 12px;font-weight:850;letter-spacing:.3px;}
+  .subtitle{font-size:16px;color:var(--muted);line-height:1.65;max-width:860px;}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .pill{border:1px solid var(--line);background:rgba(117,211,255,.09);color:#dff6ff;padding:7px 11px;border-radius:999px;font-size:13px;}
+  .kpis{padding:22px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .kpi{padding:18px;border-radius:18px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);}
+  .kpi b{display:block;font-size:30px;margin-bottom:4px;color:#fff;}
+  .kpi span{font-size:13px;color:var(--muted);}
+  .section{padding:24px;margin-top:18px;}
+  h2{font-size:22px;margin:0 0 14px;font-weight:800;}
+  .note{font-size:14px;line-height:1.7;color:var(--muted);margin:0 0 16px;}
+  .legend{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:8px 0 18px;}
+  .bar{width:180px;height:12px;border-radius:999px;background:linear-gradient(90deg,#1e2a52,#2a78a5,#ffcc66,#ff7a59);border:1px solid rgba(255,255,255,.12)}
+  .heatmap{overflow:auto;border-radius:16px;border:1px solid var(--line);background:rgba(5,8,18,.40);}
+  table{border-collapse:collapse;width:100%;min-width:920px;}
+  th,td{border-bottom:1px solid rgba(255,255,255,.075);border-right:1px solid rgba(255,255,255,.065);padding:10px 12px;text-align:center;font-size:14px;}
+  th{position:sticky;top:0;background:#121a35;color:#dfe9ff;z-index:2;font-weight:750;}
+  th:first-child{left:0;z-index:3;text-align:left;min-width:330px;}
+  td:first-child{position:sticky;left:0;background:#10172f;text-align:left;color:#eef3ff;font-weight:650;z-index:1;}
+  .cell{font-weight:800;color:#fff;border-radius:10px;padding:8px 0;min-width:42px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}
+  .v0{background:#172142;color:#5f6d91}.v1{background:#235177}.v2{background:#2f8fba}.v3{background:#ffcc66;color:#111}.v4{background:#ff9d5c;color:#111}.v5{background:#ff6f59}.v6{background:#ff4f49}.v7{background:#e83b52}.v8{background:#c72f5a}.v9{background:#a82662}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .insight{padding:20px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.075);}
+  .insight h3{font-size:17px;margin:0 0 8px;color:#f7fbff}.insight p{margin:0;color:var(--muted);line-height:1.7;font-size:14px;}
+  .timeline{display:grid;gap:10px;margin-top:12px}.yearrow{display:grid;grid-template-columns:76px 1fr 46px;gap:12px;align-items:center}.yearrow .y{font-weight:800}.track{height:16px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#75d3ff,#ffcc66,#ff7a59);border-radius:999px}.cnt{text-align:right;font-weight:800}
+  .cases{display:grid;gap:10px;margin-top:16px}.case{display:grid;grid-template-columns:72px 260px 1fr 310px;gap:12px;align-items:start;padding:14px;border-radius:16px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07)}
+  .case .yr{font-weight:850;color:#fff}.case .cat{font-size:13px;color:#d5e9ff}.case .name{font-weight:750;line-height:1.45}.case .owner{font-size:13px;color:var(--muted);line-height:1.55}
+  .tag{display:inline-block;margin:0 5px 5px 0;padding:4px 8px;border-radius:999px;background:rgba(117,211,255,.10);border:1px solid rgba(117,211,255,.20);color:#dff6ff;font-size:12px;}
+  .footer{margin-top:18px;color:#7f8aa9;font-size:12px;line-height:1.6;text-align:right;}
+  @media(max-width:900px){.hero,.grid2{grid-template-columns:1fr}.case{grid-template-columns:1fr}.wrap{padding:24px 14px}h1{font-size:28px}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="card title">
+      <h1>NHQA 智慧醫療參賽熱區圖<br>2021–2025 年 × 參賽類別</h1>
+      <div class="subtitle">依據提供清單整理，共 25 件參賽案。此圖不是官方得獎統計，而是用於盤點院內參賽布局：哪些年度集中火力、哪些類別已形成可複製戰線、哪些領域仍是空白。</div>
+      <div class="meta">
+        <span class="pill">資料範圍：2021–2025</span>
+        <span class="pill">主軸：智慧醫療類</span>
+        <span class="pill">單位：參賽案件數</span>
+        <span class="pill">產出：單一靜態 HTML</span>
+      </div>
+    </div>
+    <div class="card kpis">
+      <div class="kpi"><b>25</b><span>總參賽案件</span></div>
+      <div class="kpi"><b>16</b><span>細分類別／流程</span></div>
+      <div class="kpi"><b>9</b><span>2024 年案件數，高峰年度</span></div>
+      <div class="kpi"><b>5</b><span>2025 年：回到解決方案組集中布局</span></div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>年度 × 參賽類別熱區圖</h2>
+    <p class="note">顏色越熱代表該年度該類別案件越多。2024 年明顯從「單點解決方案」擴張到「智慧服務流程」整體覆蓋；2025 年則再度集中於智慧解決方案組，偏向臨床照護、門診與專科管理。</p>
+    <div class="legend"><span>低</span><div class="bar"></div><span>高</span></div>
+    <div class="heatmap">
+      <table>
+        <thead><tr><th>參賽類別／領域</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>合計</th></tr></thead>
+        <tbody>
+<tr><td>智慧解決方案組｜住院服務領域</td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v2">2</div></td></tr>
+<tr><td>智慧解決方案組｜門急診服務領域</td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧解決方案組｜社區健康／長照領域</td><td><div class="cell v0">0</div></td><td><div class="cell v2">2</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v3">3</div></td></tr>
+<tr><td>智慧解決方案組｜教學研究領域</td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧解決方案組｜環境管理領域</td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v2">2</div></td></tr>
+<tr><td>智慧解決方案組｜行政管理領域</td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v3">3</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v5">5</div></td></tr>
+<tr><td>智慧解決方案組｜急診管理領域</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧解決方案組｜門診服務領域</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v2">2</div></td><td><div class="cell v2">2</div></td></tr>
+<tr><td>智慧解決方案組｜手術照護領域</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧解決方案組｜藥事服務領域</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜手術照護服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜門診服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜住診／ICU 服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜急診照護服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜檢驗／檢查服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td>智慧服務組｜行政管理服務流程</td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td><td><div class="cell v0">0</div></td><td><div class="cell v1">1</div></td></tr>
+<tr><td><b>年度合計</b></td><td><div class="cell v1">1</div></td><td><div class="cell v6">6</div></td><td><div class="cell v4">4</div></td><td><div class="cell v9">9</div></td><td><div class="cell v5">5</div></td><td><div class="cell v9">25</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card section">
+      <h2>年度案件量趨勢</h2>
+      <div class="timeline">
+        <div class="yearrow"><div class="y">2021</div><div class="track"><div class="fill" style="width:11%"></div></div><div class="cnt">1</div></div>
+        <div class="yearrow"><div class="y">2022</div><div class="track"><div class="fill" style="width:67%"></div></div><div class="cnt">6</div></div>
+        <div class="yearrow"><div class="y">2023</div><div class="track"><div class="fill" style="width:44%"></div></div><div class="cnt">4</div></div>
+        <div class="yearrow"><div class="y">2024</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="cnt">9</div></div>
+        <div class="yearrow"><div class="y">2025</div><div class="track"><div class="fill" style="width:56%"></div></div><div class="cnt">5</div></div>
+      </div>
+    </div>
+    <div class="card section">
+      <h2>策略判讀</h2>
+      <div class="insight"><h3>1. 2024 是「流程型參賽」爆發點</h3><p>手術、門診、住診、急診、檢驗檢查、行政管理六條服務流程同年出現，代表從單點工具轉向全院流程包裝。</p></div>
+      <br>
+      <div class="insight"><h3>2. 行政管理是歷年最密集熱區</h3><p>智慧解決方案組行政管理累計 5 件，是最穩定的參賽母題；但也容易陷入「效率改善」敘事重複，需要拉高到病安、治理、成本與韌性。</p></div>
+      <br>
+      <div class="insight"><h3>3. 2025 轉向專科臨床與病人賦能</h3><p>放射治療、腹膜透析、冠心病、手術護理、藥事處方無紙化，顯示下一波重點不只是智慧化，而是臨床價值與病人旅程。</p></div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>類別聚類摘要</h2>
+    <p class="note">用於快速看出可延伸的參賽路線，而非單純年度回顧。</p>
+    <div>
+      <span class="tag">行政管理：6 件含服務流程</span>
+      <span class="tag">社區健康／長照：3 件</span>
+      <span class="tag">住院／住診：3 件含 ICU 流程</span>
+      <span class="tag">門診：3 件含服務流程</span>
+      <span class="tag">急診：3 件含門急診與流程</span>
+      <span class="tag">環境／ESG：2 件</span>
+      <span class="tag">手術：2 件</span>
+      <span class="tag">藥事：1 件</span>
+      <span class="tag">教學研究：1 件</span>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>原始案件清單</h2>
+    <div class="cases">
+      <div class="case"><div class="yr">2021</div><div class="cat">智慧解決方案組｜住院服務</div><div class="name">智慧行動巡房與病人安全相關應用</div><div class="owner">人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜門急診服務</div><div class="name">重災大傷e管理</div><div class="owner">醫事室</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜社區健康／長照</div><div class="name">健康福祉科技整合照護－打造沒有圍牆的醫院</div><div class="owner">院長室、企劃室</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜社區健康／長照</div><div class="name">Covid SHOT 守護健康一起來</div><div class="owner">醫事室</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜教學研究</div><div class="name">Lumos 電子病歷智能搜尋暨分析系統</div><div class="owner">研究部、臨床流病暨生統諮詢中心、醫事室</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜環境管理</div><div class="name">導入 AI 於智慧化環境管控，推行醫院 ESG 行動</div><div class="owner">工務室</div></div>
+      <div class="case"><div class="yr">2022</div><div class="cat">智慧解決方案組｜行政管理</div><div class="name">輸送不失手～千真萬確送對你</div><div class="owner">總務室、護理部、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2023</div><div class="cat">智慧解決方案組｜行政管理</div><div class="name">e路走來給藥安全亮起來</div><div class="owner">護理部、資訊室</div></div>
+      <div class="case"><div class="yr">2023</div><div class="cat">智慧解決方案組｜社區健康／長照</div><div class="name">智慧遠距－乳攝車行動篩檢報告即時達</div><div class="owner">影像醫學部</div></div>
+      <div class="case"><div class="yr">2023</div><div class="cat">智慧解決方案組｜行政管理</div><div class="name">檢驗流程數位轉型</div><div class="owner">檢驗醫學科</div></div>
+      <div class="case"><div class="yr">2023</div><div class="cat">智慧解決方案組｜行政管理</div><div class="name">Believe 即刻啟床 i 創活化</div><div class="owner">醫事室</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧解決方案組｜行政管理</div><div class="name">智慧掌握 歷歷上手</div><div class="owner">醫事室、資訊室、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧解決方案組｜環境管理</div><div class="name">導入 AI 智慧防災管理，提升環境安全，實踐醫院 ESG 永續發展</div><div class="owner">院長室、企劃室、護理部、醫事室、公共傳播室、人工智慧醫療創新發展中心、資訊室、工務室</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧解決方案組｜急診管理</div><div class="name">院前救護到院守護，智慧串接生命之鍊</div><div class="owner">院長室、醫務部、護理部、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜手術照護流程</div><div class="name">花慈手術 e 照護</div><div class="owner">手術室、護理部、資訊室</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜門診服務流程</div><div class="name">花慈門診 e 服務</div><div class="owner">護理部、腎臟內科、醫事室</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜住診／ICU 服務流程</div><div class="name">花慈住院 e 照護</div><div class="owner">心臟內科、護理部</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜急診照護流程</div><div class="name">花慈 e 急診暢通讚</div><div class="owner">急診部、護理部</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜檢驗／檢查流程</div><div class="name">花慈檢驗檢查 e 服務</div><div class="owner">消化系功能檢查室、影像醫學部、臨床病理部</div></div>
+      <div class="case"><div class="yr">2024</div><div class="cat">智慧服務組｜行政管理流程</div><div class="name">花慈行政流程 e 服務</div><div class="owner">企劃室、人工智慧醫療創新發展中心、法務室、醫事室、教學部、感染管制中心、人資室、品管中心、總務室、工務室、財務室</div></div>
+      <div class="case"><div class="yr">2025</div><div class="cat">智慧解決方案組｜門診服務</div><div class="name">花放核心以病人為中心：一體化放射治療管理系統</div><div class="owner">癌症醫學中心</div></div>
+      <div class="case"><div class="yr">2025</div><div class="cat">智慧解決方案組｜門診服務</div><div class="name">智慧結合虛擬照護：打造腹膜透析病人 AI 互動學習與自我管理</div><div class="owner">腎臟內科、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2025</div><div class="cat">智慧解決方案組｜住院服務</div><div class="name">智護冠心：跨域整合實踐全人照護與病人賦能</div><div class="owner">護理部、心臟內科、法人資訊室、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2025</div><div class="cat">智慧解決方案組｜手術照護</div><div class="name">智慧引領手術全期護理照護</div><div class="owner">護理部、外科醫學發展中心、總務室、品管中心、法人資訊室、人工智慧醫療創新發展中心</div></div>
+      <div class="case"><div class="yr">2025</div><div class="cat">智慧解決方案組｜藥事服務</div><div class="name">地球永續，開創處方無紙化元年：運用 FHIR 資料交換提升處方箋服務效能</div><div class="owner">藥學部</div></div>
+    </div>
+  </div>
+  <div class="footer">Generated from user-provided list · 2026-07-09</div>
+</div>
+</body>
+</html>

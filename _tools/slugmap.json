@@ -1,0 +1,241 @@
+{
+  "_readme": "slug 與來源檔的對應表。src 為 vault (OB_Mini2) 相對路徑。是否上站由 HTML搜集區/collect_list.md 的勾選決定，不是這裡。collect.py 偵測到新的 html_*.html 會自動追加到這裡並提示。",
+  "groups": [
+    {
+      "key": "ai-governance",
+      "label": "AI 中心 · 治理與行政",
+      "icon": "shield"
+    },
+    {
+      "key": "clinical-ai",
+      "label": "AI 中心 · 臨床應用",
+      "icon": "pulse"
+    },
+    {
+      "key": "research-method",
+      "label": "臨床研究方法",
+      "icon": "flask"
+    },
+    {
+      "key": "uiux",
+      "label": "UI/UX 與網頁",
+      "icon": "layout"
+    },
+    {
+      "key": "tools-notes",
+      "label": "工具與工作坊筆記",
+      "icon": "book"
+    }
+  ],
+  "excluded_sources": [
+    {
+      "src": "ABCDE_Focus/F_Github Page/aigov/html_醫療機構應用生成式人工智慧指引.html",
+      "reason": "已以 /aigov/ 獨立部署並有手寫 toy 卡片，不重複收集"
+    }
+  ],
+  "pages": [
+    {
+      "slug": "genai-guideline-governance",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_1.行政與PM.PM/0723_Task_AI治理委員會/Web/html_醫療機構應用生成式人工智慧指引.html",
+      "desc": "衛福部生成式 AI 指引的治理導入拆解：誰負責什麼、卡在哪一關。"
+    },
+    {
+      "slug": "genai-guideline-fulltext",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_1.行政與PM.PM/0723_Task_AI治理委員會/Web/html_醫療機構應用生成式人工智慧指引_全文.html",
+      "desc": "醫療機構應用生成式人工智慧指引全文，可逐條檢索。"
+    },
+    {
+      "slug": "health-data-deidentification",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_1.行政與PM.PM/0723_Task_AI治理委員會/Ref_其他參考/html_醫療資料去識別化流程.html",
+      "desc": "台灣醫院 AI／研究資料的去識別化流程與治理責任分工。"
+    },
+    {
+      "slug": "hospital-ai-strategy",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_AI 策略推動者真正該管什麼.html",
+      "desc": "醫院 AI 策略推動者該管什麼、不該管什麼的邊界劃分。"
+    },
+    {
+      "slug": "dept-goal-2027",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_1.行政與PM.PM/html_部門目標2027.html",
+      "desc": "部門目標與專案對齊看板。"
+    },
+    {
+      "slug": "nhqa-award-heatmap",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/0804_更新部門目標_深耕延伸/Task_NHQA加速安排/html_NHQA 智慧醫療參賽熱區圖.html",
+      "desc": "2021–2025 NHQA 智慧醫療參賽類別分布熱區圖。"
+    },
+    {
+      "slug": "nhqa-rubric",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_NHQA評分規則1.html",
+      "desc": "智慧醫療專案上台報告的評分維度與攻略。"
+    },
+    {
+      "slug": "nhqa-rubric-deck",
+      "group": "ai-governance",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_NHQA評分規則2.html",
+      "desc": "上台報告評分攻略・可編輯簡報版。"
+    },
+    {
+      "slug": "ai-patent-to-trial",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_AI 專利轉臨床試驗.html",
+      "desc": "從 AI 專利走到臨床試驗的學習與執行路線圖。"
+    },
+    {
+      "slug": "fhir-agentic-care",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_三大空間.html",
+      "desc": "用三種空間向臨床醫師解釋 FHIR 與 Agentic AI。"
+    },
+    {
+      "slug": "clinical-ai-skill-radar",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_SkillRadar.html",
+      "desc": "臨床 AI 能力雷達圖與個人技能組合盤點。"
+    },
+    {
+      "slug": "ai-use-case-100",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_4.模型組LLM/html_GAI_100組AI應用案例.html",
+      "desc": "100 組生成式 AI 應用案例，依發佈時間排列。"
+    },
+    {
+      "slug": "dialysis-morning-feed",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_HD_PreRound.html",
+      "desc": "血液透析晨間風險清單介面 mockup。"
+    },
+    {
+      "slug": "cmi-conference-journal-radar",
+      "group": "clinical-ai",
+      "src": "ABCDE_Focus/A_AI中心_/AI中心_0.CMI學程/html_臨床醫療資訊_年會與期刊.html",
+      "desc": "臨床醫療資訊領域的年會雷達與期刊選擇對照。"
+    },
+    {
+      "slug": "hypokalemia-workup",
+      "group": "research-method",
+      "src": "html_HypoK.html",
+      "desc": "低血鉀分層診斷流程圖，含各節點鑑別診斷與書目依據。"
+    },
+    {
+      "slug": "irregular-ehr-modeling",
+      "group": "research-method",
+      "src": "PFN2026/html_IrregularEHR.html",
+      "desc": "不規則縱向 EHR 的建模路線選擇：三個決策問題、四條並列路線。"
+    },
+    {
+      "slug": "clinical-stats-2026",
+      "group": "research-method",
+      "src": "ABCDE_Focus/F_Github Page/html_2026_臨床研究統計新花樣.html",
+      "desc": "2026 臨床醫學研究的統計新花招整理。"
+    },
+    {
+      "slug": "dialysis-drift-rubric",
+      "group": "research-method",
+      "src": "Temp/html_Rubric_每月透析資料漂移檢查.html",
+      "desc": "每月透析資料漂移檢查的 rubric 設計。"
+    },
+    {
+      "slug": "wardley-map-2026",
+      "group": "research-method",
+      "src": "ABCDE_Focus/C_Flow.Skill.TopQuestion/html_大問題地圖_.html",
+      "desc": "臨床腎臟 × 多組學 × 臨床 AI × 人機協作的 Wardley Map。"
+    },
+    {
+      "slug": "web-ui-anatomy",
+      "group": "uiux",
+      "src": "Task_UIUX命名/html_WebUI.html",
+      "desc": "以一個網頁畫面由上而下的解剖圖，串起 100 個現代網頁 UI 名詞。"
+    },
+    {
+      "slug": "mobile-ui-priority",
+      "group": "uiux",
+      "src": "Task_UIUX命名/html_MobileUI.html",
+      "desc": "以 P0→P5 優先級階梯決定 iPhone app UI 的設計順序與元件對照。"
+    },
+    {
+      "slug": "ai-dlc-lego-01",
+      "group": "uiux",
+      "src": "_INLINE/Task_網站樂高思考/html_Web_module01.html",
+      "title": "Clinical AI-DLC 模組樂高工作台 · 01",
+      "desc": "把臨床 AI 系統拆成可組裝模組的工作台（第一部分）。"
+    },
+    {
+      "slug": "ai-dlc-lego-02",
+      "group": "uiux",
+      "src": "_INLINE/Task_網站樂高思考/html_Web_module02.html",
+      "title": "Clinical AI-DLC 模組樂高工作台 · 02",
+      "desc": "把臨床 AI 系統拆成可組裝模組的工作台（第二部分）。"
+    },
+    {
+      "slug": "agent-orchestration-roles",
+      "group": "tools-notes",
+      "src": "ABCDE_Focus/F_Github Page/html_0701_AI Agent Orchestration、Harness Engineer 與 Loop Engineer.html",
+      "desc": "AI Agent Orchestration、Harness Engineer 與 Loop Engineer 三種角色的分工。"
+    },
+    {
+      "slug": "context-converter-cheatsheet",
+      "group": "tools-notes",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_利用typeless的10 個 Prompt.html",
+      "desc": "Context Converter prompt 使用小抄。"
+    },
+    {
+      "slug": "context-converter-playbook",
+      "group": "tools-notes",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_把話變成工作產出的 17 個語音 Prompt.html",
+      "desc": "把話變成工作產出的 17 個語音 prompt playbook。檔案 5.6 MB，載入較慢。"
+    },
+    {
+      "slug": "ten-hours-back",
+      "group": "tools-notes",
+      "src": "ABCDE_Focus/A_AI中心_/_html/html_洗腎重大_嘿嘿.html",
+      "desc": "還你 10 小時。"
+    },
+    {
+      "slug": "amazon-summit-2026",
+      "group": "tools-notes",
+      "src": "_INLINE/0930_AmazonSummit/html_Amazon summit 2026有哪些課程.html",
+      "desc": "Amazon Summit 2026 Day 1 選課筆記。"
+    },
+    {
+      "slug": "kiro-tips",
+      "group": "tools-notes",
+      "src": "_INLINE/0930_AmazonSummit/html_Kiro小技巧.html",
+      "desc": "Kiro 使用小技巧・2026 社群精選。"
+    },
+    {
+      "slug": "supabase-kiro-practice",
+      "group": "tools-notes",
+      "src": "_INLINE/0930_AmazonSummit/html_用 Supabase 練習建立自己的 Kiro Power.html",
+      "desc": "用 Supabase 練習建立自己的 Kiro Power。"
+    },
+    {
+      "slug": "hypokalemia-diagnostic-workspace",
+      "group": "tools-notes",
+      "src": "ABCDE_Focus/A_AI中心_/Task_腎臟智慧專科Vision_深耕延伸/html_Hypokalemia_Diagnostic_Workspace.html",
+      "title": "Hypokalemia Diagnostic Workspace",
+      "desc": ""
+    },
+    {
+      "slug": "tree03",
+      "group": "tools-notes",
+      "src": "_INLINE/Task_問題長成一棵樹/html_tree03.html",
+      "title": "問題長成一棵樹 · CKD CCIL 洞察階梯",
+      "desc": ""
+    },
+    {
+      "slug": "nephro-morning-briefing",
+      "group": "tools-notes",
+      "src": "_INLINE/html_nephro_morning_briefing.html",
+      "title": "晨間風險簡報 Nephrology Morning Risk Briefing",
+      "desc": ""
+    }
+  ]
+}
