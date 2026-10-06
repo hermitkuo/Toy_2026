@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>共用臨床 AI 平台</title>
+<style>
+:root{
+  --bg:#f6f5f1; --surface:#fff; --ink:#1c1e22; --muted:#5d646e; --line:#e2e0d8;
+  --accent:#1f5f8b; --accentbg:#e5eef6;
+  --w1:#2f7d5b; --w1bg:#e6f3ec; --w2:#9a6b12; --w2bg:#f7efdc; --w3:#7a4aa0; --w3bg:#efe7f6;
+  --A:#2f6e9e; --B:#2f7d5b; --C:#8a6a1f; --D:#a8502e; --E:#b23a48; --F:#6b4a9e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141619; --surface:#1c1f23; --ink:#e7e5e0; --muted:#99a0a9; --line:#30343a;
+    --accent:#79b4e3; --accentbg:#1b2a36;
+    --w1:#6cc79d; --w1bg:#1a2d23; --w2:#dcb35a; --w2bg:#2f2817; --w3:#bb98e3; --w3bg:#28203a;
+    --A:#73aee0; --B:#6cc79d; --C:#d9b45c; --D:#ec9271; --E:#ee8592; --F:#b79be6;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+main{max-width:1180px;margin:0 auto;padding:36px 16px 72px}
+h1{font-size:30px;line-height:1.3;margin:0 0 12px}
+h2{font-size:21px;margin:56px 0 6px}
+h2 .n{color:var(--accent);margin-right:8px}
+h3{font-size:16px;margin:0}
+p{margin:8px 0}
+.sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.formula{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.formula span{padding:8px 14px;border-radius:10px;font-weight:700;font-size:16px}
+.formula .p{background:var(--accentbg);color:var(--accent)}
+.formula .op{padding:0;color:var(--muted)}
+.key{border-left:4px solid var(--accent);padding:4px 0 4px 14px;margin-top:14px}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.toc a{font-size:13px;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:999px;background:var(--surface)}
+.toc a:hover{color:var(--ink)}
+
+/* workflows */
+.flowline{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 18px;font-weight:600}
+.flowline .g{display:flex;gap:4px}
+.flowline .chip{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:#fff;background:var(--c)}
+.flowline .arr{color:var(--muted)}
+.wf{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.wcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;border-top:5px solid var(--c);display:flex;flex-direction:column;gap:8px}
+.wcard .hd{display:flex;align-items:center;gap:10px}
+.wcard .letter{width:36px;height:36px;border-radius:9px;background:var(--c);color:#fff;font-weight:800;font-size:18px;display:grid;place-items:center;flex:none}
+.io{display:flex;align-items:center;gap:8px;font-size:14px;background:var(--bg);border-radius:8px;padding:8px 10px}
+.io b{font-weight:600}
+.io .to{color:var(--c);font-weight:800}
+.lab{font-size:12px;color:var(--muted);margin-right:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:1px 9px}
+
+/* components */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.filters button{padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer;font-size:13.5px}
+.filters button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.comp{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;position:relative;transition:opacity .15s}
+.ccard.off{opacity:.25}
+.ccard .num{font-size:28px;font-weight:800;color:var(--accent);line-height:1;opacity:.85}
+.ccard h3{margin:6px 0 8px}
+.ccard dl{margin:0;font-size:13.5px}
+.ccard dt{font-size:12px;color:var(--muted);margin-top:6px}
+.ccard dd{margin:0}
+.wave{position:absolute;top:14px;right:14px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--wbg);color:var(--wc)}
+.wave.w1{--wc:var(--w1);--wbg:var(--w1bg)} .wave.w2{--wc:var(--w2);--wbg:var(--w2bg)} .wave.w3{--wc:var(--w3);--wbg:var(--w3bg)}
+.wnote{font-size:12px;color:var(--muted);margin-top:6px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:14px;font-size:14px}
+
+/* generic tables */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-size:13px;color:var(--muted);font-weight:600}
+tbody th{font-weight:600;white-space:nowrap}
+tr:last-child td,tr:last-child th{border-bottom:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-top:12px}
+.card ul{margin:6px 0;padding-left:20px}
+ul li{margin:4px 0}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:14px}
+.pipeline span{background:var(--surface);border:1px solid var(--line);padding:4px 10px;border-radius:8px}
+.pipeline i{color:var(--muted);font-style:normal}
+.closing{margin-top:48px;background:var(--accentbg);border-radius:12px;padding:18px 22px;font-size:16px;font-weight:600}
+@media (max-width:640px){h1{font-size:24px}.wf{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<section class="hero">
+  <h1>共用臨床 AI 平台的 scale 策略</h1>
+  <div class="formula">
+    <span class="p">共用臨床 AI 平台</span><span class="op">＋</span>
+    <span class="p">6 種工作流程模板</span><span class="op">＋</span>
+    <span class="p">20 個科別套件</span>
+  </div>
+  <p>前面的 100 項應用是候選功能；真正要維護的是少數共用元件、科別知識與評估集。</p>
+  <p class="key"><strong>最重要的取捨：</strong>共用資料、權限、證據、執行與監測；保留各科的臨床邏輯、時間窗、操作介面與驗收標準。不同科可以使用相同元件，但不適合硬套同一套 Agent Harness。</p>
+  <nav class="toc">
+    <a href="#wf">① 六種工作流程</a><a href="#comp">② 12 個共用元件</a><a href="#contract">③ 四個資料契約</a>
+    <a href="#kit">④ 科別套件</a><a href="#scale">⑤ 四種擴張</a><a href="#plan">⑥ 90 天導入</a>
+    <a href="#gate">⑦ 驗收流程</a><a href="#team">⑧ 分工與停損</a>
+  </nav>
+</section>
+
+<h2 id="wf"><span class="n">1</span>先收斂成六種可重用工作流程</h2>
+<p class="sub">每種模板有標準輸入、輸出與成功指標；科別只決定套用在哪個場景。</p>
+<div class="flowline">導入順序
+  <span class="g"><span class="chip" style="--c:var(--A)">A</span><span class="chip" style="--c:var(--B)">B</span></span><span class="arr">→</span>
+  <span class="g"><span class="chip" style="--c:var(--C)">C</span><span class="chip" style="--c:var(--D)">D</span></span><span class="arr">→</span>
+  <span class="chip" style="--c:var(--E)">E</span><span class="arr">→</span>
+  <span class="chip" style="--c:var(--F)">F</span>
+</div>
+<div class="wf" id="wfgrid"></div>
+<p class="note">不必讓所有科別逐階升級；部分科別把文件與追蹤做好，就已經有很高價值。</p>
+
+<h2 id="comp"><span class="n">2</span>共用平台：12 個值得投資的元件</h2>
+<p class="sub">依建置波次篩選。第一波＝打底；第二波＝知識與規則；第三波＝跨科任務。</p>
+<div class="filters" id="wavebtns">
+  <button data-w="0" class="on">全部 12 項</button>
+  <button data-w="1">第一波</button>
+  <button data-w="2">第二波</button>
+  <button data-w="3">第三波</button>
+</div>
+<div class="comp" id="compgrid"></div>
+<p class="note">資料介接可以先從既有唯讀 API 或資料副本開始，逐步對應 FHIR。不必等全院 FHIR 完成才啟動，但一定要先統一病人、就醫事件、時間、單位與來源。若 HIS 支援，可用 CDS Hooks 在開啟病歷或醫囑流程等指定節點觸發服務；這正是其標準設計用途。</p>
+
+<h2 id="contract"><span class="n">3</span>四個共用資料契約</h2>
+<p class="sub">避免各科長出不同格式。這四個契約，比先選哪個模型更重要。</p>
+<div class="tw"><table>
+<thead><tr><th>契約</th><th>必備內容</th><th>解決的問題</th></tr></thead>
+<tbody>
+<tr><th>Patient Snapshot</th><td>病人／就醫識別、資料截至時間、查詢時間窗、問題、用藥、檢驗、文件來源、缺漏與衝突</td><td>避免不同應用看到不同版本的病人</td></tr>
+<tr><th>Evidence Bundle</th><td>來源文件、版本、適用族群、段落位置、檢索時間</td><td>讓建議可查證，避免把舊指引當新指引</td></tr>
+<tr><th>Action Card</th><td>問題、重要性、建議、病人依據、知識依據、不確定性、需人工處理事項</td><td>將輸出變成可執行的臨床工作</td></tr>
+<tr><th>Task Record</th><td>負責人、任務、觸發原因、到期日、狀態、完成依據、升級路徑</td><td>把「有提醒」變成「有人完成」</td></tr>
+</tbody></table></div>
+<div class="card">
+  <h3>例：腎臟科 Action Card</h3>
+  <ul>
+    <li><strong>問題：</strong>出院後仍有待追蹤的腎功能結果。</li>
+    <li><strong>病人依據：</strong>顯示相關檢驗日期、數值及來源。</li>
+    <li><strong>建議：</strong>請負責醫師確認追蹤安排。</li>
+    <li><strong>不確定性：</strong>系統未取得院外檢驗；尚未確認是否已有其他追蹤。</li>
+    <li><strong>後續任務：</strong>核對安排、指定負責人、設定期限。</li>
+  </ul>
+</div>
+<p class="note">不要把 LLM 自述的「信心 95%」當成可靠指標。顯示資料是否齊全、來源是否有效、規則是否符合與已知限制，更有判斷價值。</p>
+
+<h2 id="kit"><span class="n">4</span>科別套件：新增一科應以設定為主</h2>
+<p class="sub">每科應交付以下七項，而不是只交一段 prompt。</p>
+<div class="tw"><table>
+<thead><tr><th>套件內容</th><th>科別需要決定什麼</th><th>腎臟科範例</th></tr></thead>
+<tbody>
+<tr><th>場景與觸發點</th><td>誰在何時需要這個輸出</td><td>門診開診前產生 CKD 摘要</td></tr>
+<tr><th>資料設定</th><td>必要欄位、時間窗、缺資料時的行為</td><td>近一年 eGFR、蛋白尿、近期用藥</td></tr>
+<tr><th>文件與輸出格式</th><td>必備內容、篇幅、呈現位置</td><td>趨勢、問題、待辦、來源</td></tr>
+<tr><th>核准知識</th><td>使用哪些規範、由誰更新</td><td>院內 CKD 路徑與核准衛教</td></tr>
+<tr><th>臨床規則與工具</th><td>哪些判斷由程式執行</td><td>指標計算、門檻與追蹤查核</td></tr>
+<tr><th>操作與責任</th><td>誰覆核、誰接任務、何時升級</td><td>醫師覆核；個管師接追蹤任務</td></tr>
+<tr><th>評估集與驗收標準</th><td>哪些錯誤不可接受、如何證明有效</td><td>單位錯誤、日期錯置、虛構診斷</td></tr>
+</tbody></table></div>
+<p class="note">共用模板可以繼承，臨床差異必須明確設定。例如心臟科、腎臟科都能使用「趨勢摘要」，但重要時間窗、需比較的檢驗、禁忌與臨床重點不同。</p>
+
+<h2 id="scale"><span class="n">5</span>Scale 必須同時處理四種擴張</h2>
+<div class="tw"><table>
+<thead><tr><th>擴張方向</th><th>建議做法</th><th>容易忽略的盲點</th></tr></thead>
+<tbody>
+<tr><th>科別增加</th><td>模板與科別套件分開版本管理</td><td>一科改 prompt，意外影響其他科</td></tr>
+<tr><th>使用量增加</th><td>線上互動與批次任務分開排程；配額、排隊、背壓</td><td>晨間大量摘要占滿資源，拖慢急診使用</td></tr>
+<tr><th>臨床複雜度增加</th><td>每個工作流程有自己的驗證、工具與人工節點</td><td>文件摘要通過測試，被誤認為決策支援也可上線</td></tr>
+<tr><th>院區增加</th><td>分離院區權限、術語映射、資料來源與院內規範</td><td>同名檢驗或藥物，在不同院區定義不同</td></tr>
+</tbody></table></div>
+<div class="card">
+  <h3>三個工程原則</h3>
+  <ul>
+    <li><strong>快取要綁定病人、權限、資料版本與任務。</strong>病歷更新後要能失效，避免沿用舊摘要。</li>
+    <li><strong>模型路由要依品質驗證結果。</strong>便宜模型可先用於格式化或簡單抽取，不能僅因成本低就承接臨床判斷。</li>
+    <li><strong>失敗要有可用的退路。</strong>顯示未完成原因與原始資料；不能把部分完成的結果包裝成完整結論。</li>
+  </ul>
+</div>
+
+<h2 id="plan"><span class="n">6</span>建議的 90 天導入步驟</h2>
+<p class="sub">假設已有可用的數位資料、資訊團隊與科內負責人；若資料授權或介接尚未就緒，時程需另估。</p>
+<div class="tw"><table>
+<thead><tr><th>階段</th><th>主要工作</th><th>具體交付</th><th>進入下一階段的條件</th></tr></thead>
+<tbody>
+<tr><th>第 1–2 週<br>定義問題</th><td>從 100 項選出 3 個試點；觀察實際流程、量測基準</td><td>每案一頁需求、流程、責任人及驗收標準</td><td>有明確使用者、資料來源與可量測痛點</td></tr>
+<tr><th>第 3–4 週<br>建立共用底座</th><td>權限、資料介接、快照、模型閘道、結構化輸出、稽核</td><td>能追溯到來源的完整流程原型</td><td>病人、就醫事件、時間與來源核對正確</td></tr>
+<tr><th>第 5–6 週<br>離線評估</th><td>建立正常、例外、缺資料與衝突案例；與現行流程比較</td><td>評估集、錯誤分類與修正紀錄</td><td>達到預先定義門檻；重大失敗模式有處理方式</td></tr>
+<tr><th>第 7–8 週<br>影子運行</th><td>用實際流程資料產出結果，由指定人員評估</td><td>真實資料品質、延遲與工作量報告</td><td>成效未因真實資料而明顯下降</td></tr>
+<tr><th>第 9–10 週<br>小規模使用</th><td>小組使用、人工覆核；蒐集修改及棄用原因</td><td>使用率、修改量、節省時間與事件報告</td><td>品質可接受且使用者確實獲益</td></tr>
+<tr><th>第 11–12 週<br>複製驗證</th><td>同模板導入另一科，量測新增成本</td><td>第二科套件、共用比例與導入工時</td><td>不需重建底座即可完成新增科別</td></tr>
+</tbody></table></div>
+<div class="card">
+  <h3>第一波：三個互補案例</h3>
+  <ul>
+    <li><strong>腎臟科門診摘要</strong>：驗證結構化資料、時間窗與趨勢整合。</li>
+    <li><strong>腫瘤科治療時間軸</strong>：驗證長文件、事件抽取及來源定位。</li>
+    <li><strong>一般外科術後衛教草稿</strong>：驗證核准內容、病人溝通與覆核介面。</li>
+  </ul>
+  <p>這三案能驗證不同能力，又能共用大部分底座。第一波通過後，再加入照護缺口查核。</p>
+</div>
+
+<h2 id="gate"><span class="n">7</span>每次上線與更新，都使用相同驗收流程</h2>
+<div class="pipeline"><span>離線評估</span><i>→</i><span>真實流程驗證</span><i>→</i><span>小規模發布</span><i>→</i><span>持續監測</span><i>→</i><span>必要時回退</span></div>
+<div class="tw"><table>
+<thead><tr><th>評估面向</th><th>最少要回答的問題</th></tr></thead>
+<tbody>
+<tr><th>資料正確性</th><td>有沒有病人錯配、日期錯置、單位錯誤或資料過期？</td></tr>
+<tr><th>輸出正確性</th><td>是否虛構資訊、漏掉關鍵內容、引用不支持結論？</td></tr>
+<tr><th>工作流程價值</th><td>是否真的省時間？修改與覆核會不會抵銷收益？</td></tr>
+<tr><th>臨床影響</th><td>是否增加警示疲勞、錯誤處置或責任不清？</td></tr>
+<tr><th>營運能力</th><td>延遲、失敗率、單次成本與尖峰容量是否可接受？</td></tr>
+<tr><th>版本管理</th><td>模型、提示、知識、規則與資料映射更新後是否重測？</td></tr>
+</tbody></table></div>
+<p class="note">驗收門檻應在看結果前訂好，依應用分別制定。文件助手與治療建議不能使用同一個「整體準確率」決定上線；生成式 AI 的風險管理也需涵蓋設計、開發、使用與評估的完整生命週期。</p>
+
+<h2 id="team"><span class="n">8</span>團隊分工與停止投入的方向</h2>
+<div class="tw"><table>
+<thead><tr><th>角色</th><th>必須負責的事情</th></tr></thead>
+<tbody>
+<tr><th>AI 中心產品負責人</th><td>排優先順序、控制範圍、追蹤效益</td></tr>
+<tr><th>平台／資料團隊</th><td>共用元件、介接、效能、發布與維運</td></tr>
+<tr><th>科別臨床負責人</th><td>臨床需求、知識核准、案例與驗收</td></tr>
+<tr><th>護理／個管／實際使用者</th><td>任務接手、工作負擔與流程可行性</td></tr>
+<tr><th>品質、資安與治理窗口</th><td>依應用風險審查、事件處理與變更管理</td></tr>
+</tbody></table></div>
+<div class="card">
+  <h3>不值得先做</h3>
+  <ul>
+    <li><strong>100 個獨立 chatbot</strong>：介接、權限、更新與驗證成本會重複累積。</li>
+    <li><strong>全院病歷先全部放進向量資料庫</strong>：結構化資料先用精確查詢；文件才依任務檢索，避免時間與權限混亂。</li>
+    <li><strong>先做多 Agent 再找問題</strong>：明確流程能完成的工作，先用固定步驟；確有跨任務協作需求再加代理。</li>
+    <li><strong>先微調模型</strong>：先確認問題是否來自資料、檢索、輸出契約或流程；這些通常更值得先修。</li>
+    <li><strong>先部署再補評估</strong>：沒有案例與基準，之後很難證明升級究竟改善了什麼。</li>
+  </ul>
+</div>
+
+<div class="closing">你的平台能否 scale，最有說服力的證據是：第二科導入同一模板時，只需新增科別設定與評估集，就能在可控工時內上線並維持品質。
+<p style="font-weight:400;font-size:14.5px;margin-top:8px">建議把「新增一科所需工時」與「共用元件重用率」納入 AI 中心 KPI，與臨床效益一起追蹤。</p></div>
+
+</main>
+<script>
+const WF=[
+  ["A","臨床文件","病歷、檢查、訪談","摘要或文件草稿",["出院摘要","手術摘要","腫瘤時間軸"],"完成時間、重大遺漏、修改量"],
+  ["B","衛教溝通","已確認的診斷與計畫","病人版說明",["CKD 衛教","術後照護","孕期說明"],"正確性、可理解性、製作時間"],
+  ["C","知識查詢","問題＋核准知識庫","附來源回答",["院內流程","用藥規範","診療指引"],"引用正確率、問題解決率"],
+  ["D","照護查核","病人資料＋明確規則","缺口清單",["篩檢缺漏","待追檢查","用藥查核"],"查核準確率、有效缺口完成率"],
+  ["E","決策支援","病人快照＋證據＋工具","Action Card",["AKI","心衰竭","複雜診斷","治療比較"],"臨床適切性、警示負擔、處置影響"],
+  ["F","追蹤協作","事件＋任務狀態","指派、追蹤、升級",["術後追蹤","癌症導航","跨場域照護"],"任務完成率、逾期率、失聯率"]
+];
+// [名稱, 職責, 如何支援 scale, 波次(1/2/3), 波次備註]
+const COMP=[
+  ["身分與權限服務","驗證使用者、角色、病人存取範圍及操作權限","各科沿用院內身分；權限在服務端執行",1,""],
+  ["臨床資料介接層","接收病歷、檢驗、用藥、報告；標準化單位、時間與來源","HIS／LIS／PACS 等各接一次，供多應用使用",1,""],
+  ["Patient Context Builder","依任務建立病人快照，標記時間窗、缺漏、衝突及資料新鮮度","科別設定所需資料，不各自撰寫取資料程式",1,""],
+  ["文件處理服務","文件解析、OCR、段落定位；後續可接語音辨識","共用解析能力，每科保留文件格式設定",1,"語音後加"],
+  ["知識與證據服務","儲存核准文件、版本、有效日期、檢索與來源定位","院級共用知識＋科別知識，依權限檢索",2,""],
+  ["Model Gateway","統一模型呼叫、路由、逾時、配額、成本與資料傳送政策","可替換模型，避免各應用直接綁定供應商",1,""],
+  ["Workflow Runner","執行指定步驟、工具呼叫、重試與人工審核節點","六種模板各有流程，不依賴萬用 Agent 自行決定",1,"第一波為簡版"],
+  ["規則與工具服務","劑量計算、分數、門檻、照護查核、預測模型","同一工具提供給多科，維護可測試的臨床邏輯",2,""],
+  ["結構化輸出與驗證器","檢查欄位、引用、數值、缺漏與禁止操作","所有應用使用明確輸出契約",1,""],
+  ["人工覆核與回寫服務","顯示草稿差異、編輯、簽核與回寫；區分草稿及正式紀錄","HIS 回寫介面共用，科別配置簽核流程",1,"第一波做覆核；回寫後加"],
+  ["任務與事件服務","任務指派、到期、完成、取消、升級與通知","支援跨科追蹤，避免同一病人重複產生任務",3,""],
+  ["評估、稽核與觀測服務","保存必要追溯資訊；監測品質、使用率、延遲、成本與版本","共用評估工具，各科維護自己的測試集",1,""]
+];
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const WAVE=["","第一波","第二波","第三波"];
+
+document.getElementById("wfgrid").innerHTML=WF.map(w=>`
+<article class="wcard" style="--c:var(--${w[0]})">
+  <div class="hd"><div class="letter">${w[0]}</div><h3>${esc(w[1])}</h3></div>
+  <div class="io"><b>${esc(w[2])}</b><span class="to">→</span><b>${esc(w[3])}</b></div>
+  <div><span class="lab">科別場景</span><span class="tags">${w[4].map(t=>`<span>${esc(t)}</span>`).join("")}</span></div>
+  <div><span class="lab">成功指標</span>${esc(w[5])}</div>
+</article>`).join("");
+
+document.getElementById("compgrid").innerHTML=COMP.map((c,i)=>`
+<article class="ccard" data-w="${c[3]}">
+  <span class="wave w${c[3]}">${WAVE[c[3]]}</span>
+  <div class="num">${String(i+1).padStart(2,"0")}</div>
+  <h3>${esc(c[0])}</h3>
+  <dl><dt>具體職責與輸出</dt><dd>${esc(c[1])}</dd><dt>如何支援 scale</dt><dd>${esc(c[2])}</dd></dl>
+  ${c[4]?`<div class="wnote">※ ${esc(c[4])}</div>`:""}
+</article>`).join("");
+
+document.getElementById("wavebtns").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  const w=+b.dataset.w;
+  document.querySelectorAll("#wavebtns button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll(".ccard").forEach(c=>c.classList.toggle("off",w>0&&+c.dataset.w!==w));
+});
+</script>
+</body>
+</html>
