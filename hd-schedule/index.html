@@ -27,6 +27,7 @@
   /* ---------- header + status pill ---------- */
   header.top{display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-bottom:12px;}
   header.top h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.3px;}
+  header.top h1 .nw{white-space:nowrap;}   /* 窄螢幕斷行只斷在「·」後，不拆開詞 */
   .spacer{flex:1 1 auto;}
   button{font-family:inherit; cursor:pointer;}
 
@@ -111,8 +112,30 @@
   .chip.clear{color:var(--muted); padding-left:12px;}
   .chip.clear.on{background:var(--accent); color:#fff;}
 
-  /* 篩選器：桌機維持 inline chips，手機收成左右兩個下拉（.fdrop 觸發鈕僅手機顯示） */
+  /* 篩選器：桌機院區 inline chips、醫師下拉；手機收成左右兩個下拉 */
   .fdrop{display:none;}
+  /* 篩選器放在月份列右側、同列等高（院區、醫師皆為下拉鈕） */
+  .navbar .filters{display:flex; flex-wrap:nowrap; align-items:center; gap:4px 12px; margin-left:6px;}
+  .navbar .fgroup{display:flex; align-items:center;}
+  .navbar .chips{margin:0; gap:4px; flex-wrap:nowrap;}
+  .navbar .chips .lbl{display:none;}   /* 面板內不重複顯示「院區：/醫師：」（下拉鈕已標示） */
+  .navbar .chip{font-size:13px; padding:4px 8px 4px 6px; gap:4px;}
+  /* 桌機：院區、醫師皆為下拉（手機版樣式見 max-width:560px 區塊） */
+  @media (min-width:561px){
+    #dateFilters .fgroup{position:relative;}
+    #dateFilters .fgroup .fdrop{display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+      border:1px solid var(--line); background:var(--card); color:var(--ink);
+      border-radius:999px; padding:4px 10px 4px 12px; font-size:13px; line-height:1.15; cursor:pointer;}
+    #dateFilters .fgroup .fdrop:hover{border-color:var(--accent);}
+    #dateFilters .fgroup .fdrop .fdcaret{color:var(--muted); transition:transform .15s;}
+    #dateFilters .fgroup.open .fdrop{border-color:var(--accent); color:var(--accent);}
+    #dateFilters .fgroup.open .fdrop .fdcaret{transform:rotate(180deg); color:var(--accent);}
+    #dateFilters .fgroup .chips{position:absolute; top:calc(100% + 6px); left:0; z-index:40;
+      display:none; flex-wrap:wrap; gap:6px; padding:8px; width:max-content; max-width:320px;
+      background:var(--card); border:1px solid var(--line); border-radius:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,.16);}
+    #dateFilters .fgroup.open .chips{display:flex;}
+  }
 
   /* ---------- table ---------- */
   .tablecard{background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
@@ -201,6 +224,16 @@
     padding:7px 14px; border-radius:8px; line-height:1; display:inline-flex; align-items:center; gap:6px;}
   .vtab:hover{color:var(--accent);}
   .vtab.on{background:var(--card); color:var(--accent); box-shadow:0 1px 2px rgba(20,40,60,.08);}
+  /* 頁面切換：桌機、手機一律收進左上漢堡選單（彈出直列選單），不再佔一整列；位置由 JS 對齊漢堡鈕 */
+  .wrap{position:relative;}
+  .menubtn{display:inline-flex; width:36px; height:36px; font-size:17px;}
+  .viewtabs{display:none; position:absolute; top:58px; left:12px; z-index:60;
+    flex-direction:column; gap:2px; margin:0; padding:6px; min-width:168px;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    box-shadow:0 10px 28px rgba(0,0,0,.18);}
+  .viewtabs.open{display:flex;}
+  .viewtabs .vtab{justify-content:flex-start; padding:11px 14px; white-space:nowrap; font-size:15px; border-radius:8px;}
+  .viewtabs .vtab.on{background:var(--head); box-shadow:none;}
 
   /* ---------- availability view ---------- */
   .av-bar{display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px; margin:0 0 10px;}
@@ -437,9 +470,12 @@
     header.top h1{font-size:15.5px; letter-spacing:0; line-height:1.2;}
     .statuspill .sub{display:none;}          /* dot colour still signals load/err; ↻ stays */
     .statuspill{padding:4px 4px 4px 8px; flex:0 0 auto;}
-    .viewtabs{margin-bottom:8px;}
     .navbar{margin:2px 0 8px;}
     /* 篩選器：手機收成左右並排的兩個下拉，chips 面板改為彈出層 */
+    .navbar .filters{flex:1 1 100%; margin-left:0; gap:8px; align-items:flex-start;}
+    .navbar .chips{flex-wrap:wrap; gap:6px;}
+    .navbar .chip{font-size:14px; padding:5px 12px 5px 9px; gap:6px;}
+    .navbar .fgroup{display:block;}
     .filters{display:flex; gap:8px; align-items:flex-start; margin:0 0 8px;}
     .fgroup{flex:1 1 0; min-width:0; position:relative;}
     .fdrop{display:flex; width:100%; align-items:center; justify-content:space-between; gap:6px;
@@ -472,8 +508,7 @@
     /* touch targets ≥40px on phones */
     .iconbtn{width:40px; height:40px; font-size:17px;}
     .nav-btn.sm{width:40px; height:40px; font-size:18px; border-radius:10px;}
-    .viewtabs{display:flex;}
-    .vtab{flex:1 1 0; justify-content:center; padding:9px 8px; white-space:nowrap; font-size:13.5px;}
+    .menubtn{width:40px; height:40px;}
     .wkpill{padding:9px 15px;}
     .chip{padding:8px 14px 8px 11px;}
     .mpick .mo{padding:12px 0 9px;}
@@ -646,7 +681,10 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>花蓮慈院 · 血液透析室 醫師班表</h1>
+    <button class="iconbtn menubtn" id="menuBtn" type="button" aria-label="切換頁面" title="切換頁面" aria-haspopup="true" aria-expanded="false" aria-controls="viewTabs">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <h1><span class="nw">花蓮慈院 ·</span> <span class="nw">血液透析室 醫師班表</span></h1>
     <div class="spacer"></div>
     <div class="statuspill loading" id="statusPill">
       <span class="dot"></span>
@@ -656,7 +694,7 @@
     <button class="iconbtn" id="themeBtn" title="切換亮暗主題">🌗</button>
   </header>
 
-  <div class="viewtabs" role="tablist">
+  <div class="viewtabs" id="viewTabs" role="tablist">
     <button class="vtab on" id="tabDate" data-view="date" role="tab" aria-selected="true">📅 找班表</button>
     <button class="vtab" id="tabAvail" data-view="avail" role="tab" aria-selected="false">🔎 找空檔</button>
     <button class="vtab" id="tabMine" data-view="mine" role="tab" aria-selected="false">🗓️ 找我有空</button>
@@ -674,23 +712,22 @@
       <div class="mpick" id="mpick" hidden></div>
     </div>
     <button class="btn today-btn" id="thisMonthBtn">本月</button>
-  </div>
-
-  <div class="filters" id="dateFilters">
-    <div class="fgroup" id="fgSite">
-      <button class="fdrop" id="fdropSite" type="button" aria-haspopup="true" aria-expanded="false">
-        <span class="fdlabel">院區：全部</span><span class="fdcaret">▾</span>
-      </button>
-      <div class="chips" id="dateSiteChips" hidden>
-        <span class="lbl">院區：</span>
+    <div class="filters" id="dateFilters">
+      <div class="fgroup" id="fgSite">
+        <button class="fdrop" id="fdropSite" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="fdlabel">院區：全部</span><span class="fdcaret">▾</span>
+        </button>
+        <div class="chips" id="dateSiteChips" hidden>
+          <span class="lbl">院區：</span>
+        </div>
       </div>
-    </div>
-    <div class="fgroup" id="fgDoc">
-      <button class="fdrop" id="fdropDoc" type="button" aria-haspopup="true" aria-expanded="false">
-        <span class="fdlabel">醫師：全部</span><span class="fdcaret">▾</span>
-      </button>
-      <div class="chips" id="chips" hidden>
-        <span class="lbl">醫師：</span>
+      <div class="fgroup" id="fgDoc">
+        <button class="fdrop" id="fdropDoc" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="fdlabel">醫師：全部</span><span class="fdcaret">▾</span>
+        </button>
+        <div class="chips" id="chips" hidden>
+          <span class="lbl">醫師：</span>
+        </div>
       </div>
     </div>
   </div>
@@ -864,7 +901,7 @@ window.__sched = {
 
   // Displayed shift columns, by source column index (0-based) in the gviz row.
   // 0 date, 1 星期 handled separately. 13 is empty separator (skipped).
-  // 14..17 are the four "假" columns -> merged into one 休假 column.
+  // 14..19 are the six "假" columns (O–T) -> merged into one 休假 column.
   // group === null  -> standalone column (own header, spans both header rows)
   // group === "..." -> grouped under a shared first-tier header
   // site: 院區別（供班表頁「院區篩選器」用）。請假亦為一個可選類別（site:"請假"）。
@@ -879,7 +916,7 @@ window.__sched = {
     {i:9,  name:"關山",   group:"外派特約", site:"關山"},
     {i:10, name:"聯安",   group:"外派特約", site:"聯安"},
     {i:11, name:"聯安掛名",group:"外派特約", site:"聯安", hidden:true},   // 找班表隱藏顯示；資料仍供「我的時段」等模組使用
-    {leave:true, name:"休假", group:"請假", left:true, site:"請假"}   // 班表分頁：合併假1-4；草稿分頁：單一休假欄(索引12)
+    {leave:true, name:"休假", group:"請假", left:true, site:"請假"}   // 班表分頁：合併假1-6；草稿分頁：單一休假欄(索引12)
   ];
 
   // 院區篩選器的固定順序（四院區＋請假）
@@ -898,6 +935,7 @@ window.__sched = {
   var byMonth = {};        // "YYYY-M" -> [rowIndexes]
   var roster = [];         // doctor names (sorted for display)
   var view = null;         // {y, m}  m: 0-based
+  var weekMode = false;    // true＝只顯示「本週」（週一～週日，含今天）；由 本月/本週 切換鈕控制
   var activeNames = {};    // set of highlighted doctors {name:true}
   var activeSiteD = {};    // set of selected 院區 {site:true}（空＝全部）
   var sections = buildSections();   // header grouping, precomputed once
@@ -971,8 +1009,8 @@ window.__sched = {
           if (usingDraft){
             cells.push(valOf(c[12]) || "");                 // 草稿分頁：單一「休假」欄
           } else {
-            var parts = [];                                  // 班表分頁：合併 假1-4（索引 14..17）
-            for (var k=0; k<4; k++){ var v = valOf(c[14+k]); if (v) parts.push(v); }
+            var parts = [];                                  // 班表分頁：合併 假1-6（索引 14..19，O–T 欄）
+            for (var k=0; k<6; k++){ var v = valOf(c[14+k]); if (v) parts.push(v); }
             cells.push(parts.join("、"));
           }
         } else {
@@ -1073,7 +1111,7 @@ window.__sched = {
 
   // ---- expose leave-by-date (休假 column) for the availability view ----
   function buildLeaveMap(){
-    var m = {}, LI = SHIFT_COLS.length - 1;   // last cell = 休假 (merged 假1..4)
+    var m = {}, LI = SHIFT_COLS.length - 1;   // last cell = 休假 (merged 假1..6)
     for (var r=0; r<allRows.length; r++){
       var v = allRows[r].cells[LI]; if (!v) continue;
       var d = allRows[r].date, key = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();
@@ -1139,7 +1177,7 @@ window.__sched = {
       else { chips[i].style.background = ""; chips[i].style.borderColor = ""; chips[i].style.color = ""; }
     }
     var ds = selList(), dl = el("fdropDoc") && el("fdropDoc").querySelector(".fdlabel");
-    if (dl) dl.textContent = "醫師：" + (ds.length ? (ds.length<=2 ? ds.join("、") : ds.length+" 位") : "全部");
+    if (dl) dl.textContent = "醫師：" + (ds.length ? (ds.length<=3 ? ds.join("、") : ds.length+" 位") : "全部");
   }
 
   // ---- 院區篩選器（欄位＋列雙向收斂）----
@@ -1200,10 +1238,10 @@ window.__sched = {
       chips[i].classList.toggle("on", st ? !!activeSiteD[st] : none);
     }
     var sel = siteSelListD(), sl = el("fdropSite") && el("fdropSite").querySelector(".fdlabel");
-    if (sl) sl.textContent = "院區：" + (sel.length ? sel.join("、") : "全部");
+    if (sl) sl.textContent = "院區：" + (sel.length ? (sel.length<=3 ? sel.join("、") : sel.length+" 處") : "全部");
   }
 
-  // ---- 手機版篩選器下拉：桌機為 inline chips；手機收成左右兩個彈出下拉 ----
+  // ---- 篩選器下拉：桌機僅醫師為下拉（院區平鋪）；手機兩者皆為下拉 ----
   function closeFilterDrops(except){
     var open = document.querySelectorAll("#dateFilters .fgroup.open");
     for (var i=0;i<open.length;i++){
@@ -1230,6 +1268,7 @@ window.__sched = {
     var inside = e.target.closest ? e.target.closest("#dateFilters .fgroup.open") : null;
     closeFilterDrops(inside);
   });
+  document.addEventListener("keydown", function(e){ if (e.key==="Escape") closeFilterDrops(null); });
 
   // ---- rendering ----
   function defaultView(){
@@ -1268,13 +1307,41 @@ window.__sched = {
     return top + '</tr>' + sub + '</tr>';
   }
 
+  // ---- 本週：週一～週日（含今天）；可跨月，直接從 allRows 依日期篩 ----
+  function weekRange(){
+    var t = new Date(); t.setHours(0,0,0,0);
+    var mon = new Date(t); mon.setDate(t.getDate() - ((t.getDay()+6)%7));
+    var sun = new Date(mon); sun.setDate(mon.getDate()+6);
+    return {from:mon, to:sun};
+  }
+  function md(d){ return (d.getMonth()+1)+"/"+d.getDate(); }
+  function viewTitle(){
+    if (weekMode){ var r = weekRange(); return "本週 " + md(r.from) + "–" + md(r.to); }
+    return view.y + "年" + (view.m+1) + "月";
+  }
+  // 目前顯示的列（月份或本週），供 render／複製共用
+  function viewIdxs(){
+    if (!weekMode) return byMonth[view.y+"-"+view.m] || [];
+    var r = weekRange(), out = [];
+    for (var i=0;i<allRows.length;i++){ var d = allRows[i].date; if (d >= r.from && d <= r.to) out.push(i); }
+    out.sort(function(a,b){ return allRows[a].date - allRows[b].date; });
+    return out;
+  }
+  // 切換鈕顯示「按下去會到哪」：正在看本週→「本月」；正在看本月→「本週」；看其他月份→「本月」
+  function updateTodayBtn(){
+    var now = new Date(), b = el("thisMonthBtn");
+    var onThisMonth = !weekMode && view && view.y===now.getFullYear() && view.m===now.getMonth();
+    b.textContent = onThisMonth ? "本週" : "本月";
+    b.title = onThisMonth ? "只看本週" : "回到本月";
+  }
+
   function render(){
-    el("monthLabel").innerHTML = view.y + "年" + (view.m+1) + "月<span class=\"caret\">▾</span>";
+    el("monthLabel").innerHTML = esc(viewTitle()) + "<span class=\"caret\">▾</span>";
     updatePrintTitle();
-    var key = view.y+"-"+view.m;
-    var idxs = byMonth[key] || [];
+    updateTodayBtn();
+    var idxs = viewIdxs();
     if (!idxs.length){
-      scrollEl.innerHTML = '<div class="status">此月份沒有班表資料。</div>';
+      scrollEl.innerHTML = '<div class="status">' + (weekMode ? '本週' : '此月份') + '沒有班表資料。</div>';
       return;
     }
     var today = new Date();
@@ -1316,7 +1383,7 @@ window.__sched = {
     }
     h += '</tbody></table>';
     if (!shown){
-      scrollEl.innerHTML = '<div class="status">選取的院區在'+(view.m+1)+'月沒有排班。</div>';
+      scrollEl.innerHTML = '<div class="status">選取的院區在'+(weekMode ? '本週' : (view.m+1)+'月')+'沒有排班。</div>';
       return;
     }
     scrollEl.innerHTML = h;
@@ -1333,7 +1400,7 @@ window.__sched = {
     var sub = "院區：" + (sel.length ? sel.join("、") : "全部");
     var docs = selList();
     if (docs.length) sub += "　·　高亮：" + docs.join("、");
-    t.innerHTML = "花蓮慈院 · 血液透析室 醫師班表　" + view.y + "年" + (view.m+1) + "月"
+    t.innerHTML = "花蓮慈院 · 血液透析室 醫師班表　" + esc(viewTitle())
                 + "<small>" + esc(sub) + "</small>";
   }
 
@@ -1435,7 +1502,7 @@ window.__sched = {
     var t = e.target && e.target.closest ? e.target.closest("button") : null;
     if (!t) return;
     if (t.dataset.py){ pickYear += (+t.dataset.py); drawPick(); return; }
-    if (t.dataset.m != null){ view = {y:pickYear, m:+t.dataset.m}; closePick(); render(); }
+    if (t.dataset.m != null){ weekMode = false; view = {y:pickYear, m:+t.dataset.m}; closePick(); render(); }
   });
   el("monthLabel").onclick = function(e){
     e.stopPropagation();
@@ -1479,6 +1546,7 @@ window.__sched = {
     var m = view.m + delta, y = view.y;
     while (m < 0){ m += 12; y--; }
     while (m > 11){ m -= 12; y++; }
+    weekMode = false;
     view = {y:y, m:m};
     render();
   }
@@ -1486,7 +1554,11 @@ window.__sched = {
   // ---- events ----
   el("prevBtn").onclick = function(){ shiftMonth(-1); };
   el("nextBtn").onclick = function(){ shiftMonth(1); };
-  el("thisMonthBtn").onclick = function(){ view = defaultView(); render(); };
+  // 本月／本週 切換：鈕上文字＝按下後要去的範圍（見 updateTodayBtn）
+  el("thisMonthBtn").onclick = function(){
+    weekMode = (this.textContent === "本週");
+    view = defaultView(); render();
+  };
   el("printBtn").onclick = function(){ window.print(); };
 
   // ---- 複製目前顯示的班表（TSV，依院區篩選收斂欄與列，可貼進試算表/訊息）----
@@ -1497,11 +1569,11 @@ window.__sched = {
   }
   function dateTableToText(){
     if (!view) return "";
-    var idxs = byMonth[view.y+"-"+view.m] || [];
+    var idxs = viewIdxs();
     var cols = [];
     for (var s=0;s<SHIFT_COLS.length;s++){ if (colVisible(s)) cols.push(s); }
     var sel = siteSelListD();
-    var title = "花蓮慈院 · 血液透析室 醫師班表　" + view.y + "年" + (view.m+1) + "月"
+    var title = "花蓮慈院 · 血液透析室 醫師班表　" + viewTitle()
               + "（院區：" + (sel.length ? sel.join("、") : "全部") + "）";
     var header = ["日期","週"];
     for (var c=0;c<cols.length;c++) header.push(SHIFT_COLS[cols[c]].name);
@@ -1532,10 +1604,10 @@ window.__sched = {
     }catch(e){ return false; }
   }
   el("copyBtn").onclick = function(){
-    var btn = this, key = view ? view.y+"-"+view.m : "";
+    var btn = this;
     var reset = function(){ btn.classList.remove("ok"); btn.title = "複製目前顯示的班表（依院區篩選）"; };
-    if (!view || !(byMonth[key] && byMonth[key].length)){
-      btn.title = "此月份無資料"; setTimeout(reset, 1500); return;
+    if (!view || !viewIdxs().length){
+      btn.title = weekMode ? "本週無資料" : "此月份無資料"; setTimeout(reset, 1500); return;
     }
     copyText(dateTableToText(), function(ok){
       btn.classList.toggle("ok", ok);
@@ -1552,6 +1624,7 @@ window.__sched = {
     var sel = siteSelListD();
     var site = sel.length ? sel.join("、") : "全部";
     var mm = view ? ("0"+(view.m+1)).slice(-2) : "";
+    if (weekMode){ var r = weekRange(); return "本週" + md(r.from).replace("/","") + "-" + md(r.to).replace("/","") + "腎臟科班表-" + site; }
     return (view ? view.y : "") + mm + "腎臟科班表-" + site;
   }
   window.addEventListener("beforeprint", function(){
@@ -2496,7 +2569,7 @@ window.__sched = {
     // column indexes per source
     var map = (kind==="hist")
       ? {oncall:[7], sess:[[8],[9],[10]], siteBy:{"玉里":[2],"關山":[3],"嘉恩":[4],"懷德":[5],"鳳林":[6]}, clinic:[11,12], leave:[]}
-      : {oncall:[2], sess:[[3],[4],[5]],  siteBy:{"玉里":[8],"關山":[9],"聯安":[10]},                     clinic:[6,7], leave:[14,15,16,17]};
+      : {oncall:[2], sess:[[3],[4],[5]],  siteBy:{"玉里":[8],"關山":[9],"聯安":[10]},                     clinic:[6,7], leave:[14,15,16,17,18,19]};
     for(var r=0;r<rows.length;r++){
       var c=rows[r].c||[];
       var dt=gvizDate(c[0]); if(!dt) continue;
@@ -2881,7 +2954,7 @@ window.__sched = {
 
   // ---- 年度請假熱門區間（52 週時間軸）----
   function leaveTimelineSection(){
-    var desc='當年<b>請假人次</b>（來自班表「假1-4」欄）依<b>週</b>分布，柱越高＝該週請假越集中。'
+    var desc='當年<b>請假人次</b>（來自班表「假1-6」欄）依<b>週</b>分布，柱越高＝該週請假越集中。'
            + '週定義：第 1 週＝含 1/1 那週、週一為首。（2026 前歷史表無合併休假欄，可能無資料。）';
     var idxs=byYear[curYear]||[];
     var firstJan=new Date(curYear,0,1);
@@ -2989,7 +3062,19 @@ window.__sched = {
     window.__hdPill.show(v);
     for(var j=0;j<TABS.length;j++){ if(TABS[j].v===v && TABS[j].init) TABS[j].init(); }
   }
-  for(var i=0;i<TABS.length;i++){ (function(t){ document.getElementById(t.btn).onclick=function(){ show(t.v); }; })(TABS[i]); }
+  // 漢堡選單（桌機／手機共用）：開／關頁面切換面板
+  var menuBtn=document.getElementById("menuBtn"), tabsEl=document.getElementById("viewTabs");
+  function setMenu(open){
+    if (open){   // 面板貼齊漢堡鈕下緣（桌機／手機表頭高度不同）
+      tabsEl.style.top  = (menuBtn.offsetTop + menuBtn.offsetHeight + 6) + "px";
+      tabsEl.style.left = menuBtn.offsetLeft + "px";
+    }
+    tabsEl.classList.toggle("open",open); menuBtn.setAttribute("aria-expanded",open?"true":"false");
+  }
+  menuBtn.onclick=function(e){ e.stopPropagation(); setMenu(!tabsEl.classList.contains("open")); };
+  document.addEventListener("click",function(e){ if(!tabsEl.contains(e.target)) setMenu(false); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") setMenu(false); });
+  for(var i=0;i<TABS.length;i++){ (function(t){ document.getElementById(t.btn).onclick=function(){ show(t.v); setMenu(false); }; })(TABS[i]); }
   // header ↻ refreshes whichever view is active
   document.getElementById("refreshBtn").onclick=function(){
     var f=window.__hdPill.refresh[window.__hdView]; if (f) f();
