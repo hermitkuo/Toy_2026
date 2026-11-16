@@ -654,6 +654,14 @@
   }
 </style>
 <script>
+/* 班表資料來源：Apps Script 唯讀代理（見 data_proxy.gs）。試算表本身維持私人，原始碼不含試算表 ID。
+   部署代理後把 /exec 網址貼在這裡（schedule.html 也有一處）。 */
+window.HD_DATA_URL = "https://script.google.com/macros/s/AKfycbz-XtW9zcratP-xeCRNJGmscX0K-GBSEkXobRSvTXg1UTt2Mom9z2MCUyzPB1epBCaWWw/exec";
+// JSONP 網址：key＝data_proxy.gs 的 SOURCES 代號；回傳格式與 gviz 相同（callback(resp)）
+window.hdDataSrc = function(key, cb, noHeaders){
+  return window.HD_DATA_URL + "?k=" + encodeURIComponent(key) + (noHeaders ? "&headers=0" : "")
+       + "&callback=" + cb + "&_=" + Date.now();
+};
 /* theme: resolve stored preference (auto|light|dark) → concrete data-theme before first paint (no flash) */
 (function(){
   var KEY="hd_theme";
@@ -824,7 +832,7 @@
 
   <footer>
     資料即時同步自
-    <a id="sheetLink" href="#" target="_blank" rel="noopener">Google 試算表</a>
+    Google 試算表
     · 名字為醫師簡稱 · 滑過任一醫師可跨列高亮同名班
   </footer>
 </div>
@@ -887,16 +895,14 @@ window.__sched = {
 <script>
 (function(){
   "use strict";
-  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var BANBIAO_GID = "1837573287";      // 現行「班表」分頁
+  var BANBIAO_KEY = "banbiao";         // 現行「班表」分頁（data_proxy.gs SOURCES 代號）
 
   // ── 改讀 schedule.html 發布的「自動排班草稿」分頁 ──
-  // 填該分頁 gid → 醫師閱覽頁即改讀草稿；留空＝維持讀原班表分頁（預設，不改變現況）。
-  // 草稿分頁若在另一份試算表，另填 DRAFT_SHEET_ID。草稿為空時會自動退回原班表，避免頁面空白。
-  var DRAFT_GID = "";
-  var DRAFT_SHEET_ID = "";
-  var usingDraft = !!DRAFT_GID;
-  var GID = usingDraft ? DRAFT_GID : BANBIAO_GID;
+  // 填 "draft"（並在 data_proxy.gs 的 SOURCES 加 draft 分頁）→ 醫師閱覽頁即改讀草稿；
+  // 留空＝維持讀原班表分頁（預設）。草稿為空時會自動退回原班表，避免頁面空白。
+  var DRAFT_KEY = "";
+  var usingDraft = !!DRAFT_KEY;
+  var GID = usingDraft ? DRAFT_KEY : BANBIAO_KEY;
   var triedBanbiaoFallback = false;
 
   // Displayed shift columns, by source column index (0-based) in the gviz row.
@@ -944,9 +950,7 @@ window.__sched = {
   // map SHIFT_COLS names -> cell index, for the 我的時段 module (via window.__sched)
   function schedColIndex(){ var m={}; for (var i=0;i<SHIFT_COLS.length;i++) m[SHIFT_COLS[i].name]=i; return m; }
 
-  el("sheetLink").href = "https://docs.google.com/spreadsheets/d/"+((usingDraft&&DRAFT_SHEET_ID)?DRAFT_SHEET_ID:SHEET_ID)+"/edit?gid="+GID;
-
-  // ---- data load via gviz JSONP (no CORS) ----
+  // ---- data load via 資料代理 JSONP（gviz 格式，no CORS）----
   var CB = "__sched_cb__";
   var curScript = null, loadTimer = null;
 
@@ -955,9 +959,7 @@ window.__sched = {
     showStatus('<span class="spin"></span>正在載入班表…', false);
     if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
     clearTimeout(loadTimer);
-    var sid = (usingDraft && DRAFT_SHEET_ID) ? DRAFT_SHEET_ID : SHEET_ID;
-    var url = "https://docs.google.com/spreadsheets/d/"+sid+"/gviz/tq"
-            + "?gid="+GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
+    var url = window.hdDataSrc(GID, CB);
     curScript = document.createElement("script");
     curScript.src = url;
     curScript.onerror = function(){ onError("無法連線到 Google 試算表。請檢查網路連線。"); };
@@ -970,13 +972,13 @@ window.__sched = {
     try {
       if (!resp || !resp.table || resp.status === "error") {
         var msg = (resp && resp.errors && resp.errors[0] && resp.errors[0].detailed_message)
-                  || "試算表無法讀取，可能已改為非公開。";
+                  || "班表資料無法讀取，請稍後重試。";
         onError(msg); return;
       }
       parse(resp.table);
       if (usingDraft && !triedBanbiaoFallback && allRows.length === 0){
         // 草稿分頁尚無資料 → 自動退回原班表分頁，避免醫師看到空白
-        triedBanbiaoFallback = true; usingDraft = false; GID = BANBIAO_GID;
+        triedBanbiaoFallback = true; usingDraft = false; GID = BANBIAO_KEY;
         load(); return;
       }
       buildRoster();
@@ -1536,8 +1538,7 @@ window.__sched = {
     chipsEl.hidden = true;
     siteChipsEl.hidden = true;
     showStatus('<div class="big">⚠ 無法載入班表</div><div>'+esc(msg)+'</div>'
-      +'<div style="margin-top:14px"><button class="btn" id="retryBtn">重試</button> '
-      +'<a class="btn" style="text-decoration:none" href="'+el("sheetLink").href+'" target="_blank" rel="noopener">開啟試算表</a></div>', true);
+      +'<div style="margin-top:14px"><button class="btn" id="retryBtn">重試</button></div>', true);
     var rb = el("retryBtn"); if (rb) rb.onclick = load;
   }
 
@@ -1650,10 +1651,8 @@ window.__sched = {
 // ===== 找空檔（輪值母表）module ====================================
 (function(){
   "use strict";
-  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var GID = "1810798741";                 // rotation master (week × site matrix)
+  // 資料：master＝輪值母表（week × site matrix）；raw＝原始母表（!早/!中/!晚 有事欄）— 經 hdDataSrc 代理
   var CB  = "__avail_cb__";
-  var BGID = "0";                          // raw master tab: holds the !早/!中/!晚 (有事) columns
   var BCB  = "__avail_busy_cb__";
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
   var OUT_ROWS = {"有空":1,"全天有空":1};  // computed rows in the sheet — ignore as source
@@ -1696,8 +1695,7 @@ window.__sched = {
     scrollEl.innerHTML = '<div class="status"><span class="spin"></span>正在載入輪值母表…</div>';
     if (curScript && curScript.parentNode) curScript.parentNode.removeChild(curScript);
     clearTimeout(loadTimer);
-    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
-            + "?gid="+GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
+    var url = window.hdDataSrc("master", CB);
     curScript = document.createElement("script");
     curScript.src = url;
     curScript.onerror = function(){ onError("無法連線到 Google 試算表。"); };
@@ -1710,8 +1708,7 @@ window.__sched = {
   function loadBusy(){
     if (curBusyScript && curBusyScript.parentNode) curBusyScript.parentNode.removeChild(curBusyScript);
     clearTimeout(busyTimer);
-    var url = "https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq"
-            + "?gid="+BGID+"&headers=0&tqx=responseHandler:"+BCB+"&_="+Date.now();
+    var url = window.hdDataSrc("raw", BCB, true);
     curBusyScript = document.createElement("script");
     curBusyScript.src = url;
     curBusyScript.onerror = function(){ clearTimeout(busyTimer); };   // keep view working without 有事
@@ -2147,10 +2144,8 @@ window.__sched = {
 // ===== 我的時段（依醫師別的個人週行事曆）module =====================
 (function(){
   "use strict";
-  var SHEET_ID = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var OGID = "1810798741";   // rotation master → 花蓮OPD (session-level, by week-of-month)
+  // 資料：master→花蓮OPD（session-level, by week-of-month）；raw→有事（!早/!中/!晚）— 經 hdDataSrc 代理
   var OCB  = "__mine_opd_cb__";
-  var BGID = "0";            // raw master → 有事 (!早/!中/!晚)
   var BCB  = "__mine_busy_cb__";
   var BLACK = {"X":1,"Ｘ":1,"x":1,"?":1,"？":1,"-":1,"－":1,"—":1,"─":1,"":1};
   var WD = ["一","二","三","四","五","六","日"];   // Mon..Sun
@@ -2202,7 +2197,7 @@ window.__sched = {
   // ---------- 有事 (gid=0) ----------
   function loadBusy(){
     var s=document.createElement("script");
-    s.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?gid="+BGID+"&headers=0&tqx=responseHandler:"+BCB+"&_="+Date.now();
+    s.src=window.hdDataSrc("raw", BCB, true);
     s.onerror=function(){}; document.head.appendChild(s);
   }
   window[BCB]=function(resp){ try{ if(resp&&resp.table){ parseBusy(resp.table); if(inited) render(); } }catch(e){} };
@@ -2223,7 +2218,7 @@ window.__sched = {
   // ---------- 花蓮OPD (rotation master gid=1810798741) ----------
   function loadOPD(){
     var s=document.createElement("script");
-    s.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?gid="+OGID+"&tqx=responseHandler:"+OCB+"&_="+Date.now();
+    s.src=window.hdDataSrc("master", OCB);
     s.onerror=function(){}; document.head.appendChild(s);
   }
   window[OCB]=function(resp){ try{ if(resp&&resp.table){ parseOPD(resp.table); if(inited) render(); } }catch(e){} };
@@ -2403,12 +2398,8 @@ window.__sched = {
 // ===== 找統計（跨年統計）module ===================================
 (function(){
   "use strict";
-  var SHEET_ID  = "1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var HIST_GID  = "834332171";       // 歷史班表（~2023/2 起；採用 2026-01-01 之前）
-  var CUR_GID   = "1837573287";      // 現行班表（採用 2026-01-01 起）
-  var HOL_SHEET = "1UdSMWQG1XxpNa7jRRmvK5cqQ7sfMb7E4O89B-y5Te9c";
-  var HOL_GID   = "600263934";       // 國定假日表（欄：日期／週幾／節日名稱／醫院是否放假／HD醫師非週末出勤）
-  var OPD_GID   = "1810798741";      // 輪值母表 → 花蓮OPD（週期模板；用於總工作量投影）
+  // 資料（經 hdDataSrc 代理）：hist＝歷史班表（~2023/2 起；採用 2026-01-01 之前）；banbiao＝現行班表（2026-01-01 起）；
+  // hol＝國定假日表（欄：日期／週幾／節日名稱／醫院是否放假／HD醫師非週末出勤）；master＝輪值母表→花蓮OPD（總工作量投影）
   var CUTOFF    = new Date(2026,0,1); // < CUTOFF → 歷史；>= CUTOFF → 現行
 
   var PREF_ORDER = ["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
@@ -2436,16 +2427,15 @@ window.__sched = {
     opd={year:null,m0:null,weekList:[],byWeek:{}};
     window.__hdPill.set("stat","loading","載入統計…");
     el("statBody").innerHTML='<div class="status"><span class="spin"></span>正在載入統計資料…</div>';
-    loadOne("hist", SHEET_ID, HIST_GID, "__stat_hist_cb__");
-    loadOne("cur",  SHEET_ID, CUR_GID,  "__stat_cur_cb__");
-    loadOne("hol",  HOL_SHEET, HOL_GID, "__stat_hol_cb__");
-    loadOne("opd",  SHEET_ID, OPD_GID,  "__stat_opd_cb__");
+    loadOne("hist", "hist",    "__stat_hist_cb__");
+    loadOne("cur",  "banbiao", "__stat_cur_cb__");
+    loadOne("hol",  "hol",     "__stat_hol_cb__");
+    loadOne("opd",  "master",  "__stat_opd_cb__");
   }
 
-  function loadOne(kind, sheetId, gid, cbName){
+  function loadOne(kind, key, cbName){
     var s=document.createElement("script");
-    s.src="https://docs.google.com/spreadsheets/d/"+sheetId+"/gviz/tq?gid="+gid
-         +"&tqx=responseHandler:"+cbName+"&_="+Date.now();
+    s.src=window.hdDataSrc(key, cbName);
     s.onerror=function(){ got[kind]=true; maybeReady(); };   // 缺這一份不致命
     var t=setTimeout(function(){ if(!got[kind]){ got[kind]=true; maybeReady(); } }, 15000);
     s.onload=function(){ clearTimeout(t); };
@@ -2932,7 +2922,7 @@ window.__sched = {
     if(!list.length){
       return sec("非週末國定假日HD值班", desc,
         '<div class="stat-empty">尚無 '+curYear+' 年「HD醫師非週末出勤」註記為 1 的國定假日資料。<br>'
-        +'請於<a href="https://docs.google.com/spreadsheets/d/'+HOL_SHEET+'/edit?gid='+HOL_GID+'" target="_blank" rel="noopener">國定假日表</a>'
+        +'請於國定假日表'
         +'填入日期／節日名稱／HD醫師非週末出勤後即會自動顯示。</div>');
     }
     var rowsH='<div class="stat-scroll"><table class="holtbl"><thead><tr>'

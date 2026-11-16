@@ -276,8 +276,9 @@
   "use strict";
 
   // ===== constants =====
-  var SHEET_ID="1GI6xVjN7T4KBYP_SXbF-QXohRyPDhIb3k-0QxnLfzFk";
-  var MASTER_GID="1810798741", CB="__sched_master_cb__";
+  // 輪值母表經 Apps Script 唯讀代理取得（見 data_proxy.gs）；與 index.html 的 HD_DATA_URL 相同
+  var HD_DATA_URL="https://script.google.com/macros/s/AKfycbz-XtW9zcratP-xeCRNJGmscX0K-GBSEkXobRSvTXg1UTt2Mom9z2MCUyzPB1epBCaWWw/exec";
+  var CB="__sched_master_cb__";
   var ROSTER=["徐","王","賴","林","郭","超","鄧","翔","祺","禮"];
   var DUTY_POOL=["徐","王","賴","林","郭","鄧","翔"];              // H5 值班池
   var LIANAN_DECOUPLE={"翔":1,"祺":1,"超":1,"禮":1};               // H7
@@ -318,8 +319,8 @@
       try{ if(!resp||!resp.table) throw new Error("母表無法讀取"); master=parseMaster(resp.table); cb&&cb(); }
       catch(e){ el("scroll").innerHTML='<div class="status">⚠ '+esc(e.message||e)+'</div>'; } };
     curScript=document.createElement("script");
-    curScript.src="https://docs.google.com/spreadsheets/d/"+SHEET_ID+"/gviz/tq?gid="+MASTER_GID+"&tqx=responseHandler:"+CB+"&_="+Date.now();
-    curScript.onerror=function(){ el("scroll").innerHTML='<div class="status">⚠ 無法連線 Google 試算表</div>'; };
+    curScript.src=HD_DATA_URL+"?k=master&callback="+CB+"&_="+Date.now();
+    curScript.onerror=function(){ el("scroll").innerHTML='<div class="status">⚠ 無法連線班表資料代理</div>'; };
     document.head.appendChild(curScript);
     loadTimer=setTimeout(function(){ el("scroll").innerHTML='<div class="status">⚠ 載入逾時</div>'; },15000);
   }
